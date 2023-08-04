@@ -1,11 +1,11 @@
-import { STRIPE_TEST_KEY, DOMAIN } from '$env/static/private';
+import { STRIPE_TEST_KEY} from '$env/static/private';
 
 import { error, redirect } from '@sveltejs/kit';
 import Stripe from 'stripe'
 
 
 
-export async function POST() {
+export async function POST({ url }) {
     const stripe = new Stripe(STRIPE_TEST_KEY, {
         apiVersion: '2022-11-15'
     });
@@ -17,8 +17,8 @@ export async function POST() {
         },
       ],
       mode: 'payment',
-      success_url: `${DOMAIN}/success`,
-      cancel_url: `${DOMAIN}/cancel`,
+      success_url: `${url.origin}/success`,
+      cancel_url: `${url.origin}/cancel`,
     });
     if (session.url) {
       throw redirect(303, session.url);
