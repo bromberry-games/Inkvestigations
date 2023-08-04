@@ -36,9 +36,6 @@
    
 </script>
 
-<form action="/create-checkout-session" method="POST">
-  <button type="submit" id="checkout-button">Checkout</button>
-</form>
 <div class="flex justify-center p-4 h-full">
   <div class="w-1/2 text-center flex flex-col justify-items-end h-full ">
     <div class="max-h-[80vh] overflow-y-auto">
