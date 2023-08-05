@@ -3,6 +3,7 @@
   import { writable, } from 'svelte/store';
 	import Message from "../lib/components/message.svelte";
 	import type { MessageData } from "../data/message";
+  export let data;
 
   let text = '';
   let answer_text = '';
@@ -35,6 +36,10 @@
   }
    
 </script>
+
+<p>
+  {data.text}
+</p>
 
 <div class="flex justify-center p-4 h-full">
   <div class="w-1/2 text-center flex flex-col justify-items-end h-full ">
