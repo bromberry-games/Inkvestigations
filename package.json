@@ -18,6 +18,7 @@
 		"@sveltejs/adapter-auto": "^2.0.0",
 		"@sveltejs/adapter-cloudflare": "^2.3.2",
 		"@sveltejs/kit": "^1.5.0",
+		"@types/uuid": "^9.0.2",
 		"@typescript-eslint/eslint-plugin": "^5.45.0",
 		"@typescript-eslint/parser": "^5.45.0",
 		"autoprefixer": "^10.4.14",
@@ -36,13 +37,23 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@inqling/svelte-icons": "^3.4.3",
 		"@popperjs/core": "^2.11.8",
 		"classnames": "^2.3.2",
 		"flowbite": "^1.6.5",
 		"flowbite-svelte": "^0.37.4",
+		"gpt3-tokenizer": "^1.1.5",
+		"highlight.js": "^11.8.0",
 		"lucide-svelte": "^0.241.0",
 		"openai": "^3.3.0",
+		"random-word-slugs": "^0.1.7",
+		"snarkdown": "^2.0.0",
+		"sse": "^0.0.8",
+		"sse.js": "^0.6.1",
 		"stripe": "^12.17.0",
-		"tailwindcss": "^3.3.2"
+		"svelte-legos": "^0.2.1",
+		"svelte-local-storage-store": "^0.5.0",
+		"tailwindcss": "^3.3.2",
+		"uuid": "^9.0.0"
 	}
 }

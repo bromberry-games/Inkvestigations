@@ -1,5 +1,13 @@
 <script>
+	import { createNewChat } from "$misc/shared";
+	import { chatStore } from "$misc/stores";
   import { Card, Button,  } from "flowbite-svelte";
+	import { onMount } from "svelte";
+
+  onMount(() => {
+    $chatStore = {} 
+  });
+
 </script>
 <div class="p-4 w-full flex">
 <div class="p-4">
@@ -11,6 +19,7 @@
     <form action="/create-checkout-session" method="POST">
       <Button color="dark" type="submit" id="checkout-button">Buy 3€</Button>
     </form>
+    <Button color="dark" on:click={() => createNewChat()}>Buy 3€</Button>
   </Card>
 </div>
 <div class="p-4">
