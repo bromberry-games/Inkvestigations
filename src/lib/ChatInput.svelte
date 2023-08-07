@@ -199,7 +199,7 @@
 </script>
 
 <footer
-	class="sticky card space-y-4 bottom-0 z-10 variant-filled-surface-700 py-2 md:py-4 md:px-8 md:rounded-xl"
+	class="sticky space-y-4 bottom-0 z-10 py-2 md:py-4 md:px-8 md:rounded-xl"
 >
 	{#if $isLoadingAnswerStore}
 		<div class="flex items-center justify-center">

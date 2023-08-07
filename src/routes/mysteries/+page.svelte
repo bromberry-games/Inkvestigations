@@ -19,7 +19,7 @@
     <form action="/create-checkout-session" method="POST">
       <Button color="dark" type="submit" id="checkout-button">Buy 3€</Button>
     </form>
-    <Button color="dark" on:click={() => createNewChat()}>Buy 3€</Button>
+    <Button color="dark" on:click={() => createNewChat()}>Play</Button>
   </Card>
 </div>
 <div class="p-4">

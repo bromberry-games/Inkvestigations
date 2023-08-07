@@ -5,6 +5,7 @@
 	import type { Chat } from '$misc/shared';
 	import { chatStore, enhancedLiveAnswerStore, isLoadingAnswerStore } from '$misc/stores';
 	import ChatMessages from './ChatMessages.svelte';
+	import { Spinner } from 'flowbite-svelte';
 
 	export let slug: string;
 	export let chat: Chat | undefined = undefined;
@@ -64,13 +65,7 @@
 			class="animate-pulse md:w-12 self-center py-2 md:py-6"
 			class:invisible={!$isLoadingAnswerStore}
 		>
-			<!-- <ProgressRadial
-				class="w-8"
-				stroke={120}
-				meter="stroke-tertiary-500"
-				track="stroke-tertiary-500/30"
-			/> -->
-
+		<Spinner color="gray"/>
 		</div>
 	</div>
 {/if}
