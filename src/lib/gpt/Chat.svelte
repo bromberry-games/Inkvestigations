@@ -4,7 +4,7 @@
 	import { afterNavigate } from '$app/navigation';
 	import type { Chat } from '$misc/shared';
 	import { chatStore, enhancedLiveAnswerStore, isLoadingAnswerStore } from '$misc/stores';
-	import ChatMessages from './ChatMessages.svelte';
+	import ChatMessages from '../ChatMessages.svelte';
 	import { Spinner } from 'flowbite-svelte';
 
 	export let slug: string;
