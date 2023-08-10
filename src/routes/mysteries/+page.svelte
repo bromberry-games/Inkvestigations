@@ -9,7 +9,6 @@
   });
 
   export let data;
-  $: console.log("data is: " + data);
 
 </script>
 

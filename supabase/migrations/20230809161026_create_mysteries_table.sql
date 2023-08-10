@@ -12,3 +12,14 @@ CREATE TABLE unlocked_mysteries (
     FOREIGN KEY (user_id) REFERENCES auth.users(id),
     FOREIGN KEY (Name) REFERENCES mysteries(Name)
 );
+
+alter table mysteries 
+  enable row level security;
+
+alter table unlocked_mysteries 
+  enable row level security;
+
+create policy "Mysteries are viewable by everyone"
+  on mysteries for select using (
+    true
+  );

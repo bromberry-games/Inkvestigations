@@ -28,7 +28,11 @@
     <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Inkvestigations</span>
   </NavBrand>
   <div class="flex md:order-2">
-    <Button color="red" size="sm" href="/login" >Login</Button>
+    {#if session}
+      <Button color="red" size="sm" on:click={() => supabase.auth.signOut()}>Logout</Button>
+    {:else}
+      <Button color="red" size="sm" href="/login" >Login</Button>
+    {/if}
     <NavHamburger on:click={toggle} />
   </div>
   <NavUl {hidden}>
