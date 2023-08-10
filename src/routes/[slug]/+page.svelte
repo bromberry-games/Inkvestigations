@@ -4,7 +4,7 @@
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { chatStore, isLoadingAnswerStore, } from '$misc/stores';
-	import ChatInput from '$lib/ChatInput.svelte';
+	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
 	import { estimateChatCost } from '$misc/openai';
 	import type {
