@@ -1,4 +1,3 @@
-import type { Config } from '@sveltejs/adapter-vercel';
 import type { ChatCompletionRequestMessage, CreateChatCompletionRequest } from 'openai';
 import type { RequestHandler } from './$types';
 import type { OpenAiSettings } from '$misc/openai';
@@ -10,6 +9,7 @@ import { OPEN_AI_KEY } from '$env/static/private';
 const openAiKey : string = OPEN_AI_KEY;
 
 export const POST: RequestHandler = async ({ request, fetch }) => {
+	throw error(500, "DOnt do this right now");
 	try {
 		const requestData = await request.json();
 		throwIfUnset('request data', requestData);

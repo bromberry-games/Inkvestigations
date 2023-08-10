@@ -1,5 +1,5 @@
 <script>
-  import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte'
+  import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button } from 'flowbite-svelte'
   import "../app.css";
 </script>
 
@@ -8,7 +8,10 @@
     <img src="/public/police_captain.png" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo"/>
     <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white">Inkvestigations</span>
   </NavBrand>
-  <NavHamburger on:click={toggle} />
+  <div class="flex md:order-2">
+    <Button color="red" size="sm" href="/login" >Login</Button>
+    <NavHamburger on:click={toggle} />
+  </div>
   <NavUl {hidden}>
     <NavLi href="/mysteries">Mysteries</NavLi>
     <NavLi href="/about">About</NavLi>
