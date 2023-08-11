@@ -21,5 +21,5 @@ create policy "Mysteries are viewable by everyone"
   );
 
 create policy "Individuals can view their own muessages."
-    on messages for select
+    on user_messages for select
     using ( auth.uid() = user_id );
