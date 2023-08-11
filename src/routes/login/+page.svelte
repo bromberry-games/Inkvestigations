@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Auth } from '@supabase/auth-ui-svelte';
 	import { ThemeSupa, type SocialLayout, type ViewType } from '@supabase/auth-ui-shared';
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 
     export let data;
 
@@ -28,6 +30,24 @@
 	let socialLayout = socialAlignments[1] satisfies SocialLayout;
 	let borderRadius = radii[0];
 	let view = views[0];
+
+	let gotoHome: boolean = false;
+
+	onMount(() => {
+		gotoHome = false;
+		data.supabase.auth.onAuthStateChange((event, session) => {
+        	if (event === 'SIGNED_IN' && session) {
+				gotoHome = true;
+        	} 
+      });  
+	});
+
+	$: {
+		if (gotoHome) {
+			goto('/');
+		}
+	}
+
 </script>
 
 <svelte:head>
