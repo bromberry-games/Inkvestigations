@@ -30,14 +30,14 @@
 	let brandColor = colors[0];
 	let socialLayout = socialAlignments[1] satisfies SocialLayout;
 	let borderRadius = radii[0];
-	let view = views[0];
+	let view = views[4];
 
 	let gotoHome: boolean = false;
 
 	onMount(() => {
 		gotoHome = false;
 		data.supabase.auth.onAuthStateChange((event, session) => {
-        	if (event === 'SIGNED_IN' && session) {
+        	if (event === 'USER_UPDATED' && session) {
 				gotoHome = true;
         	} 
       });  
@@ -73,6 +73,7 @@
                             supabaseClient={data.supabase}
 							theme="dark"
 							view={view.id}
+							showLinks={false}
 							appearance={{
 								theme: ThemeSupa,
 								style: {
@@ -92,10 +93,6 @@
 									}
 								}
 							}}
-							providers={['apple', 'google', 'facebook']}
-							{socialLayout}
-                            redirectTo={`${data.url}/auth/callback`}
-							forgottenPasswordRedirect={`${data.url}/auth/callback?next=/update-password`}
 						/>
 					</div>
 				</div>
