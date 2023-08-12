@@ -13,12 +13,6 @@ export const load = async ({ fetch, data, depends }) => {
     serverSession: data.session,
   })
 
-  supabase.auth.onAuthStateChange((event, _session) => {
-    if(event === 'PASSWORD_RECOVERY') {
-      console.log("Password recov");
-    }
-  })
-
   const {
     data: { session },
   } = await supabase.auth.getSession()

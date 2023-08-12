@@ -1,25 +1,25 @@
 CREATE TABLE mysteries (
     Name TEXT PRIMARY KEY UNIQUE,
-    Description TEXT,
-    Prompt TEXT
+    Description TEXT Not Null,
+    Prompt TEXT Not Null,
 );
 
-CREATE TABLE unlocked_mysteries (
-    user_id UUID NOT NULL,
-    Name TEXT NOT NULL,
-    unlocked BOOLEAN DEFAULT FALSE,
-    PRIMARY KEY (user_id, Name),
-    FOREIGN KEY (user_id) REFERENCES auth.users(id),
-    FOREIGN KEY (Name) REFERENCES mysteries(Name)
+CREATE TABLE user_messages (
+    user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON UPDATE CASCADE,
+    amount INTEGER CHECK (amount >= 0)
 );
 
 alter table mysteries 
   enable row level security;
 
-alter table unlocked_mysteries 
+alter table user_messages 
   enable row level security;
 
 create policy "Mysteries are viewable by everyone"
   on mysteries for select using (
     true
   );
+
+create policy "Individuals can view their own muessages."
+    on user_messages for select
+    using ( auth.uid() = user_id );

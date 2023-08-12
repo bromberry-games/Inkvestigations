@@ -4,11 +4,12 @@
   import { Card, Button,  } from "flowbite-svelte";
 	import { onMount } from "svelte";
 
+  export let data;
+
   onMount(() => {
     $chatStore = {} 
   });
 
-  export let data;
 
 </script>
 
