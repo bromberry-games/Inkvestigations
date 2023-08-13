@@ -36,47 +36,38 @@ export interface Database {
     Tables: {
       mysteries: {
         Row: {
-          description: string | null
+          description: string
           name: string
-          prompt: string | null
+          prompt: string
         }
         Insert: {
-          description?: string | null
+          description: string
           name: string
-          prompt?: string | null
+          prompt: string
         }
         Update: {
-          description?: string | null
+          description?: string
           name?: string
-          prompt?: string | null
+          prompt?: string
         }
         Relationships: []
       }
-      unlocked_mysteries: {
+      user_messages: {
         Row: {
-          name: string
-          unlocked: boolean | null
+          amount: number | null
           user_id: string
         }
         Insert: {
-          name: string
-          unlocked?: boolean | null
+          amount?: number | null
           user_id: string
         }
         Update: {
-          name?: string
-          unlocked?: boolean | null
+          amount?: number | null
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "unlocked_mysteries_name_fkey"
-            columns: ["name"]
-            referencedRelation: "mysteries"
-            referencedColumns: ["name"]
-          },
-          {
-            foreignKeyName: "unlocked_mysteries_user_id_fkey"
+            foreignKeyName: "user_messages_user_id_fkey"
             columns: ["user_id"]
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -85,7 +76,21 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      mysteries_view: {
+        Row: {
+          description: string | null
+          name: string | null
+        }
+        Insert: {
+          description?: string | null
+          name?: string | null
+        }
+        Update: {
+          description?: string | null
+          name?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never

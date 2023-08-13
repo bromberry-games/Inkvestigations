@@ -22,7 +22,7 @@
         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
           {shopItem.description}
         </p>
-        {#if shopItem.bought}
+        {#if data.amount > 0}
           <Button color="dark" on:click={() => createNewChat()}>Play</Button>
         {:else}
         <form action="/api/create-checkout-session" method="POST">

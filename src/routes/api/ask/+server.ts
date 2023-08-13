@@ -8,8 +8,9 @@ import { OPEN_AI_KEY } from '$env/static/private';
 
 const openAiKey : string = OPEN_AI_KEY;
 
-export const POST: RequestHandler = async ({ request, fetch }) => {
+export const POST: RequestHandler = async ({ request, fetch, locals: {getSession, supabase} }) => {
 	throw error(500, "DOnt do this right now");
+	const session = getSession();
 	try {
 		const requestData = await request.json();
 		throwIfUnset('request data', requestData);

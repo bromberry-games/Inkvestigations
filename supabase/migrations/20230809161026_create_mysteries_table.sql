@@ -11,6 +11,10 @@ CREATE TABLE user_messages (
     amount INTEGER CHECK (amount >= 0)
 );
 
+-- views
+CREATE VIEW mysteries_view AS
+  SELECT Name, Description FROM mysteries;
+
 -- policies
 
 alter table mysteries 
@@ -19,24 +23,22 @@ alter table mysteries
 alter table user_messages 
   enable row level security;
 
-create policy "Mysteries are viewable by everyone"
-  on mysteries for select using (
-    true
-  );
-
-create policy "Individuals can view their own muessages."
+create policy "Individuals can view their own messages."
     on user_messages for select
     using ( auth.uid() = user_id );
 
 -- triggers
 
 CREATE OR REPLACE FUNCTION add_user_to_user_messages()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+language plpgsql
+security definer set search_path = public
+AS $$
 BEGIN
-    INSERT INTO user_messages (user_id, amount) VALUES (NEW.id, 5);
+    INSERT INTO public.user_messages (user_id, amount) VALUES (NEW.id, 5);
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$;
 
 
 CREATE OR REPLACE TRIGGER tr_insert_user_messages
