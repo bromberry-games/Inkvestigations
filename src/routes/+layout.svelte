@@ -37,7 +37,7 @@
   </div>
   <NavUl {hidden}>
     <NavLi href="/mysteries">Mysteries</NavLi>
-    <NavLi href="/about">About</NavLi>
+    <NavLi href="/pricing">Pricing</NavLi>
   </NavUl>
 </Navbar>
 

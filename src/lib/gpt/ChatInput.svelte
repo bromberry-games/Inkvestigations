@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ChatCompletionRequestMessage } from 'openai';
-	import { onDestroy, tick } from 'svelte';
+	import { createEventDispatcher, onDestroy, tick } from 'svelte';
 	import { textareaAutosizeAction } from 'svelte-legos';
 	//import { focusTrap } from '@skeletonlabs/skeleton';
 	import { PaperAirplane, CircleStack } from '@inqling/svelte-icons/heroicon-24-solid';
@@ -16,6 +16,9 @@
 		enhancedLiveAnswerStore,
 	} from '$misc/stores';
 	import { countTokens } from '$misc/openai';
+
+
+	const dispatch = createEventDispatcher();
 
 	export let slug: string;
 	export let chatCost: ChatCost | null;
@@ -84,6 +87,7 @@
 		};
 
 		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort);
+		dispatch('chatInput');
 		input = '';
 	}
 

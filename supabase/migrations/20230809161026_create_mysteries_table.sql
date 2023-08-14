@@ -8,7 +8,7 @@ CREATE TABLE mysteries (
 
 CREATE TABLE user_messages (
     user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON UPDATE CASCADE,
-    amount INTEGER CHECK (amount >= 0)
+    amount INTEGER CHECK (amount >= 0) NOT NULL
 );
 
 -- views
@@ -16,6 +16,7 @@ CREATE VIEW mysteries_view AS
   SELECT Name, Description FROM mysteries;
 
 -- policies
+ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
 
 alter table mysteries 
   enable row level security;
@@ -45,3 +46,23 @@ CREATE OR REPLACE TRIGGER tr_insert_user_messages
 AFTER INSERT ON auth.users
 FOR EACH ROW
 EXECUTE FUNCTION add_user_to_user_messages();
+
+-- functions
+
+create function decrement_message_for_user(the_user_id uuid) 
+returns void as
+$$
+  update user_messages
+  set amount = amount - 1
+  where user_id = the_user_id
+$$ 
+language sql volatile;
+
+create function increase_message_for_user_by_amount(the_user_id uuid, increase integer) 
+returns void as
+$$
+  update user_messages
+  set amount = amount + increase
+  where user_id = the_user_id
+$$ 
+language sql volatile;

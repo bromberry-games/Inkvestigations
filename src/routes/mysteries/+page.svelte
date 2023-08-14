@@ -14,6 +14,7 @@
 </script>
 
 
+<h1>{data.amount}</h1>
 <div class="p-4 w-full flex">
   {#each data.mysteries as shopItem}
     <div class="p-4">

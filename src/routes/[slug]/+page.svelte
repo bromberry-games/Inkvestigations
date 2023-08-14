@@ -12,6 +12,14 @@
 	} from '$misc/shared';;
 
 	export let data: PageData;
+	let userMessages = 0
+	$: supabase = data.supabase
+
+	async function updateUserMessages() {
+		const { data } = await supabase.from("user_messages").select().limit(1).single();
+      	userMessages = data.amount
+	}
+
 
 	$: ({ slug } = data);
 	$: chat = $chatStore[slug];
@@ -21,6 +29,7 @@
 
 	onMount(async () => {
 		await highlightCode();
+		updateUserMessages();
 	});
 
 	const unsubscribeChatStore = chatStore.subscribe(async () => {
@@ -62,7 +71,8 @@
 
 {#if chat}
 
+	<h1>{userMessages}</h1>
 	<Chat {slug} on:editMessage={handleEditMessage}>
 	</Chat> 
-	<ChatInput {slug} chatCost={cost} bind:this={chatInput} />
+	<ChatInput {slug} chatCost={cost} bind:this={chatInput} on:chatInput={updateUserMessages}/>
 {/if}

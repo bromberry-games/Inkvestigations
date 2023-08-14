@@ -5,6 +5,7 @@ import { migrateChat } from '$misc/chatMigration';
 
 export const load: PageLoad = async ({ params }) => {
 	const { slug } = params;
+	console.log(params)
 
 	const chat = get(chatStore)[slug];
 	const { chat: migratedChat, migrated } = migrateChat(chat);

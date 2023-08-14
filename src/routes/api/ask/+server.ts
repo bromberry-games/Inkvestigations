@@ -5,12 +5,18 @@ import { error } from '@sveltejs/kit';
 import { defaultOpenAiSettings } from '$misc/openai';
 import { getErrorMessage, throwIfUnset } from '$misc/error';
 import { OPEN_AI_KEY } from '$env/static/private';
+import { decreaseMessageForUser, getMessageAmountForUser } from '$lib/supabase';
 
 const openAiKey : string = OPEN_AI_KEY;
 
 export const POST: RequestHandler = async ({ request, fetch, locals: {getSession, supabase} }) => {
-	throw error(500, "DOnt do this right now");
-	const session = getSession();
+	const session = await getSession();
+	if (!session) {
+		throw error(500, 'You are not logged in.');
+	}
+	if (getMessageAmountForUser(session.user.id) <= 0) {
+		throw error(500, 'You have no messages.');
+	}
 	try {
 		const requestData = await request.json();
 		throwIfUnset('request data', requestData);
@@ -41,11 +47,14 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 			throw err.error;
 		}
 
+		decreaseMessageForUser(session.user.id);
+
 		return new Response(response.body, {
 			headers: {
 				'Content-Type': 'text/event-stream'
 			}
 		});
+
 	} catch (err) {
 		throw error(500, getErrorMessage(err));
 	}
