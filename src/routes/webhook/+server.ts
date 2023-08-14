@@ -10,10 +10,17 @@ export async function POST({ request }) {
   const body = await request.text()
   const signature = request.headers.get('stripe-signature')
 
+  let event;
   try {
-    const event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET)
-    if (event.type == 'charge.succeeded') {
+    event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET)
+  } catch (err) {
+    console.warn('⚠️  Webhook signature verification failed.', err.message)
+
+    return new Response(undefined, { status: 400 })
+  }
+    if (event.type == 'checkout.session.completed') {
         console.log(event.data)
+        console.log("event obj: ", event.data.object)
         const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
             event.data.object.id,
             {
@@ -28,11 +35,6 @@ export async function POST({ request }) {
             fulfillOrder(lineItems);
         }
     }
-  } catch (err) {
-    console.warn('⚠️  Webhook signature verification failed.', err.message)
-
-    return new Response(undefined, { status: 400 })
-  }
 
 
   return new Response(undefined)
