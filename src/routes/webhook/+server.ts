@@ -29,9 +29,10 @@ export async function POST({ request }) {
         );
         console.log("Session: ", sessionWithLineItems);
         console.log("fucking line!")
+        console.log("User id: " sessionWithLineItems.metadata.user_id);
         console.log("Line items: ", sessionWithLineItems.line_items);
         const lineItems = sessionWithLineItems.line_items;
-        if (lineItems) {
+        if (lineItems, user_id) {
             fulfillOrder(lineItems);
         }
     }
@@ -40,5 +41,8 @@ export async function POST({ request }) {
   return new Response(undefined)
 }
 
-function fulfillOrder(lineItems: Stripe.ApiList<Stripe.LineItem>) {
+function fulfillOrder(lineItems: Stripe.ApiList<Stripe.LineItem>, user_id: string) {
+    for (const item of lineItems) {
+        increaseMessageAmountForUserByAmount(user_id, item.amount_total);
+    }
 }

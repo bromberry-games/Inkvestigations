@@ -21,8 +21,9 @@ export const actions = {
       mode: 'payment',
       success_url: `${url.origin}/success`,
       cancel_url: `${url.origin}/cancel`,
+      //automatic_tax: {enabled: true},
       metadata: {
-        user_id: user_session.user.id
+        user_id: user_session ? user_session.user.id : ''
       }
     });
 
