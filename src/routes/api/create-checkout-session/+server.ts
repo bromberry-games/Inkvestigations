@@ -19,9 +19,6 @@ export async function POST({ url }) {
       mode: 'payment',
       success_url: `${url.origin}/success`,
       cancel_url: `${url.origin}/cancel`,
-      metadata: {
-        user_id: 
-      }
     });
     if (session.url) {
       throw redirect(303, session.url);
