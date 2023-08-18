@@ -43,6 +43,6 @@ export async function POST({ request }) {
 
 function fulfillOrder(lineItems: Stripe.ApiList<Stripe.LineItem>, user_id: string) {
     for (const item of lineItems) {
-        increaseMessageAmountForUserByAmount(user_id, item.amount_total);
+        increaseMessageAmountForUserByAmount(user_id, );
     }
 }

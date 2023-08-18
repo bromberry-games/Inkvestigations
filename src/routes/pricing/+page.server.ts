@@ -3,25 +3,51 @@ import { STRIPE_TEST_KEY} from '$env/static/private';
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import Stripe from 'stripe'
 
-export const actions = {
-  buy: async ({url, locals: {getSession}}) => {
-    const user_session = await getSession();
+const stripe = new Stripe(STRIPE_TEST_KEY, {
+    apiVersion: '2022-11-15'
+});
 
-    const stripe = new Stripe(STRIPE_TEST_KEY, {
-        apiVersion: '2022-11-15'
-    });
+const name_to_price_map = {
+  'ONE_TIME' : 'price_1NgTQsKIDbJkcynJPpFoFZNz',
+  '10_daily' : 'price_1Ng9UfKIDbJkcynJYsE9jPMZ',
+  '30_daily' : 'price_1NgSRVKIDbJkcynJkhJJb1E3',
+}
+
+
+export const load = async () => {
+  const prices = [];
+  for (const key in name_to_price_map) {
+    const price = await stripe.prices.retrieve(name_to_price_map[key], {expand: ['product']});
+    if(!price.unit_amount) {
+      throw Error("no unit amount");
+    }
+    prices.push({
+      id: price.id,
+      currency: price.currency,
+      unit_amount: price.unit_amount,
+      product_name: (price.product as Stripe.Product).name
+    })
+  }
+  return {prices: prices};
+}
+
+export const actions = {
+  buy: async ({url, request, locals: {getSession}}) => {
+    const user_session = await getSession();
+    const form_data = request.formData();
+    const price = (await form_data).get('price_id') as string;
 
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {
-          price: 'price_1NaloJKIDbJkcynJshhB7EsM',
+          price: price,
           quantity: 1,
         },
       ],
-      mode: 'payment',
+      mode: 'subscription',
       success_url: `${url.origin}/success`,
       cancel_url: `${url.origin}/cancel`,
-      //automatic_tax: {enabled: true},
+      automatic_tax: {enabled: true},
       metadata: {
         user_id: user_session ? user_session.user.id : ''
       }
