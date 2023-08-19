@@ -2,16 +2,12 @@ import { STRIPE_TEST_KEY} from '$env/static/private';
 
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import Stripe from 'stripe'
+import { name_to_price_map } from './pricing_const';
 
 const stripe = new Stripe(STRIPE_TEST_KEY, {
     apiVersion: '2022-11-15'
 });
 
-const name_to_price_map = {
-  'ONE_TIME' : 'price_1NgTQsKIDbJkcynJPpFoFZNz',
-  '10_daily' : 'price_1Ng9UfKIDbJkcynJYsE9jPMZ',
-  '30_daily' : 'price_1NgSRVKIDbJkcynJkhJJb1E3',
-}
 
 
 export const load = async () => {
@@ -48,9 +44,11 @@ export const actions = {
       success_url: `${url.origin}/success`,
       cancel_url: `${url.origin}/cancel`,
       automatic_tax: {enabled: true},
-      metadata: {
-        user_id: user_session ? user_session.user.id : ''
-      }
+      subscription_data: {
+        metadata: {
+          user_id: user_session ? user_session.user.id : ''
+        }
+      },
     });
 
     if (session.url) {

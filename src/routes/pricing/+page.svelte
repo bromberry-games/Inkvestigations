@@ -1,10 +1,7 @@
 <script>
-  import { Card, Button } from 'flowbite-svelte';
-  import { Icon } from 'flowbite-svelte-icons';
 	import Pricing from './pricing.svelte';
 
   export let data;
-
 </script>
 
 <div class="flex justify-center flex-wrap ">

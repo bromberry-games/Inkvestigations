@@ -10,7 +10,6 @@
         maximumFractionDigits: 2   // No more than 2 decimal places
     });
 
-
 </script>
 
 
