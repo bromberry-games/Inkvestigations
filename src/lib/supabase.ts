@@ -15,5 +15,8 @@ export async function getMessageAmountForUser(userid: string): number {
 }
 
 export async function increaseMessageAmountForUserByAmount(userid: string, amount: number) {
-    await supabase_full_access.rpc('increase_message_for_user_by', { the_user_id: userid, amount: amount })
+    const { error } = await supabase_full_access.rpc('increase_message_for_user_by_amount', { the_user_id: userid, increase: amount})
+    if (error) {
+        console.error(error)
+    }
 }
