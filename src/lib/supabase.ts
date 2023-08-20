@@ -7,6 +7,7 @@ export const supabase_full_access = createClient<Database>(PUBLIC_SUPABASE_URL, 
 
 export async function decreaseMessageForUser(userid: string) {
     const { error } = await supabase_full_access.rpc('decrement_message_for_user', { the_user_id: userid })
+    console.log("decremented with client: ", supabase_full_access)
     if (error) {
         console.error(error)
     }
