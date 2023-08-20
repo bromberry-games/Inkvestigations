@@ -47,7 +47,9 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 			throw err.error;
 		}
 
+		console.log("decreasing in api route")
 		decreaseMessageForUser(session.user.id);
+		console.log("Should have decreased")
 
 		return new Response(response.body, {
 			headers: {
