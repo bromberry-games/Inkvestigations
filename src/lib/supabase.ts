@@ -6,6 +6,7 @@ import { SUPABASE_SERVICE_KEY } from '$env/static/private';
 export const supabase_full_access = createClient<Database>(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 export async function decreaseMessageForUser(userid: string) {
+    console.log("decreae in supa file hit");
     const { error } = await supabase_full_access.rpc('decrement_message_for_user', { the_user_id: userid })
     console.log("decremented with client: ", supabase_full_access)
     if (error) {
