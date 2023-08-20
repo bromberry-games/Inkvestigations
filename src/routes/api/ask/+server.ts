@@ -14,7 +14,7 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 	if (!session) {
 		throw error(500, 'You are not logged in.');
 	}
-	if (getMessageAmountForUser(session.user.id) <= 0) {
+	if (await getMessageAmountForUser(session.user.id) <= 0) {
 		throw error(500, 'You have no messages.');
 	}
 	try {

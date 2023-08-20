@@ -6,11 +6,20 @@ import { SUPABASE_SERVICE_KEY } from '$env/static/private';
 export const supabase_full_access = createClient<Database>(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 export async function decreaseMessageForUser(userid: string) {
-    await supabase_full_access.rpc('decrement_message_for_user', { the_user_id: userid })
+    const { error } = await supabase_full_access.rpc('decrement_message_for_user', { the_user_id: userid })
+    if (error) {
+        console.error(error)
+    }
 }
 
-export async function getMessageAmountForUser(userid: string): number {
-    const { data } = await supabase_full_access.from('user_messages').select('amount').eq('user_id', userid).single();
+export async function getMessageAmountForUser(userid: string): Promise<number> {
+    const { data, error } = await supabase_full_access.from('user_messages').select('amount').eq('user_id', userid).single();
+    if (error) {
+        console.error(error)
+    }
+    if (!data?.amount) {
+        return 0
+    }
     return data.amount
 }
 
