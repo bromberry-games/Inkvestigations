@@ -14,7 +14,7 @@ export async function POST({ request }) {
   console.log("webhook hit");
   let event;
   try {
-    event = stripe.webhooks.constructEvent(body, signature as string, STRIPE_WEBHOOK_SECRET)
+    event = await stripe.webhooks.constructEventAsync(body, signature as string, STRIPE_WEBHOOK_SECRET)
   } catch (err) {
     console.warn('⚠️  Webhook signature verification failed.', err.message)
 
@@ -37,11 +37,10 @@ export async function POST({ request }) {
     console.log("subscription updated")
     console.log("user id: ", subscription.metadata.user_id);
     await handleSubscriptionUpdated(subscription.plan.id, subscription.metadata.user_id);
-    return new Response(JSON.stringify({received: true}), { status: 200 })
   }
 
 
-  return new Response(undefined)
+  return new Response(JSON.stringify({received: true}), { status: 200 })
 }
 
 async function handleSubscriptionUpdated(price: string, user_id: string) {
