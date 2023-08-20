@@ -47,7 +47,7 @@
 	class:rounded-tr-none={message.role === 'user'}
 > -->
 <div
-	class="grid px-5 py-2  {message.role === 'assistant'
+	class="grid px-5 py-2 border border-custom-secondary {message.role === 'assistant'
 		? 'md:place-self-start'
 		: 'md:place-self-end'}"
 	class:variant-ghost-surface={message.role === 'user'}

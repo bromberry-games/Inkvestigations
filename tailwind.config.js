@@ -14,7 +14,14 @@ const config = {
 	],
 
 	theme: {
-		extend: {}
+		extend: {
+      		colors: {
+        		'custom-primary': '#a05e2a',
+        		'custom-secondary': '#c8934f',
+        		'custom-tertiary': '#efdfbb',
+
+      		},
+    	},
 	},
 
 	plugins: [require('flowbite/plugin')],

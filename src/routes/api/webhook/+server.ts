@@ -1,7 +1,7 @@
 import Stripe from 'stripe'
 import { STRIPE_TEST_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private'
 import { increaseMessageAmountForUserByAmount } from '$lib/supabase';
-import { getAmountForPrice } from '../pricing/pricing_const';
+import { getAmountForPrice } from '../../pricing/pricing_const';
 
 const stripe = new Stripe(STRIPE_TEST_KEY, {
         apiVersion: '2022-11-15'
@@ -36,7 +36,7 @@ export async function POST({ request }) {
     const subscription = event.data.object;
     console.log("subscription updated")
     console.log("user id: ", subscription.metadata.user_id);
-    handleSubscriptionUpdated(subscription.plan.id, subscription.metadata.user_id);
+    await handleSubscriptionUpdated(subscription.plan.id, subscription.metadata.user_id);
     return new Response(JSON.stringify({received: true}), { status: 200 })
   }
 
@@ -45,6 +45,6 @@ export async function POST({ request }) {
 }
 
 async function handleSubscriptionUpdated(price: string, user_id: string) {
-  increaseMessageAmountForUserByAmount(user_id, getAmountForPrice(price))
+  await increaseMessageAmountForUserByAmount(user_id, getAmountForPrice(price))
 }
 

@@ -8,6 +8,8 @@ module.exports = {
 	],
 	parser: '@typescript-eslint/parser',
 	plugins: ['@typescript-eslint'],
+	'@typescript-eslint/no-floating-promises': 'error',
+
 	parserOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020,

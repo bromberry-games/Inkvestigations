@@ -1,1 +1,0 @@
-<h1>This is protected!</h1>

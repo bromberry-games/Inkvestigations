@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "concurrently \"npm:dev-vite\" \"npm:dev-stripe\"",
 	    "dev-vite": "vite dev",
-	    "dev-stripe": "stripe listen --forward-to http://localhost:5173/webhook",
+	    "dev-stripe": "stripe listen --forward-to http://localhost:5173/api/webhook",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "playwright test",
