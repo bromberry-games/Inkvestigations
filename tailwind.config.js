@@ -19,8 +19,10 @@ const config = {
         		'custom-primary': '#a05e2a',
         		'custom-secondary': '#c8934f',
         		'custom-tertiary': '#efdfbb',
-
       		},
+			fontFamily: {
+        		'primary': ['Roboto', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+      		}
     	},
 	},
 

@@ -44,6 +44,7 @@ function nestMessages(chat: Chat): void {
 }
 
 function needsMigration(chat: Chat): boolean {
+	console.log("chat obj: ", chat);
 	return hasMissingId(chat.messages);
 }
 
