@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ChatCompletionRequestMessage } from 'openai';
-	import { createEventDispatcher, onDestroy, tick } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 	import { textareaAutosizeAction } from 'svelte-legos';
 	//import { focusTrap } from '@skeletonlabs/skeleton';
 	import { PaperAirplane, CircleStack } from '@inqling/svelte-icons/heroicon-24-solid';
@@ -35,10 +35,22 @@
 	let originalMessage: ChatMessage | null = null;
 
 	$: chat = $chatStore[slug];
-	$: message = {
-		role: 'user',
-		content: input.trim()
-	} as ChatCompletionRequestMessage;
+	$: message = setMessage(input.trim());
+	$: {
+		if(chat.messages[0] == undefined) {
+			input = chat.prompt;
+			message = setMessage(input.trim());
+			handleSubmit();
+		}
+	}
+
+	function setMessage(content: string): ChatCompletionRequestMessage {
+		return {
+			role: 'user',
+			content: content
+		} as ChatCompletionRequestMessage;
+	}
+	
 
 	const unsubscribe = chatStore.subscribe((chats) => {
 		const chat = chats[slug];

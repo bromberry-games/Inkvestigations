@@ -24,7 +24,7 @@ export interface OpenAiSettings {
 }
 
 export const defaultOpenAiSettings: OpenAiSettings = {
-	model: OpenAiModel.Gpt35Turbo,
+	model: OpenAiModel.Gpt4,
 	max_tokens: 2048,
 	temperature: 1,
 	top_p: 1

@@ -9,7 +9,9 @@
 	import { estimateChatCost } from '$misc/openai';
 	import type {
 		ChatMessage
-	} from '$misc/shared';;
+	} from '$misc/shared';
+	import { Button } from 'flowbite-svelte';
+
 
 	export let data: PageData;
 	let userMessages = 0
@@ -52,7 +54,7 @@
 
 	function deleteChat() {
 		chatStore.deleteChat(slug);
-		goto('/');
+		goto('/mysteries');
 	}
 
 	async function handleCloseChat() {
@@ -67,11 +69,13 @@
 	function handleEditMessage(event: CustomEvent<ChatMessage>) {
 		chatInput.editMessage(event.detail);
 	}
+
 </script>
 
 {#if chat}
 
 	<h1>{userMessages}</h1>
+	<Button color="red" on:click={() => deleteChat()}>Delete chat</Button>
 	<Chat {slug} on:editMessage={handleEditMessage}>
 	</Chat> 
 	<ChatInput {slug} chatCost={cost} bind:this={chatInput} on:chatInput={updateUserMessages}/>
