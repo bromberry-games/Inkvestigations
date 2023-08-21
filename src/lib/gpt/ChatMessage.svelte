@@ -46,6 +46,9 @@
 	class:rounded-tl-none={message.role === 'assistant'}
 	class:rounded-tr-none={message.role === 'user'}
 > -->
+	
+	
+{#if message.index > 0}
 <div
 	class="grid px-5 py-2 border border-custom-secondary {message.role === 'assistant'
 		? 'md:place-self-start'
@@ -59,7 +62,7 @@
 	<!-- Header -->
 	<div class="flex justify-between space-x-12 mb-1 items-center">
 		<!-- Author -->
-		<span class="font-bold">{message.role === 'user' ? 'You' : 'AI'}:</span>
+		<span class="font-bold">{message.role === 'user' ? 'You' : 'Police chief'}:</span>
 
 		<div class="flex space-x-4">
 			<!-- Tokens -->
@@ -87,6 +90,7 @@
 		{@html snarkdown(message.content)}
 	</div>
 </div>
+{/if}
 
 {#if renderChildren && message.messages}
 	<!-- This TypeScript error is nonsense... -->

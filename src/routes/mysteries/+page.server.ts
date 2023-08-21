@@ -1,6 +1,6 @@
 
 export const load = async ({ locals: { getSession, supabase } }) => {
-    const { data } = await supabase.from("mysteries_view").select();
+    const { data } = await supabase.from("mysteries").select();
     const session = await getSession()
     let userMessages = 0;
     if (session) {

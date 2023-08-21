@@ -36,8 +36,8 @@
     <NavHamburger on:click={toggle} />
   </div>
   <NavUl {hidden}>
-    <NavLi href="/mysteries" class="!text-custom-primary text-2xl md:mx-8">Mysteries</NavLi>
-    <NavLi href="/pricing"class="!text-custom-primary text-2xl md:mx-8">Pricing</NavLi>
+    <NavLi href="/mysteries" class="!text-custom-primary !font-primary text-2xl md:mx-8">Mysteries</NavLi>
+    <NavLi href="/pricing"class="!text-custom-primary !font-primary text-2xl md:mx-8">Pricing</NavLi>
   </NavUl>
 </Navbar>
 

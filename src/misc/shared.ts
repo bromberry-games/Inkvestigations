@@ -4,8 +4,10 @@ import { generateSlug } from 'random-word-slugs';
 
 import { goto } from '$app/navigation';
 import { chatStore, } from './stores';
+import { get } from 'svelte/store';
 
 export interface ChatMessage extends ChatCompletionRequestMessage {
+	index?: number;
 	id?: string;
 	messages?: ChatMessage[];
 	isSelected?: boolean;
@@ -17,6 +19,7 @@ export interface Chat {
 	contextMessage: ChatCompletionRequestMessage;
 	messages: ChatMessage[];
 	created: Date;
+	prompt: string;
 
 	isImported?: boolean;
 	updateToken?: string;
@@ -39,24 +42,27 @@ export interface ChatCost {
 	maxTokensForModel: number;
 }
 
-export function createNewChat(template?: {
+export function createNewChat(template: {
 	context?: string;
-	title?: string;
+	title: string;
+	prompt: string;
 	settings?: OpenAiSettings;
 	messages?: ChatCompletionRequestMessage[];
 }) {
-	const slug = generateSlug();
+	const slug = template.title;
 	const chat: Chat = {
-		title: template?.title || slug,
+		title: slug,
 		contextMessage: {
 			role: 'system',
 			content: template?.context || ''
 		},
 		messages: template?.messages || [],
-		created: new Date()
+		created: new Date(),
+		prompt: template.prompt
 	};
 
 	chatStore.updateChat(slug, chat);
+	console.log(get(chatStore)[slug]);
 
 	goto(`/${slug}`, { invalidateAll: true });
 }

@@ -11,10 +11,6 @@ CREATE TABLE user_messages (
     amount INTEGER CHECK (amount >= 0) NOT NULL
 );
 
--- views
-CREATE VIEW mysteries_view AS
-  SELECT Name, Description FROM mysteries;
-
 -- policies
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
 
@@ -23,6 +19,10 @@ alter table mysteries
 
 alter table user_messages 
   enable row level security;
+
+create policy "everybody can view mysteries."
+    on mysteries for select
+    using ( true );
 
 create policy "Individuals can view their own messages."
     on user_messages for select
