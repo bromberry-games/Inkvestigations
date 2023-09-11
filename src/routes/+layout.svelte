@@ -24,8 +24,7 @@
 
 <Navbar let:hidden let:toggle class="w-full !bg-custom-secondary"  navDivClass="mx-auto flex flex-wrap justify-between items-center">
   <NavBrand href="/">
-    <img src="/images/police_captain.png" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo"/>
-    <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white text-custom-primary">Inkvestigations</span>
+    <img src="/images/pen_minimal.png" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo"/>
   </NavBrand>
   <div class="flex md:order-2">
     {#if session}
