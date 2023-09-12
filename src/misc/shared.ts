@@ -46,6 +46,7 @@ export function createNewChat(template: {
 	context?: string;
 	title: string;
 	prompt: string;
+	answer: string;
 	settings?: OpenAiSettings;
 	messages?: ChatCompletionRequestMessage[];
 }) {
@@ -62,6 +63,16 @@ export function createNewChat(template: {
 	};
 
 	chatStore.updateChat(slug, chat);
+	const promptMessage : ChatMessage = {
+		role: 'user',
+		content: template.prompt
+	}
+	chatStore.addMessageToChat(slug, promptMessage, undefined);
+
+	chatStore.addMessageToChat(slug, {
+		role: 'assistant',
+		content: template.answer
+	}, promptMessage);
 	console.log(get(chatStore)[slug]);
 
 	goto(`/${slug}`, { invalidateAll: true });

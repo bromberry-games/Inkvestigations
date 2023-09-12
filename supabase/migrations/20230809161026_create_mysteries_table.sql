@@ -3,7 +3,8 @@
 CREATE TABLE mysteries (
     Name TEXT PRIMARY KEY UNIQUE,
     Description TEXT Not Null,
-    Prompt TEXT Not Null
+    Prompt TEXT NOT NULL,
+    Answer TEXT NOT NULL
 );
 
 CREATE TABLE user_messages (

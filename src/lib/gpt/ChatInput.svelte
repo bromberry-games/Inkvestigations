@@ -38,9 +38,9 @@
 	$: message = setMessage(input.trim());
 	$: {
 		if(chat.messages[0] == undefined) {
-			input = chat.prompt;
+			//input = chat.prompt;
 			message = setMessage(input.trim());
-			handleSubmit();
+			//handleSubmit();
 		}
 	}
 

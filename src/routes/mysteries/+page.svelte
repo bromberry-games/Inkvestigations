@@ -12,10 +12,10 @@
   //  //$chatStore = {} 
   //});
 
-  function createOrSetChat(name: string, prompt: string) {
+  function createOrSetChat(name: string, prompt: string, answer: string) {
     console.log($chatStore[name]);
     if(!$chatStore[name] || $chatStore[name].messages.length <= 0) {
-      createNewChat({title: name, prompt: prompt});
+      createNewChat({title: name, prompt: prompt, answer: answer});
       console.log("creating new chat");
     } else {
       console.log("chat already exists");
@@ -37,7 +37,7 @@
           {mystery.description}
         </p>
         {#if data.amount > 0}
-          <Button color="dark" on:click={() => createOrSetChat(mystery.name.toLowerCase().replace(/\s+/g, '_'), mystery.prompt)}>Play</Button>
+          <Button color="dark" on:click={() => createOrSetChat(mystery.name.toLowerCase().replace(/\s+/g, '_'), mystery.prompt, mystery.answer)}>Play</Button>
         {:else}
         <form action="/api/create-checkout-session" method="POST">
           <Button color="dark" type="submit" id="checkout-button">Buy 3€</Button>
