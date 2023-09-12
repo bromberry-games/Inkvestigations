@@ -29,3 +29,19 @@ export async function increaseMessageAmountForUserByAmount(userid: string, amoun
         console.error(error)
     }
 }
+
+export async function createConversationForUserAndMystery(userid: string, mystery: string) {
+    const { error } = await supabase_full_access.from('conversations').insert({ user_id: userid, myster_name: mystery })
+    if (error) {
+        console.error(error)
+    }
+}
+
+export async function storeMessageInDatabase(message: string, conversationId: string) {
+    const { error } = await supabase_full_access.from('user_mystery_messages').insert({ 
+        content: message, conversation_id: conversationId 
+    });
+    if (error) {
+        console.error(error)
+    }
+}

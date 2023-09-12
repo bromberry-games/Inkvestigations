@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount, tick } from 'svelte';
-    import hljs from 'highlight.js';
+	import { onDestroy, onMount,} from 'svelte';
 	import type { PageData } from './$types';
 	import { goto } from '$app/navigation';
 	import { chatStore, isLoadingAnswerStore, } from '$misc/stores';
@@ -11,6 +10,7 @@
 		ChatMessage
 	} from '$misc/shared';
 	import { Button } from 'flowbite-svelte';
+	import ChatMessage from '$lib/gpt/ChatMessage.svelte';
 
 
 	export let data: PageData;
@@ -22,48 +22,33 @@
       	userMessages = data.amount
 	}
 
-
 	$: ({ slug } = data);
 	$: chat = $chatStore[slug];
 	$: cost = chat ? estimateChatCost(chat) : null;
+	$: if (chat) {
+		let message = chat.messages[0];
+		let count = 0;
+		while (true) {
+			if (!message.messages) {
+				break;
+			}
+			console.log(message.content)
+			message = message.messages[0];
+			count++;
+		}
+		//TODO: add last message to database
+		console.log("last message: ", message)
+	}
 
 	let chatInput: ChatInput;
 
 	onMount(async () => {
-		await highlightCode();
 		updateUserMessages();
 	});
-
-	const unsubscribeChatStore = chatStore.subscribe(async () => {
-		await highlightCode();
-	});
-
-	const unsubscribeisLoadingAnswerStore = isLoadingAnswerStore.subscribe(async () => {
-		await highlightCode();
-	});
-
-	onDestroy(() => {
-		unsubscribeChatStore();
-		unsubscribeisLoadingAnswerStore();
-	});
-
-	async function highlightCode() {
-		await tick();
-		//hljs.highlightAll();
-	}
 
 	function deleteChat() {
 		chatStore.deleteChat(slug);
 		goto('/mysteries');
-	}
-
-	async function handleCloseChat() {
-		// untouched => discard
-		if (chat.title === slug && !chat.contextMessage?.content && chat.messages.length === 0) {
-			deleteChat();
-		}
-
-		goto('/');
 	}
 
 	function handleEditMessage(event: CustomEvent<ChatMessage>) {
@@ -73,7 +58,6 @@
 </script>
 
 {#if chat}
-
 	<h1>{userMessages}</h1>
 	<Button color="red" on:click={() => deleteChat()}>Delete chat</Button>
 	<Chat {slug} on:editMessage={handleEditMessage}>

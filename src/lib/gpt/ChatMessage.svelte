@@ -70,16 +70,17 @@
 
 			{#if $chatStore[slug] && message.id}
 				<div class="flex space-x-0">
-					<!-- Edit Message / Branch chat -->
+					<!-- Edit Message / Branch chat 
 					{#if message.role === 'user'}
 						<button class="btn btn-sm" on:click={() => dispatch('editMessage', message)}>
 							<PencilSquare class="w-6 h-6" />
 						</button>
 					{/if}
-					<!-- Delete message -->
+					Delete message 
 					<button class="btn btn-sm" on:click={() => modalConfirmDelete(message.id)}>
 						<XMark class="w-6 h-6" />
-					</button>
+					</button> 
+					-->
 				</div>
 			{/if}
 		</div>

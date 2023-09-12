@@ -12,6 +12,21 @@ CREATE TABLE user_messages (
     amount INTEGER CHECK (amount >= 0) NOT NULL
 );
 
+CREATE TABLE user_mystery_conversations (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON UPDATE CASCADE,
+    mystery_name TEXT NOT NULL REFERENCES mysteries(Name) ON UPDATE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+);
+
+CREATE TABLE user_mystery_messages {
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  conversation_id INT REFERENCES user_mystery_conversations(id) ON UPDATE CASCADE,
+  content TEXT NOT NULL, 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+}
+
+
 -- policies
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
 
@@ -21,6 +36,9 @@ alter table mysteries
 alter table user_messages 
   enable row level security;
 
+alter table user_mystery_conversations 
+  enable row level security;
+
 create policy "everybody can view mysteries."
     on mysteries for select
     using ( true );
@@ -28,6 +46,19 @@ create policy "everybody can view mysteries."
 create policy "Individuals can view their own messages."
     on user_messages for select
     using ( auth.uid() = user_id );
+
+create policy "Individuals can view their own conversations"
+    on user_mystery_conversations for select
+    using ( auth.uid() = user_id ); 
+
+create policy "Individuals can view their own messages"
+  on teams
+  for select using (
+    auth.uid() in (
+      select user_id from user_mystery_conversations
+      where conversation_id = id
+    )
+  );
 
 -- triggers
 
