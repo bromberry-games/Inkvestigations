@@ -25,7 +25,7 @@
 <Navbar let:hidden let:toggle class="w-full !bg-custom-secondary"  navDivClass="mx-auto flex flex-wrap justify-between items-center">
   <NavBrand href="/">
     <img src="/images/police_captain.png" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo"/>
-    <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white text-custom-primary">Inkvestigations</span>
+    <span class="self-center whitespace-nowrap text-xl font-tertiary dark:text-white text-custom-black">Inkvestigations</span>
   </NavBrand>
   <div class="flex md:order-2">
     {#if session}
@@ -36,8 +36,8 @@
     <NavHamburger on:click={toggle} />
   </div>
   <NavUl {hidden}>
-    <NavLi href="/mysteries" class="!text-custom-primary !font-primary text-2xl md:mx-8">Mysteries</NavLi>
-    <NavLi href="/pricing"class="!text-custom-primary !font-primary text-2xl md:mx-8">Pricing</NavLi>
+    <NavLi href="/mysteries" class="!text-custom-primary !font-primary text-4xl md:mx-8">Mysteries</NavLi>
+    <NavLi href="/pricing"class="!text-custom-primary !font-primary text-4xl md:mx-8">Pricing</NavLi>
   </NavUl>
 </Navbar>
 
