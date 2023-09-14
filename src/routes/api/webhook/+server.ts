@@ -34,8 +34,6 @@ export async function POST({ request }) {
     //}
   } else if (event.type == 'customer.subscription.updated') {
     const subscription = event.data.object;
-    console.log("subscription updated")
-    console.log("user id: ", subscription.metadata.user_id);
     await handleSubscriptionUpdated(subscription.plan.id, subscription.metadata.user_id);
   }
 

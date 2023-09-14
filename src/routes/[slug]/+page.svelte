@@ -6,11 +6,8 @@
 	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
 	import { estimateChatCost } from '$misc/openai';
-	import type {
-		ChatMessage
-	} from '$misc/shared';
 	import { Button } from 'flowbite-svelte';
-	import ChatMessage from '$lib/gpt/ChatMessage.svelte';
+	import type ChatMessage from '$lib/gpt/ChatMessage.svelte';
 
 
 	export let data: PageData;
@@ -36,8 +33,19 @@
 			message = message.messages[0];
 			count++;
 		}
-		//TODO: add last message to database
-		console.log("last message: ", message)
+
+		let post_fun = async () => {
+			const response = await fetch('/api/add-message', {
+				method: 'POST',
+				body: JSON.stringify({ message: message.content, mystery: slug }),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
+			console.log("posted")	
+		}
+		post_fun()
+
 	}
 
 	let chatInput: ChatInput;

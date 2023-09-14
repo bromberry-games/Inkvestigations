@@ -16,9 +16,7 @@
     console.log($chatStore[name]);
     if(!$chatStore[name] || $chatStore[name].messages.length <= 0) {
       createNewChat({title: name, prompt: prompt, answer: answer});
-      console.log("creating new chat");
     } else {
-      console.log("chat already exists");
       goto(name);
     }
   }

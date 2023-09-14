@@ -71,10 +71,6 @@ const addMessageToChat = (slug: string, message: ChatMessage, parent?: ChatMessa
 
 	message.index = parent !== undefined ? parent.index + 1 : 0;
 
-	console.log("parent is: ", parent);
-	console.log("parent index: ", parent?.index);
-	console.log("this index: ", message.index);
-
 	_chatStore.update((store) => {
 		const updatedMessages = parent?.id
 			? ChatStorekeeper.addMessageAsChild(store[slug].messages, parent.id, message)
