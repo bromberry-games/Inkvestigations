@@ -21,7 +21,9 @@ const config = {
         		'custom-tertiary': '#efdfbb',
       		},
 			fontFamily: {
-        		'primary': ['Roboto', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        		'primary': ['Oswald', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+				'secondary': ['Zilla Slab', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+				'tertiary': ['Abril Fatface', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif']
       		}
     	},
 	},
