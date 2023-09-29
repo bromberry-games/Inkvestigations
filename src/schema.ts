@@ -36,16 +36,19 @@ export interface Database {
     Tables: {
       mysteries: {
         Row: {
+          answer: string
           description: string
           name: string
           prompt: string
         }
         Insert: {
+          answer: string
           description: string
           name: string
           prompt: string
         }
         Update: {
+          answer?: string
           description?: string
           name?: string
           prompt?: string
@@ -54,15 +57,15 @@ export interface Database {
       }
       user_messages: {
         Row: {
-          amount: number | null
+          amount: number
           user_id: string
         }
         Insert: {
-          amount?: number | null
+          amount: number
           user_id: string
         }
         Update: {
-          amount?: number | null
+          amount?: number
           user_id?: string
         }
         Relationships: [
@@ -74,26 +77,86 @@ export interface Database {
           }
         ]
       }
-    }
-    Views: {
-      mysteries_view: {
+      user_mystery_conversations: {
         Row: {
-          description: string | null
-          name: string | null
+          created_at: string | null
+          id: number
+          mystery_name: string
+          user_id: string | null
         }
         Insert: {
-          description?: string | null
-          name?: string | null
+          created_at?: string | null
+          id?: number
+          mystery_name: string
+          user_id?: string | null
         }
         Update: {
-          description?: string | null
-          name?: string | null
+          created_at?: string | null
+          id?: number
+          mystery_name?: string
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "user_mystery_conversations_mystery_name_fkey"
+            columns: ["mystery_name"]
+            referencedRelation: "mysteries"
+            referencedColumns: ["name"]
+          },
+          {
+            foreignKeyName: "user_mystery_conversations_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      user_mystery_messages: {
+        Row: {
+          content: string
+          conversation_id: number | null
+          created_at: string | null
+          id: number
+        }
+        Insert: {
+          content: string
+          conversation_id?: number | null
+          created_at?: string | null
+          id?: number
+        }
+        Update: {
+          content?: string
+          conversation_id?: number | null
+          created_at?: string | null
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_mystery_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            referencedRelation: "user_mystery_conversations"
+            referencedColumns: ["id"]
+          }
+        ]
       }
     }
-    Functions: {
+    Views: {
       [_ in never]: never
+    }
+    Functions: {
+      decrement_message_for_user: {
+        Args: {
+          the_user_id: string
+        }
+        Returns: undefined
+      }
+      increase_message_for_user_by_amount: {
+        Args: {
+          the_user_id: string
+          increase: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

@@ -2,27 +2,25 @@
 	import { goto } from "$app/navigation";
 	import { createNewChat } from "$misc/shared";
 	import { chatStore } from "$misc/stores";
-	import { template } from "@supabase/auth-ui-shared";
   import { Card, Button,  } from "flowbite-svelte";
-	import { onMount } from "svelte";
 
   export let data;
 
-  //onMount(() => {
-  //  //$chatStore = {} 
-  //});
-
-  function createOrSetChat(name: string, prompt: string, answer: string) {
-    console.log($chatStore[name]);
-    if(!$chatStore[name] || $chatStore[name].messages.length <= 0) {
-      createNewChat({title: name, prompt: prompt, answer: answer});
-      console.log("creating new chat");
+  function createOrSetChat(slug: string, prompt: string, answer: string, name: string) {
+    console.log($chatStore[slug]);
+    if(!$chatStore[slug] || $chatStore[slug].messages.length <= 0) {
+      createNewChat({title: slug, prompt: prompt, answer: answer});
+			fetch('/api/add-conversation', {
+				method: 'POST',
+				body: JSON.stringify({ mystery: name}),
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
     } else {
-      console.log("chat already exists");
-      goto(name);
+      goto(slug);
     }
   }
-
 
 </script>
 
@@ -37,7 +35,7 @@
           {mystery.description}
         </p>
         {#if data.amount > 0}
-          <Button color="dark" on:click={() => createOrSetChat(mystery.name.toLowerCase().replace(/\s+/g, '_'), mystery.prompt, mystery.answer)}>Play</Button>
+          <Button color="dark" on:click={() => createOrSetChat(mystery.name.replace(/\s+/g, '_'), mystery.prompt, mystery.answer, mystery.name)}>Play</Button>
         {:else}
         <form action="/api/create-checkout-session" method="POST">
           <Button color="dark" type="submit" id="checkout-button">Buy 3€</Button>
