@@ -8,5 +8,6 @@
 </script>
 
 <!-- This TypeScript error is nonsense... -->
-<ChatMessage {slug} message={siblings[0]} renderChildren on:editMessage />
-
+{#each siblings as message}
+	<ChatMessage {slug} message={message} on:editMessage />	
+{/each}

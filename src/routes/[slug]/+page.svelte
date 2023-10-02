@@ -19,9 +19,10 @@
       	userMessages = data.amount
 	}
 
+	let cost = 0;
 	$: ({ slug } = data);
 	$: chat = $chatStore[slug];
-	$: cost = chat ? estimateChatCost(chat) : null;
+	//$: cost = chat ? estimateChatCost(chat) : null;
 	$: if (chat) {
 		let message = chat.messages[0];
 		let count = 0;

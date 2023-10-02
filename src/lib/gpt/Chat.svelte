@@ -46,7 +46,8 @@
 
 		<div class="flex flex-col max-w-4xl md:mx-auto space-y-6 pt-6">
 			<!-- Message history -->
-			<ChatMessages {slug} siblings={chat.messages} on:editMessage />
+			<!-- Do not display the 1. message-->
+			<ChatMessages {slug} siblings={chat.messages.slice(1)} on:editMessage />
 
 			<!-- Live Message -->
 			{#if $isLoadingAnswerStore}

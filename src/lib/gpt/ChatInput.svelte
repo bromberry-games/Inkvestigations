@@ -55,7 +55,8 @@
 	const unsubscribe = chatStore.subscribe((chats) => {
 		const chat = chats[slug];
 		if (chat) {
-			currentMessages = chatStore.getCurrentMessageBranch(chat);
+			//currentMessages = chatStore.getCurrentMessage(chat);
+			currentMessages = chat.messages;
 		}
 	});
 
@@ -80,7 +81,8 @@
 		if (!isEditMode) {
 			chatStore.addMessageToChat(slug, message, parent || undefined);
 		} else if (originalMessage && originalMessage.id) {
-			chatStore.addAsSibling(slug, originalMessage.id, message);
+			//TODO: Remove all this edit mode stuff.
+			//chatStore.addAsSibling(slug, originalMessage.id, message);
 		}
 
 		// message now has an id

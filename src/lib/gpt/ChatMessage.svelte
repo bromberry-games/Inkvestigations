@@ -1,22 +1,15 @@
 <script lang="ts">
 	import type { ChatMessage } from '$misc/shared';
-	import { createEventDispatcher } from 'svelte';
 	import snarkdown from 'snarkdown';
 	import { chatStore } from '$misc/stores';
 	import { countTokens } from '$misc/openai';
 	import TokenCost from './TokenCost.svelte';
-	import ChatMessages from './ChatMessages.svelte';
-
-	const dispatch = createEventDispatcher();
 
 	export let slug: string;
 	export let message: ChatMessage;
-	export let renderChildren = false;
-
 </script>
 
 	
-{#if message.index > 0}
 <div
 	class="grid px-5 py-2 border border-custom-secondary {message.role === 'assistant'
 		? 'md:place-self-start'
@@ -48,9 +41,3 @@
 		{@html snarkdown(message.content)}
 	</div>
 </div>
-{/if}
-
-{#if renderChildren && message.messages}
-	<!-- This TypeScript error is nonsense... -->
-	<ChatMessages {slug} siblings={message.messages} on:editMessage />
-{/if}
