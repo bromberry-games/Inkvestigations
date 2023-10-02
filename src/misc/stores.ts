@@ -44,7 +44,7 @@ export interface ChatStore extends Writable<{ [key: string]: Chat }> {
 	deleteMessage(slug: string, id: string): void;
 	deleteUpdateToken(slug: string): void;
 	deleteChat(slug: string): void;
-	isFlat(chat: Chat): boolean;
+	//isFlat(chat: Chat): boolean;
 	findParent(messageId: string, chat: Chat): { parent: ChatMessage; index: number } | null;
 	getMessageById(messageId: string, chat: Chat): ChatMessage | null;
 	getCurrentMessageBranch(chat: Chat, includeContext?: boolean): ChatMessage[] | null;
@@ -194,7 +194,7 @@ export const chatStore: ChatStore = {
 	subscribe: _chatStore.subscribe,
 	set: _chatStore.set,
 	update: _chatStore.update,
-	isFlat: ChatStorekeeper.isFlat,
+	//isFlat: ChatStorekeeper.isFlat,
 	countAllMessages: ChatStorekeeper.countAllMessages,
 	countMessagesInCurrentBranch: ChatStorekeeper.countMessagesInCurrentBranch,
 	findParent: (messageId, chat) => ChatStorekeeper.findParent(messageId, chat.messages),

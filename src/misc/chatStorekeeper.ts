@@ -5,26 +5,26 @@ import type { Chat, ChatMessage } from './shared';
  * Contains only static functions and does not temper with the Svelte store.
  */
 export class ChatStorekeeper {
-	static isFlat(chat: Chat): boolean {
-		return (function checkMessages(messages?: ChatMessage[]): boolean {
-			if (!messages || messages.length === 0) {
-				return true;
-			}
-
-			for (const message of messages) {
-				if (message.messages && message.messages.length > 1) {
-					return false;
-				}
-
-				if (message.messages && message.messages.length === 1) {
-					return checkMessages(message.messages);
-				}
-			}
-
-			return true;
-		})(chat.messages);
-	}
-
+//	static isFlat(chat: Chat): boolean {
+//		return (function checkMessages(messages?: ChatMessage[]): boolean {
+//			if (!messages || messages.length === 0) {
+//				return true;
+//			}
+//
+//			for (const message of messages) {
+//				if (message.messages && message.messages.length > 1) {
+//					return false;
+//				}
+//
+//				if (message.messages && message.messages.length === 1) {
+//					return checkMessages(message.messages);
+//				}
+//			}
+//
+//			return true;
+//		})(chat.messages);
+//	}
+//
 	static getById(messageId: string, chatMessages: ChatMessage[]): ChatMessage | null {
 		for (const message of chatMessages) {
 			if (message.id === messageId) {
