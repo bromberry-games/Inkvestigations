@@ -7,9 +7,7 @@ import { chatStore, } from './stores';
 import { get } from 'svelte/store';
 
 export interface ChatMessage extends ChatCompletionRequestMessage {
-	index?: number;
 	id?: string;
-	messages?: ChatMessage[];
 	isSelected?: boolean;
 	isAborted?: boolean;
 }
