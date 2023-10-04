@@ -5,7 +5,6 @@
 	import { chatStore, isLoadingAnswerStore, } from '$misc/stores';
 	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
-	import { estimateChatCost } from '$misc/openai';
 	import { Button } from 'flowbite-svelte';
 	import type ChatMessage from '$lib/gpt/ChatMessage.svelte';
 
@@ -16,6 +15,10 @@
 
 	async function updateUserMessages() {
 		const { data } = await supabase.from("user_messages").select().limit(1).single();
+		if(!data) {
+			console.error("Could not get messages amount");
+			return;
+		}
       	userMessages = data.amount
 	}
 
@@ -24,28 +27,28 @@
 	$: chat = $chatStore[slug];
 	//$: cost = chat ? estimateChatCost(chat) : null;
 	$: if (chat) {
-		let message = chat.messages[0];
-		let count = 0;
-		while (true) {
-			if (!message.messages) {
-				break;
-			}
-			console.log(message.content)
-			message = message.messages[0];
-			count++;
-		}
+		const lastMessage = chat.messages[chat.messages.length - 1];
+    
+    	let post_fun = async () => {
+    	    try {
+    	        const response = await fetch('/api/add-message', {
+    	            method: 'POST',
+    	            body: JSON.stringify({ message: lastMessage.content, mystery: slug }),
+    	            headers: {
+    	                'Content-Type': 'application/json'
+    	            }
+    	        });
 
-		let post_fun = async () => {
-			const response = await fetch('/api/add-message', {
-				method: 'POST',
-				body: JSON.stringify({ message: message.content, mystery: slug }),
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-			console.log("posted")	
-		}
-		post_fun()
+    	        if (!response.ok) {
+    	            throw new Error(`HTTP error! Status: ${response.status}`);
+    	        }
+
+    	    } catch (error) {
+    	        console.error('Failed to post message', error);
+    	    }
+    	}
+    
+    	post_fun();
 
 	}
 

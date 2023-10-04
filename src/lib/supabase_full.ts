@@ -48,6 +48,8 @@ export async function addMessageForUser(userid: string, message: string, mystery
         .select('id')
         .eq('user_id', userid)
         .eq('mystery_name', mystery)
+        .order('created_at', { ascending: false })
+        .limit(1)
         .single();
 
     if (conversationError) {
@@ -94,7 +96,6 @@ export async function addMessageForUser(userid: string, message: string, mystery
             return;
         }
     }
-
 
     const { error: messageError } = await supabase_full_access
         .from('user_mystery_messages')
