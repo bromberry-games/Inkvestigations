@@ -47,9 +47,7 @@
     	        console.error('Failed to post message', error);
     	    }
     	}
-    
     	post_fun();
-
 	}
 
 	let chatInput: ChatInput;

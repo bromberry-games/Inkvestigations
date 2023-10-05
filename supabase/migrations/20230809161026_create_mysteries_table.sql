@@ -16,14 +16,14 @@ CREATE TABLE user_mystery_conversations (
     id SERIAL PRIMARY KEY,
     user_id uuid REFERENCES auth.users(id) ON UPDATE CASCADE,
     mystery_name TEXT NOT NULL REFERENCES mysteries(Name) ON UPDATE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 CREATE TABLE user_mystery_messages (
   id SERIAL PRIMARY KEY,
   conversation_id INT REFERENCES user_mystery_conversations(id) ON UPDATE CASCADE,
   content TEXT NOT NULL, 
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 

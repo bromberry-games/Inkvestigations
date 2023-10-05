@@ -4,11 +4,15 @@ import { chatStore } from '$misc/stores';
 import { migrateChat } from '$misc/chatMigration';
 export const ssr = false;
 
-export const load: PageLoad = async ({ params }) => {
+export const load: PageLoad = async ({ params, data }) => {
 	const { slug } = params;
 
-	const chat = get(chatStore)[slug];
-	const { chat: migratedChat, migrated } = migrateChat(chat);
+	const chachedChat = get(chatStore)[slug];
+
+
+	const { chat: migratedChat, migrated } = data.chat && chachedChat.messages.length < data.chat?.messages.length? migrateChat(data.chat) : migrateChat(chachedChat); 
+	//const chat = get(chatStore)[slug];
+	//const { chat: migratedChat, migrated } = migrateChat(chat);
 
 	if (migrated) {
 		chatStore.updateChat(slug, migratedChat);
@@ -16,6 +20,6 @@ export const load: PageLoad = async ({ params }) => {
 	}
 
 	return {
-		slug
+		slug,
 	};
 };
