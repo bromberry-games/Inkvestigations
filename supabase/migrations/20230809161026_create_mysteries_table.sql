@@ -15,7 +15,8 @@ CREATE TABLE user_messages (
 CREATE TABLE user_mystery_conversations (
     id SERIAL PRIMARY KEY,
     user_id uuid REFERENCES auth.users(id) ON UPDATE CASCADE,
-    mystery_name TEXT NOT NULL REFERENCES mysteries(Name) ON UPDATE CASCADE,
+    mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE,
+    archived BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 

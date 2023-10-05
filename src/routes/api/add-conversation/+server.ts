@@ -1,4 +1,4 @@
-import { addConversationForUser, addMessageForUser } from "$lib/supabase_full";
+import { addConversationForUser, } from "$lib/supabase_full.server";
 import type { Session } from "@supabase/supabase-js";
 import { error, json, type RequestHandler } from "@sveltejs/kit";
 

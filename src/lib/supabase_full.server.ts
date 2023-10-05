@@ -46,19 +46,34 @@ export async function addConversationForUser(userid: string, mystery: string) {
 
 export async function loadChatForUser(userid: string, mystery: string): Promise<Chat | null> {
     // Step 1: Get the conversation_id
-    mystery = mystery.replace(/_/g, ' ');
     const { data: conversationData, error: conversationError } = await supabase_full_access
         .from('user_mystery_conversations')
-        .select('id, created_at')
+        .select('id, created_at, archived')
         .eq('user_id', userid)
         .eq('mystery_name', mystery)
-        .order('created_at', { ascending: true})
+        .order('created_at', { ascending: false})
         .limit(1)
-        .single();  
 
-    if (conversationError || !conversationData) {
+    if (conversationError) {
         console.error("error querying conversation: ", conversationError);
         return null;
+    }
+
+    let {id: conversationId, created_at: createdAt} = conversationData && conversationData.length >= 1 ? conversationData[0] : {id: 0, created_at: 0};
+    if(!conversationData || conversationData.length == 0 || conversationData[0].archived) {
+        const {data: conversationInsertData, error: conversationInsertError } = await supabase_full_access
+            .from('user_mystery_conversations')
+            .insert({ user_id: userid, mystery_name: mystery })
+            .select('id, created_at')
+            .single()
+        
+        if (conversationInsertError) {
+            console.error("error inserting conversation: ");
+            console.error(conversationInsertError); 
+            return null;
+        }
+        conversationId = conversationInsertData.id
+        createdAt = conversationInsertData.created_at
     }
 
     const {data: mysteryData, error: mysteryError} = await supabase_full_access
@@ -75,7 +90,7 @@ export async function loadChatForUser(userid: string, mystery: string): Promise<
     const { data: messageData, error: messageError } = await supabase_full_access
         .from('user_mystery_messages')
         .select('content, created_at')
-        .eq('conversation_id', conversationData.id);
+        .eq('conversation_id', conversationId);
 
     if (messageError) {
         console.error("error querying messages: ", messageError);
@@ -109,13 +124,31 @@ export async function loadChatForUser(userid: string, mystery: string): Promise<
 			role: 'system',
 			content: ''
 		},
-        created: new Date(conversationData.created_at),
+        created: new Date(createdAt),
         messages,
         prompt: '',  // you might want to define how to derive or set this field
         // other optional fields can be set as needed
     };
 }
 
+
+export async function archiveLastConversation(userid: string, mystery: string): Promise<boolean> {
+    const { error: archiveError } = await supabase_full_access
+        .from('user_mystery_conversations')
+        .update({ archived: true })
+        .eq('user_id', userid)
+        .eq('mystery_name', mystery)
+        .eq('archived', false) 
+        .order('created_at', { ascending: false})
+        .limit(1);
+
+    if (archiveError) {
+        console.error("error archiving the conversation: ", archiveError);
+        return false;
+    }
+
+    return true; 
+}
 
 export async function addMessageForUser(userid: string, message: string, mystery: string) {
     const {data: conversationData, error: conversationError} = await supabase_full_access
@@ -139,37 +172,22 @@ export async function addMessageForUser(userid: string, message: string, mystery
     }
 
     let conversationId = conversationData?.id;
-    if (!conversationData || !conversationData?.id) {
-        const { data: conversation_insert_data , error: insertError } = await supabase_full_access
-            .from('user_mystery_conversations')
-            .insert({ user_id: userid, mystery_name: mystery })
-            .select('id')
-            .single();
+    const { data: existingMessageData, error: messageCheckError } = await supabase_full_access
+        .from('user_mystery_messages')
+        .select('id')
+        .eq('content', message)
+        .eq('conversation_id', conversationData.id)
 
-        if (insertError) {
-            console.error("insert error: ");
-            console.error(insertError);
-            return;
-        }
-        
-        conversationId = conversation_insert_data?.id;
-    } else {
-        const { data: existingMessageData, error: messageCheckError } = await supabase_full_access
-            .from('user_mystery_messages')
-            .select('id')
-            .eq('content', message)
-            .eq('conversation_id', conversationData.id)
-            .single();
+    if (messageCheckError) {
+        console.error("message check error: ");
+        console.error(messageCheckError)
+        return;
+    }
 
-        if (messageCheckError) {
-            console.error("message check error: " + messageCheckError);
-        }
-
-        // If the message already exists, return early to prevent duplicate insertion
-        if (existingMessageData && existingMessageData.id) {
-            console.warn('Message already exists in the database for this conversation.');
-            return;
-        }
+    // If the message already exists, return early to prevent duplicate insertion
+    if (existingMessageData && existingMessageData.length > 0) {
+        console.warn('Message already exists in the database for this conversation.');
+        return;
     }
 
     const { error: messageError } = await supabase_full_access

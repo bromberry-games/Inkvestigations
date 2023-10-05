@@ -5,7 +5,7 @@ import { error } from '@sveltejs/kit';
 import { defaultOpenAiSettings } from '$misc/openai';
 import { getErrorMessage, throwIfUnset } from '$misc/error';
 import { OPEN_AI_KEY } from '$env/static/private';
-import { decreaseMessageForUser, getMessageAmountForUser } from '$lib/supabase_full';
+import { decreaseMessageForUser, getMessageAmountForUser } from '$lib/supabase_full.server';
 
 const openAiKey : string = OPEN_AI_KEY;
 

@@ -26,7 +26,7 @@
 	$: ({ slug } = data);
 	$: chat = $chatStore[slug];
 	//$: cost = chat ? estimateChatCost(chat) : null;
-	$: if (chat) {
+	$: if (chat && chat.messages.length > 2) {
 		const lastMessage = chat.messages[chat.messages.length - 1];
     
     	let post_fun = async () => {
@@ -56,9 +56,11 @@
 		updateUserMessages();
 	});
 
-	function deleteChat() {
+	function deleteChat(event: Event) {
+		event.preventDefault();
 		chatStore.deleteChat(slug);
-		goto('/mysteries');
+		(event.target as HTMLButtonElement).form.submit();
+		//goto('/mysteries');
 	}
 
 	function handleEditMessage(event: CustomEvent<ChatMessage>) {
@@ -69,7 +71,9 @@
 
 {#if chat}
 	<h1>{userMessages}</h1>
-	<Button color="red" on:click={() => deleteChat()}>Delete chat</Button>
+	<form method="POST" action="?/delete">
+		<Button color="red" on:click={deleteChat}>Delete chat</Button>
+	</form>
 	<Chat {slug} on:editMessage={handleEditMessage}>
 	</Chat> 
 	<ChatInput {slug} chatCost={cost} bind:this={chatInput} on:chatInput={updateUserMessages}/>
