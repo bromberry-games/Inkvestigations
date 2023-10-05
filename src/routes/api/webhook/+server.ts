@@ -1,6 +1,6 @@
 import Stripe from 'stripe'
 import { STRIPE_TEST_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private'
-import { increaseMessageAmountForUserByAmount } from '$lib/supabase_full';
+import { increaseMessageAmountForUserByAmount } from '$lib/supabase_full.server';
 import { getAmountForPrice } from '../../pricing/pricing_const';
 
 const stripe = new Stripe(STRIPE_TEST_KEY, {
