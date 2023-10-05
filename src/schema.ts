@@ -79,19 +79,22 @@ export interface Database {
       }
       user_mystery_conversations: {
         Row: {
-          created_at: string | null
+          archived: boolean
+          created_at: string
           id: number
           mystery_name: string
           user_id: string | null
         }
         Insert: {
-          created_at?: string | null
+          archived?: boolean
+          created_at?: string
           id?: number
           mystery_name: string
           user_id?: string | null
         }
         Update: {
-          created_at?: string | null
+          archived?: boolean
+          created_at?: string
           id?: number
           mystery_name?: string
           user_id?: string | null
@@ -115,19 +118,19 @@ export interface Database {
         Row: {
           content: string
           conversation_id: number | null
-          created_at: string | null
+          created_at: string
           id: number
         }
         Insert: {
           content: string
           conversation_id?: number | null
-          created_at?: string | null
+          created_at?: string
           id?: number
         }
         Update: {
           content?: string
           conversation_id?: number | null
-          created_at?: string | null
+          created_at?: string
           id?: number
         }
         Relationships: [
