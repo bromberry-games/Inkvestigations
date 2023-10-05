@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onDestroy, onMount,} from 'svelte';
 	import type { PageData } from './$types';
-	import { goto } from '$app/navigation';
 	import { chatStore, isLoadingAnswerStore, } from '$misc/stores';
 	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
@@ -60,7 +59,6 @@
 		event.preventDefault();
 		chatStore.deleteChat(slug);
 		(event.target as HTMLButtonElement).form.submit();
-		//goto('/mysteries');
 	}
 
 	function handleEditMessage(event: CustomEvent<ChatMessage>) {
