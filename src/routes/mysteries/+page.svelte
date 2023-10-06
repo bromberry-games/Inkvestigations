@@ -5,8 +5,7 @@
 </script>
 
 
-<h1>{data.amount}</h1>
-<div class="p-4 w-full flex">
+<div class="p-4 w-full flex flex-wrap justify-center">
   {#each data.mysteries as mystery}
     <div class="p-4">
       <Card img="/images/deadly_diner.webp">
