@@ -8,8 +8,6 @@ const stripe = new Stripe(STRIPE_TEST_KEY, {
     apiVersion: '2022-11-15'
 });
 
-
-
 export const load = async () => {
   const prices = [];
   for (const key in name_to_price_map) {

@@ -8,8 +8,6 @@ export const load = async ({ locals: { getSession, supabase } }) => {
       userMessages = data.amount
     }
 
-    console.log(data)
-
     return {
       mysteries: data ?? [],
       amount: userMessages
