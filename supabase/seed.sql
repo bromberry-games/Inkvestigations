@@ -1,13 +1,14 @@
-INSERT INTO mysteries (Name, Description, Prompt, Answer)
+INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath)
 VALUES (
     'The deadly diner',
     'A deadly dining experience with a devious plan.
      Can you figure out what is going on?',
     'Answer with 1 word only',
-    'Understood'
+    'Understood',
+    'images/mysteries/deadly_diner.webp'
 );
 
-INSERT INTO mysteries (Name, Description, Prompt, Answer)
+INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath)
 VALUES(
 'Train to death',
 'A train ride ends deadly for one of the passengers. But no one knows who did it.',
@@ -86,5 +87,6 @@ Edward Norton
 
 
 Police Chief .
-'
+',
+    'images/mysteries/police_captain.webp'
 )

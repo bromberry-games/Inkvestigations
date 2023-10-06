@@ -4,7 +4,8 @@ CREATE TABLE mysteries (
     name TEXT PRIMARY KEY UNIQUE,
     description TEXT Not Null,
     prompt TEXT NOT NULL,
-    answer TEXT NOT NULL
+    answer TEXT NOT NULL,
+    filepath TEXT NOT NULL
 );
 
 CREATE TABLE user_messages (
