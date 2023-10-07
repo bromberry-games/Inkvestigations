@@ -55,12 +55,12 @@
 	<title>Auth UI Svelte</title>
 </svelte:head>
 
-<div class="dark:bg-scale-200 bg-scale-100 relative py-2 pb-16">
+<div class="dark:bg-scale-200 bg-scale-100 relative py-2">
 	<div
-		class="sm:py-18 gap container relative mx-auto grid grid-cols-12 px-6 py-16 md:gap-16 md:py-24 lg:gap-16 lg:px-16 lg:py-24 xl:px-20"
+		class="gap container relative mx-auto grid grid-cols-12 px-6 md:gap-16 lg:gap-16 pt-8"
 	>
 	    <div class="relative col-span-12 mb-16 md:col-start-5 md:col-end-9 lg:col-start-4 lg:col-end-10">
-			<div class="relative lg:mx-auto lg:max-w-md bg-zinc-900">
+			<div class="relative lg:mx-auto lg:max-w-md bg-custom-secondary rounded-lg">
 				<div >
 					<div class="border-scale-400 bg-scale-300 relative rounded-xl px-8 py-12 drop-shadow-sm">
 						<div class="mb-6 flex flex-col gap-6">
