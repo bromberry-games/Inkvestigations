@@ -13,12 +13,10 @@
         <p class="mb-3 font-normal text-gray-700 dark:text-gray-400 leading-tight">
           {mystery.description}
         </p>
-        {#if data.amount > 0}
+        {#if data.session}
           <Button color="dark" href={mystery.name.replace(/\s+/g, '_')}> Play</Button>
         {:else}
-        <form action="/api/create-checkout-session" method="POST">
-          <Button color="dark" type="submit" id="checkout-button">Buy 3€</Button>
-        </form>
+          <Button color="dark" href="/login">Login</Button>
         {/if}
       </Card>
     </div>

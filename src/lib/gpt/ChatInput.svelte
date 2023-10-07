@@ -15,12 +15,14 @@
 		enhancedLiveAnswerStore,
 	} from '$misc/stores';
 	import { countTokens } from '$misc/openai';
+	import Button from '../../auth-ui/UI/Button.svelte';
 
 
 	const dispatch = createEventDispatcher();
 
 	export let slug: string;
 	export let chatCost: ChatCost | null;
+	export let messagesAmount: number;
 
 	let debounceTimer: number | undefined;
 	let input = '';
@@ -36,9 +38,7 @@
 	$: message = setMessage(input.trim());
 	$: {
 		if(chat.messages[0] == undefined) {
-			//input = chat.prompt;
 			message = setMessage(input.trim());
-			//handleSubmit();
 		}
 	}
 
@@ -53,7 +53,6 @@
 	const unsubscribe = chatStore.subscribe((chats) => {
 		const chat = chats[slug];
 		if (chat) {
-			//currentMessages = chatStore.getCurrentMessage(chat);
 			currentMessages = chat.messages;
 		}
 	});
@@ -187,8 +186,11 @@
 	}
 </script>
 
-<footer
+<!-- <footer
 	class="sticky space-y-4 bottom-0 z-10 py-2 md:py-4 md:px-8 md:rounded-xl"
+> -->
+<footer
+	class="fixed bottom-0 z-10 py-2 md:py-4 md:px-8 md:rounded-xl w-full"
 >
 	{#if $isLoadingAnswerStore}
 		<div class="flex items-center justify-center">
@@ -199,6 +201,7 @@
 	{:else}
 		<div class="flex flex-col space-y-2 md:mx-auto md:w-3/4 px-2 md:px-8">
 			<div class="grid">
+				{#if messagesAmount > 0}
 				<form on:submit|preventDefault={handleSubmit}>
 				<!-- <form use:focusTrap={!$isLoadingAnswerStore} on:submit|preventDefault={handleSubmit}> -->
 					<div class="grid grid-cols-[1fr_auto]">
@@ -220,6 +223,26 @@
 						</div>
 					</div>
 				</form>
+				{:else}
+				<div class="text-center">
+					No more messages 
+				</div>
+				<div class="grid grid-cols-[1fr_auto]">
+						<!-- Input -->
+						<textarea
+							class="textarea overflow-hidden min-h-[42px]"
+							rows="1"
+							placeholder="No more messages left"
+							disabled
+						/>
+						<div class="flex flex-col md:flex-row items-center justify-end md:items-end">
+							<!-- Send button -->
+							<button type="submit" class="btn btn-sm ml-2">
+								<PaperAirplane class="w-6 h-6" />
+							</button>
+						</div>
+					</div>
+				{/if}
 			</div>
 			<!-- Tokens -->
 			{#if input.length > 0}
