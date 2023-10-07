@@ -13,6 +13,7 @@
 		type RedirectTo
 	} from '@supabase/auth-ui-shared';
 	import type { Appearance } from '$lib/types';
+	import Divider from '../../UI/Divider.svelte';
 
 	export let authView: ViewType = 'sign_in';
 	export let email = '';
@@ -74,7 +75,6 @@
 	<Container direction="vertical" gap="large" {appearance}>
 		<Container direction="vertical" gap="large" {appearance}>
 			<div>
-				<Label for="email" {appearance}>{i18n?.[lngKey]?.email_label}</Label>
 				<Input
 					id="email"
 					type="email"
@@ -87,7 +87,6 @@
 				/>
 			</div>
 			<div>
-				<Label for="password" {appearance}>{i18n?.[lngKey]?.password_label}</Label>
 				<Input
 					id="password"
 					type="password"
@@ -118,6 +117,7 @@
 					</Anchor>
 				{/if}
 				{#if authView === VIEWS.SIGN_IN}
+					<Divider {appearance} />
 					<Anchor
 						on:click={(e) => {
 							e.preventDefault();
@@ -128,7 +128,7 @@
 					>
 						{i18n?.forgotten_password?.link_text}</Anchor
 					>
-					<Anchor
+					<Button
 						on:click={(e) => {
 							e.preventDefault();
 							authView = VIEWS.SIGN_UP;
@@ -137,7 +137,7 @@
 						{appearance}
 					>
 						{i18n?.sign_up?.link_text}
-					</Anchor>
+					</Button>
 				{:else}
 					<Anchor
 						on:click={(e) => {
