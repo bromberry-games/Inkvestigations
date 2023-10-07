@@ -74,5 +74,5 @@
 	</form>
 	<Chat {slug} on:editMessage={handleEditMessage}>
 	</Chat> 
-	<ChatInput {slug} chatCost={cost} bind:this={chatInput} on:chatInput={updateUserMessages}/>
+	<ChatInput {slug} chatCost={cost} bind:this={chatInput} on:chatInput={updateUserMessages} messagesAmount={userMessages}/>
 {/if}
