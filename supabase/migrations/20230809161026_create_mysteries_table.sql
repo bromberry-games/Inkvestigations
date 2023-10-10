@@ -28,6 +28,25 @@ CREATE TABLE user_mystery_messages (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
+CREATE TABLE subscription_tiers (
+    tier_id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    daily_message_limit INTEGER CHECK (daily_message_limit >= 0) NOT NULL,
+    stripe_price_id TEXT NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE user_subscriptions (
+    subscription_id SERIAL PRIMARY KEY,
+    user_id uuid REFERENCES auth.users(id) ON UPDATE CASCADE,
+    tier_id INT REFERENCES subscription_tiers(tier_id) ON UPDATE CASCADE,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+
 
 -- policies
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
@@ -42,6 +61,12 @@ alter table user_mystery_conversations
   enable row level security;
 
 alter table user_mystery_messages 
+  enable row level security;
+
+alter table user_subscriptions 
+  enable row level security;
+
+alter table subscription_tiers 
   enable row level security;
 
 create policy "everybody can view mysteries."
@@ -101,5 +126,25 @@ $$
   update user_messages
   set amount = amount + increase
   where user_id = the_user_id
+$$ 
+language sql volatile;
+
+create function create_subscription(the_user_id uuid, price_id text)
+returns void as
+$$
+UPDATE user_subscriptions
+SET active = FALSE, 
+    end_date = CURRENT_DATE  -- Set end_date to today, marking the end of this subscription tier.
+WHERE user_id = the_user_id AND active = TRUE;
+
+-- Insert a new record for the updated subscription
+INSERT INTO user_subscriptions(user_id, tier_id, start_date, end_date, active)
+VALUES (
+    the_user_id, 
+    (SELECT tier_id FROM subscription_tiers WHERE stripe_price_id = price_id LIMIT 1), 
+    CURRENT_DATE, 
+    NULL,  
+    TRUE
+);
 $$ 
 language sql volatile;

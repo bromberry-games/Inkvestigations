@@ -38,20 +38,50 @@ export interface Database {
         Row: {
           answer: string
           description: string
+          filepath: string
           name: string
           prompt: string
         }
         Insert: {
           answer: string
           description: string
+          filepath: string
           name: string
           prompt: string
         }
         Update: {
           answer?: string
           description?: string
+          filepath?: string
           name?: string
           prompt?: string
+        }
+        Relationships: []
+      }
+      subscription_tiers: {
+        Row: {
+          active: boolean
+          daily_message_limit: number
+          description: string
+          name: string
+          stripe_price_id: string
+          tier_id: number
+        }
+        Insert: {
+          active?: boolean
+          daily_message_limit: number
+          description: string
+          name: string
+          stripe_price_id: string
+          tier_id?: number
+        }
+        Update: {
+          active?: boolean
+          daily_message_limit?: number
+          description?: string
+          name?: string
+          stripe_price_id?: string
+          tier_id?: number
         }
         Relationships: []
       }
@@ -142,11 +172,58 @@ export interface Database {
           }
         ]
       }
+      user_subscriptions: {
+        Row: {
+          active: boolean
+          end_date: string | null
+          start_date: string
+          subscription_id: number
+          tier_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          end_date?: string | null
+          start_date: string
+          subscription_id?: number
+          tier_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          end_date?: string | null
+          start_date?: string
+          subscription_id?: number
+          tier_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_tier_id_fkey"
+            columns: ["tier_id"]
+            referencedRelation: "subscription_tiers"
+            referencedColumns: ["tier_id"]
+          },
+          {
+            foreignKeyName: "user_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      create_subscription: {
+        Args: {
+          the_user_id: string
+          price_id: string
+        }
+        Returns: undefined
+      }
       decrement_message_for_user: {
         Args: {
           the_user_id: string

@@ -31,6 +31,26 @@ export async function increaseMessageAmountForUserByAmount(userid: string, amoun
     }
 }
 
+export async function createSubscription(priceId: string, userId: string) {
+    const { error }  = await supabase_full_access
+        .rpc('create_subscription', { price_id: priceId, the_user_id: userId });
+    if(error) {
+        console.error(error);
+        return false;
+    }
+    return true;
+}
+
+export async function createOrUpdateSubscription(priceId: string, userId: string) : Promise<boolean> {
+    const { error }  = await supabase_full_access
+        .rpc('create_or_update_subscription', { price_id: priceId, user_id: userId });
+    if(error) {
+        console.error(error);
+        return false;
+    }
+    return true;
+}
+
 export async function addConversationForUser(userid: string, mystery: string) {
     const { error } = await supabase_full_access
             .from('user_mystery_conversations')
