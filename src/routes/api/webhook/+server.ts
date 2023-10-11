@@ -59,17 +59,6 @@ export async function POST({ request }) {
     default:
       // Unhandled event type
   }
-  // else if (event.type == 'customer.subscription.updated') {
-  //  const subscription : Stripe.Subscription= event.data.object;
-  //  const item : Stripe.SubscriptionItem = subscription.items.data[0];
-  //  await handleSubscriptionUpdated(item.price.id, subscription.metadata.user_id);
-  //}
-
 
   return new Response(JSON.stringify({received: true}), { status: 200 })
 }
-
-async function handleSubscriptionUpdated(price: string, user_id: string) {
-
-}
-
