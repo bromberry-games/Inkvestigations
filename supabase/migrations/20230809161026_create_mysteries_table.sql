@@ -1,3 +1,7 @@
+-- extensions
+create extension pg_cron with schema extensions;
+
+
 -- Create tables
 
 CREATE TABLE mysteries (
@@ -28,6 +32,25 @@ CREATE TABLE user_mystery_messages (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
+CREATE TABLE subscription_tiers (
+    tier_id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    daily_message_limit INTEGER CHECK (daily_message_limit >= 0) NOT NULL,
+    stripe_price_id TEXT NOT NULL,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE user_subscriptions (
+    subscription_id SERIAL PRIMARY KEY,
+    user_id uuid REFERENCES auth.users(id) ON UPDATE CASCADE,
+    tier_id INT REFERENCES subscription_tiers(tier_id) ON UPDATE CASCADE,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+
 
 -- policies
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
@@ -42,6 +65,12 @@ alter table user_mystery_conversations
   enable row level security;
 
 alter table user_mystery_messages 
+  enable row level security;
+
+alter table user_subscriptions 
+  enable row level security;
+
+alter table subscription_tiers 
   enable row level security;
 
 create policy "everybody can view mysteries."
@@ -103,3 +132,56 @@ $$
   where user_id = the_user_id
 $$ 
 language sql volatile;
+
+create function create_subscription(the_user_id uuid, price_id text)
+returns void as
+$$
+UPDATE user_subscriptions
+SET active = FALSE, 
+    end_date = CURRENT_DATE  
+WHERE user_id = the_user_id AND active = TRUE;
+
+INSERT INTO user_subscriptions(user_id, tier_id, start_date, end_date, active)
+VALUES (
+    the_user_id, 
+    (SELECT tier_id FROM subscription_tiers WHERE stripe_price_id = price_id LIMIT 1), 
+    CURRENT_DATE, 
+    NULL,  
+    TRUE
+);
+
+  UPDATE user_messages um
+  SET amount = sub.daily_message_limit + um.amount
+  FROM (
+      SELECT us.user_id, st.daily_message_limit
+      FROM user_subscriptions us
+      JOIN subscription_tiers st ON us.tier_id = st.tier_id
+      WHERE us.active = TRUE AND us.user_id = the_user_id
+  ) AS sub
+  WHERE um.user_id = sub.user_id;
+
+$$ 
+language sql volatile;
+
+CREATE OR REPLACE FUNCTION reset_daily_messages()
+RETURNS VOID
+LANGUAGE plpgsql AS $$
+BEGIN
+
+  UPDATE user_subscriptions
+    SET active = FALSE
+    WHERE end_date IS NOT NULL AND end_date < CURRENT_DATE;
+
+    UPDATE user_messages um
+    SET amount = sub.daily_message_limit + um.amount
+    FROM (
+        SELECT us.user_id, st.daily_message_limit
+        FROM user_subscriptions us
+        JOIN subscription_tiers st ON us.tier_id = st.tier_id
+        WHERE us.active = TRUE
+    ) AS sub
+    WHERE um.user_id = sub.user_id;
+END;
+$$;
+
+SELECT cron.schedule('0 0 * * *', $$SELECT reset_daily_messages();$$);

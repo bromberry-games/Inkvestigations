@@ -3,6 +3,7 @@ import { STRIPE_TEST_KEY} from '$env/static/private';
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import Stripe from 'stripe'
 import { name_to_price_map } from './pricing_const';
+import type { Session } from '@supabase/supabase-js';
 
 const stripe = new Stripe(STRIPE_TEST_KEY, {
     apiVersion: '2022-11-15'
@@ -27,7 +28,7 @@ export const load = async () => {
 
 export const actions = {
   buy: async ({url, request, locals: {getSession}}) => {
-    const user_session = await getSession();
+    const user_session: Session = await getSession();
     const form_data = request.formData();
     const price = (await form_data).get('price_id') as string;
 
@@ -42,6 +43,9 @@ export const actions = {
       success_url: `${url.origin}/success`,
       cancel_url: `${url.origin}/cancel`,
       automatic_tax: {enabled: true},
+      metadata: {
+        user_id: user_session.user.id,
+      },
       subscription_data: {
         metadata: {
           user_id: user_session ? user_session.user.id : ''

@@ -1,7 +1,8 @@
 import Stripe from 'stripe'
 import { STRIPE_TEST_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private'
-import { increaseMessageAmountForUserByAmount } from '$lib/supabase_full.server';
+import { cancelSubscription, createSubscription, increaseMessageAmountForUserByAmount } from '$lib/supabase_full.server';
 import { getAmountForPrice } from '../../pricing/pricing_const';
+import { error } from '@sveltejs/kit';
 
 const stripe = new Stripe(STRIPE_TEST_KEY, {
         apiVersion: '2022-11-15'
@@ -20,28 +21,44 @@ export async function POST({ request }) {
 
     return new Response(undefined, { status: 400 })
   }
-  if (event.type == 'checkout.session.completed') {
-    //const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
-    //    event.data.object.id,
-    //    {
-    //      expand: ['line_items'],
-    //    }
-    //);
-    //console.log(sessionWithLineItems)
-    //const lineItems = sessionWithLineItems.line_items;
-    //if (lineItems) {
-    //    //fulfillOrder(lineItems, sessionWithLineItems.metadata.user_id);
-    //}
-  } else if (event.type == 'customer.subscription.updated') {
-    const subscription = event.data.object;
-    await handleSubscriptionUpdated(subscription.plan.id, subscription.metadata.user_id);
+  switch (event.type) {
+    case 'checkout.session.completed':
+      const checkoutSession: Stripe.Checkout.Session = event.data.object;
+      if(checkoutSession.payment_status === 'paid') {
+        const session = await stripe.checkout.sessions.retrieve(checkoutSession.id, { expand: ['line_items'] });
+        console.log(checkoutSession)
+        console.log(session)
+        if(session.line_items == null || session.line_items.data[0].price == null) {
+          return new Response(undefined, { status: 500 });
+        } 
+        if (checkoutSession.metadata == null) {
+          return new Response(undefined, { status: 500 });
+        }
+        const price_id = session.line_items.data[0].price.id;
+        createSubscription(price_id, checkoutSession.metadata.user_id);
+      }
+      
+      break;
+    case 'invoice.paid':
+      // Continue to provision the subscription as payments continue to be made.
+      // Store the status in your database and check when a user accesses your service.
+      // This approach helps you avoid hitting rate limits.
+      break;
+    case 'invoice.payment_failed':
+      // The payment failed or the customer does not have a valid payment method.
+      // The subscription becomes past_due. Notify your customer and send them to the
+      // customer portal to update their payment information.
+      break;
+    case 'customer.subscription.updated':
+      const subscription : Stripe.Subscription= event.data.object;
+      if(subscription.cancel_at_period_end) {
+        cancelSubscription(subscription.metadata.user_id, new Date(subscription.current_period_end).toISOString());
+        subscription.current_period_end
+      }
+      break
+    default:
+      // Unhandled event type
   }
-
 
   return new Response(JSON.stringify({received: true}), { status: 200 })
 }
-
-async function handleSubscriptionUpdated(price: string, user_id: string) {
-  await increaseMessageAmountForUserByAmount(user_id, getAmountForPrice(price))
-}
-
