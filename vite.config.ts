@@ -8,10 +8,8 @@ export default defineConfig({
       		allow: [
       		  searchForWorkspaceRoot(process.cwd()),
       		],
-    },
-    proxy: {
-      '/api': 'http://localhost:8000',
-	}},
+    	},
+	},
 	plugins: [sveltekit()],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
