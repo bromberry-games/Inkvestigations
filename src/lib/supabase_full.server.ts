@@ -41,13 +41,15 @@ export async function createSubscription(priceId: string, userId: string) {
     return true;
 }
 
-export async function createOrUpdateSubscription(priceId: string, userId: string) : Promise<boolean> {
-    const { error }  = await supabase_full_access
-        .rpc('create_or_update_subscription', { price_id: priceId, user_id: userId });
+export async function cancelSubscription(userId: string, endDate: string) : Promise<boolean> {
+    const { error } = await supabase_full_access.
+        from('user_subscriptions')
+        .update({ end_date: endDate })
+        .eq('user_id', userId);
     if(error) {
         console.error(error);
         return false;
-    }
+    } 
     return true;
 }
 

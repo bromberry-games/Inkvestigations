@@ -1,6 +1,6 @@
 import Stripe from 'stripe'
 import { STRIPE_TEST_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private'
-import { createSubscription, increaseMessageAmountForUserByAmount } from '$lib/supabase_full.server';
+import { cancelSubscription, createSubscription, increaseMessageAmountForUserByAmount } from '$lib/supabase_full.server';
 import { getAmountForPrice } from '../../pricing/pricing_const';
 import { error } from '@sveltejs/kit';
 
@@ -28,14 +28,11 @@ export async function POST({ request }) {
         const session = await stripe.checkout.sessions.retrieve(checkoutSession.id, { expand: ['line_items'] });
         console.log(checkoutSession)
         console.log(session)
-        if(session.line_items == null) {
-          //throw error(500, 'could not load session line items');
+        if(session.line_items == null || session.line_items.data[0].price == null) {
           return new Response(undefined, { status: 500 });
         } 
-        console.log(session.line_items.data[0])
-        if (session.metadata.user_id == null) {
+        if (checkoutSession.metadata == null) {
           return new Response(undefined, { status: 500 });
-          //throw error(500, 'could not load session user id');
         }
         const price_id = session.line_items.data[0].price.id;
         createSubscription(price_id, checkoutSession.metadata.user_id);
@@ -52,6 +49,13 @@ export async function POST({ request }) {
       // The subscription becomes past_due. Notify your customer and send them to the
       // customer portal to update their payment information.
       break;
+    case 'customer.subscription.updated':
+      const subscription : Stripe.Subscription= event.data.object;
+      if(subscription.cancel_at_period_end) {
+        cancelSubscription(subscription.metadata.user_id, new Date(subscription.current_period_end).toISOString());
+        subscription.current_period_end
+      }
+      break
     default:
       // Unhandled event type
   }
