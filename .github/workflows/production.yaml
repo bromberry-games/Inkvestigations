@@ -3,7 +3,7 @@ name: Deploy Migrations to Production
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 jobs:
