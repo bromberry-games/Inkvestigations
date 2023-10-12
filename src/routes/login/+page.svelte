@@ -4,6 +4,7 @@
 	import { ThemeSupa, type SocialLayout, type ViewType } from '@supabase/auth-ui-shared';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import logo from "/static/images/logo_2.svg?src";
 
     export let data;
 
@@ -51,6 +52,7 @@
 
 </script>
 
+
 <svelte:head>
 	<title>Auth UI Svelte</title>
 </svelte:head>
@@ -64,8 +66,8 @@
 				<div >
 					<div class="border-scale-400 bg-scale-300 relative rounded-xl px-8 py-8 drop-shadow-sm">
 						<div class="mb-6 flex flex-col">
-							<div class="flex items-center gap-3">
-								<img src="/images/logo_2.svg" class="scale-90" alt="Inkvestigations logo"/>
+							<div class="flex items-center gap-3 font-tertiary">
+								{@html logo}
 							</div>
 							<p class="text-auth-widget-test text-center text-2xl font-secondary">Sign in with existing account</p>
 						</div>

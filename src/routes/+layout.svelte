@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte'
 
 	export let data
+  import logo from "/static/images/logo_2.svg?src";
 
 	let { supabase, session } = data
 	$: ({ supabase, session } = data)
@@ -24,7 +25,10 @@
 
 <Navbar let:hidden let:toggle class="w-full !bg-custom-secondary"  navDivClass="mx-auto flex flex-wrap justify-between items-center">
   <NavBrand href="/">
-    <img src="/images/logo_2.svg" class="mr-3 h-6 sm:h-12" alt="Inkvestigations logo"/>
+   <!-- <img src="/images/logo_2.svg" class="mr-3 h-6 sm:h-12" alt="Inkvestigations logo"/>--> 
+   <div class="font-tertiary w-2/3" id="logo-container">
+			{@html logo}
+		</div>
   </NavBrand>
   <div class="flex md:order-2">
     {#if session}
