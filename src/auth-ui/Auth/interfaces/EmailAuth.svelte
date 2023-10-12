@@ -69,7 +69,7 @@
 
 <form method="post" on:submit|preventDefault={handleSubmit}>
 	<Container direction="vertical" gap="large" {appearance}>
-			<p class="text-center text-2xl">Log in with e-mail</p>
+			<p class="text-center text-2xl font-primary">Log in with e-mail</p>
 			<div>
 				<Input
 					id="email"
@@ -79,7 +79,7 @@
 					placeholder={i18n?.[lngKey]?.email_input_placeholder}
 					bind:value={email}
 					autocomplete="email"
-					class="text-white bg-gray-800 border-gray-600"
+					class="text-white bg-gray-800 border-gray-600 font-primary"
 				/>
 			</div>
 			<div>
@@ -90,12 +90,12 @@
 					placeholder={i18n?.[lngKey]?.password_input_placeholder}
 					bind:value={password}
 					autocomplete={authView === VIEWS.SIGN_IN ? 'current-password' : 'new-password'}
-					class="text-white bg-gray-800 border-gray-600"
+					class="text-white bg-gray-800 border-gray-600 font-primary"
 				/>
 			</div>
 			<slot />
 		<div class="flex justify-center">
-			<Button type="submit" btnClass="bg-custom-tertiary text-xl w-2/5 py-4 rounded">
+			<Button type="submit" btnClass="bg-custom-tertiary text-2xl w-2/5 py-4 rounded text-center font-secondary">
 				{i18n?.[lngKey]?.button_label}
 			</Button>
 		</div>
@@ -108,6 +108,7 @@
 							authView = VIEWS.MAGIC_LINK;
 						}}
 						href="#auth-magic-link"
+
 						>{i18n?.magic_link?.link_text}
 					</a>
 				{/if}
@@ -119,10 +120,10 @@
 							authView = VIEWS.FORGOTTEN_PASSWORD;
 						}}
 						href="#auth-forgot-password"
-						class="text-center"
+						class="text-center font-primary"
 					>
 						{i18n?.forgotten_password?.link_text}</a>
-					<Button btnClass="bg-custom-tertiary text-xl py-4 rounded text-center"
+					<Button btnClass="bg-custom-tertiary text-2xl py-4 rounded text-center font-secondary"
 						on:click={(e) => {
 							e.preventDefault();
 							authView = VIEWS.SIGN_UP;
@@ -139,7 +140,7 @@
 							authView = VIEWS.SIGN_IN;
 						}}
 						href="#auth-sign-in"
-						class="text-center"
+						class="text-center font-primary"
 					>
 						{i18n?.sign_in?.link_text}
 					</a>

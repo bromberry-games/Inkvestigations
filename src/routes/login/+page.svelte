@@ -67,7 +67,7 @@
 							<div class="flex items-center gap-3">
 								<img src="/images/logo_2.svg" class="scale-90" alt="Inkvestigations logo"/>
 							</div>
-							<p class="text-auth-widget-test text-center text-2xl">Sign in with existing account</p>
+							<p class="text-auth-widget-test text-center text-2xl font-primary">Sign in with existing account</p>
 						</div>
 						<Auth
                             supabaseClient={data.supabase}
