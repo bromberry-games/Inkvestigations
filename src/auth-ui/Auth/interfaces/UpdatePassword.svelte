@@ -1,13 +1,12 @@
 <script lang="ts">
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import Anchor from '$lib/../auth-ui/UI/Anchor.svelte';
 	import Button from '$lib/../auth-ui/UI/Button.svelte';
 	import Container from '$lib/../auth-ui/UI/Container.svelte';
 	import Input from '$lib/../auth-ui/UI/Input.svelte';
-	import Label from '$lib/../auth-ui/UI/Label.svelte';
 	import Message from '$lib/../auth-ui/UI/Message.svelte';
 	import { VIEWS, type I18nVariables, type ViewType } from '@supabase/auth-ui-shared';
 	import type { Appearance } from '$lib/types';
+	import { Label } from 'flowbite-svelte';
 
 	export let i18n: I18nVariables;
 	export let supabaseClient: SupabaseClient;
@@ -37,7 +36,7 @@
 	<Container direction="vertical" gap="large" {appearance}>
 		<Container direction="vertical" gap="large" {appearance}>
 			<div>
-				<Label for="password" {appearance}>
+				<Label for="password">
 					{i18n?.update_password?.password_label}
 				</Label>
 				<Input
@@ -57,14 +56,14 @@
 		</Container>
 
 		{#if showLinks}
-			<Anchor
+			<a
 				on:click={(e) => {
 					e.preventDefault();
 					authView = VIEWS.SIGN_IN;
 				}}
 				href="#auth-magic-link"
-				{appearance}>{i18n?.sign_in?.link_text}</Anchor
-			>
+				>{i18n?.sign_in?.link_text}
+			</a>
 		{/if}
 		{#if message}
 			<Message {appearance}>

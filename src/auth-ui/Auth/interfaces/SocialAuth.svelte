@@ -10,7 +10,6 @@
 	import Button from '$lib/../auth-ui/UI/Button.svelte';
 	import Container from '$lib/../auth-ui/UI/Container.svelte';
 	import Icons from '$lib/../auth-ui/Auth/Icons.svelte';
-	import Divider from '$lib/../auth-ui/UI/Divider.svelte';
 
 	export let supabaseClient: SupabaseClient;
 	export let socialLayout: SocialLayout;
@@ -77,6 +76,6 @@
 		</Container>
 	</Container>
 	{#if !onlyThirdPartyProviders}
-		<Divider {appearance} />
+		<hr class="border-slate-900">
 	{/if}
 {/if}
