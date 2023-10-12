@@ -43,10 +43,10 @@
 					placeholder={i18n?.forgotten_password?.email_input_placeholder}
 					bind:value={email}
 					autocomplete="email"
-					class="text-white bg-gray-800 border-gray-600 font-primary"
+					class="text-white bg-gray-800 border-gray-600 font-secondary"
 				/>
 			</div>
-			<Button type="submit"  btnClass="bg-custom-tertiary rounded py-4 font-secondary text-xl" {appearance}>
+			<Button type="submit"  btnClass="bg-custom-tertiary rounded py-4 font-primary text-xl" {appearance}>
 				{i18n?.forgotten_password?.button_label}
 			</Button>
 		</Container>
@@ -58,7 +58,7 @@
 					authView = VIEWS.SIGN_IN;
 				}}
 				href="#auth-magic-link"
-				class="text-center font-primary"
+				class="text-center font-secondary"
 				>{i18n?.sign_in?.link_text}
 			</a>
 		{/if}
