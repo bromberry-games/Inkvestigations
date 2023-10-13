@@ -16,7 +16,7 @@
 	$: classNames = generateClassNames('button', color, appearance);
 </script>
 
-<button on:click {...$$restProps} disabled={loading} style={appearance?.style?.button} class={classNames.join(' ')}>
+<button on:click {...$$restProps} disabled={loading} style={appearance?.style?.button} class={classNames.join(' ') + " font-primary"}>
 	<slot />
 </button>
 
