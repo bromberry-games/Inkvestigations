@@ -25,7 +25,6 @@
 
 <Navbar let:hidden let:toggle class="w-full !bg-custom-secondary"  navDivClass="mx-auto flex flex-wrap justify-between items-center">
   <NavBrand href="/" class="w-1/2">
-   <!-- <img src="/images/logo_2.svg" class="mr-3 h-6 sm:h-12" alt="Inkvestigations logo"/>--> 
    <div class="font-tertiary md:w-3/5 inline" id="logo-container">
 			{@html logo}
 		</div>
