@@ -4,6 +4,7 @@
 
 #logo-container svg {
         width: 100% !important;
+        height: 70px;
 }
 
 svg text {
