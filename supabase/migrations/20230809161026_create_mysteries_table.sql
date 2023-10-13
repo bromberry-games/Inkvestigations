@@ -1,7 +1,6 @@
 -- extensions
 create extension pg_cron with schema extensions;
 
-
 -- Create tables
 
 CREATE TABLE mysteries (
@@ -10,6 +9,19 @@ CREATE TABLE mysteries (
     prompt TEXT NOT NULL,
     answer TEXT NOT NULL,
     filepath TEXT NOT NULL
+);
+
+CREATE TABLE suspects (
+    id SERIAL PRIMARY KEY,
+    mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    description TEXT NOT NULL
+);
+
+CREATE TABLE murderers (
+  id SERIAL PRIMARY KEY, 
+  suspect_id INT NOT NULL UNIQUE REFERENCES suspects(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  murder_reasons TEXT NOT NULL,
 );
 
 CREATE TABLE user_messages (
@@ -56,6 +68,12 @@ CREATE TABLE user_subscriptions (
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
 
 alter table mysteries 
+  enable row level security;
+
+alter table suspects
+  enable row level security;
+
+alter table murderers
   enable row level security;
 
 alter table user_messages 

@@ -12,7 +12,6 @@ test('login', async ({ page }) => {
 });
 
 test('logout', async ({ page }) => {
-  console.log("im running")
   await page.goto('/');
   await page.getByRole('link', { name: 'Login' }).click();
   await page.getByPlaceholder('Your email address').fill('test@mail.com');

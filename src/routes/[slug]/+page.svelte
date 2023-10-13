@@ -1,14 +1,16 @@
 <script lang="ts">
 	import { onDestroy, onMount,} from 'svelte';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import { chatStore, isLoadingAnswerStore, } from '$misc/stores';
 	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
-	import { Button } from 'flowbite-svelte';
+	import { Button, Modal, Radio } from 'flowbite-svelte';
 	import type ChatMessage from '$lib/gpt/ChatMessage.svelte';
 
-
 	export let data: PageData;
+	export let form: ActionData;
+	console.log(form)
+
 	let userMessages = 0
 	$: supabase = data.supabase
 
@@ -20,7 +22,6 @@
 		}
       	userMessages = data.amount
 	}
-
 	let cost = 0;
 	$: ({ slug } = data);
 	$: chat = $chatStore[slug];
@@ -65,7 +66,33 @@
 		chatInput.editMessage(event.detail);
 	}
 
+	function accuse(event: Event) {
+		event.preventDefault();
+		(event.target as HTMLButtonElement).form.submit();
+		clickOutsideModal = false;
+	}
+
+	let clickOutsideModal = false;
 </script>
+
+<Button on:click={() => (clickOutsideModal = true)} color="red">Default modal</Button>
+<Modal title="Suspects" bind:open={clickOutsideModal} size="md" outsideclose>
+	<form method="post" action="?/accuse">
+	<div class="grid gap-6 w-full grid-cols-2 md:grid-cols-3">
+		{#each data.suspects as suspect}
+  		<Radio name="suspects" value={suspect} custom>
+  		  <div class="flex justify-between flex-col items-center p-5 w-full cursor-pointer peer-checked:border-solid peer-checked:border-2 peer-checked:border-slate-500" >
+				<img src="/images/police_captain.png">
+				<p>{suspect}</p>
+  		  </div>
+  		</Radio>
+		{/each}
+	</div>
+	<div class="flex justify-center">
+    	<Button type="submit" color="red" on:click={accuse}>Accuse</Button>
+	</div>
+	</form>
+</Modal>
 
 {#if chat}
 	<h1>{userMessages}</h1>

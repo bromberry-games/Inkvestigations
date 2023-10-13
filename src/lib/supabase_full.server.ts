@@ -31,7 +31,7 @@ export async function increaseMessageAmountForUserByAmount(userid: string, amoun
     }
 }
 
-export async function createSubscription(priceId: string, userId: string) {
+export async function createSubscription(priceId: string, userId: string) : Promise<boolean> {
     const { error }  = await supabase_full_access
         .rpc('create_subscription', { price_id: priceId, the_user_id: userId });
     if(error) {
@@ -39,6 +39,31 @@ export async function createSubscription(priceId: string, userId: string) {
         return false;
     }
     return true;
+}
+
+export async function getSuspects(mysterName: string) : Promise<string[] | null> {
+    const { data, error } = await supabase_full_access
+        .from('suspects')
+        .select('name')
+        .eq('mystery_name', mysterName);
+    if(error) {
+        console.error(error);
+        return null;
+    }
+    return data?.map(suspect => suspect.name) || null;
+}
+
+export async function getMurderer(mysterName: string) : Promise<string | null> {
+    const { data, error } = await supabase_full_access
+        .from('suspects')
+        .select('id, name, murderers!inner(id)')
+        .eq('mystery_name', mysterName)
+    if(error) {
+        console.error(error);
+        return null;
+    }
+    console.log(data)
+    return data?.[0]?.name || null; 
 }
 
 export async function cancelSubscription(userId: string, endDate: string) : Promise<boolean> {

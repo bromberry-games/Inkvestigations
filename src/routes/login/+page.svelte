@@ -4,7 +4,7 @@
 	import { ThemeSupa, type SocialLayout, type ViewType } from '@supabase/auth-ui-shared';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import logo from "/static/images/logo_2.svg?src";
+	import logo from "/src/images/logo_2.svg?src";
 
     export let data;
 

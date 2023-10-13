@@ -6,7 +6,7 @@
 	import { onMount } from 'svelte'
 
 	export let data
-  import logo from "/static/images/logo_2.svg?src";
+  import logo from "/src/images/logo_2.svg?src";
 
 	let { supabase, session } = data
 	$: ({ supabase, session } = data)
