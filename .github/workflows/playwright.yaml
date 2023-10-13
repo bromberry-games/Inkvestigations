@@ -52,4 +52,4 @@ jobs:
         env:
           CF_ACCESS_CLIENT_ID:  ${{ secrets.CF_ACCESS_CLIENT_ID }}
           CF_ACCESS_CLIENT_SECRET:  ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
-        run: CI=true ENV_TO_TEST=DEV npx playwright test
+        run: CI=true ENV_TO_TEST=DEV HOME=/root npx playwright test
