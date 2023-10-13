@@ -25,7 +25,7 @@
 
 <Navbar let:hidden let:toggle class="w-full !bg-custom-secondary"  navDivClass="mx-auto flex flex-wrap justify-between items-center">
   <NavBrand href="/" class="w-1/2">
-   <div class="font-tertiary md:w-3/5 inline" id="logo-container">
+   <div class="font-tertiary md:w-1/2 inline" id="logo-container">
 			{@html logo}
 		</div>
   </NavBrand>

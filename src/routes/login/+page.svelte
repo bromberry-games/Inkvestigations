@@ -64,7 +64,7 @@
 	    <div class="relative col-span-12 mb-16 md:col-start-5 md:col-end-9 lg:col-start-4 lg:col-end-10">
 			<div class="relative lg:mx-auto lg:max-w-md bg-custom-secondary rounded-lg">
 				<div >
-					<div class="border-scale-400 bg-scale-300 relative rounded-xl px-8 py-8 drop-shadow-sm">
+					<div class="border-scale-400 bg-scale-300 relative rounded-xl px-8 pt-4 pb-8 drop-shadow-sm">
 						<div class="mb-6 flex flex-col">
 							<div class="flex items-center gap-3 font-tertiary">
 								{@html logo}

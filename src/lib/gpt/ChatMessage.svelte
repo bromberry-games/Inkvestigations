@@ -2,8 +2,6 @@
 	import type { ChatMessage } from '$misc/shared';
 	import snarkdown from 'snarkdown';
 	import { chatStore } from '$misc/stores';
-	import { countTokens } from '$misc/openai';
-	import TokenCost from './TokenCost.svelte';
 
 	export let slug: string;
 	export let message: ChatMessage;
@@ -26,9 +24,6 @@
 		<span class="font-bold">{message.role === 'user' ? 'You' : 'Police chief'}:</span>
 
 		<div class="flex space-x-4">
-			<!-- Tokens -->
-			<TokenCost tokens={countTokens(message)} />
-
 			{#if $chatStore[slug] && message.id}
 				<div class="flex space-x-0">
 				</div>
@@ -37,7 +32,7 @@
 	</div>
 
 	<!-- Message Content -->
-	<div>
-		{@html snarkdown(message.content)}
+	<div class="font-secondary text-lg">
+		{@html snarkdown(message.content.replace(/\n/g, "<br>"))}
 	</div>
 </div>
