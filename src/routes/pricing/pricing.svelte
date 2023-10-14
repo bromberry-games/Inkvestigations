@@ -2,6 +2,7 @@
     import { Card, Button } from 'flowbite-svelte';
     import { Icon } from 'flowbite-svelte-icons';
 
+    export let login: boolean;
     export let name: String;
     export let price_id: String;
     export let amount: Number;
@@ -20,7 +21,10 @@
     <span class="text-5xl font-extrabold tracking-tight">{amount_string}</span>
     <span class="ml-1 text-xl font-normal text-gray-500 dark:text-gray-400">per month</span>
   </div>
-  <!-- List -->
+  <h1 class="mt-4 text-2xl font-semibold ">
+    20 Messages per day
+  </h1>
+  <!-- List 
   <ul class="my-7 space-y-4">
     <li class="flex space-x-2">
       <Icon name="check-circle-solid" class="w-4 h-4 text-primary-600 dark:text-primary-500" />
@@ -39,8 +43,13 @@
       <span class="text-base font-normal leading-tight text-gray-500">Subscriber only mysteries</span>
     </li>
   </ul>
-    <form action="?/buy" method="POST">
+  -->
+    {#if login}
+      <form action="?/buy" method="POST">
         <input type="hidden" name="price_id" value={price_id}>
         <Button class="w-full" color="red" type="submit">Choose plan</Button>
-    </form>
+      </form>
+    {:else}
+      <Button class="w-full" color="red" type="submit" href="/login">Signup to buy</Button>
+    {/if}
 </Card>

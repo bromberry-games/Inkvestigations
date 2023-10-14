@@ -1,10 +1,6 @@
 <script lang="ts">
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import Anchor from '$lib/../auth-ui/UI/Anchor.svelte';
-	import Button from '$lib/../auth-ui/UI/Button.svelte';
 	import Container from '$lib/../auth-ui/UI/Container.svelte';
-	import Input from '$lib/../auth-ui/UI/Input.svelte';
-	import Label from '$lib/../auth-ui/UI/Label.svelte';
 	import Message from '$lib/../auth-ui/UI/Message.svelte';
 	import {
 		VIEWS,
@@ -13,7 +9,7 @@
 		type RedirectTo
 	} from '@supabase/auth-ui-shared';
 	import type { Appearance } from '$lib/types';
-	import Divider from '../../UI/Divider.svelte';
+	import { Button, Input } from 'flowbite-svelte';
 
 	export let authView: ViewType = 'sign_in';
 	export let email = '';
@@ -73,7 +69,7 @@
 
 <form method="post" on:submit|preventDefault={handleSubmit}>
 	<Container direction="vertical" gap="large" {appearance}>
-		<Container direction="vertical" gap="large" {appearance}>
+			<p class="text-center text-2xl font-secondary">Log in with e-mail</p>
 			<div>
 				<Input
 					id="email"
@@ -83,7 +79,7 @@
 					placeholder={i18n?.[lngKey]?.email_input_placeholder}
 					bind:value={email}
 					autocomplete="email"
-					{appearance}
+					class="text-white bg-gray-800 border-gray-600 font-secondary"
 				/>
 			</div>
 			<div>
@@ -94,41 +90,40 @@
 					placeholder={i18n?.[lngKey]?.password_input_placeholder}
 					bind:value={password}
 					autocomplete={authView === VIEWS.SIGN_IN ? 'current-password' : 'new-password'}
-					{appearance}
+					class="text-white bg-gray-800 border-gray-600 font-secondary"
 				/>
 			</div>
 			<slot />
-		</Container>
-		<Button type="submit" color="primary" {loading} {appearance}
-			>{i18n?.[lngKey]?.button_label}</Button
-		>
+		<div class="flex justify-center">
+			<Button type="submit" btnClass="bg-custom-tertiary text-2xl w-2/5 py-4 rounded text-center font-primary">
+				{i18n?.[lngKey]?.button_label}
+			</Button>
+		</div>
 
 		{#if showLinks}
-			<Container direction="vertical" gap="small" {appearance}>
 				{#if authView === VIEWS.SIGN_IN && magicLink}
-					<Anchor
+					<a
 						on:click={(e) => {
 							e.preventDefault();
 							authView = VIEWS.MAGIC_LINK;
 						}}
 						href="#auth-magic-link"
-						{appearance}
+
 						>{i18n?.magic_link?.link_text}
-					</Anchor>
+					</a>
 				{/if}
 				{#if authView === VIEWS.SIGN_IN}
-					<Divider {appearance} />
-					<Anchor
+					<hr class="border-slate-900">
+					<a
 						on:click={(e) => {
 							e.preventDefault();
 							authView = VIEWS.FORGOTTEN_PASSWORD;
 						}}
 						href="#auth-forgot-password"
-						{appearance}
+						class="text-center font-secondary"
 					>
-						{i18n?.forgotten_password?.link_text}</Anchor
-					>
-					<Button
+						{i18n?.forgotten_password?.link_text}</a>
+					<Button btnClass="bg-custom-tertiary text-2xl py-4 rounded text-center font-primary"
 						on:click={(e) => {
 							e.preventDefault();
 							authView = VIEWS.SIGN_UP;
@@ -136,21 +131,20 @@
 						href="#auth-sign-up"
 						{appearance}
 					>
-						{i18n?.sign_up?.link_text}
+						Create new Account
 					</Button>
 				{:else}
-					<Anchor
+					<a
 						on:click={(e) => {
 							e.preventDefault();
 							authView = VIEWS.SIGN_IN;
 						}}
 						href="#auth-sign-in"
-						{appearance}
+						class="text-center font-secondary"
 					>
 						{i18n?.sign_in?.link_text}
-					</Anchor>
+					</a>
 				{/if}
-			</Container>
 		{/if}
 	</Container>
 

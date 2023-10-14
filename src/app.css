@@ -1,3 +1,16 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+#logo-container svg {
+        width: 100% !important;
+        height: 70px;
+}
+
+svg text {
+        font-family: inherit !important;
+}
+
+svg tspan {
+        font-family: inherit !important;
+}
