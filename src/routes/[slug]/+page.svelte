@@ -9,10 +9,13 @@
 
 	export let data: PageData;
 	export let form: ActionData;
-	console.log(form)
+	$: if (form != undefined) {
+		chatStore.deleteChat(data.slug);
+	}
 
 	let userMessages = 0
 	$: supabase = data.supabase
+
 
 	async function updateUserMessages() {
 		const { data } = await supabase.from("user_messages").select().limit(1).single();
@@ -22,10 +25,9 @@
 		}
       	userMessages = data.amount
 	}
-	let cost = 0;
 	$: ({ slug } = data);
 	$: chat = $chatStore[slug];
-	//$: cost = chat ? estimateChatCost(chat) : null;
+
 	$: if (chat && chat.messages.length > 2) {
 		const lastMessage = chat.messages[chat.messages.length - 1];
     
@@ -50,8 +52,6 @@
     	post_fun();
 	}
 
-	let chatInput: ChatInput;
-
 	onMount(async () => {
 		updateUserMessages();
 	});
@@ -60,10 +60,6 @@
 		event.preventDefault();
 		chatStore.deleteChat(slug);
 		(event.target as HTMLButtonElement).form.submit();
-	}
-
-	function handleEditMessage(event: CustomEvent<ChatMessage>) {
-		chatInput.editMessage(event.detail);
 	}
 
 	function accuse(event: Event) {
@@ -75,7 +71,8 @@
 	let clickOutsideModal = false;
 </script>
 
-<Button on:click={() => (clickOutsideModal = true)} color="red">Default modal</Button>
+{#if form == undefined}
+<Button on:click={() => (clickOutsideModal = true)} color="red">Accuse</Button>
 <Modal title="Suspects" bind:open={clickOutsideModal} size="md" outsideclose>
 	<form method="post" action="?/accuse">
 	<div class="grid gap-6 w-full grid-cols-2 md:grid-cols-3">
@@ -93,13 +90,20 @@
 	</div>
 	</form>
 </Modal>
+{:else if form.won}
+	<h1 class="text-center text-2xl">You won!</h1>
+{:else}
+	<h1 class="text-center text-2xl">You lost!</h1>
+{/if}
 
 {#if chat}
 	<h1>{userMessages}</h1>
 	<form method="POST" action="?/delete">
 		<Button color="red" on:click={deleteChat}>Delete chat</Button>
 	</form>
-	<Chat {slug} on:editMessage={handleEditMessage}>
+	<Chat {slug} >
 	</Chat> 
-	<ChatInput {slug} chatCost={cost} bind:this={chatInput} on:chatInput={updateUserMessages} messagesAmount={userMessages}/>
+	{#if form == undefined}
+		<ChatInput {slug} on:chatInput={updateUserMessages} messagesAmount={userMessages}/>
+	{/if}
 {/if}

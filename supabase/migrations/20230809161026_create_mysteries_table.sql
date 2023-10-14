@@ -21,7 +21,7 @@ CREATE TABLE suspects (
 CREATE TABLE murderers (
   id SERIAL PRIMARY KEY, 
   suspect_id INT NOT NULL UNIQUE REFERENCES suspects(id) ON UPDATE CASCADE ON DELETE CASCADE,
-  murder_reasons TEXT NOT NULL,
+  murder_reasons TEXT NOT NULL
 );
 
 CREATE TABLE user_messages (

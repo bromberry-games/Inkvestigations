@@ -33,8 +33,10 @@ export const actions = {
     if (!session) {
       throw redirect(303, '/')
     }
+    const mysterName = params.slug.replace(/_/g, ' ');
     const data = await request.formData();
-    const murderer = await getMurderer(params.slug.replace(/_/g, ' '))
+    const murderer = await getMurderer(mysterName)
+    const archived = await archiveLastConversation(session.user.id, mysterName);
     return {
       won: murderer === data.get('suspects')
     }
