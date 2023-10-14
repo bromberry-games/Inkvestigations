@@ -7,9 +7,9 @@ import { migrateChat } from '$misc/chatMigration';
 export const load: PageLoad = async ({ params, data }) => {
 	const { slug } = params;
 
-	const cachedChat = get(chatStore)[slug];
+	chatStore.updateChat(slug, data.chat);
 	//TODO check this out
-	const { chat: migratedChat, migrated } = !cachedChat || data.chat && cachedChat.messages.length < data.chat?.messages.length? migrateChat(data.chat) : migrateChat(cachedChat); 
+	const { chat: migratedChat, migrated } = migrateChat(data.chat); 
 	if (migrated) {
 		chatStore.updateChat(slug, migratedChat);
 		console.log(`migrated chat: ${slug}`);

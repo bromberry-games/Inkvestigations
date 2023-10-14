@@ -34,6 +34,31 @@ export interface Database {
   }
   public: {
     Tables: {
+      murderers: {
+        Row: {
+          id: number
+          murder_reasons: string
+          suspect_id: number
+        }
+        Insert: {
+          id?: number
+          murder_reasons: string
+          suspect_id: number
+        }
+        Update: {
+          id?: number
+          murder_reasons?: string
+          suspect_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "murderers_suspect_id_fkey"
+            columns: ["suspect_id"]
+            referencedRelation: "suspects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       mysteries: {
         Row: {
           answer: string
@@ -57,6 +82,40 @@ export interface Database {
           prompt?: string
         }
         Relationships: []
+      }
+      solved: {
+        Row: {
+          id: number
+          mystery_name: string
+          solved: boolean
+          user_id: string
+        }
+        Insert: {
+          id?: number
+          mystery_name: string
+          solved?: boolean
+          user_id: string
+        }
+        Update: {
+          id?: number
+          mystery_name?: string
+          solved?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "solved_mystery_name_fkey"
+            columns: ["mystery_name"]
+            referencedRelation: "mysteries"
+            referencedColumns: ["name"]
+          },
+          {
+            foreignKeyName: "solved_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       subscription_tiers: {
         Row: {
@@ -84,6 +143,34 @@ export interface Database {
           tier_id?: number
         }
         Relationships: []
+      }
+      suspects: {
+        Row: {
+          description: string
+          id: number
+          mystery_name: string
+          name: string
+        }
+        Insert: {
+          description: string
+          id?: number
+          mystery_name: string
+          name: string
+        }
+        Update: {
+          description?: string
+          id?: number
+          mystery_name?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suspects_mystery_name_fkey"
+            columns: ["mystery_name"]
+            referencedRelation: "mysteries"
+            referencedColumns: ["name"]
+          }
+        ]
       }
       user_messages: {
         Row: {
@@ -235,6 +322,10 @@ export interface Database {
           the_user_id: string
           increase: number
         }
+        Returns: undefined
+      }
+      reset_daily_messages: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
     }

@@ -89,8 +89,6 @@
 			// streaming...
 			if (event.data !== '[DONE]') {
 				// todo What's the correct type for this? It's not CreateChatCompletionResponse... maybe still missing in TypeDefs?
-				console.log("data: ")
-				console.log(event.data)
 				const completionResponse: any = JSON.parse(event.data);
 				const delta = completionResponse.choices[0].delta.content || '';
 				liveAnswerStore.update((store) => {

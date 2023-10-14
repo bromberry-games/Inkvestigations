@@ -1,7 +1,7 @@
 import { error, redirect } from "@sveltejs/kit";
 import type { PageLoad, PageServerLoad } from "./$types";
 import type { Session } from "@supabase/supabase-js";
-import { archiveLastConversation, getMurderer, getSuspects, loadChatForUser } from "$lib/supabase_full.server";
+import { archiveLastConversation, getMurderer, getSuspects, loadChatForUser, setSolved } from "$lib/supabase_full.server";
 
 export const load: PageServerLoad = async ({ params, locals: { getSession } }) => {
     const session: Session = await getSession()
@@ -37,6 +37,16 @@ export const actions = {
     const data = await request.formData();
     const murderer = await getMurderer(mysterName)
     const archived = await archiveLastConversation(session.user.id, mysterName);
+    if(!archived) {
+      throw error(500, 'could not archive the conversation');
+    }
+    if(!murderer) {
+      throw error(500, 'could not get the murderer');
+    }
+    const won = murderer === data.get('suspects')
+    if(won) {
+      await setSolved(mysterName, session.user.id)
+    }
     return {
       won: murderer === data.get('suspects')
     }

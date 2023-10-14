@@ -62,8 +62,18 @@ export async function getMurderer(mysterName: string) : Promise<string | null> {
         console.error(error);
         return null;
     }
-    console.log(data)
     return data?.[0]?.name || null; 
+}
+
+export async function setSolved(mystery: string, user_id: string) : Promise<boolean> {
+    const { error } = await supabase_full_access
+        .from('solved')
+        .insert({ mystery_name: mystery, user_id: user_id, solved: true })
+    if(error) {
+        console.error(error);
+        return false;
+    }
+    return true;
 }
 
 export async function cancelSubscription(userId: string, endDate: string) : Promise<boolean> {

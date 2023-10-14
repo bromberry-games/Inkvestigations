@@ -6,11 +6,12 @@
 	import Chat from '$lib/gpt/Chat.svelte';
 	import { Button, Modal, Radio } from 'flowbite-svelte';
 	import type ChatMessage from '$lib/gpt/ChatMessage.svelte';
+	import { textareaAutosizeAction } from 'svelte-legos';
 
 	export let data: PageData;
 	export let form: ActionData;
 	$: if (form != undefined) {
-		chatStore.deleteChat(data.slug);
+		//chatStore.deleteChat(data.slug);
 	}
 
 	let userMessages = 0
@@ -72,7 +73,7 @@
 </script>
 
 {#if form == undefined}
-<Button on:click={() => (clickOutsideModal = true)} color="red">Accuse</Button>
+<Button on:click={() => (clickOutsideModal = true)} color="red" class="sticky top-20">Accuse</Button>
 <Modal title="Suspects" bind:open={clickOutsideModal} size="md" outsideclose>
 	<form method="post" action="?/accuse">
 	<div class="grid gap-6 w-full grid-cols-2 md:grid-cols-3">
@@ -84,9 +85,10 @@
   		  </div>
   		</Radio>
 		{/each}
+		<textarea class="col-span-2 md:col-span-3" name="accusation" use:textareaAutosizeAction placeholder="Reasons for accusation"></textarea>
 	</div>
-	<div class="flex justify-center">
-    	<Button type="submit" color="red" on:click={accuse}>Accuse</Button>
+	<div class="flex justify-center py-4">
+    	<Button type="submit" color="red" on:click={accuse} >Accuse</Button>
 	</div>
 	</form>
 </Modal>

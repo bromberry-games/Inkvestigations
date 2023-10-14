@@ -1,16 +1,16 @@
 
 export const load = async ({ locals: { getSession, supabase } }) => {
-    const { data } = await supabase.from("mysteries").select();
     const session = await getSession()
-    let userMessages = 0;
+    let mysteries;
     if (session) {
-      const { data } = await supabase.from("user_messages").select().limit(1).single();
-      userMessages = data.amount
+      const { data } = await supabase.from("mysteries").select('*, solved(solved)');
+      mysteries = data;
+    } else {
+      const { data } = await supabase.from("mysteries").select();
+      mysteries = data
     }
 
     return {
-      mysteries: data ?? [],
-      amount: userMessages
+      mysteries: mysteries ?? [],
     }
-
 }

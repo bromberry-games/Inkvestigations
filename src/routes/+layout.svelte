@@ -23,7 +23,7 @@
 
 </script>
 
-<Navbar let:hidden let:toggle class="w-full !bg-custom-secondary"  navDivClass="mx-auto flex flex-wrap justify-between items-center">
+<Navbar let:hidden let:toggle class="w-full !bg-custom-secondary sticky top-0"  navDivClass="mx-auto flex flex-wrap justify-between items-center">
   <NavBrand href="/" class="w-1/2">
    <div class="font-tertiary md:w-1/2 inline" id="logo-container">
 			{@html logo}
@@ -37,7 +37,7 @@
     {/if}
     <NavHamburger on:click={toggle} />
   </div>
-  <NavUl {hidden}>
+  <NavUl {hidden} on:click={toggle}>
     <NavLi href="/mysteries" class="!text-custom-primary !font-secondary text-4xl md:mx-8">Mysteries</NavLi>
     <NavLi href="/pricing"class="!text-custom-primary !font-secondary text-4xl md:mx-8">Pricing</NavLi>
   </NavUl>

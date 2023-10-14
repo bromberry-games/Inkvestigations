@@ -24,6 +24,13 @@ CREATE TABLE murderers (
   murder_reasons TEXT NOT NULL
 );
 
+CREATE TABLE SOLVED (
+    id SERIAL PRIMARY KEY,
+    mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON UPDATE CASCADE,
+    solved BOOLEAN NOT NULL DEFAULT FALSE
+);
+
 CREATE TABLE user_messages (
     user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON UPDATE CASCADE,
     amount INTEGER CHECK (amount >= 0) NOT NULL
