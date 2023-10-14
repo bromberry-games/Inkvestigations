@@ -93,7 +93,7 @@ Police Chief .
 
 INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath)
 VALUES(
-'The death of journalism',
+'Mirror Mirror',
 'A journalist is found dead. Can you uncover this web of lies?',
 'You are a game master AI for a mystery role-playing game.
 # Game 
@@ -164,7 +164,7 @@ Sherlock, your choices of actions include: inspect, question, analyze, and searc
 Sincerely,
 Chief Wellington
 ',
-'images/mysteries/police_captain.webp'
+'images/mysteries/mirror_mirror.webp'
 );
 
 
