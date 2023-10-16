@@ -14,11 +14,13 @@
 		enhancedLiveAnswerStore,
 	} from '$misc/stores';
 	import { countTokens } from '$misc/openai';
+	import { Toast } from 'flowbite-svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let slug: string;
 	export let messagesAmount: number;
+	export let suspectToAccuse = '';
 
 	let debounceTimer: number | undefined;
 	let input = '';
@@ -197,6 +199,7 @@
 				<!-- <form use:focusTrap={!$isLoadingAnswerStore} on:submit|preventDefault={handleSubmit}> -->
 					<div class="grid grid-cols-[1fr_auto]">
 						<!-- Input -->
+						<Toast>Accuse: </Toast>
 						<textarea
 							class="textarea overflow-hidden min-h-[42px]"
 							rows="1"
@@ -220,6 +223,7 @@
 				</div>
 				<div class="grid grid-cols-[1fr_auto]">
 						<!-- Input -->
+						<Toast>Accuse: </Toast>
 						<textarea
 							class="textarea overflow-hidden min-h-[42px]"
 							rows="1"

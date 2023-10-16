@@ -103,18 +103,8 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 		const game_config = requestData.game_config;
 		throwIfUnset('game_config', game_config);
 
-		const settings = defaultOpenAiSettings;
-
-
-		//const completionOpts: CreateChatCompletionRequest = {
-		//	...settings,
-		//	messages,
-		//	stream: true
-		//};
 		const completionOpts = createChatCompletionRequest(game_config.mode, messages);
-
 		const apiUrl = 'https://api.openai.com/v1/chat/completions';
-
 		const response = await fetch(apiUrl, {
 			headers: {
 				Authorization: `Bearer ${openAiKey}`,
