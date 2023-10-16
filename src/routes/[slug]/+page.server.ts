@@ -28,6 +28,7 @@ export const actions = {
     archiveLastConversation(session.user.id, params.slug.replace(/_/g, ' '))
     throw redirect(302, '/mysteries')
 	},
+
   accuse: async ({request, params, locals: { getSession }}) => {
     const session: Session = await getSession()
     if (!session) {

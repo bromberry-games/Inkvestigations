@@ -69,6 +69,9 @@
 
 		const payload = {
 			// OpenAI API complains if we send additionale props
+			game_config: {
+				mode: 'accuse'	
+			},
 			messages: currentMessages?.map(
 				(m) =>
 					({

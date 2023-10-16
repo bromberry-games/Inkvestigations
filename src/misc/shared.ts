@@ -75,3 +75,8 @@ export function createNewChat(template: {
 
 	goto(`/${slug}`, { invalidateAll: true });
 }
+
+export enum ChatMode {
+	Chat = 'chat',
+	Accuse = 'accuse'
+}

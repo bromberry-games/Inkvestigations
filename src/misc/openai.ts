@@ -114,3 +114,4 @@ export function estimateChatCost(chat: Chat): ChatCost {
 		maxTokensForModel: maxTokens
 	};
 }
+

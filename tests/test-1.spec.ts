@@ -11,6 +11,7 @@ test('test', async ({ page }) => {
 });
 
 test('mystery chat', async ({ page }) => {
+  //TODO Get this to work somehow
   await page.goto('/');
 
   await page.getByRole('link', { name: 'Mysteries' }).click();
