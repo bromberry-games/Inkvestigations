@@ -29,27 +29,4 @@ export const actions = {
     throw redirect(302, '/mysteries')
 	},
 
-  accuse: async ({request, params, locals: { getSession }}) => {
-    const session: Session = await getSession()
-    if (!session) {
-      throw redirect(303, '/')
-    }
-    const mysterName = params.slug.replace(/_/g, ' ');
-    const data = await request.formData();
-    const murderer = await getMurderer(mysterName)
-    const archived = await archiveLastConversation(session.user.id, mysterName);
-    if(!archived) {
-      throw error(500, 'could not archive the conversation');
-    }
-    if(!murderer) {
-      throw error(500, 'could not get the murderer');
-    }
-    const won = murderer === data.get('suspects')
-    if(won) {
-      await setSolved(mysterName, session.user.id)
-    }
-    return {
-      won: murderer === data.get('suspects')
-    }
-  }
 }

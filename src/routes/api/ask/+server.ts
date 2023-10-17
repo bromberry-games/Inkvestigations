@@ -5,7 +5,7 @@ import { error } from '@sveltejs/kit';
 import { defaultOpenAiSettings } from '$misc/openai';
 import { getErrorMessage, throwIfUnset } from '$misc/error';
 import { OPEN_AI_KEY } from '$env/static/private';
-import { decreaseMessageForUser, getMessageAmountForUser } from '$lib/supabase_full.server';
+import { archiveLastConversation, decreaseMessageForUser, getMessageAmountForUser } from '$lib/supabase_full.server';
 import { ChatMode } from '$misc/shared';
 import Chat from '$lib/gpt/Chat.svelte';
 
@@ -65,7 +65,7 @@ const ratingMessages: ChatCompletionRequestMessage[] = [
 ]
 
 
-function createChatCompletionRequest(chatMode: ChatMode, messages: ChatCompletionRequestMessage[]): CreateChatCompletionRequest {
+function createChatCompletionRequest(chatMode: ChatMode, messages: ChatCompletionRequestMessage[], suspectToAccuse: string): CreateChatCompletionRequest {
 	switch(chatMode) {
 		case ChatMode.Chat: {
 			return {
@@ -96,14 +96,19 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 	try {
 		const requestData = await request.json();
 		throwIfUnset('request data', requestData);
-
 		const messages: ChatCompletionRequestMessage[] = requestData.messages;
 		throwIfUnset('messages', messages);
-
 		const game_config = requestData.game_config;
 		throwIfUnset('game_config', game_config);
+		const suspectToAccuse = game_config.suspectToAccuse;
+		throwIfUnset('Mystery name', game_config.mysteryName);
 
-		const completionOpts = createChatCompletionRequest(game_config.mode, messages);
+		const chatMode = suspectToAccuse ? ChatMode.Accuse : ChatMode.Chat;
+		if(chatMode == ChatMode.Accuse) {
+			await archiveLastConversation(session.user.id, game_config.mysteryName);
+		}
+
+		const completionOpts = createChatCompletionRequest(chatMode, messages, suspectToAccuse);
 		const apiUrl = 'https://api.openai.com/v1/chat/completions';
 		const response = await fetch(apiUrl, {
 			headers: {
