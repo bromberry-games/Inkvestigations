@@ -229,15 +229,15 @@ Waiting for your move.
 
 -- Inserting suspects for the mystery "The death of journalism"
 INSERT INTO suspects (mystery_name, name, description) VALUES
-('The death of journalism', 'Bianca White', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.'),
-('The death of journalism', 'Dexter Tin', 'Politician who was disgraced by Michael Terry.'),
-('The death of journalism', 'Oliver Smith', 'Michael Terry''s biggest fan turned apprentice. Strongly believes in journalistic ethics and professionalism.'),
-('The death of journalism', 'Maria Payton', 'Long-time maid of Michael Terry.'),
-('The death of journalism', 'Angela Videl', 'Rival columnist to Michael Terry.'),
-('The death of journalism', 'Peter O''Ranner', 'Retired detective who occasionally assisted Michael Terry with his articles.');
+('Mirror Mirror', 'Bianca White', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.'),
+('Mirror Mirror', 'Dexter Tin', 'Politician who was disgraced by Michael Terry.'),
+('Mirror Mirror', 'Oliver Smith', 'Michael Terry''s biggest fan turned apprentice. Strongly believes in journalistic ethics and professionalism.'),
+('Mirror Mirror', 'Maria Payton', 'Long-time maid of Michael Terry.'),
+('Mirror Mirror', 'Angela Videl', 'Rival columnist to Michael Terry.'),
+('Mirror Mirror', 'Peter O''Ranner', 'Retired detective who occasionally assisted Michael Terry with his articles.');
 
 INSERT INTO murderers (suspect_id, murder_reasons) VALUES
-((SELECT id FROM suspects WHERE name = 'Oliver Smith' AND mystery_name = 'The death of journalism'), 'Jealousy over Terry''s success and disappointment with Terry''s lack of journalistic integrity, leading to an attempt to frame Terry as a fraud.');
+((SELECT id FROM suspects WHERE name = 'Oliver Smith' AND mystery_name = 'Mirror Mirror'), 'Jealousy over Terry''s success and disappointment with Terry''s lack of journalistic integrity, leading to an attempt to frame Terry as a fraud.');
 
 
 
