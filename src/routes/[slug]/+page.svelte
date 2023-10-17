@@ -5,8 +5,6 @@
 	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
 	import { Button, Modal, Radio } from 'flowbite-svelte';
-	import type ChatMessage from '$lib/gpt/ChatMessage.svelte';
-	import { textareaAutosizeAction } from 'svelte-legos';
 
 	export let data: PageData;
 	let suspectToAccuse = '';

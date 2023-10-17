@@ -41,16 +41,21 @@ export async function createSubscription(priceId: string, userId: string) : Prom
     return true;
 }
 
-export async function getSuspects(mysterName: string) : Promise<string[] | null> {
+export interface suspects {
+    name: string;
+    imagepath: string;
+}
+
+export async function getSuspects(mysterName: string) : Promise<suspects[] | null> {
     const { data, error } = await supabase_full_access
         .from('suspects')
-        .select('name')
+        .select('name, imagepath')
         .eq('mystery_name', mysterName);
     if(error) {
         console.error(error);
         return null;
     }
-    return data?.map(suspect => suspect.name) || null;
+    return data;
 }
 
 export async function getMurderer(mysterName: string) : Promise<string | null> {
@@ -100,6 +105,18 @@ export async function addConversationForUser(userid: string, mystery: string) {
     }
 }
 
+export async function getAccusePrompt(mysteryName: string) : Promise<string | null> {
+    const { data, error } = await supabase_full_access
+        .from('mysteries')
+        .select('accuse_prompt')
+        .eq('name', mysteryName)
+        .single();
+    if(error) {
+        console.error(error);
+        return null;
+    }
+    return data?.accuse_prompt || null;
+}
 
 export async function loadChatForUser(userid: string, mystery: string): Promise<Chat | null> {
     // Step 1: Get the conversation_id

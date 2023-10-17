@@ -8,13 +8,15 @@ CREATE TABLE mysteries (
     description TEXT Not Null,
     prompt TEXT NOT NULL,
     answer TEXT NOT NULL,
-    filepath TEXT NOT NULL
+    filepath TEXT NOT NULL,
+    accuse_prompt TEXT NOT NULL
 );
 
 CREATE TABLE suspects (
     id SERIAL PRIMARY KEY,
     mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE ON DELETE CASCADE,
     name TEXT NOT NULL,
+    imagepath TEXT NOT NULL,
     description TEXT NOT NULL
 );
 

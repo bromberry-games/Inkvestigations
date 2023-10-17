@@ -1,14 +1,15 @@
-INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath)
+INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
 VALUES (
     'The deadly diner',
     'A deadly dining experience with a devious plan.
      Can you figure out what is going on?',
     'Answer with 1 word only',
     'Understood',
-    'images/mysteries/deadly_diner.webp'
+    'images/mysteries/deadly_diner.webp',
+    'tmp'
 );
 
-INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath)
+INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
 VALUES(
 'Train to death',
 'A train ride ends deadly for one of the passengers. But no one knows who did it.',
@@ -88,10 +89,11 @@ Edward Norton
 
 Police Chief .
 ',
-    'images/mysteries/police_captain.webp'
+    'images/mysteries/police_captain.webp',
+    'tmp'
 );
 
-INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath)
+INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
 VALUES(
 'Mirror Mirror',
 'A journalist is found dead. Can you uncover this web of lies?',
@@ -224,17 +226,67 @@ Waiting for your move.
 
 *Chief Wellington*
 ',
-'images/mysteries/mirror_mirror.webp'
+'images/mysteries/mirror_mirror.webp',
+'
+    ## Game information
+The theme of this game is: pride and shame. All information that you make up should reflect these one way or another.
+Wellington only knows the following at the beginning of the game:
+"Michael Terry who regularly dragged people''s name through the mud, was found dead, thrown through the mirror in his study. His maid called the police, but before we had arrived, the politician Dexter Tin was there. He was supposed to have a meeting with Terry. Three days prior, Terry held a party at his house, but between then and his death he should have been alone until his appointment with Mr. Tin. There is no sign of struggle or forced entry, but a suicide is unlikely because the method is so gruesome and strange." 
+### Time Frame
+Friday evening: party with his friends
+Saturday morning: guests who stayed over leave his house early in the morning. Terry recovers from his hangover. 
+Sunday: Terry is alone writing
+Monday: Terry is found dead around noon by the maid. Dexter Tin arrives.
+___
+## Characters
+#### Michael Terry
+Victim. Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing. 
+#### Bianca White
+Best friend who always gets the first draft, also wanted to be a journalist. Works in marketing now. [Acts like Cersei Lannister]
+#### Dexter Tin
+Politician disgraced by Terry. [Acts like Samuel L. Jackson]
+#### Oliver Smith
+Biggest fan before becoming his apprentice. Extremely strong drive for journalistic ethics and professionalism [Acts like Captain America]
+#### Maria 
+Long-time maid. [Acts like Sofia Vergara]
+
+---
+## Game information
+- Searching the rooms yields these clues: a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry''s desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;
+- inspecting the half-written piece: it is an expose, but none of the names are known in the country;
+- inspecting the Tin letters: they just show his innocence from an objective observer, but have his fingerprints all over them;
+- inspecting fan letters: different fans praising him for different things. A lot are from Oliver from when he was still a fan. The recent ones have the distinct smudge Terry''s pen leaves when writing, as if he wrote some himself
+- asking about the similarity of Oliver''s letters and Terry''s drafts: they are using the same pen; 
+- autopsy: he was poisoned with cyanide; in his stomach a pill was found; he had a blue tongue, probably from his famous habit of licking his pen, he probably fell through the mirror after dying;
+- analyzing pills: all ordinary;
+- analyzing pen: gelatin and traces of cyanide in the inkwell;
+- asking about the gelatin: it is common for pills to be encased in gelatin, but this is much more than a normal pill, it would have taken a lot longer to dissolve;
+- asking how often Terry refilled the inkwell: with his writing speed every two days probably;
+- alleged alibis: Bianca was on a trip, but talked to Terry over the phone; Tin was busy with his political obligations; Oliver was at home writing a piece;
+- searching Oliver''s apartment: a normal apartment, but for the fact that he has the same pen as Terry twice
+- analyzing Oliver''s pens: one is regular, the other has the same traces as the one in Terry''s apartment
+"
+
+In this game Oliver smith is the killer anybody else is wrong. 
+
+The previous text was all information to a mystery game. Now I want YOU to wait for ME to provide the correct information on the motive, opportunity, and evidence to solve this case. Rate my performance based on the correctness from 1-3 stars. If I am wrong, give 0 stars. Also, do not say who is more likely to have been the perpetrator! Always write an epilogue of how the accusation went based on the stars rating. Make it no longer than 100 words.
+
+The following is an example conversation for your output:
+User: It was Dexter Tin because he despised Michael for having libeled him. He poisoned him with the bottle of pills.
+System:
+    Rating: 0
+    Epilogue: The accusation hurled towards Dexter Tin was filled with animosity and assumptions. The motive was apparent given the bitter past, but the evidence presented was scant and circumstantial at best. The claim that he poisoned Michael with a bottle of pills lacked the forensic backing needed to convince the jury. Moreover, there was no direct evidence linking Tin to the act of poisoning, nor a clear explanation on how he could have administered the poison unnoticed. The trial against Tin fizzled out, failing to cut through the veil of pride and shame that overshadowed the case, leaving the quest for truth and justice in this tangled narrative unfulfilled.
+'
 );
 
 -- Inserting suspects for the mystery "The death of journalism"
-INSERT INTO suspects (mystery_name, name, description) VALUES
-('Mirror Mirror', 'Bianca White', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.'),
-('Mirror Mirror', 'Dexter Tin', 'Politician who was disgraced by Michael Terry.'),
-('Mirror Mirror', 'Oliver Smith', 'Michael Terry''s biggest fan turned apprentice. Strongly believes in journalistic ethics and professionalism.'),
-('Mirror Mirror', 'Maria Payton', 'Long-time maid of Michael Terry.'),
-('Mirror Mirror', 'Angela Videl', 'Rival columnist to Michael Terry.'),
-('Mirror Mirror', 'Peter O''Ranner', 'Retired detective who occasionally assisted Michael Terry with his articles.');
+INSERT INTO suspects (mystery_name, name, description, imagepath) VALUES
+('Mirror Mirror', 'Bianca White', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.', 'bianca_white.webp'),
+('Mirror Mirror', 'Dexter Tin', 'Politician who was disgraced by Michael Terry.', 'dexter_tin.webp'),
+('Mirror Mirror', 'Oliver Smith', 'Michael Terry''s biggest fan turned apprentice. Strongly believes in journalistic ethics and professionalism.', 'oliver_smith.webp'),
+('Mirror Mirror', 'Maria Payton', 'Long-time maid of Michael Terry.', 'maria_payton.webp'),
+('Mirror Mirror', 'Angela Videl', 'Rival columnist to Michael Terry.', 'angela_videl.webp'),
+('Mirror Mirror', 'Peter O''Ranner', 'Retired detective who occasionally assisted Michael Terry with his articles.', 'peter_oranner.webp');
 
 INSERT INTO murderers (suspect_id, murder_reasons) VALUES
 ((SELECT id FROM suspects WHERE name = 'Oliver Smith' AND mystery_name = 'Mirror Mirror'), 'Jealousy over Terry''s success and disappointment with Terry''s lack of journalistic integrity, leading to an attempt to frame Terry as a fraud.');

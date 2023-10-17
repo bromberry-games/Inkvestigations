@@ -32,6 +32,7 @@
 	let lastUserMessage: ChatMessage | null = null;
 	let currentMessages: ChatMessage[] | null = null;
 	let gameOver = false;
+	let rating : number;
 
 
 	$: chat = $chatStore[slug];
@@ -145,10 +146,30 @@
 		input = inputCopy;
 	}
 
+	function extractContentData(content: string) {
+    	const ratingMatch = content.match(/Rating:\s?(\d+)/);
+    	const epilogueMatch = content.match(/Epilogue:\s?(.*)/);
+
+    	if (ratingMatch && epilogueMatch) {
+    	    return {
+    	        rating: parseInt(ratingMatch[1], 10),
+    	        epilogue: epilogueMatch[1]
+    	    };
+    	}
+    	return null;
+	}
+
 	function addCompletionToChat(isAborted = false) {
 		const messageToAdd: ChatMessage = !isAborted
 			? { ...$liveAnswerStore }
 			: { ...$enhancedLiveAnswerStore, isAborted: true };
+		
+		if(gameOver) {
+			const contentData = extractContentData(messageToAdd.content);
+			messageToAdd.content = contentData?.epilogue;
+			rating = contentData?.rating
+			console.log("rating is: " + rating)
+		}
 
 		chatStore.addMessageToChat(slug, messageToAdd, lastUserMessage || undefined);
 		$isLoadingAnswerStore = false;
@@ -198,12 +219,13 @@
 <footer
 	class="fixed bottom-0 z-10 py-2 md:py-4 md:px-8 md:rounded-xl w-full"
 >
+	{#if rating != undefined}
+	<div class="text-center text-xl">
+		rating: {rating}/3
+	</div>
+	{/if}
 	{#if $isLoadingAnswerStore}
-		<div class="flex items-center justify-center">
-			<button class="btn variant-ghost w-48 self-center" on:click={() => $eventSourceStore.stop()}>
-				Cancel generating
-			</button>
-		</div>
+		<div></div>
 	{:else}
 		<div class="flex flex-col space-y-2 md:mx-auto md:w-3/4 lg:w-3/5 px-2 md:px-8">
 			<div class="grid">
