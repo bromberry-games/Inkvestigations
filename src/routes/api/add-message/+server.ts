@@ -9,8 +9,6 @@ export const POST: RequestHandler = async ({ request, locals: {getSession, supab
 	}
     const { message, mystery }: { message: string; mystery: string } = await request.json();
 
-    console.log(message);
-    
     addMessageForUser(session.user.id, message, mystery.replace(/_/g, ' '));
 
     return json({ status: 201 });

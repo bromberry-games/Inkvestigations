@@ -29,8 +29,6 @@ export const enhancedLiveAnswerStore = derived(liveAnswerStore, ($liveAnswer) =>
 
 export const isLoadingAnswerStore: Writable<boolean> = writable(false);
 
-export const isTimeagoInitializedStore: Writable<boolean> = writable(false);
-
 export const eventSourceStore: Readable<EventSource> = readable(new EventSource());
 
 /**

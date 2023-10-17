@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { onDestroy, onMount,} from 'svelte';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import { chatStore, isLoadingAnswerStore, } from '$misc/stores';
 	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
-	import { Button } from 'flowbite-svelte';
+	import { Button, Modal, Radio } from 'flowbite-svelte';
 	import type ChatMessage from '$lib/gpt/ChatMessage.svelte';
-
+	import { textareaAutosizeAction } from 'svelte-legos';
 
 	export let data: PageData;
+	let suspectToAccuse = '';
+
 	let userMessages = 0
 	$: supabase = data.supabase
+
 
 	async function updateUserMessages() {
 		const { data } = await supabase.from("user_messages").select().limit(1).single();
@@ -20,11 +23,9 @@
 		}
       	userMessages = data.amount
 	}
-
-	let cost = 0;
 	$: ({ slug } = data);
 	$: chat = $chatStore[slug];
-	//$: cost = chat ? estimateChatCost(chat) : null;
+
 	$: if (chat && chat.messages.length > 2) {
 		const lastMessage = chat.messages[chat.messages.length - 1];
     
@@ -49,8 +50,6 @@
     	post_fun();
 	}
 
-	let chatInput: ChatInput;
-
 	onMount(async () => {
 		updateUserMessages();
 	});
@@ -60,11 +59,6 @@
 		chatStore.deleteChat(slug);
 		(event.target as HTMLButtonElement).form.submit();
 	}
-
-	function handleEditMessage(event: CustomEvent<ChatMessage>) {
-		chatInput.editMessage(event.detail);
-	}
-
 </script>
 
 {#if chat}
@@ -72,7 +66,7 @@
 	<form method="POST" action="?/delete">
 		<Button color="red" on:click={deleteChat}>Delete chat</Button>
 	</form>
-	<Chat {slug} on:editMessage={handleEditMessage}>
+	<Chat {slug} >
 	</Chat> 
-	<ChatInput {slug} chatCost={cost} bind:this={chatInput} on:chatInput={updateUserMessages} messagesAmount={userMessages}/>
+	<ChatInput {slug} on:chatInput={updateUserMessages} messagesAmount={userMessages} {suspectToAccuse} suspects={data.suspects}/>
 {/if}

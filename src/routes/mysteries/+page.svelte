@@ -2,6 +2,9 @@
   import { Card, Button,  } from "flowbite-svelte";
 
   export let data;
+  $: {
+    console.log(data)
+  }
 </script>
 
 
@@ -14,12 +17,14 @@
           {mystery.description}
         </p>
         {#if data.session}
-          <Button color="dark" href={mystery.name.replace(/\s+/g, '_')}> Play</Button>
+        <div class="flex justify-between">
+          <Button color="dark" href={mystery.name.replace(/\s+/g, '_')}> Play </Button>
+          <Button color="dark" href={mystery.name.replace(/\s+/g, '_')}> Restart </Button>
+        </div>
         {:else}
           <Button color="dark" href="/login">Login</Button>
         {/if}
       </Card>
     </div>
   {/each}
-
 </div>

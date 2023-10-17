@@ -4,7 +4,7 @@
 	import { afterNavigate } from '$app/navigation';
 	import type { Chat } from '$misc/shared';
 	import { chatStore, enhancedLiveAnswerStore, isLoadingAnswerStore } from '$misc/stores';
-	import ChatMessages from './ChatMessages.svelte';
+	import ChatMessage from './ChatMessage.svelte';
 	import { Spinner } from 'flowbite-svelte';
 
 	export let slug: string;
@@ -47,13 +47,15 @@
 		<div class="flex flex-col max-w-4xl md:mx-auto space-y-6 pt-6">
 			<!-- Message history -->
 			<!-- Do not display the 1. message-->
-			<ChatMessages {slug} siblings={chat.messages.slice(1)} on:editMessage />
+			{#each chat.messages.slice(1) as message}
+				<ChatMessage {slug} message={message} />	
+			{/each}
 
 			<!-- Live Message -->
 			{#if $isLoadingAnswerStore}
 				<div class="place-self-start">
 					<div class="p-5 rounded-2xl variant-ghost-tertiary rounded-tl-none">
-						{@html snarkdown($enhancedLiveAnswerStore.content)}
+						{@html snarkdown($enhancedLiveAnswerStore.content?.replace(/\n/g, "<br>"))}
 					</div>
 				</div>
 			{/if}
