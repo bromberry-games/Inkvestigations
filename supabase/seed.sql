@@ -93,7 +93,7 @@ Police Chief .
 
 INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath)
 VALUES(
-'The death of journalism',
+'Mirror Mirror',
 'A journalist is found dead. Can you uncover this web of lies?',
 '
 # Game
@@ -224,7 +224,7 @@ Waiting for your move.
 
 *Chief Wellington*
 ',
-'images/mysteries/police_captain.webp'
+'images/mysteries/mirror_mirror.webp'
 );
 
 -- Inserting suspects for the mystery "The death of journalism"
