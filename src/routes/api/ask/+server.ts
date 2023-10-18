@@ -8,6 +8,8 @@ import { OPEN_AI_KEY } from '$env/static/private';
 import { archiveLastConversation, decreaseMessageForUser, getAccusePrompt, getMessageAmountForUser } from '$lib/supabase_full.server';
 import { ChatMode } from '$misc/shared';
 import Chat from '$lib/gpt/Chat.svelte';
+import { Transform } from 'stream';
+
 
 const openAiKey : string = OPEN_AI_KEY;
 
@@ -76,18 +78,42 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 			body: JSON.stringify(completionOpts)
 		});
 
-		if (!response.ok) {
-			const err = await response.json();
-			throw err.error;
-		}
+		let processedReadableController: ReadableStreamDefaultController;
 
-		await decreaseMessageForUser(session.user.id);
+        const processedReadableStream = new ReadableStream<Uint8Array>({
+            start(controller) {
+                processedReadableController = controller;
+            }
+        });
 
-		return new Response(response.body, {
-			headers: {
-				'Content-Type': 'text/event-stream'
-			}
-		});
+        const writer = new WritableStream({
+            write(chunk) {
+                // Process the chunk if needed
+                // For this example, directly enqueuing it to the readable stream
+				console.log("proccessing chink")
+				console.log(chunk);
+                processedReadableController.enqueue(chunk);
+            },
+            close() {
+                processedReadableController.close();
+            },
+            abort(err) {
+                processedReadableController.error(err);
+            }
+        });
+
+        response.body?.pipeTo(writer).catch(err => {
+            processedReadableController.error(err);
+        });
+
+
+        await decreaseMessageForUser(session.user.id);
+
+        return new Response(processedReadableStream, {
+            headers: {
+                'Content-Type': 'text/event-stream'
+            }
+        });
 
 	} catch (err) {
 		throw error(500, getErrorMessage(err));

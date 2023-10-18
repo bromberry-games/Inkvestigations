@@ -16,7 +16,7 @@
   		<Radio name="suspects" value={suspect.name} custom bind:group={suspectToAccuse}>
   		  <div class="flex justify-between flex-col items-center p-5 w-full cursor-pointer peer-checked:border-solid peer-checked:border-2 peer-checked:border-slate-500" >
 				<img src={"/images/mysteries/mirror_mirror/suspects/" + suspect.imagepath}>
-				<p>{suspect.name}</p>
+				<p class="text-xl">{suspect.name}</p>
   		  </div>
   		</Radio>
 		{/each}
