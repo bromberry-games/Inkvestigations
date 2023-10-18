@@ -1,14 +1,12 @@
 import type { ChatCompletionRequestMessage, CreateChatCompletionRequest } from 'openai';
 import type { RequestHandler } from './$types';
 import type { OpenAiSettings } from '$misc/openai';
-import { error } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import { defaultOpenAiSettings } from '$misc/openai';
 import { getErrorMessage, throwIfUnset } from '$misc/error';
 import { OPEN_AI_KEY } from '$env/static/private';
-import { archiveLastConversation, decreaseMessageForUser, getAccusePrompt, getMessageAmountForUser } from '$lib/supabase_full.server';
+import { addMessageForUser, archiveLastConversation, decreaseMessageForUser, getAccusePrompt, getMessageAmountForUser } from '$lib/supabase_full.server';
 import { ChatMode } from '$misc/shared';
-import Chat from '$lib/gpt/Chat.svelte';
-import { Transform } from 'stream';
 
 
 const openAiKey : string = OPEN_AI_KEY;
@@ -66,8 +64,6 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 			throw error(500, 'Could not get rating prompt');
 		}
 		const completionOpts = createChatCompletionRequest(chatMode, messages, suspectToAccuse, ratingPrompt);
-		console.log("messages: ")
-		console.log(completionOpts.messages);
 		const apiUrl = 'https://api.openai.com/v1/chat/completions';
 		const response = await fetch(apiUrl, {
 			headers: {
@@ -78,42 +74,63 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 			body: JSON.stringify(completionOpts)
 		});
 
-		let processedReadableController: ReadableStreamDefaultController;
+	    await decreaseMessageForUser(session.user.id);
 
-        const processedReadableStream = new ReadableStream<Uint8Array>({
-            start(controller) {
-                processedReadableController = controller;
-            }
-        });
+	  	if (!response.ok) {
+	        const err = await response.json();
+	        throw err.error;
+	    }
 
-        const writer = new WritableStream({
-            write(chunk) {
-                // Process the chunk if needed
-                // For this example, directly enqueuing it to the readable stream
-				console.log("proccessing chink")
-				console.log(chunk);
-                processedReadableController.enqueue(chunk);
-            },
-            close() {
-                processedReadableController.close();
-            },
-            abort(err) {
-                processedReadableController.error(err);
-            }
-        });
+	    const decoder = new TextDecoder();
 
-        response.body?.pipeTo(writer).catch(err => {
-            processedReadableController.error(err);
-        });
+		let message = '';
+	    const processedStream = new ReadableStream({
+	        async start(controller) {
+	            const reader = response.body.getReader();
+	            while (true) {
+	                 const { done, value } = await reader.read();
 
+	                 if (done) {
+						controller.enqueue("data: [DONE]\n\n");
+	                    break;
+	                 }
 
-        await decreaseMessageForUser(session.user.id);
+					const decodedChunk = decoder.decode(value);
+					const regex = /data:\s*([^]+?)(?=(\ndata:|$))/g;
+					let match;
+					let content = '';
+					while ((match = regex.exec(decodedChunk)) !== null) {
+	 					console.log("matched: " + match[1]);  
+						if(!match[1].startsWith("[DONE]"))  {
+							const jsonData = JSON.parse(match[1]);
+							if(jsonData.choices[0].delta.content) {
+								content += jsonData.choices[0].delta.content;
+							}
+						}
+					}
 
-        return new Response(processedReadableStream, {
-            headers: {
-                'Content-Type': 'text/event-stream'
-            }
-        });
+					if (content) {
+						if (chatMode == ChatMode.Accuse) {
+							//TODO
+							//content.test
+						}
+						message += content;
+						const newData = "data: " + JSON.stringify({content: content}) + "\n\n";
+						controller.enqueue(newData);
+					}
+	            }
+    			addMessageForUser(session.user.id, message, game_config.mysteryName);
+				console.log("message from backend: " + message);
+	            controller.close();
+	         }
+	    });
+		addMessageForUser(session.user.id, messages[messages.length - 1].content, game_config.mysteryName);
+		
+	    return new Response(processedStream, {
+	        headers: {
+	            'Content-Type': 'text/event-stream'
+	        }
+	    });
 
 	} catch (err) {
 		throw error(500, getErrorMessage(err));
