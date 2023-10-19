@@ -82,6 +82,7 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 	    }
 
 	    const decoder = new TextDecoder();
+		const encoder = new TextEncoder();
 
 		let accuseParsed = false;
 		let message = '';
@@ -92,7 +93,7 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 	                const { done, value } = await reader.read();
 
 	                if (done) {
-						controller.enqueue("data: [DONE]\n\n");
+						controller.enqueue(encoder.encode("data: [DONE]\n\n"));
 	    	            break;
 	                }
 
@@ -116,7 +117,7 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 								const ratingRegex=/Rating:\s?(\d+)/
 								const rating = message.match(ratingRegex)[1];
 								message = message.replace(ratingRegex, '').replace(/Epilogue:\s?/,'');
-								controller.enqueue("data: " + JSON.stringify({content: message}) + "\n\n");
+								controller.enqueue(encoder.encode("data: " + JSON.stringify({content: message}) + "\n\n"));
 								setRating(game_config.mysteryName, session.user.id, parseInt(rating));
 								accuseParsed = true;
 							} else {
@@ -126,7 +127,7 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 						} else {
 							message += content;
 							const newData = "data: " + JSON.stringify({content: content}) + "\n\n";
-							controller.enqueue(newData);
+							controller.enqueue(encoder.encode(newData));
 						}
 					}
 	            }
