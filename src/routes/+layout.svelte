@@ -1,12 +1,13 @@
 <script>
-  import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button } from 'flowbite-svelte'
+  import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Img } from 'flowbite-svelte'
   import "../app.css";
-
   import { invalidate } from '$app/navigation'
 	import { onMount } from 'svelte'
-
-	export let data
   import logo from "/src/images/logo_2.svg?src";
+	import { page } from '$app/stores';
+
+  $: activeUrl = $page.url.pathname;
+	export let data
 
 	let { supabase, session } = data
 	$: ({ supabase, session } = data)
@@ -31,16 +32,20 @@
   </NavBrand>
   <div class="flex md:order-2">
     {#if session}
-      <Button class="bg-primary text-xl hover:scale-110 transform transition-transform" size="lg" on:click={() => supabase.auth.signOut()}>Logout</Button>
+        <Button class="bg-quaternary text-xl hover:scale-110 transform font-primary !px-5 !py-3 transition-transform !rounded-full !text-tertiary"  on:click={() => supabase.auth.signOut()}>LOGOUT</Button> 
     {:else}
-      <Button class="bg-primary text-xl hover:scale-110 transform transition-transform" size="lg" href="/login" >Login</Button>
+        <Button class="bg-quaternary text-xl hover:scale-110 transform font-primary !px-5 !py-3 transition-transform !rounded-full !text-tertiary" href="/login">LOGIN</Button> 
     {/if}
     <NavHamburger on:click={toggle} />
   </div>
-  <NavUl {hidden} on:click={toggle}>
-    <NavLi href="/mysteries" class="!text-primary !font-secondary text-4xl md:mx-8">Mysteries</NavLi>
-    <NavLi href="/pricing"class="!text-primary !font-secondary text-4xl md:mx-8">Pricing</NavLi>
+  <NavUl {hidden}  class="font-primary" activeClass="!text-tertiary" on:click={toggle}>
+    <NavLi href="/mysteries" class="!text-quaternary text-4xl md:mx-8">MYSTERIES</NavLi>
+    <NavLi href="/pricing"class="!text-quaternary text-4xl md:mx-8">PRICING</NavLi>
   </NavUl>
 </Navbar>
 
-<slot />
+<div class="flex justify-center h-full flex-1">
+  <div class="md:w-11/12 bg-tertiary h-full">
+    <slot />
+  </div>
+</div>

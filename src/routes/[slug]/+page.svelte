@@ -36,10 +36,6 @@
 </script>
 
 {#if chat}
-	<h1>{userMessages}</h1>
-	<form method="POST" action="?/delete">
-		<Button color="red" on:click={deleteChat}>Delete chat</Button>
-	</form>
 	<Chat {slug} >
 	</Chat> 
 	<ChatInput {slug} on:chatInput={updateUserMessages} messagesAmount={userMessages} {suspectToAccuse} suspects={data.suspects}/>

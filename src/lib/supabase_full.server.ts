@@ -7,7 +7,7 @@ import type { Chat, ChatMessage } from '$misc/shared';
 const supabase_full_access = createClient<Database>(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 export async function decreaseMessageForUser(userid: string) {
-    const { error } = await supabase_full_access.rpc('decrement_message_for_user', { the_user_id: userid })
+    const { error } = await supabase_full_access.rpc('user_interaction.decrement_message_for_user', { the_user_id: userid })
     if (error) {
         console.error(error)
     }
@@ -25,7 +25,7 @@ export async function getMessageAmountForUser(userid: string): Promise<number> {
 }
 
 export async function increaseMessageAmountForUserByAmount(userid: string, amount: number) {
-    const { error } = await supabase_full_access.rpc('increase_message_for_user_by_amount', { the_user_id: userid, increase: amount})
+    const { error } = await supabase_full_access.rpc('user_interaction.increase_message_for_user_by_amount', { the_user_id: userid, increase: amount})
     if (error) {
         console.error(error)
     }
