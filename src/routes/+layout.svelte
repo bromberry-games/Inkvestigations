@@ -43,4 +43,8 @@
   </NavUl>
 </Navbar>
 
-<slot />
+<div class="flex justify-center h-full flex-1">
+  <div class="w-11/12 bg-tertiary h-full">
+    <slot />
+  </div>
+</div>

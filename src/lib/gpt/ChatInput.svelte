@@ -198,13 +198,8 @@
 
 <SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects}></SuspectModal>
 <footer
-	class="fixed bottom-0 z-10 py-2 md:py-4 md:px-8 md:rounded-xl w-full"
+	class="fixed bottom-0 z-10 py-2 md:py-4 md:px-8 md:rounded-xl w-11/12"
 >
-	{#if rating != undefined}
-	<div class="text-center text-xl">
-		rating: {rating}/3
-	</div>
-	{/if}
 	{#if $isLoadingAnswerStore}
 		<div></div>
 	{:else}
@@ -214,15 +209,15 @@
 				{#if messagesAmount > 0}
 				<form on:submit|preventDefault={handleSubmit}>
 				<!-- <form use:focusTrap={!$isLoadingAnswerStore} on:submit|preventDefault={handleSubmit}> -->
-					<div class="grid grid-cols-[auto_1fr_auto] gap-1 items-center">
+					<div class="flex items-center">
 						<!-- Input -->
 						{#if suspectToAccuse}
-							<Toast class="!p-3" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
+							<Toast class="!p-3 mx-2 w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
 						{:else}
-							<Button class="bg-primary p-2" on:click={() => clickOutsideModal=true}>Accuse </Button>
+							<Button class="bg-primary p-2 mx-2 text-xl font-primary " on:click={() => clickOutsideModal=true}>Accuse </Button>
 						{/if}
 						<textarea
-							class="textarea overflow-hidden min-h-[42px]"
+							class="textarea flex-1 overflow-hidden min-h-[42px] font-secondary"
 							rows="1"
 							placeholder="Enter to send, Shift+Enter for newline"
 							use:textareaAutosizeAction

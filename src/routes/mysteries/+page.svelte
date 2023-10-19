@@ -1,11 +1,15 @@
 <script lang="ts">
+	import { chatStore } from "$misc/stores.js";
   import { Card, Button,  } from "flowbite-svelte";
 
   export let data;
   $: {
     console.log(data)
   }
-  $: rating = data.mysteries[0].rating
+  function deleteChat(event: Event, mysterName: string) {
+    event.preventDefault();
+    chatStore.deleteChat(mysterName); 
+  }
 </script>
 
 
@@ -31,7 +35,11 @@
         {#if data.session}
         <div class="flex justify-between font-primary text-xl">
           <Button class="bg-tertiary text-xl !text-quaternary !rounded-2xl !px-8" href={mystery.name.replace(/\s+/g, '_')}> PLAY</Button>
-          <Button class="bg-quaternary text-xl !text-tertiary border-tertiary border-4 !rounded-2xl !py-0" href={mystery.name.replace(/\s+/g, '_')}> RESTART </Button>
+          <form action="?/deleteChat" method="post">
+            <input type="hidden" name="slug" value={mystery.name} />
+            <Button class="h-full bg-quaternary text-xl !text-tertiary border-tertiary border-4 !rounded-2xl !py-0" 
+                  type="submit"> RESTART </Button>
+          </form>
         </div>
         {:else}
           <Button color="dark" href="/login">Login</Button>
