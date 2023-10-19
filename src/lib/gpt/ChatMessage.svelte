@@ -10,8 +10,8 @@
 	
 <div
 	class="grid px-5 w-full py-2 {message.role === 'assistant'
-		? 'md:place-self-start bg-secondary'
-		: 'md:place-self-end bg-tertiary border-2 border-secondary'}"
+		? 'md:place-self-start '
+		: 'md:place-self-end bg-chief border-secondary'}"
 	class:variant-ghost-surface={message.role === 'user'}
 	class:variant-ghost-secondary={message.role === 'assistant'}
 	class:variant-ghost-warning={message.isAborted}

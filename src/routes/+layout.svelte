@@ -1,12 +1,13 @@
 <script>
   import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button } from 'flowbite-svelte'
   import "../app.css";
-
   import { invalidate } from '$app/navigation'
 	import { onMount } from 'svelte'
-
-	export let data
   import logo from "/src/images/logo_2.svg?src";
+	import { page } from '$app/stores';
+
+  $: activeUrl = $page.url.pathname;
+	export let data
 
 	let { supabase, session } = data
 	$: ({ supabase, session } = data)
@@ -37,7 +38,7 @@
     {/if}
     <NavHamburger on:click={toggle} />
   </div>
-  <NavUl {hidden} on:click={toggle}>
+  <NavUl {hidden}  activeClass="!text-tertiary" on:click={toggle}>
     <NavLi href="/mysteries" class="!text-primary !font-secondary text-4xl md:mx-8">Mysteries</NavLi>
     <NavLi href="/pricing"class="!text-primary !font-secondary text-4xl md:mx-8">Pricing</NavLi>
   </NavUl>

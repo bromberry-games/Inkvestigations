@@ -20,11 +20,16 @@ const config = {
         		'secondary': '#c8934f',
         		'tertiary': '#efdfbb',
 				'quaternary': '#3c3c3c',
+				'chief': '#dcb98c',
+				'bars': '#3b271e'
       		},
 			fontFamily: {
         		'primary': ['Oswald', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
 				'secondary': ['Zilla Slab', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
 				'tertiary': ['Abril Fatface', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif']
+      		},
+			 backgroundImage: {
+        		'message-counter': "url('/static/images/message_counter.svg')",
       		}
     	},
 	},

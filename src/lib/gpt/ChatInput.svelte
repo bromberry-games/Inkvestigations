@@ -209,12 +209,12 @@
 				{#if messagesAmount > 0}
 				<form on:submit|preventDefault={handleSubmit}>
 				<!-- <form use:focusTrap={!$isLoadingAnswerStore} on:submit|preventDefault={handleSubmit}> -->
-					<div class="flex items-center">
+					<div class="flex items-center flex-wrap">
 						<!-- Input -->
 						{#if suspectToAccuse}
 							<Toast class="!p-3 mx-2 w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
 						{:else}
-							<Button class="bg-primary p-2 mx-2 text-xl font-primary " on:click={() => clickOutsideModal=true}>Accuse </Button>
+							<Button class="bg-primary !p-2 mr-1 text-xl font-primary md:mx-2 md:px-5" on:click={() => clickOutsideModal=true}>Accuse </Button>
 						{/if}
 						<textarea
 							class="textarea flex-1 overflow-hidden min-h-[42px] font-secondary"
@@ -225,6 +225,9 @@
 							bind:value={input}
 							bind:this={textarea}
 						/>
+						<div class="bg-[url('/images/message_counter.svg')] bg-no-repeat bg-center bg-cover h-full py-6 px-4 mx-2 text-xl">
+							{messagesAmount}
+						</div>
 						<div class="flex flex-col md:flex-row items-center justify-end md:items-end">
 							<!-- Send button -->
 							<button type="submit" class="btn btn-sm ml-2">
