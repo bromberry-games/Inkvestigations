@@ -61,6 +61,7 @@ export interface Database {
       }
       mysteries: {
         Row: {
+          accuse_prompt: string
           answer: string
           description: string
           filepath: string
@@ -68,6 +69,7 @@ export interface Database {
           prompt: string
         }
         Insert: {
+          accuse_prompt: string
           answer: string
           description: string
           filepath: string
@@ -75,6 +77,7 @@ export interface Database {
           prompt: string
         }
         Update: {
+          accuse_prompt?: string
           answer?: string
           description?: string
           filepath?: string
@@ -148,18 +151,21 @@ export interface Database {
         Row: {
           description: string
           id: number
+          imagepath: string
           mystery_name: string
           name: string
         }
         Insert: {
           description: string
           id?: number
+          imagepath: string
           mystery_name: string
           name: string
         }
         Update: {
           description?: string
           id?: number
+          imagepath?: string
           mystery_name?: string
           name?: string
         }

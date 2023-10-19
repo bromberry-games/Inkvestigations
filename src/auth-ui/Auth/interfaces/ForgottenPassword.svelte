@@ -46,7 +46,7 @@
 					class="text-white bg-gray-800 border-gray-600 font-secondary"
 				/>
 			</div>
-			<Button type="submit"  btnClass="bg-custom-tertiary rounded py-4 font-primary text-xl" {appearance}>
+			<Button type="submit"  btnClass="bg-tertiary rounded py-4 font-primary text-xl" {appearance}>
 				{i18n?.forgotten_password?.button_label}
 			</Button>
 		</Container>

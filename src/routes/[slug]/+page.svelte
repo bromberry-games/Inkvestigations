@@ -5,8 +5,6 @@
 	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
 	import { Button, Modal, Radio } from 'flowbite-svelte';
-	import type ChatMessage from '$lib/gpt/ChatMessage.svelte';
-	import { textareaAutosizeAction } from 'svelte-legos';
 
 	export let data: PageData;
 	let suspectToAccuse = '';
@@ -25,30 +23,6 @@
 	}
 	$: ({ slug } = data);
 	$: chat = $chatStore[slug];
-
-	$: if (chat && chat.messages.length > 2) {
-		const lastMessage = chat.messages[chat.messages.length - 1];
-    
-    	let post_fun = async () => {
-    	    try {
-    	        const response = await fetch('/api/add-message', {
-    	            method: 'POST',
-    	            body: JSON.stringify({ message: lastMessage.content, mystery: slug }),
-    	            headers: {
-    	                'Content-Type': 'application/json'
-    	            }
-    	        });
-
-    	        if (!response.ok) {
-    	            throw new Error(`HTTP error! Status: ${response.status}`);
-    	        }
-
-    	    } catch (error) {
-    	        console.error('Failed to post message', error);
-    	    }
-    	}
-    	post_fun();
-	}
 
 	onMount(async () => {
 		updateUserMessages();
