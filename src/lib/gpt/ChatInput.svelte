@@ -225,7 +225,7 @@
 							bind:value={input}
 							bind:this={textarea}
 						/>
-						<div class="bg-[url('/images/message_counter.svg')] bg-no-repeat bg-center bg-cover h-full py-6 px-4 text-xl">
+						<div class="bg-[url('/images/message_counter.svg')] bg-no-repeat bg-center bg-cover h-full py-6 px-4 text-xl md:ml-2 ml-1">
 							{messagesAmount}
 						</div>
 						<div class="flex flex-col md:flex-row items-center justify-end md:items-end">

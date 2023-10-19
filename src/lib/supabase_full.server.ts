@@ -107,7 +107,7 @@ export async function addConversationForUser(userid: string, mystery: string) {
 
 export async function getAccusePrompt(mysteryName: string) : Promise<string | null> {
     const { data, error } = await supabase_full_access
-        .from('mystery.mysteries')
+        .from('mysteries')
         .select('accuse_prompt')
         .eq('name', mysteryName)
         .single();
@@ -151,7 +151,7 @@ export async function loadChatForUser(userid: string, mystery: string): Promise<
     }
 
     const {data: mysteryData, error: mysteryError} = await supabase_full_access
-        .from('mystery.mysteries')
+        .from('mysteries')
         .select('prompt, answer')
         .eq('name', mystery)
         .single();

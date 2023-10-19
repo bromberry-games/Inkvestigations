@@ -13,7 +13,7 @@
           <h5 >{mystery.name}</h5>
           <div>
             {#each Array(3) as _, index}
-              {#if data.mysteries[i].solved.length > 0 && index < data.mysteries[i].solved[0].rating}
+              {#if data.session && data.mysteries[i].solved.length > 0 && index < data.mysteries[i].solved[0].rating}
                 ★
               {:else}
                 ☆
