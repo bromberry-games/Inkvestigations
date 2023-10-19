@@ -5,7 +5,7 @@
 </script>
 
 
-<div class="p-4 w-full flex flex-wrap justify-center">
+<div class="p-4 w-full flex flex-wrap justify-center mb-56">
   {#each data.mysteries as mystery, i}
     <div class="p-4">
       <Card img={mystery.filepath} class="!bg-quaternary border-8 border-quaternary rounded">

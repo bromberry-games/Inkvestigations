@@ -1,4 +1,4 @@
-INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
+INSERT INTO mystery.mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
 VALUES (
     'The deadly diner',
     'A deadly dining experience with a devious plan.
@@ -9,7 +9,7 @@ VALUES (
     'tmp'
 );
 
-INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
+INSERT INTO mystery.mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
 VALUES(
 'Train to death',
 'A train ride ends deadly for one of the passengers. But no one knows who did it.',
@@ -93,7 +93,7 @@ Police Chief .
     'tmp'
 );
 
-INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
+INSERT INTO mystery.mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
 VALUES(
 'Mirror Mirror',
 'A journalist is found dead. Can you uncover this web of lies?',
@@ -280,7 +280,7 @@ System:
 );
 
 -- Inserting suspects for the mystery "The death of journalism"
-INSERT INTO suspects (mystery_name, name, description, imagepath) VALUES
+INSERT INTO mystery.suspects (mystery_name, name, description, imagepath) VALUES
 ('Mirror Mirror', 'Bianca White', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.', 'bianca_white.webp'),
 ('Mirror Mirror', 'Dexter Tin', 'Politician who was disgraced by Michael Terry.', 'dexter_tin.webp'),
 ('Mirror Mirror', 'Oliver Smith', 'Michael Terry''s biggest fan turned apprentice. Strongly believes in journalistic ethics and professionalism.', 'oliver_smith.webp'),
@@ -288,12 +288,12 @@ INSERT INTO suspects (mystery_name, name, description, imagepath) VALUES
 ('Mirror Mirror', 'Angela Videl', 'Rival columnist to Michael Terry.', 'angela_videl.webp'),
 ('Mirror Mirror', 'Peter O''Ranner', 'Retired detective who occasionally assisted Michael Terry with his articles.', 'peter_oranner.webp');
 
-INSERT INTO murderers (suspect_id, murder_reasons) VALUES
-((SELECT id FROM suspects WHERE name = 'Oliver Smith' AND mystery_name = 'Mirror Mirror'), 'Jealousy over Terry''s success and disappointment with Terry''s lack of journalistic integrity, leading to an attempt to frame Terry as a fraud.');
+INSERT INTO mystery.murderers (suspect_id, murder_reasons) VALUES
+((SELECT id FROM mystery.suspects WHERE name = 'Oliver Smith' AND mystery_name = 'Mirror Mirror'), 'Jealousy over Terry''s success and disappointment with Terry''s lack of journalistic integrity, leading to an attempt to frame Terry as a fraud.');
 
 
 
-INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
+INSERT INTO subscriptions.subscription_tiers (name, description, daily_message_limit, stripe_price_id)
 VALUES
 (
     'Rookie',
@@ -301,7 +301,7 @@ VALUES
     10,
     'price_1NgTQsKIDbJkcynJPpFoFZNz'
 );
-INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
+INSERT INTO subscriptions.subscription_tiers (name, description, daily_message_limit, stripe_price_id)
 VALUES
 (
     'Detective',
@@ -309,7 +309,7 @@ VALUES
     20,
     'price_1Ng9UfKIDbJkcynJYsE9jPMZ'
 );
-INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
+INSERT INTO subscriptions.subscription_tiers (name, description, daily_message_limit, stripe_price_id)
 VALUES
 (
     'Chief',

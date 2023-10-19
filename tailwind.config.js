@@ -17,11 +17,10 @@ const config = {
 		extend: {
       		colors: {
         		'primary': '#a05e2a',
-        		'secondary': '#c8934f',
+        		'secondary': '#99785e',
         		'tertiary': '#efdfbb',
 				'quaternary': '#3c3c3c',
 				'chief': '#dcb98c',
-				'bars': '#3b271e'
       		},
 			fontFamily: {
         		'primary': ['Oswald', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],

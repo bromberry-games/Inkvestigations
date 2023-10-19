@@ -198,7 +198,7 @@
 
 <SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects}></SuspectModal>
 <footer
-	class="fixed bottom-0 z-10 py-2 md:py-4 md:px-8 md:rounded-xl w-11/12"
+	class="fixed bottom-0 z-10 md:py-4 md:px-8 md:rounded-xl md:w-11/12"
 >
 	{#if $isLoadingAnswerStore}
 		<div></div>
@@ -214,7 +214,7 @@
 						{#if suspectToAccuse}
 							<Toast class="!p-3 mx-2 w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
 						{:else}
-							<Button class="bg-primary !p-2 mr-1 text-xl font-primary md:mx-2 md:px-5" on:click={() => clickOutsideModal=true}>Accuse </Button>
+							<Button class="bg-secondary text-quaternary !p-2 mr-1 text-xl font-primary md:mx-2 md:px-5" on:click={() => clickOutsideModal=true}>ACCUSE</Button>
 						{/if}
 						<textarea
 							class="textarea flex-1 overflow-hidden min-h-[42px] font-secondary"
@@ -225,7 +225,7 @@
 							bind:value={input}
 							bind:this={textarea}
 						/>
-						<div class="bg-[url('/images/message_counter.svg')] bg-no-repeat bg-center bg-cover h-full py-6 px-4 mx-2 text-xl">
+						<div class="bg-[url('/images/message_counter.svg')] bg-no-repeat bg-center bg-cover h-full py-6 px-4 text-xl">
 							{messagesAmount}
 						</div>
 						<div class="flex flex-col md:flex-row items-center justify-end md:items-end">
