@@ -10,7 +10,7 @@
 </script>
 
 
-<Modal title="Pick a suspect to accuse" bind:open={clickOutsideModal} size="md" outsideclose defaultClass="!bg-custom-secondary" color="!bg-custom-secondary">
+<Modal title="Pick a suspect to accuse" bind:open={clickOutsideModal} size="md" outsideclose defaultClass="!bg-secondary" color="!bg-secondary">
 	<div class="grid gap-6 w-full grid-cols-2 md:grid-cols-3">
 		{#each suspects as suspect}
   		<Radio name="suspects" value={suspect.name} custom bind:group={suspectToAccuse}>

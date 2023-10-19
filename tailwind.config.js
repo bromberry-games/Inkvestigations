@@ -16,9 +16,10 @@ const config = {
 	theme: {
 		extend: {
       		colors: {
-        		'custom-primary': '#a05e2a',
-        		'custom-secondary': '#c8934f',
-        		'custom-tertiary': '#efdfbb',
+        		'primary': '#a05e2a',
+        		'secondary': '#c8934f',
+        		'tertiary': '#efdfbb',
+				'quaternary': '#3c3c3c',
       		},
 			fontFamily: {
         		'primary': ['Oswald', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],

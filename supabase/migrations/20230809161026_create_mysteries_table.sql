@@ -30,7 +30,7 @@ CREATE TABLE SOLVED (
     id SERIAL PRIMARY KEY,
     mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE,
     user_id uuid NOT NULL REFERENCES auth.users(id) ON UPDATE CASCADE,
-    solved BOOLEAN NOT NULL DEFAULT FALSE
+    rating INTEGER CHECK (rating >= 0)
 );
 
 CREATE TABLE user_messages (

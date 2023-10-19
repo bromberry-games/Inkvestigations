@@ -70,10 +70,10 @@ export async function getMurderer(mysterName: string) : Promise<string | null> {
     return data?.[0]?.name || null; 
 }
 
-export async function setSolved(mystery: string, user_id: string) : Promise<boolean> {
+export async function setRating(mystery: string, user_id: string, rating: number) : Promise<boolean> {
     const { error } = await supabase_full_access
         .from('solved')
-        .insert({ mystery_name: mystery, user_id: user_id, solved: true })
+        .insert({ mystery_name: mystery, user_id: user_id, rating: rating})
     if(error) {
         console.error(error);
         return false;

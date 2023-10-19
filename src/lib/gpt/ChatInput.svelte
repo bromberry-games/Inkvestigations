@@ -147,31 +147,11 @@
 		input = inputCopy;
 	}
 
-	function extractContentData(content: string) {
-    	const ratingMatch = content.match(/Rating:\s?(\d+)/);
-    	const epilogueMatch = content.match(/Epilogue:\s?(.*)/);
-
-    	if (ratingMatch && epilogueMatch) {
-    	    return {
-    	        rating: parseInt(ratingMatch[1], 10),
-    	        epilogue: epilogueMatch[1]
-    	    };
-    	}
-    	return null;
-	}
-
 	function addCompletionToChat(isAborted = false) {
 		const messageToAdd: ChatMessage = !isAborted
 			? { ...$liveAnswerStore }
 			: { ...$enhancedLiveAnswerStore, isAborted: true };
 		
-		if(gameOver) {
-			const contentData = extractContentData(messageToAdd.content);
-			messageToAdd.content = contentData?.epilogue;
-			rating = contentData?.rating
-			console.log("rating is: " + rating)
-		}
-
 		chatStore.addMessageToChat(slug, messageToAdd, lastUserMessage || undefined);
 		$isLoadingAnswerStore = false;
 
@@ -239,7 +219,7 @@
 						{#if suspectToAccuse}
 							<Toast class="!p-3" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
 						{:else}
-							<Button class="bg-custom-primary p-2" on:click={() => clickOutsideModal=true}>Accuse </Button>
+							<Button class="bg-primary p-2" on:click={() => clickOutsideModal=true}>Accuse </Button>
 						{/if}
 						<textarea
 							class="textarea overflow-hidden min-h-[42px]"

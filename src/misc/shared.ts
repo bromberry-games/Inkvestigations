@@ -71,7 +71,6 @@ export function createNewChat(template: {
 		role: 'assistant',
 		content: template.answer
 	}, promptMessage);
-	console.log(get(chatStore)[slug]);
 
 	goto(`/${slug}`, { invalidateAll: true });
 }

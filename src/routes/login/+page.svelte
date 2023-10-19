@@ -62,7 +62,7 @@
 		class="gap container relative mx-auto grid grid-cols-12 px-6 md:gap-16 lg:gap-16 pt-8"
 	>
 	    <div class="relative col-span-12 mb-16 md:col-start-5 md:col-end-9 lg:col-start-4 lg:col-end-10">
-			<div class="relative lg:mx-auto lg:max-w-md bg-custom-secondary rounded-lg">
+			<div class="relative lg:mx-auto lg:max-w-md bg-secondary rounded-lg">
 				<div >
 					<div class="border-scale-400 bg-scale-300 relative rounded-xl px-8 pt-4 pb-8 drop-shadow-sm">
 						<div class="mb-6 flex flex-col">

@@ -5,7 +5,7 @@ import { error, json } from '@sveltejs/kit';
 import { defaultOpenAiSettings } from '$misc/openai';
 import { getErrorMessage, throwIfUnset } from '$misc/error';
 import { OPEN_AI_KEY } from '$env/static/private';
-import { addMessageForUser, archiveLastConversation, decreaseMessageForUser, getAccusePrompt, getMessageAmountForUser } from '$lib/supabase_full.server';
+import { addMessageForUser, archiveLastConversation, decreaseMessageForUser, getAccusePrompt, getMessageAmountForUser, setRating } from '$lib/supabase_full.server';
 import { ChatMode } from '$misc/shared';
 
 
@@ -83,17 +83,18 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 
 	    const decoder = new TextDecoder();
 
+		let accuseParsed = false;
 		let message = '';
 	    const processedStream = new ReadableStream({
 	        async start(controller) {
 	            const reader = response.body.getReader();
 	            while (true) {
-	                 const { done, value } = await reader.read();
+	                const { done, value } = await reader.read();
 
-	                 if (done) {
+	                if (done) {
 						controller.enqueue("data: [DONE]\n\n");
-	                    break;
-	                 }
+	    	            break;
+	                }
 
 					const decodedChunk = decoder.decode(value);
 					const regex = /data:\s*([^]+?)(?=(\ndata:|$))/g;
@@ -110,13 +111,23 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 					}
 
 					if (content) {
-						if (chatMode == ChatMode.Accuse) {
-							//TODO
-							//content.test
+						if (chatMode == ChatMode.Accuse && !accuseParsed) {
+							if(/Rating:\s*\d+[\s\S]*?Epilogue:/i.test(message)) {
+								const ratingRegex=/Rating:\s?(\d+)/
+								const rating = message.match(ratingRegex)[1];
+								message = message.replace(ratingRegex, '').replace(/Epilogue:\s?/,'');
+								controller.enqueue("data: " + JSON.stringify({content: message}) + "\n\n");
+								setRating(game_config.mysteryName, session.user.id, parseInt(rating));
+								accuseParsed = true;
+							} else {
+								message += content;
+								console.log("current message ist: " + message);
+							}
+						} else {
+							message += content;
+							const newData = "data: " + JSON.stringify({content: content}) + "\n\n";
+							controller.enqueue(newData);
 						}
-						message += content;
-						const newData = "data: " + JSON.stringify({content: content}) + "\n\n";
-						controller.enqueue(newData);
 					}
 	            }
     			addMessageForUser(session.user.id, message, game_config.mysteryName);

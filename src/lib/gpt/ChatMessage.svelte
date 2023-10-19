@@ -9,9 +9,9 @@
 
 	
 <div
-	class="grid px-5 w-full py-2 border border-custom-secondary {message.role === 'assistant'
+	class="grid px-5 w-full py-2 border border-secondary {message.role === 'assistant'
 		? 'md:place-self-start bg-custom-ternary'
-		: 'md:place-self-end bg-custom-secondary'}"
+		: 'md:place-self-end bg-secondary'}"
 	class:variant-ghost-surface={message.role === 'user'}
 	class:variant-ghost-secondary={message.role === 'assistant'}
 	class:variant-ghost-warning={message.isAborted}

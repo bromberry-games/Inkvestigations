@@ -3,7 +3,7 @@ export const load = async ({ locals: { getSession, supabase } }) => {
     const session = await getSession()
     let mysteries;
     if (session) {
-      const { data } = await supabase.from("mysteries").select('*, solved(solved)');
+      const { data } = await supabase.from("mysteries").select('*, solved(rating)');
       mysteries = data;
     } else {
       const { data } = await supabase.from("mysteries").select();
