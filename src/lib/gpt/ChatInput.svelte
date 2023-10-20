@@ -2,9 +2,8 @@
 	import type { ChatCompletionRequestMessage } from 'openai';
 	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 	import { textareaAutosizeAction } from 'svelte-legos';
-	import { PaperAirplane, CircleStack } from '@inqling/svelte-icons/heroicon-24-solid';
+	import { PaperAirplane, } from '@inqling/svelte-icons/heroicon-24-solid';
 	import type {
-		ChatCost,
 		ChatMessage,
 	} from '$misc/shared';;
 	import {
@@ -15,14 +14,15 @@
 		enhancedLiveAnswerStore,
 	} from '$misc/stores';
 	import { countTokens } from '$misc/openai';
-	import Button from '../../auth-ui/UI/Button.svelte';
-
+	import { Toast, Button } from 'flowbite-svelte';
+	import SuspectModal from './SuspectModal.svelte';
 
 	const dispatch = createEventDispatcher();
 
 	export let slug: string;
-	export let chatCost: ChatCost | null;
 	export let messagesAmount: number;
+	export let suspectToAccuse = '';
+	export let suspects;
 
 	let debounceTimer: number | undefined;
 	let input = '';
@@ -31,8 +31,9 @@
 	let messageTokens = 0;
 	let lastUserMessage: ChatMessage | null = null;
 	let currentMessages: ChatMessage[] | null = null;
+	let gameOver = false;
+	let rating : number;
 
-	let originalMessage: ChatMessage | null = null;
 
 	$: chat = $chatStore[slug];
 	$: message = setMessage(input.trim());
@@ -59,14 +60,10 @@
 
 	onDestroy(unsubscribe);
 
-	let tokensLeft = -1;
-	$: {
-		tokensLeft = chatCost
-			? chatCost.maxTokensForModel - (chatCost.tokensTotal + messageTokens)
-			: -1;
-	}
-
 	function handleSubmit() {
+		if(suspectToAccuse) {
+			gameOver = true;
+		}
 		isLoadingAnswerStore.set(true);
 		inputCopy = input;
 
@@ -81,6 +78,10 @@
 
 		const payload = {
 			// OpenAI API complains if we send additionale props
+			game_config: {
+				suspectToAccuse: suspectToAccuse,
+				mysteryName: slug.replace(/_/g,' ')
+			},
 			messages: currentMessages?.map(
 				(m) =>
 					({
@@ -100,9 +101,8 @@
 		try {
 			// streaming...
 			if (event.data !== '[DONE]') {
-				// todo What's the correct type for this? It's not CreateChatCompletionResponse... maybe still missing in TypeDefs?
 				const completionResponse: any = JSON.parse(event.data);
-				const delta = completionResponse.choices[0].delta.content || '';
+				const delta = completionResponse.content;
 				liveAnswerStore.update((store) => {
 					const answer = { ...store };
 					answer.content += delta;
@@ -133,6 +133,8 @@
 		}
 
 		console.error(event);
+		console.log("data: ")
+		console.error(event.data)
 
 		const data = JSON.parse(event.data);
 
@@ -149,7 +151,7 @@
 		const messageToAdd: ChatMessage = !isAborted
 			? { ...$liveAnswerStore }
 			: { ...$enhancedLiveAnswerStore, isAborted: true };
-
+		
 		chatStore.addMessageToChat(slug, messageToAdd, lastUserMessage || undefined);
 		$isLoadingAnswerStore = false;
 
@@ -184,30 +186,36 @@
 		clearTimeout(debounceTimer);
 		debounceTimer = undefined;
 	}
+
+	let clickOutsideModal = false;
+	let toastOpen = true;
+	$: if(!toastOpen) {
+		suspectToAccuse = ''
+		toastOpen = true;
+	}
+
 </script>
 
-<!-- <footer
-	class="sticky space-y-4 bottom-0 z-10 py-2 md:py-4 md:px-8 md:rounded-xl"
-> -->
+<SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects}></SuspectModal>
 <footer
-	class="fixed bottom-0 z-10 py-2 md:py-4 md:px-8 md:rounded-xl w-full"
+	class="fixed bottom-0 z-10 md:py-4 md:px-8 md:rounded-xl md:w-11/12"
 >
 	{#if $isLoadingAnswerStore}
-		<div class="flex items-center justify-center">
-			<button class="btn variant-ghost w-48 self-center" on:click={() => $eventSourceStore.stop()}>
-				Cancel generating
-			</button>
-		</div>
+		<div></div>
 	{:else}
-		<div class="flex flex-col space-y-2 md:mx-auto md:w-3/4 px-2 md:px-8">
-			<div class="grid">
+		<div class="flex flex-col space-y-2 md:mx-auto md:w-3/4 xl:w-1/2 px-2 md:px-8">
+				{#if !gameOver}
 				{#if messagesAmount > 0}
 				<form on:submit|preventDefault={handleSubmit}>
-				<!-- <form use:focusTrap={!$isLoadingAnswerStore} on:submit|preventDefault={handleSubmit}> -->
-					<div class="grid grid-cols-[1fr_auto]">
+					<div class="flex items-center flex-wrap">
 						<!-- Input -->
+						{#if suspectToAccuse}
+							<Toast class="w-full grow-0 !max-w-md !md:p-3 md:mx-2 md:w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
+						{:else}
+							<Button class="bg-secondary text-quaternary !p-2 mr-1 text-xl font-primary md:mx-2 md:px-5" on:click={() => clickOutsideModal=true}>ACCUSE</Button>
+						{/if}
 						<textarea
-							class="textarea overflow-hidden min-h-[42px]"
+							class="textarea flex-1 overflow-hidden min-h-[42px] font-secondary"
 							rows="1"
 							placeholder="Enter to send, Shift+Enter for newline"
 							use:textareaAutosizeAction
@@ -215,8 +223,10 @@
 							bind:value={input}
 							bind:this={textarea}
 						/>
+						<div class="bg-[url('/images/message_counter.svg')] bg-no-repeat bg-center bg-cover h-full py-6 px-4 text-xl md:ml-2 ml-1">
+							{messagesAmount}
+						</div>
 						<div class="flex flex-col md:flex-row items-center justify-end md:items-end">
-							<!-- Send button -->
 							<button type="submit" class="btn btn-sm ml-2">
 								<PaperAirplane class="w-6 h-6" />
 							</button>
@@ -243,17 +253,7 @@
 						</div>
 					</div>
 				{/if}
+				{/if}
 			</div>
-			<!-- Tokens -->
-			{#if input.length > 0}
-				<button
-					class="flex items-center text-xs text-slate-500 dark:text-slate-200 ml-4 space-x-1"
-					class:animate-pulse={!!debounceTimer}
-				>
-					<span>{tokensLeft} tokens left</span>
-					<CircleStack class="w-6 h-6" />
-				</button>
-			{/if}
-		</div>
 	{/if}
 </footer>

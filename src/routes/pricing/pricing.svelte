@@ -14,42 +14,22 @@
 </script>
 
 
-<Card padding="xl">
-  <h5 class="mb-4 text-xl font-medium text-gray-500 dark:text-gray-400">{name}</h5>
-  <div class="flex items-baseline text-gray-900 dark:text-white">
+<Card class="!bg-quaternary text-tertiary">
+  <h5 class="mb-4 text-xl font-medium">{name}</h5>
+  <div class="flex items-baseline">
     <span class="text-3xl font-semibold">$</span>
     <span class="text-5xl font-extrabold tracking-tight">{amount_string}</span>
-    <span class="ml-1 text-xl font-normal text-gray-500 dark:text-gray-400">per month</span>
+    <span class="ml-1 text-xl">per month</span>
   </div>
-  <h1 class="mt-4 text-2xl font-semibold ">
+  <h1 class="mt-4 text-2xl font-semibold my-4">
     20 Messages per day
   </h1>
-  <!-- List 
-  <ul class="my-7 space-y-4">
-    <li class="flex space-x-2">
-      <Icon name="check-circle-solid" class="w-4 h-4 text-primary-600 dark:text-primary-500" />
-      <span class="text-base font-normal leading-tight text-gray-500 dark:text-gray-400"> Normal mysteries playable </span>
-    </li>
-    <li class="flex space-x-2">
-      <Icon name="check-circle-solid" class="w-4 h-4 text-primary-600 dark:text-primary-500" />
-      <span class="text-base font-normal leading-tight text-gray-500 dark:text-gray-400"> Mysteries storage </span>
-    </li>
-    <li class="flex space-x-2">
-      <Icon name="check-circle-solid" class="w-4 h-4 text-primary-600 dark:text-primary-500" />
-      <span class="text-base font-normal leading-tight text-gray-500 dark:text-gray-400"> Integration help </span>
-    </li>
-    <li class="flex space-x-2 line-through decoration-gray-500">
-      <Icon name="check-circle-solid" class="w-4 h-4 text-gray-400 dark:text-gray-500" />
-      <span class="text-base font-normal leading-tight text-gray-500">Subscriber only mysteries</span>
-    </li>
-  </ul>
-  -->
     {#if login}
       <form action="?/buy" method="POST">
         <input type="hidden" name="price_id" value={price_id}>
-        <Button class="w-full" color="red" type="submit">Choose plan</Button>
+        <Button class="w-full bg-tertiary text-quaternary font-primary text-xl"  type="submit">CHOOSE PLAN</Button>
       </form>
     {:else}
-      <Button class="w-full" color="red" type="submit" href="/login">Signup to buy</Button>
+      <Button class="w-full " type="submit" href="/login">Signup to buy</Button>
     {/if}
 </Card>

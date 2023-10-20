@@ -12,6 +12,5 @@ setup('authenticate', async ({ page }) => {
   await page.goto('/');
   expect(page.getByRole('link', { name: 'Login' })).toBeVisible();
   
-  //await expect(page.getByRole('button', { name: 'View profile and more' })).toBeVisible();
   await page.context().storageState({ path: authFile });
 });

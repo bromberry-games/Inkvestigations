@@ -31,9 +31,49 @@ export async function increaseMessageAmountForUserByAmount(userid: string, amoun
     }
 }
 
-export async function createSubscription(priceId: string, userId: string) {
+export async function createSubscription(priceId: string, userId: string) : Promise<boolean> {
     const { error }  = await supabase_full_access
         .rpc('create_subscription', { price_id: priceId, the_user_id: userId });
+    if(error) {
+        console.error(error);
+        return false;
+    }
+    return true;
+}
+
+export interface suspects {
+    name: string;
+    imagepath: string;
+}
+
+export async function getSuspects(mysterName: string) : Promise<suspects[] | null> {
+    const { data, error } = await supabase_full_access
+        .from('suspects')
+        .select('name, imagepath')
+        .eq('mystery_name', mysterName);
+    if(error) {
+        console.error(error);
+        return null;
+    }
+    return data;
+}
+
+export async function getMurderer(mysterName: string) : Promise<string | null> {
+    const { data, error } = await supabase_full_access
+        .from('suspects')
+        .select('id, name, murderers!inner(id)')
+        .eq('mystery_name', mysterName)
+    if(error) {
+        console.error(error);
+        return null;
+    }
+    return data?.[0]?.name || null; 
+}
+
+export async function setRating(mystery: string, user_id: string, rating: number) : Promise<boolean> {
+    const { error } = await supabase_full_access
+        .from('solved')
+        .insert({ mystery_name: mystery, user_id: user_id, rating: rating})
     if(error) {
         console.error(error);
         return false;
@@ -65,6 +105,18 @@ export async function addConversationForUser(userid: string, mystery: string) {
     }
 }
 
+export async function getAccusePrompt(mysteryName: string) : Promise<string | null> {
+    const { data, error } = await supabase_full_access
+        .from('mysteries')
+        .select('accuse_prompt')
+        .eq('name', mysteryName)
+        .single();
+    if(error) {
+        console.error(error);
+        return null;
+    }
+    return data?.accuse_prompt || null;
+}
 
 export async function loadChatForUser(userid: string, mystery: string): Promise<Chat | null> {
     // Step 1: Get the conversation_id

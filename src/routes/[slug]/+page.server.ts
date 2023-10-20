@@ -1,7 +1,7 @@
 import { error, redirect } from "@sveltejs/kit";
 import type { PageLoad, PageServerLoad } from "./$types";
 import type { Session } from "@supabase/supabase-js";
-import { addConversationForUser, archiveLastConversation, loadChatForUser } from "$lib/supabase_full.server";
+import { archiveLastConversation, getMurderer, getSuspects, loadChatForUser, } from "$lib/supabase_full.server";
 
 export const load: PageServerLoad = async ({ params, locals: { getSession } }) => {
     const session: Session = await getSession()
@@ -9,11 +9,13 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
       throw redirect(303, '/')
     }
     const { slug } = params;
-    const chat = await loadChatForUser(session.user.id, slug.replace(/_/g, ' '));
+    const mysteryName = slug.replace(/_/g, ' ');
+    const chat = await loadChatForUser(session.user.id, mysteryName);
+    const suspects = await getSuspects(mysteryName);
     if(!chat) {
       throw error(500, 'could not load chat from data');
     }
-    return {chat: chat};
+    return {chat: chat, suspects: suspects};
 }
 
 
@@ -25,5 +27,6 @@ export const actions = {
     }
     archiveLastConversation(session.user.id, params.slug.replace(/_/g, ' '))
     throw redirect(302, '/mysteries')
-	}
-};
+	},
+
+}

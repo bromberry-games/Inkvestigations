@@ -1,7 +1,6 @@
 -- extensions
 create extension pg_cron with schema extensions;
 
-
 -- Create tables
 
 CREATE TABLE mysteries (
@@ -9,7 +8,29 @@ CREATE TABLE mysteries (
     description TEXT Not Null,
     prompt TEXT NOT NULL,
     answer TEXT NOT NULL,
-    filepath TEXT NOT NULL
+    filepath TEXT NOT NULL,
+    accuse_prompt TEXT NOT NULL
+);
+
+CREATE TABLE suspects (
+    id SERIAL PRIMARY KEY,
+    mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    imagepath TEXT NOT NULL,
+    description TEXT NOT NULL
+);
+
+CREATE TABLE murderers (
+  id SERIAL PRIMARY KEY, 
+  suspect_id INT NOT NULL UNIQUE REFERENCES suspects(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  murder_reasons TEXT NOT NULL
+);
+
+CREATE TABLE solved (
+    id SERIAL PRIMARY KEY,
+    mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON UPDATE CASCADE,
+    rating INTEGER CHECK (rating >= 0)
 );
 
 CREATE TABLE user_messages (
@@ -55,23 +76,29 @@ CREATE TABLE user_subscriptions (
 -- policies
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
 
-alter table mysteries 
-  enable row level security;
+ALTER TABLE mysteries 
+  ENABLE ROW LEVEL SECURITY;
 
-alter table user_messages 
-  enable row level security;
+ALTER TABLE suspects
+  ENABLE ROW LEVEL SECURITY;
 
-alter table user_mystery_conversations 
-  enable row level security;
+ALTER TABLE murderers
+  ENABLE ROW LEVEL SECURITY;
 
-alter table user_mystery_messages 
-  enable row level security;
+ALTER TABLE user_messages 
+  ENABLE ROW LEVEL SECURITY;
 
-alter table user_subscriptions 
-  enable row level security;
+ALTER TABLE user_mystery_conversations 
+  ENABLE ROW LEVEL SECURITY;
 
-alter table subscription_tiers 
-  enable row level security;
+ALTER TABLE user_mystery_messages 
+  ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE user_subscriptions 
+  ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE subscription_tiers 
+  ENABLE ROW LEVEL SECURITY;
 
 create policy "everybody can view mysteries."
     on mysteries for select
@@ -102,7 +129,7 @@ language plpgsql
 security definer set search_path = public
 AS $$
 BEGIN
-    INSERT INTO public.user_messages (user_id, amount) VALUES (NEW.id, 5);
+    INSERT INTO user_messages (user_id, amount) VALUES (NEW.id, 5);
     RETURN NEW;
 END;
 $$;
@@ -163,7 +190,7 @@ VALUES (
 $$ 
 language sql volatile;
 
-CREATE OR REPLACE FUNCTION reset_daily_messages()
+CREATE OR REPLACE FUNCTION update_daily_messages()
 RETURNS VOID
 LANGUAGE plpgsql AS $$
 BEGIN
@@ -176,7 +203,7 @@ BEGIN
     SET amount = sub.daily_message_limit + um.amount
     FROM (
         SELECT us.user_id, st.daily_message_limit
-        FROM user_subscriptions us
+        FROM subscriptionsuser_subscriptions us
         JOIN subscription_tiers st ON us.tier_id = st.tier_id
         WHERE us.active = TRUE
     ) AS sub
@@ -184,4 +211,4 @@ BEGIN
 END;
 $$;
 
-SELECT cron.schedule('0 0 * * *', $$SELECT reset_daily_messages();$$);
+SELECT cron.schedule('0 0 * * *', $$SELECT subscriptions.update_daily_messages();$$);
