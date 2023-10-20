@@ -34,8 +34,12 @@ function createChatCompletionRequest(chatMode: ChatMode, messages: ChatCompletio
 			}	
 		}
 	}
-
 }
+
+function formatData(message: string, encoder: TextEncoder) {
+    return encoder.encode(`data: ${JSON.stringify({content: message})}\n\n`);
+}
+
 
 export const POST: RequestHandler = async ({ request, fetch, locals: {getSession, supabase} }) => {
 	const session = await getSession();
@@ -64,6 +68,7 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 		if(!ratingPrompt) {
 			throw error(500, 'Could not get rating prompt');
 		}
+
 		const completionOpts = createChatCompletionRequest(chatMode, messages, suspectToAccuse, ratingPrompt);
 		const apiUrl = 'https://api.openai.com/v1/chat/completions';
 		const response = await fetch(apiUrl, {
@@ -82,67 +87,56 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 	        throw err.error;
 	    }
 
-	    const decoder = new TextDecoder();
 		const encoder = new TextEncoder();
 
-		let accuseParsed = false;
+		let parseRating = ChatMode.Accuse ? true : false;
 
 		const processedStream = new ReadableStream({
 		    async start(controller) {
 		        const parser = createParser(onParse);
 
+				const ratingRegex=/Rating:\s?(\d+)/;
 				let message = '';
 				function onParse(event) {
-				    if (event.type === 'event') {
-				        if (event.data !== "[DONE]") {
-				            const content = JSON.parse(event.data).choices[0].delta?.content || "";
-				            if (chatMode == ChatMode.Accuse && !accuseParsed) {
-				                if(/Rating:\s*\d+[\s\S]*?Epilogue:\s*\w/i.test(message)) {
-				                    const ratingRegex=/Rating:\s?(\d+)/;
-									const ratingMatch = message.match(ratingRegex);
-									if(!ratingMatch) {
-										throw error(500, 'Could not parse rating');
-									}
-				                    const rating = ratingMatch[1];
-				                    message = message.replace(ratingRegex, '').replace(/Epilogue:\s?/,'');
-									console.log("message to inser: " + message);
-									const newData = "data: " + JSON.stringify({content: message}) + "\n\n";
-									console.log(newData)
-				                    controller.enqueue(encoder.encode(newData));
-				                    setRating(game_config.mysteryName, session.user.id, parseInt(rating));
-				                    accuseParsed = true;
-				                } else {
-				                    message += content;
-				                    console.log("current message ist: " + message);
-				                }
-				            } else {
-				                message += content;
-				                const newData = "data: " + JSON.stringify({content: content}) + "\n\n";
-				                controller.enqueue(encoder.encode(newData));
-				            }
+				    if (event.type !== 'event') {
+						return;
+					}
+					if (event.data === "[DONE]") {
+						//TODO is this really needed?
+				        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+				        addMessageForUser(session.user.id, message, game_config.mysteryName);
+				        controller.close();
+						return;
+					}
+				    const content = JSON.parse(event.data).choices[0].delta?.content || "";
+				    if (parseRating) {
+				        if(/Rating:\s*\d+[\s\S]*?Epilogue:\s*\w/i.test(message)) {
+							const ratingMatch = message.match(ratingRegex);
+							if(!ratingMatch) {
+								throw error(500, 'Could not parse rating');
+							}
+				            const rating = ratingMatch[1];
+				            message = message.replace(ratingRegex, '').replace(/Epilogue:\s?/,'');
+				            controller.enqueue(formatData(message, encoder));
+				            setRating(game_config.mysteryName, session.user.id, parseInt(rating));
+				            parseRating = false;
 				        } else {
-				            controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-				            addMessageForUser(session.user.id, message, game_config.mysteryName);
-				            console.log("message from backend: " + message);
-				            controller.close();
+				            message += content;
 				        }
-				    } else if (event.type === 'reconnect-interval') {
-				        console.warn('We should set reconnect interval to %d milliseconds', event.value);
+				    } else {
+				        message += content;
+				        controller.enqueue(formatData(content, encoder));
 				    }
-				}
+				} 
 
 				if(response.body == null) {
 					throw error(500, 'No response from OpenAI');
 				}
-			
 		        for await (const value of response.body.pipeThrough(new TextDecoderStream())) {
 		            parser.feed(value);
-					console.log(value)
 		        }
 		    }
 		});
-
-
 
 		addMessageForUser(session.user.id, messages[messages.length - 1].content, game_config.mysteryName);
 		

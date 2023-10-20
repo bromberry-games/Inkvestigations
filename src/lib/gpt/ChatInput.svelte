@@ -196,7 +196,7 @@
 
 </script>
 
-<SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects}></SuspectModal>
+<SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects} {slug}></SuspectModal>
 <footer
 	class="fixed bottom-0 z-10 md:py-4 md:px-8 md:rounded-xl md:w-11/12"
 >

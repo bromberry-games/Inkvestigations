@@ -1,16 +1,20 @@
 module.exports = {
 	root: true,
+
 	extends: [
 		'eslint:recommended',
 		'plugin:@typescript-eslint/recommended',
 		'plugin:svelte/recommended',
-		'prettier'
+		'prettier',
 	],
 	parser: '@typescript-eslint/parser',
 	plugins: ['@typescript-eslint'],
-	'@typescript-eslint/no-floating-promises': 'error',
+	rules : {
+		'@typescript-eslint/no-floating-promises': 'error',
+	},
 
 	parserOptions: {
+		project: './tsconfig.json',
 		sourceType: 'module',
 		ecmaVersion: 2020,
 		extraFileExtensions: ['.svelte']
