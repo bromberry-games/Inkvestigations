@@ -101,6 +101,8 @@ export const POST: RequestHandler = async ({ request, fetch, locals: {getSession
 					const regex = /data:\s*([^]+?)(?=(\ndata:|$))/g;
 					let match;
 					let content = '';
+					console.log("decoded chunk: ")
+					console.log(decodedChunk);
 					while ((match = regex.exec(decodedChunk)) !== null) {
 	 					console.log("matched: " + match[1]);  
 						if(!match[1].startsWith("[DONE]"))  {
