@@ -2,7 +2,7 @@
 	import type { ChatCompletionRequestMessage } from 'openai';
 	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
 	import { textareaAutosizeAction } from 'svelte-legos';
-	import { PaperAirplane, CircleStack } from '@inqling/svelte-icons/heroicon-24-solid';
+	import { PaperAirplane, } from '@inqling/svelte-icons/heroicon-24-solid';
 	import type {
 		ChatMessage,
 	} from '$misc/shared';;
@@ -203,16 +203,14 @@
 	{#if $isLoadingAnswerStore}
 		<div></div>
 	{:else}
-		<div class="flex flex-col space-y-2 md:mx-auto md:w-3/4 lg:w-3/5 px-2 md:px-8">
-			<div class="grid">
+		<div class="flex flex-col space-y-2 md:mx-auto md:w-3/4 xl:w-1/2 px-2 md:px-8">
 				{#if !gameOver}
 				{#if messagesAmount > 0}
 				<form on:submit|preventDefault={handleSubmit}>
-				<!-- <form use:focusTrap={!$isLoadingAnswerStore} on:submit|preventDefault={handleSubmit}> -->
 					<div class="flex items-center flex-wrap">
 						<!-- Input -->
 						{#if suspectToAccuse}
-							<Toast class="!p-3 mx-2 w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
+							<Toast class="w-full grow-0 !max-w-md !md:p-3 md:mx-2 md:w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
 						{:else}
 							<Button class="bg-secondary text-quaternary !p-2 mr-1 text-xl font-primary md:mx-2 md:px-5" on:click={() => clickOutsideModal=true}>ACCUSE</Button>
 						{/if}
@@ -229,7 +227,6 @@
 							{messagesAmount}
 						</div>
 						<div class="flex flex-col md:flex-row items-center justify-end md:items-end">
-							<!-- Send button -->
 							<button type="submit" class="btn btn-sm ml-2">
 								<PaperAirplane class="w-6 h-6" />
 							</button>
@@ -258,6 +255,5 @@
 				{/if}
 				{/if}
 			</div>
-		</div>
 	{/if}
 </footer>
