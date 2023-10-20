@@ -53,6 +53,7 @@
 		"@supabase/auth-ui-svelte": "^0.2.2",
 		"@supabase/supabase-js": "^2.32.0",
 		"classnames": "^2.3.2",
+		"eventsource-parser": "^1.1.1",
 		"flowbite": "^1.6.5",
 		"flowbite-svelte": "^0.37.4",
 		"flowbite-svelte-icons": "^0.3.6",
