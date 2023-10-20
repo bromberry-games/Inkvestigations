@@ -90,14 +90,15 @@ const dev_config: PlaywrightTestConfig = {
   	},
   	// Configure projects for major browsers.
   	projects: [
-    	{ name: 'setup cloudflare access', testMatch: /.*auth\.setup\.ts/ },
+    	{ name: 'setup_cloudflare_access', testMatch: /.*auth\.setup\.ts/ },
   	  	{
   	  	  	name: 'chromium',
   	  	  	use: { 
 				...devices['Desktop Chrome'],
         		storageState: 'playwright/.auth/user.json',
 			},
-      		dependencies: ['setup'],
+      		testMatch: /.*login.spec.ts/,
+      		dependencies: ['setup_cloudflare_access'],
   	  	},
 		{
 			name: 'firefox',
@@ -105,7 +106,8 @@ const dev_config: PlaywrightTestConfig = {
 				...devices['Desktop Firefox'],
 				storageState: 'playwright/.auth/user.json',
 			},
-      		dependencies: ['setup'],
+      		testMatch: /.*login.spec.ts/,
+      		dependencies: ['setup_cloudflare_access'],
 		},
 		{
       		name: 'Mobile Chrome',
@@ -114,7 +116,8 @@ const dev_config: PlaywrightTestConfig = {
 				isMobile: true,
 				storageState: 'playwright/.auth/user.json',
 			},
-      		dependencies: ['setup'],
+      		testMatch: /.*login.spec.ts/,
+      		dependencies: ['setup_cloudflare_access'],
     	},
   	],
 	testDir: 'tests',
