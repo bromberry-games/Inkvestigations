@@ -3,6 +3,7 @@
 
 	export let clickOutsideModal = false;
     export let suspects;
+	export let slug = '';
     export let suspectToAccuse = '';
     $: if(suspectToAccuse != '') {
         clickOutsideModal = false;
@@ -15,7 +16,7 @@
 		{#each suspects as suspect}
   		<Radio name="suspects" value={suspect.name} custom bind:group={suspectToAccuse}>
   		  <div class="flex justify-between flex-col items-center p-5 w-full cursor-pointer peer-checked:border-solid peer-checked:border-2 peer-checked:border-slate-500" >
-				<img src={"/images/mysteries/mirror_mirror/suspects/" + suspect.imagepath}>
+				<img src={"/images/mysteries/" + slug.toLowerCase()  + "/suspects/" + suspect.imagepath} alt={suspect.name}>
 				<p class="sm:text-lg md:text-xl">{suspect.name}</p>
   		  </div>
   		</Radio>
