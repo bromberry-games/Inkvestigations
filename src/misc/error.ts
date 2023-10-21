@@ -11,13 +11,10 @@ export function throwIfUnset(name: string, value: any) {
 	}
 }
 
-export function respondToClient(response: any) {
-	return new Response(JSON.stringify(response), {
-		status: 200,
-		headers: {
-			'content-type': 'application/json'
-		}
-	});
+export function throwIfFalse(condition: boolean, message: string) {
+	if (!condition) {
+		throw new Error(message);
+	}
 }
 
 export function getErrorMessage(error: unknown) {
@@ -30,10 +27,7 @@ type ErrorWithMessage = {
 
 function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
 	return (
-		typeof error === 'object' &&
-		error !== null &&
-		'message' in error &&
-		typeof (error as Record<string, unknown>).message === 'string'
+		typeof error === 'object' && error !== null && 'message' in error && typeof (error as Record<string, unknown>).message === 'string'
 	);
 }
 
