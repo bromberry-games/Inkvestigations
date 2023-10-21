@@ -6,6 +6,113 @@ import type { Chat, ChatMessage } from '$misc/shared';
 
 const supabase_full_access = createClient<Database>(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
+export async function getInfoModelMessages(userId: string, mystery: string): Promise<ChatMessage[] | null> {
+	const { data: conversationData, error: conversationError } = await supabase_full_access
+		.from('user_mystery_conversations')
+		.select('id')
+		.eq('user_id', userId)
+		.eq('mystery_name', mystery)
+		.order('created_at', { ascending: false })
+		.limit(1)
+		.single();
+
+	if (conversationError) {
+		console.error('conversation error: ');
+		console.error(conversationError);
+		return null;
+	}
+
+	if (!conversationData) {
+		console.error('conversation not found');
+		return null;
+	}
+
+	const { data, error } = await supabase_full_access
+		.from('user_mystery_info_messages')
+		.select('content')
+		.eq('conversation_id', conversationData.id);
+	if (error) {
+		console.error(error);
+		return null;
+	}
+
+	const { data: messageData, error: messageError } = await supabase_full_access
+		.from('user_mystery_messages')
+		.select('content')
+		.eq('conversation_id', conversationData.id);
+
+	if (messageError) {
+		console.error(messageError);
+		return null;
+	}
+
+	const conversation: ChatMessage[] = [];
+
+	const { data: prompData, error: prompError } = await supabase_full_access
+		.from('mysteries')
+		.select('info_prompt, info_answer')
+		.eq('name', mystery);
+
+	if (prompError) {
+		console.error(prompError);
+		return null;
+	}
+
+	conversation.push({
+		role: 'user',
+		content: prompData[0].info_prompt
+	});
+	conversation.push({
+		role: 'assistant',
+		content: prompData[0].info_answer
+	});
+
+	data.forEach((item, index) => {
+		conversation.push({
+			role: 'user',
+			content: item.content
+		});
+		conversation.push({
+			role: 'assistant',
+			content: messageData[index].content
+		});
+	});
+
+	return conversation;
+}
+
+export async function addInfoModelMessage(userId: string, mystery: string, message: ChatMessage): Promise<boolean> {
+	const { data: conversationData, error: conversationError } = await supabase_full_access
+		.from('user_mystery_conversations')
+		.select('id')
+		.eq('user_id', userId)
+		.eq('mystery_name', mystery)
+		.order('created_at', { ascending: false })
+		.limit(1)
+		.single();
+
+	if (conversationError) {
+		console.error('conversation error: ');
+		console.error(conversationError);
+		return false;
+	}
+
+	if (!conversationData) {
+		console.error('conversation not found');
+		return false;
+	}
+
+	const { error } = await supabase_full_access
+		.from('user_mystery_info_messages')
+		.insert({ content: message, conversation_id: conversationData.id });
+
+	if (error) {
+		console.error(error);
+		return false;
+	}
+	return true;
+}
+
 export async function decreaseMessageForUser(userid: string): Promise<boolean> {
 	const { error } = await supabase_full_access.rpc('decrement_message_for_user', { the_user_id: userid });
 	if (error) {
@@ -206,6 +313,7 @@ export async function addMessageForUser(userid: string, message: string, mystery
 		return false;
 	}
 
+	//TODO remove this existing messages crap. Was there because of bad design anyways
 	const conversationId = conversationData?.id;
 	const { data: existingMessageData, error: messageCheckError } = await supabase_full_access
 		.from('user_mystery_messages')

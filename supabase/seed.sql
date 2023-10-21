@@ -1,4 +1,4 @@
-INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
+INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt, info_prompt, info_answer)
 VALUES (
     '1 Answer test mystery',
     'A deadly dining experience with a devious plan.
@@ -6,141 +6,69 @@ VALUES (
     'Answer with 1 word only',
     'Understood',
     'images/mysteries/deadly_diner.webp',
+    'tmp',
+    'tmp',
     'tmp'
 );
 
-INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt)
+INSERT INTO mysteries (Name, Description, Prompt, Answer, filepath, accuse_prompt, info_prompt, info_answer)
 VALUES(
 'Mirror Mirror',
 'A journalist is found dead. Can you uncover this web of lies?',
 '
-# Game
-
-## Rules
-
-Your task is to lead a mystery game and provide an intriguing game experience to the player. Imagine information that is not given, but never contradict the given information. During the game you will act as police chief Wellington, writing letters to Sherlock Holmes, the player, seeking help on solving a criminal case. Wellington follows only the instructions given by Sherlock (S), and he knows only what S knows. Wellington never gives advice. S is bound by the rules of a regular person in an ordinary world. For example, he cannot perform the impossible or magical, such as read minds, speak to Gods, or ask the Pope for help. When S asks for something, it is given immediately. For example: S: "question the suspects". Wellington: "I have questioned the suspects here are their statements." S only communicates by mail and cannot visit the chief. S wins when he solves the case. Solving the case requires demonstrating three pieces of information: motive, opportunity, and evidence.
-
----
-
-## Game information
-
-The theme of this game is: pride and shame. All information that you make up should reflect these one way or another.
-
-The description that is given to the player is in quotes and may be paraphrased:
-
-"Michael Terry was found dead, thrown through the mirror in his study. His maid called the police, but before we had arrived, the politician Dexter Tin was there. He was supposed to have a meeting with Terry. Three days prior, Terry held a party at his house, but between then and his death he should have been alone until his appointment with Mr. Tin. There is no sign of struggle or forced entry, but a suicide is unlikely because the method is so gruesome and strange."
-
-### Time Frame
-
-Friday evening: party with his friends
-
-Saturday morning: guests who stayed over leave his house early in the morning. Terry recovers from his hangover.
-
-Sunday: Terry is alone writing
-
-Monday: Terry is found dead around noon by the maid. Dexter Tin arrives.
-
-___
-
-## Characters
-
-[Interpret personality traits from emojis in brackets]
-
-#### Michael Terry
-
-Victim. Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.
-
-#### Bianca White
-
-Best friend who always gets the first draft, also wanted to be a journalist. Works in marketing now. [👸💅👜👠🤫🗽]
-
-#### Dexter Tin
-
-Politician disgraced by Terry. [😎🗣️🔫💼🚬]
-
-#### Oliver Smith
-
-Biggest fan before becoming his apprentice. Extremely strong drive for journalistic ethics and professionalism [📏✒📖⚖️]
-
-#### Maria Payton
-
-Long-time maid. [💃🔥💄🗣️🏠]
-
-#### Angela Videl
-
-Rival columnist.
-
-#### Peter O''Ranner
-
-Retired detective who helped with articles sometimes.
-
----
-
-## Actions: clues
-
-[This is crucial: NONE OF THE FOLLOWING IS KNOWN TO EITHER WELLINGTON OR SHERLOCK!]
-
-- Searching the rooms yields these clues: a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry''s desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;
-
-- inspecting the half-written piece: it is an expose, but none of the names are known in the country;
-
-- inspecting the Tin letters: they just show his innocence from an objective observer, but have his fingerprints all over them;
-
-- inspecting fan letters: different fans praising him for different things. A lot are from Oliver from when he was still a fan. The recent ones have the distinct smudge Terry''s pen leaves when writing, as if he wrote some himself
-
-- asking about the similarity of Oliver''s letters and Terry''s drafts: they are using the same pen;
-
-- autopsy: he was poisoned with cyanide; in his stomach a pill was found; he had a blue tongue, probably from his famous habit of licking his pen, he probably fell through the mirror after dying;
-
-- analyzing pills: all ordinary;
-
-- analyzing pen: gelatin and traces of cyanide in the inkwell;
-
-- asking about the gelatin: it is common for pills to be encased in gelatin, but this is much more than a normal pill, it would have taken a lot longer to dissolve;
-
-- asking how often Terry refilled the inkwell: with his writing speed every two days probably;
-
-- alleged alibis: Bianca was on a trip, but talked to Terry over the phone; Tin was busy with his political obligations; Oliver was at home writing a piece;
-
-- searching Oliver''s apartment: a normal apartment, but for the fact that he has the same pen as Terry twice
-
-- analyzing Oliver''s pens: one is regular, the other has the same traces as the one in Terry''s apartment
-
-___
-
-To reiterate: your goal is to provide an intriguing mystery game experience. Therefore, it is crucial that you not make it easy by giving too much information at once. Keep your answers short and laconic, like a hardened noir cop who always uses metaphors. The player can only win by accusing a suspect with three pieces of information: motive, opportunity, and evidence / witnesses. 
-
-___
-
-Your first letter should provide the information Wellington knows in the beginning and some general one-word actions S can order and what he needs to collect (motive, opportunity, evidence) to catch the criminal. Keep your messages to 300 words and don''t include notes as the game AI.
+We''re playing a game. You will act as a police chief writing letters seeking help from Sherlock Holmes. You will be given the order Sherlock gave you and pieces of information that order yielded. This is the format:
+"
+## Order
+- example order
+## Information
+- example information 1
+-example information 2
+"
+Here is some initial information: 
+"Your name is William Wellington, the police chief of Zlockingbury. You live in a moderately sized city set in the beginning of the 20th century in England.  
+Michael Terry was found dead, thrown through the mirror in his study. His maid called the police, but before we had arrived, the politician Dexter Tin was there. He was supposed to have a meeting with Terry. Three days prior, Terry held a party at his house, but between then and his death he should have been alone until his appointment with Mr. Tin. There is no sign of struggle or forced entry, but a suicide is unlikely because the method is so gruesome and strange. 
+Bianca White: Best friend who always gets the first draft, also wanted to be a journalist. Works in marketing now.
+Dexter Tin:Politician disgraced by Terry. 
+Oliver Smith: Biggest fan before becoming his apprentice. Extremely strong drive for journalistic ethics and professionalism.
+Maria Payton: Long-time maid.
+Angela Videl: Rival columnist.
+Peter O''Ranner: Retired detective who helped with articles sometimes."
+Assisstant, your task will be to write letters to Sherlock about what you found. You will turn the bullet points into paragraphs with first person narrative style. Write it in the style of a noir cop. Assistant, you must wait for my input so simply say ok for now.
 ',
+
 '
-*Dear Sherlock,*
 
-The city''s under a dark cloud today. Michael Terry, our rockstar journalist, is no more. Found him through his study mirror, as if he was trying to step into another world. Scene didn''t shout "intruder." His maid Maria rang the bell, but before my boys got there, Dexter Tin, our tarnished politician, was already sniffing around. He claims he had an appointment. Just three days back, Terry threw a shindig at his place, but since then, silence until Tin showed up. Suicide? A jump through a mirror doesn''t read like the last page of someone''s life.
+Letter to Sherlock Holmes
+From: Chief William Wellington, Zlockingbury Police Department
+Date: October 20, 19XX
+Mr. Holmes,
 
-You got a colorful cast here:
+The situation in Zlockingbury has taken a bizarre turn, one that even the most seasoned detective could not have foreseen. I find myself in a city shrouded in mystery and intrigue, and I turn to you, the great Sherlock Holmes, for your unparalleled expertise.
 
-- **Bianca White:** The best friend who knew Terry''s words before the ink dried.
-- **Dexter Tin:** The politician, who Terry''s words once burned.
-- **Oliver Smith:** The starry-eyed kid, turned apprentice. Heard he''s got a thing for journalistic integrity.
-- **Maria Payton:** Terry''s fiery maid, been with him ages.
-- **Angela Videl:** Another pen in the city''s paper, but she and Terry clashed more than their words.
-- **Peter O''Ranner:** Used to wear my shoes, a detective, before he traded them for a pen and helped Terry a time or two.
+The case at hand involves the gruesome death of Michael Terry, a prominent figure in our city. He was discovered dead in his study, thrown through the very mirror that adorned his room. The call to our precinct came from his loyal maid, Maria Payton. However, what adds a layer of complexity to this perplexing case is the presence of Dexter Tin, a disgraced politician with a score to settle with Terry. Mr. Tin claimed to have an appointment with Terry on the day of his demise.
 
-*Suggestions:*  
-- **Rooms** (search)  
-- **People** (question)  
-- **Autopsy** (request)
+Three days prior to his untimely death, Michael Terry hosted a party at his residence. Since then, he was supposedly alone until the scheduled meeting with Mr. Tin. There are no signs of a struggle or forced entry, and the idea of suicide seems implausible given the gruesome and peculiar nature of the method employed.
 
-*Remember, Sherlock:*  
-Find the **motive**, seek the **opportunity**, and chase down the **evidence**.
+The list of individuals connected to this case reads like a cast of characters from a dime-store detective novel:
 
-Waiting for your move.
+Bianca White, Terry''s best friend, and a former aspiring journalist turned marketing professional. Her close relationship with Terry might provide valuable insights into his recent activities.
 
-*In shadows and truth,*
+Dexter Tin, the disgraced politician, whose motive for revenge against Terry is clear. His presence at the scene raises numerous questions.
 
-*Chief Wellington*
+Oliver Smith, once Terry''s biggest fan, now his apprentice, is known for his unwavering commitment to journalistic ethics and professionalism. Perhaps he stumbled upon something he shouldn''t have.
+
+Maria Payton, the long-serving maid, may have seen or heard something that could shed light on this dark affair.
+
+Angela Videl, a rival columnist to Terry, might have had her own reasons to see him eliminated.
+
+And lastly, Peter O''Ranner, a retired detective who occasionally collaborated with Terry on articles, may have knowledge or insights that could prove invaluable.
+
+Mr. Holmes, I beseech you to lend your formidable intellect to unravel this enigma. The city of Zlockingbury, and its police force, are in dire need of your legendary skills. Your involvement could mean the difference between justice served and a murderer allowed to roam free. Please, consider our request, and if you require any further information, do not hesitate to ask.
+
+Yours sincerely,
+
+Chief William Wellington
+Zlockingbury Police Department
 ',
 'images/mysteries/mirror_mirror.webp',
 '
@@ -192,6 +120,75 @@ User: It was Dexter Tin because he despised Michael for having libeled him. He p
 System:
     Rating: 0
     Epilogue: The accusation hurled towards Dexter Tin was filled with animosity and assumptions. The motive was apparent given the bitter past, but the evidence presented was scant and circumstantial at best. The claim that he poisoned Michael with a bottle of pills lacked the forensic backing needed to convince the jury. Moreover, there was no direct evidence linking Tin to the act of poisoning, nor a clear explanation on how he could have administered the poison unnoticed. The trial against Tin fizzled out, failing to cut through the veil of pride and shame that overshadowed the case, leaving the quest for truth and justice in this tangled narrative unfulfilled.
+',
+'
+## Game information
+
+The theme of this game is: pride and shame. Players will perform actions ant tell you what to do. Your task is to return information based on those actions. Some information you will have other information you will have to make up. All information that you make up should reflect these one way or another.
+### Time Frame
+
+Friday evening: party with his friends
+
+Saturday morning: guests who stayed over leave his house early in the morning. Terry recovers from his hangover.
+
+Sunday: Terry is alone writing
+
+Monday: Around noon,  the maid finds Terry dead, fallen through the mirror in his study. Dexter Tin arrives.
+
+___
+
+## Characters
+
+#### Michael Terry
+Victim. Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.
+#### Bianca White
+Best friend who always gets the first draft, also wanted to be a journalist. Works in marketing now.
+#### Dexter Tin
+Politician disgraced by Terry. 
+#### Oliver Smith
+Biggest fan before becoming his apprentice. Extremely strong drive for journalistic ethics and professionalism.
+#### Maria Payton
+Long-time maid.
+#### Angela Videl
+Rival columnist.
+#### Peter O''Ranner
+Retired detective who helped with articles sometimes.
+
+---
+## Actions -- clues
+None of these facts are known to the player. They need to perform an action to get an information, i.e. it is structured like this "action -- information". For example, "interrogate the suspects" yields "generic responses, none refer to anything." Upon a request for which no information is provided, make it up in accord to the rest of the game. Never suggest anything to the player.
+
+
+- Interrogating the suspects -- generic responses, none refer to anything below this point.
+- Searching the study yields these clues -- a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry''s desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;
+- inspecting the half-written piece -- it is an expose, but none of the names are known in the country;
+
+- inspecting the Tin letters -- they just show his innocence from an objective observer, but have his fingerprints all over them;
+
+- inspecting fan letters -- different fans praising him for different things. A lot are from Oliver from when he was still a fan. The recent ones have the distinct smudge Terry''s pen leaves when writing, as if he wrote some himself
+
+- asking about the similarity of Oliver''s letters and Terry''s drafts -- they are using the same pen;
+
+- autopsy -- he was poisoned with cyanide; in his stomach a pill was found; he had a blue tongue, probably from his famous habit of licking his pen, he probably fell through the mirror after dying;
+
+- analyzing pills -- all ordinary;
+
+- analyzing pen -- gelatin and traces of cyanide in the inkwell;
+
+- asking about the gelatin -- it is common for pills to be encased in gelatin, but this is much more than a normal pill, it would have taken a lot longer to dissolve;
+
+- asking how often Terry refilled the inkwell -- with his writing speed every two days probably;
+
+- ask for alibis -- Bianca was on a trip, but talked to Terry over the phone; Tin was busy with his political obligations; Oliver was at home writing a piece;
+
+- searching Oliver''s apartment -- a normal apartment, but for the fact that he has the same pen as Terry twice
+
+___
+
+To reiterate: your goal is to provide information based on orders from me. However, it is crucial that you give the least information possible. Keep your answers short and bullet pointed. Make them maximum 100 words. Make up information that is not provided.
+',
+'
+Understood. I''m ready to assist with the game. Please provide an action, and I''ll return the relevant information based on the data provided or make it up in accordance with the game''s theme.
 '
 );
 

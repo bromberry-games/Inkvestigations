@@ -25,7 +25,7 @@ export interface OpenAiSettings {
 
 export const defaultOpenAiSettings: OpenAiSettings = {
 	model: OpenAiModel.Gpt4,
-	max_tokens: 2048,
+	max_tokens: 1024,
 	temperature: 1,
 	top_p: 1
 };
@@ -96,11 +96,7 @@ export function estimateChatCost(chat: Chat): ChatCost {
 
 	// see https://platform.openai.com/docs/guides/chat/introduction > Deep Dive Expander
 	const tokensTotal = tokensPrompt + tokensCompletion + 2; // every reply is primed with <im_start>assistant
-	const {
-		maxTokens,
-		costPrompt: costPromptPer1k,
-		costCompletion: costCompletionPer1k
-	} = models['gpt-3.5-turbo'];
+	const { maxTokens, costPrompt: costPromptPer1k, costCompletion: costCompletionPer1k } = models['gpt-3.5-turbo'];
 	const costPrompt = (costPromptPer1k / 1000.0) * tokensPrompt;
 	const costCompletion = (costCompletionPer1k / 1000.0) * tokensCompletion;
 
@@ -114,4 +110,3 @@ export function estimateChatCost(chat: Chat): ChatCost {
 		maxTokensForModel: maxTokens
 	};
 }
-
