@@ -8,6 +8,8 @@ CREATE TABLE mysteries (
     description TEXT Not Null,
     prompt TEXT NOT NULL,
     answer TEXT NOT NULL,
+    info_prompt TEXT NOT NULL,
+    info_answer TEXT NOT NULL,
     filepath TEXT NOT NULL,
     accuse_prompt TEXT NOT NULL
 );
@@ -47,6 +49,13 @@ CREATE TABLE user_mystery_conversations (
 );
 
 CREATE TABLE user_mystery_messages (
+  id SERIAL PRIMARY KEY,
+  conversation_id INT REFERENCES user_mystery_conversations(id) ON UPDATE CASCADE,
+  content TEXT NOT NULL, 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE user_mystery_info_messages (
   id SERIAL PRIMARY KEY,
   conversation_id INT REFERENCES user_mystery_conversations(id) ON UPDATE CASCADE,
   content TEXT NOT NULL, 
