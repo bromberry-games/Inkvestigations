@@ -46,8 +46,6 @@ export async function getInfoModelMessages(userId: string, mystery: string): Pro
 		return null;
 	}
 
-	const conversation: ChatMessage[] = [];
-
 	const { data: prompData, error: prompError } = await supabase_full_access
 		.from('mysteries')
 		.select('info_prompt, info_answer')
@@ -58,14 +56,10 @@ export async function getInfoModelMessages(userId: string, mystery: string): Pro
 		return null;
 	}
 
-	conversation.push({
-		role: 'user',
-		content: prompData[0].info_prompt
-	});
-	conversation.push({
-		role: 'assistant',
-		content: prompData[0].info_answer
-	});
+	const conversation: ChatMessage[] = [
+		{ role: 'user', content: prompData[0].info_prompt },
+		{ role: 'assistant', content: prompData[0].info_answer }
+	];
 
 	data.forEach((item, index) => {
 		conversation.push({
@@ -291,7 +285,6 @@ export async function archiveLastConversation(userid: string, mystery: string): 
 	return true;
 }
 
-//TODO cleanup or postgres function
 export async function addMessageForUser(userid: string, message: string, mystery: string): Promise<boolean> {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('user_mystery_conversations')
@@ -313,29 +306,9 @@ export async function addMessageForUser(userid: string, message: string, mystery
 		return false;
 	}
 
-	//TODO remove this existing messages crap. Was there because of bad design anyways
-	const conversationId = conversationData?.id;
-	const { data: existingMessageData, error: messageCheckError } = await supabase_full_access
-		.from('user_mystery_messages')
-		.select('id')
-		.eq('content', message)
-		.eq('conversation_id', conversationData.id);
-
-	if (messageCheckError) {
-		console.error('message check error: ');
-		console.error(messageCheckError);
-		return false;
-	}
-
-	// If the message already exists, return early to prevent duplicate insertion
-	if (existingMessageData && existingMessageData.length > 0) {
-		console.warn('Message already exists in the database for this conversation.');
-		return false;
-	}
-
 	const { error: messageError } = await supabase_full_access
 		.from('user_mystery_messages')
-		.insert({ content: message, conversation_id: conversationId });
+		.insert({ content: message, conversation_id: conversationData.id });
 
 	if (messageError) {
 		console.error('message error: ' + messageError);

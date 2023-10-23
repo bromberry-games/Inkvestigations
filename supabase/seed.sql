@@ -33,7 +33,7 @@ Oliver Smith: Biggest fan before becoming his apprentice. Extremely strong drive
 Maria Payton: Long-time maid.
 Angela Videl: Rival columnist.
 Peter O''Ranner: Retired detective who helped with articles sometimes."
-Assisstant, your task will be to write letters to Sherlock about what you found. You will turn the bullet points into paragraphs with first person narrative style. Write it in the style of a noir cop. Assistant, you must wait for my input so simply say ok for now.
+Assisstant, your task will be to write letters to Sherlock about what you found. You will turn the bullet points into paragraphs with first person narrative style. Write it in the style of a noir cop. Answer with 2-3 paragraphs.
 ',
 
 '
