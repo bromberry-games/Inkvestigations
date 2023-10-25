@@ -57,13 +57,6 @@
 		isLoadingAnswerStore.set(true);
 		inputCopy = input;
 
-		let parent: ChatMessage | null = null;
-		if (currentMessages && currentMessages.length > 0) {
-			parent = chatStore.getMessageById(currentMessages[currentMessages.length - 1].id!, chat);
-		}
-
-		chatStore.addMessageToChat(slug, message, parent || undefined);
-		// message now has an id
 		lastUserMessage = message;
 
 		const payload = {

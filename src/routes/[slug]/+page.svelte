@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { onDestroy, onMount,} from 'svelte';
-	import type { ActionData, PageData } from './$types';
-	import { chatStore, isLoadingAnswerStore, } from '$misc/stores';
+	import { onMount,} from 'svelte';
+	import type { PageData } from './$types';
+	import { chatStore,  } from '$misc/stores';
 	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
-	import { Button, Modal, Radio } from 'flowbite-svelte';
 
 	export let data: PageData;
 	let suspectToAccuse = '';
@@ -27,16 +26,10 @@
 	onMount(async () => {
 		updateUserMessages();
 	});
-
-	function deleteChat(event: Event) {
-		event.preventDefault();
-		chatStore.deleteChat(slug);
-		(event.target as HTMLButtonElement).form.submit();
-	}
 </script>
 
 {#if chat}
-	<Chat {slug} >
+	<Chat {slug} messages={data.messages}>
 	</Chat> 
 	<ChatInput {slug} on:chatInput={updateUserMessages} messagesAmount={userMessages} {suspectToAccuse} suspects={data.suspects}/>
 {/if}

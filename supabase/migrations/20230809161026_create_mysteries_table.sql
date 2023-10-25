@@ -2,16 +2,15 @@
 create extension pg_cron with schema extensions;
 
 -- Create tables
-
 CREATE TABLE mysteries (
-    name TEXT PRIMARY KEY UNIQUE,
-    description TEXT Not Null,
-    prompt TEXT NOT NULL,
-    answer TEXT NOT NULL,
-    info_prompt TEXT NOT NULL,
-    info_answer TEXT NOT NULL,
-    filepath TEXT NOT NULL,
-    accuse_prompt TEXT NOT NULL
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    description TEXT Not NULL,
+    first_letter TEXT NOT NULL,
+    letter_prompt JSON NOT NULL,
+    info_prompt JSON NOT NULL,
+    accuse_prompt JSON NOT NULL,
+    filepath TEXT NOT NULL
 );
 
 CREATE TABLE suspects (

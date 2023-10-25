@@ -81,6 +81,8 @@ async function twoMessageAnswer(mysteryName: string, messages: ChatCompletionReq
 	if (!infoModelMessages) {
 		throw error(500, 'Could not get info model messages');
 	}
+	console.log("infor model messages: ")
+	console.log(infoModelMessages)
 	const promptMessage = messages[messages.length - 1];
 	const completionOpts = createChatCompletionRequest(ChatMode.Request, [...infoModelMessages, promptMessage]);
 	const responseJson = await (await createGptResponseAndHandleError(completionOpts)).json();
@@ -93,112 +95,26 @@ async function twoMessageAnswer(mysteryName: string, messages: ChatCompletionReq
 		role: 'user',
 		content: '## Order\n' + promptMessage.content + '\n## Information\n' + responseMessage
 	};
-	return handleSuspectAccuseAnswer(mysteryName, ChatMode.Letter, messages, userId, 'bob');
-
-	//return handleStreamingAnswer(messages, mysteryName, userId);
+	const streamingCompletionOpts = createChatCompletionRequest(ChatMode.Letter, messages);
+	return handleStreamingAnswer(mysteryName,  userId, streamingCompletionOpts);
 }
 
-async function handleStreamingAnswer(messages: ChatCompletionRequestMessage[], mysteryName: string, userId: string) {
-	console.log('prompt message');
-	console.log(messages[messages.length - 1].content);
-	console.log(messages);
-	const completionOptsLetter = createChatCompletionRequest(ChatMode.Letter, messages);
-	console.log(completionOptsLetter);
-	const response = await createGptResponseAndHandleError(completionOptsLetter);
-
-	const encoder = new TextEncoder();
-	let parseRating = false;
-
-	const processedStream = new ReadableStream({
-		async start(controller) {
-			const parser = createParser(onParse);
-
-			const RATING_REGEX = /Rating:\s?(\d+)/;
-			const EPILOGUE_RATING_REGEX = /Rating:\s*\d+[\s\S]*?Epilogue:\s*\w/i;
-
-			let message = '';
-			async function onParse(event) {
-				if (event.type !== 'event') return;
-
-				if (event.data === '[DONE]') {
-					//TODO is this really needed?
-					controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-					const addedMessage = await addMessageForUser(userId, message, mysteryName);
-					throwIfFalse(addedMessage, 'Could not add message to chat');
-					controller.close();
-					return;
-				}
-				const content = JSON.parse(event.data).choices[0].delta?.content || '';
-				if (parseRating) {
-					if (EPILOGUE_RATING_REGEX.test(message)) {
-						const ratingMatch = message.match(RATING_REGEX);
-						if (!ratingMatch) {
-							throw error(500, 'Could not parse rating');
-						}
-						message = message.replace(RATING_REGEX, '').replace(/Epilogue:\s?/, '');
-						controller.enqueue(formatData(message, encoder));
-						//const ratingSet = await setRating(mysteryName, userId, parseInt(ratingMatch[1]));
-						//throwIfFalse(ratingSet, 'Could not set rating');
-						parseRating = false;
-					} else {
-						message += content;
-					}
-				} else {
-					message += content;
-					console.log(content);
-					controller.enqueue(formatData(content, encoder));
-				}
-			}
-
-			if (response.body == null) {
-				throw error(500, 'No response from OpenAI');
-			}
-			for await (const value of response.body.pipeThrough(new TextDecoderStream())) {
-				parser.feed(value);
-			}
-		}
-	});
-
-	const messageAdded = await addMessageForUser(userId, messages[messages.length - 1].content, mysteryName);
-	throwIfFalse(messageAdded, 'Could not add message to chat');
-
-	return new Response(processedStream, {
-		headers: {
-			'Content-Type': 'text/event-stream'
-		}
-	});
-}
-
-async function handleSuspectAccuseAnswer(
+async function handleStreamingAnswer(
 	mysteryName: string,
-	chatMode: ChatMode,
-	messages: ChatCompletionRequestMessage[],
 	userId: string,
-	suspectToAccuse: string
+	completionOpts: CreateChatCompletionRequest,
 ) {
 	const accusePrompt = getAccusePrompt(mysteryName);
 	if (!accusePrompt) {
 		throw error(500, 'Could not get accuse prompt');
 	}
-	const newMessages: ChatCompletionRequestMessage[] = [
-		{
-			role: 'user',
-			content: accusePrompt + '\n' + 'The murderer is: ' + suspectToAccuse + '\n' + messages[messages.length - 1].content
-		}
-	];
 
-	const completionOpts = createChatCompletionRequest(chatMode, messages);
 	const response = await createGptResponseAndHandleError(completionOpts);
-
 	const encoder = new TextEncoder();
-	let parseRating = chatMode == ChatMode.Accuse ? true : false;
 
 	const processedStream = new ReadableStream({
 		async start(controller) {
 			const parser = createParser(onParse);
-
-			const RATING_REGEX = /Rating:\s?(\d+)/;
-			const EPILOGUE_RATING_REGEX = /Rating:\s*\d+[\s\S]*?Epilogue:\s*\w/i;
 
 			let message = '';
 			async function onParse(event) {
@@ -213,26 +129,9 @@ async function handleSuspectAccuseAnswer(
 					return;
 				}
 				const content = JSON.parse(event.data).choices[0].delta?.content || '';
-				if (parseRating) {
-					if (EPILOGUE_RATING_REGEX.test(message)) {
-						const ratingMatch = message.match(RATING_REGEX);
-						if (!ratingMatch) {
-							throw error(500, 'Could not parse rating');
-						}
-						message = message.replace(RATING_REGEX, '').replace(/Epilogue:\s?/, '');
-						controller.enqueue(formatData(message, encoder));
-						const ratingSet = await setRating(mysteryName, userId, parseInt(ratingMatch[1]));
-						throwIfFalse(ratingSet, 'Could not set rating');
-						parseRating = false;
-					} else {
-						message += content;
-					}
-				} else {
-					message += content;
-					controller.enqueue(formatData(content, encoder));
-				}
+				message += content;
+				controller.enqueue(formatData(content, encoder));
 			}
-
 			if (response.body == null) {
 				throw error(500, 'No response from OpenAI');
 			}
@@ -242,15 +141,95 @@ async function handleSuspectAccuseAnswer(
 		}
 	});
 
-	const messageAdded = await addMessageForUser(userId, messages[messages.length - 1].content, mysteryName);
-	throwIfFalse(messageAdded, 'Could not add message to chat');
-
 	return new Response(processedStream, {
 		headers: {
 			'Content-Type': 'text/event-stream'
 		}
 	});
 }
+
+//async function handleSuspectAccuseAnswer(
+//	mysteryName: string,
+//	chatMode: ChatMode,
+//	messages: ChatCompletionRequestMessage[],
+//	userId: string,
+//	suspectToAccuse: string
+//) {
+//	const accusePrompt = getAccusePrompt(mysteryName);
+//	if (!accusePrompt) {
+//		throw error(500, 'Could not get accuse prompt');
+//	}
+//	const newMessages: ChatCompletionRequestMessage[] = [
+//		{
+//			role: 'user',
+//			content: accusePrompt + '\n' + 'The murderer is: ' + suspectToAccuse + '\n' + messages[messages.length - 1].content
+//		}
+//	];
+//
+//	const completionOpts = createChatCompletionRequest(chatMode, messages);
+//	const response = await createGptResponseAndHandleError(completionOpts);
+//
+//	const encoder = new TextEncoder();
+//	let parseRating = chatMode == ChatMode.Accuse ? true : false;
+//
+//	const processedStream = new ReadableStream({
+//		async start(controller) {
+//			const parser = createParser(onParse);
+//
+//			const RATING_REGEX = /Rating:\s?(\d+)/;
+//			const EPILOGUE_RATING_REGEX = /Rating:\s*\d+[\s\S]*?Epilogue:\s*\w/i;
+//
+//			let message = '';
+//			async function onParse(event) {
+//				if (event.type !== 'event') return;
+//
+//				if (event.data === '[DONE]') {
+//					//TODO is this really needed?
+//					controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+//					const addedMessage = await addMessageForUser(userId, message, mysteryName);
+//					throwIfFalse(addedMessage, 'Could not add message to chat');
+//					controller.close();
+//					return;
+//				}
+//				const content = JSON.parse(event.data).choices[0].delta?.content || '';
+//				if (parseRating) {
+//					if (EPILOGUE_RATING_REGEX.test(message)) {
+//						const ratingMatch = message.match(RATING_REGEX);
+//						if (!ratingMatch) {
+//							throw error(500, 'Could not parse rating');
+//						}
+//						message = message.replace(RATING_REGEX, '').replace(/Epilogue:\s?/, '');
+//						controller.enqueue(formatData(message, encoder));
+//						const ratingSet = await setRating(mysteryName, userId, parseInt(ratingMatch[1]));
+//						throwIfFalse(ratingSet, 'Could not set rating');
+//						parseRating = false;
+//					} else {
+//						message += content;
+//					}
+//				} else {
+//					message += content;
+//					controller.enqueue(formatData(content, encoder));
+//				}
+//			}
+//
+//			if (response.body == null) {
+//				throw error(500, 'No response from OpenAI');
+//			}
+//			for await (const value of response.body.pipeThrough(new TextDecoderStream())) {
+//				parser.feed(value);
+//			}
+//		}
+//	});
+
+//	const messageAdded = await addMessageForUser(userId, messages[messages.length - 1].content, mysteryName);
+//	throwIfFalse(messageAdded, 'Could not add message to chat');
+//
+//	return new Response(processedStream, {
+//		headers: {
+//			'Content-Type': 'text/event-stream'
+//		}
+//	});
+//}
 
 export const POST: RequestHandler = async ({ request, locals: { getSession } }) => {
 	const session: Session = await getSession();
@@ -270,11 +249,13 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		const suspectToAccuse = game_config.suspectToAccuse;
 		throwIfUnset('Mystery name', game_config.mysteryName);
 
+		const messageAdded = await addMessageForUser(session.user.id, messages[messages.length - 1].content, game_config.mysteryName);
+		throwIfFalse(messageAdded, 'Could not add message to chat');
+
 		const chatMode = suspectToAccuse ? ChatMode.Accuse : ChatMode.Letter;
 		if (chatMode == ChatMode.Accuse) {
 			await archiveLastConversation(session.user.id, game_config.mysteryName);
 		}
-
 		//return await oneMessageAnswer(game_config.mysteryName, chatMode, messages, session.user.id);
 		const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
 		throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
