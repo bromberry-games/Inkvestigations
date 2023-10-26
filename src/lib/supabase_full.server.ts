@@ -7,7 +7,6 @@ import type { Chat, ChatMessage } from '$misc/shared';
 const supabase_full_access = createClient<Database>(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
 export async function getInfoModelMessages(userId: string, mystery: string): Promise<ChatMessage[] | null> {
-	console.log("getting info model messages");
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('user_mystery_conversations')
 		.select('id')
@@ -28,7 +27,7 @@ export async function getInfoModelMessages(userId: string, mystery: string): Pro
 		return null;
 	}
 
-	const { data, error } = await supabase_full_access
+	const { data: infoMessageData, error } = await supabase_full_access
 		.from('user_mystery_info_messages')
 		.select('content')
 		.eq('conversation_id', conversationData.id);
@@ -58,26 +57,23 @@ export async function getInfoModelMessages(userId: string, mystery: string): Pro
 		console.error(prompError);
 		return null;
 	}
-	if(!prompData.info_prompt) {
-		console.error("no prompt data")
+	if (!prompData.info_prompt) {
+		console.error('no prompt data');
 		return null;
 	}
 
-	const conversation: ChatMessage[] = [
-		...prompData.info_prompt.messages
-	];
+	const conversation: ChatMessage[] = [...prompData.info_prompt.messages];
 
-	data.forEach((item, index) => {
+	infoMessageData.forEach((item, index) => {
 		conversation.push({
 			role: 'user',
-			content: item.content
+			content: messageData[index].content
 		});
 		conversation.push({
 			role: 'assistant',
-			content: messageData[index].content
+			content: item.content
 		});
 	});
-	console.log(conversation);
 
 	return conversation;
 }
@@ -242,14 +238,13 @@ export async function loadUserUIMessages(userid: string, mystery: string): Promi
 	const messages: ChatMessage[] = [
 		{
 			role: 'assistant',
-			content: mysteryData.first_letter,
+			content: mysteryData.first_letter
 		}
 	];
 
 	messages.push(
 		...messageData.map(
 			(message, index): ChatMessage => ({
-				id: String(index), // assuming messages have no unique ID in your database
 				content: message.content,
 				role: index % 2 === 0 ? 'user' : 'assistant'
 			})
@@ -259,86 +254,29 @@ export async function loadUserUIMessages(userid: string, mystery: string): Promi
 	return messages;
 }
 
-export async function loadBackendMessages(userid: string, mystery: string): Promise<ChatMessage[] | null> {
-	// Step 1: Get the conversation_id
-	const { data: conversationData, error: conversationError } = await supabase_full_access
-		.from('user_mystery_conversations')
-		.select('id, created_at, archived')
-		.eq('user_id', userid)
-		.eq('mystery_name', mystery)
-		.order('created_at', { ascending: false })
-		.limit(1);
+export async function loadBackendMessages(
+	userid: string,
+	mystery: string
+): Promise<{ promptMessages: ChatMessage[]; responseMessages: ChatMessage[] } | null> {
+	const { data, error } = await supabase_full_access.from('mysteries').select('letter_prompt').eq('name', mystery).single();
 
-	if (conversationError) {
-		console.error('error querying conversation: ', conversationError);
+	if (error) {
+		console.error(error);
 		return null;
 	}
 
-	let { id: conversationId, created_at: createdAt } =
-		conversationData && conversationData.length >= 1 ? conversationData[0] : { id: 0, created_at: 0 };
-	if (!conversationData || conversationData.length == 0 || conversationData[0].archived) {
-		const { data: conversationInsertData, error: conversationInsertError } = await supabase_full_access
-			.from('user_mystery_conversations')
-			.insert({ user_id: userid, mystery_name: mystery })
-			.select('id, created_at')
-			.single();
-
-		if (conversationInsertError) {
-			console.error('error inserting conversation: ');
-			console.error(conversationInsertError);
-			return null;
-		}
-		conversationId = conversationInsertData.id;
-		createdAt = conversationInsertData.created_at;
-	}
-
-	const { data: mysteryData, error: mysteryError } = await supabase_full_access
-		.from('mysteries')
-		.select('letter_prompt')
-		.eq('name', mystery)
-		.single();
-
-	if (mysteryError) {
-		console.error('error querying mystery: ', mysteryError);
+	if (!data || !data.letter_prompt) {
+		console.error('data is null');
 		return null;
 	}
-
-	const { data: messageData, error: messageError } = await supabase_full_access
-		.from('user_mystery_messages')
-		.select('content, created_at')
-		.eq('conversation_id', conversationId);
-
-	if (messageError) {
-		console.error('error querying messages: ', messageError);
+	//const messages: ChatMessage[] = [...data.letter_prompt.messages];
+	const uiMessages = await loadUserUIMessages(userid, mystery);
+	if (!uiMessages) {
+		console.error('uiMessages is null');
 		return null;
 	}
-
-	const messages: ChatMessage[] = [
-		...mysteryData.letter_prompt.messages
-	];
-
-	messages.push(
-		...messageData.map(
-			(message, index): ChatMessage => ({
-				id: String(index), // assuming messages have no unique ID in your database
-				content: message.content,
-				role: index % 2 === 0 ? 'user' : 'assistant'
-			})
-		)
-	);
-
-	// Construct and return the Chat object
-	return {
-		title: mystery,
-		contextMessage: {
-			role: 'system',
-			content: ''
-		},
-		created: new Date(createdAt),
-		messages,
-		prompt: '' // you might want to define how to derive or set this field
-		// other optional fields can be set as needed
-	};
+	const responesMessages = uiMessages.filter((msg) => msg.role === 'assistant');
+	return { promptMessages: data.letter_prompt.messages, responseMessages: responesMessages };
 }
 
 export async function archiveLastConversation(userid: string, mystery: string): Promise<boolean> {

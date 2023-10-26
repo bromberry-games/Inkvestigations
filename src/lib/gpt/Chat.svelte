@@ -2,31 +2,18 @@
 	import { afterUpdate, beforeUpdate, onMount } from 'svelte';
 	import snarkdown from 'snarkdown';
 	import { afterNavigate } from '$app/navigation';
-	import type { Chat, ChatMessage, } from '$misc/shared';
+	import type { Chat, ChatMessage } from '$misc/shared';
 	import { chatStore, enhancedLiveAnswerStore, isLoadingAnswerStore } from '$misc/stores';
 	import ChatMessageUI from './ChatMessageUI.svelte';
 	import { Spinner } from 'flowbite-svelte';
 
 	export let slug: string;
 	export let messages: ChatMessage[];
-	//export let chat: Chat | undefined = undefined;
-
-	//$: if ($chatStore[slug]) {
-	//	// If this is used in the "Shared chat" view, the chat is not in the local store.
-	//	// Instead it's loaded from the db and passed in as a prop.
-	//	chat = $chatStore[slug];
-	//}
+	$: console.log('messages from Chat: ', messages);
 
 	// Autoscroll: https://svelte.dev/tutorial/update
 	let div: HTMLElement | null | undefined;
 	let autoscroll: boolean | null | undefined;
-
-	onMount(() => {
-		// bind to the *scrollable* element by it's id
-		// note: element is not exposed in this file, it lives in app.html
-		div = document.getElementById('page');
-		console.log(div);
-	});
 
 	beforeUpdate(() => {
 		autoscroll = div && div.offsetHeight + div.scrollTop > div.scrollHeight - 20;

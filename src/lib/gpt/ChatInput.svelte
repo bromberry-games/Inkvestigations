@@ -21,34 +21,10 @@
 	let inputCopy = '';
 	let textarea: HTMLTextAreaElement;
 	let messageTokens = 0;
-	let lastUserMessage: ChatMessage | null = null;
-	let currentMessages: ChatMessage[] | null = null;
+	let lastUserMessage: string | null = null;
 	let gameOver = false;
-	let rating: number;
 
-	$: chat = $chatStore[slug];
-	$: message = setMessage(input.trim());
-	$: {
-		if (chat.messages[0] == undefined) {
-			message = setMessage(input.trim());
-		}
-	}
-
-	function setMessage(content: string): ChatCompletionRequestMessage {
-		return {
-			role: 'user',
-			content: content
-		} as ChatCompletionRequestMessage;
-	}
-
-	const unsubscribe = chatStore.subscribe((chats) => {
-		const chat = chats[slug];
-		if (chat) {
-			currentMessages = chat.messages;
-		}
-	});
-
-	onDestroy(unsubscribe);
+	$: message = input.trim();
 
 	function handleSubmit() {
 		if (suspectToAccuse) {
@@ -65,18 +41,11 @@
 				suspectToAccuse: suspectToAccuse,
 				mysteryName: slug.replace(/_/g, ' ')
 			},
-			messages: currentMessages?.map(
-				(m) =>
-					({
-						role: m.role,
-						content: m.content,
-						name: m.name
-					}) as ChatCompletionRequestMessage
-			)
+			message: message
 		};
 
 		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort);
-		dispatch('chatInput');
+		dispatch('chatInput', { role: 'user', content: message });
 		input = '';
 	}
 
@@ -112,9 +81,6 @@
 		$isLoadingAnswerStore = false;
 
 		// always true, check just for TypeScript
-		if (lastUserMessage?.id) {
-			chatStore.deleteMessage(slug, lastUserMessage.id);
-		}
 
 		console.error(event);
 		console.log('data: ');
@@ -133,13 +99,11 @@
 
 	function addCompletionToChat(isAborted = false) {
 		const messageToAdd: ChatMessage = !isAborted ? { ...$liveAnswerStore } : { ...$enhancedLiveAnswerStore, isAborted: true };
-
-		chatStore.addMessageToChat(slug, messageToAdd, lastUserMessage || undefined);
 		$isLoadingAnswerStore = false;
-
 		$eventSourceStore.reset();
 		resetLiveAnswer();
 		lastUserMessage = null;
+		dispatch('messageReceived', messageToAdd);
 	}
 
 	function resetLiveAnswer() {
@@ -151,8 +115,8 @@
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
-		clearTimeout(debounceTimer);
-		debounceTimer = window.setTimeout(calculateMessageTokens, 750);
+		//clearTimeout(debounceTimer);
+		//debounceTimer = window.setTimeout(calculateMessageTokens, 750);
 
 		if ($isLoadingAnswerStore) {
 			return;

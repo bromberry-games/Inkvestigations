@@ -9,7 +9,7 @@ VALUES (
     $${"message": "t'mp"}$$
 );
 
-INSERT INTO mysteries (Name, Description, filepath, first_letter, letter_prompt, accuse_prompt, info_prompt)
+INSERT INTO mysteries (Name, Description, filepath, first_letter, letter_prompt, info_prompt, accuse_prompt)
 VALUES(
 'Mirror Mirror',
 'A journalist is found dead. Can you uncover this web of lies?',

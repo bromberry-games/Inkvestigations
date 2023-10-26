@@ -15,7 +15,7 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		throw error(500, 'could not load chat from data');
 	}
 	const suspects = await getSuspects(mysteryName);
-	if(!suspects) {
+	if (!suspects) {
 		throw error(500, 'could not suspects chat from data');
 	}
 	return { messages: messages, suspects: suspects };

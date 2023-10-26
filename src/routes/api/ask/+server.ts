@@ -12,9 +12,10 @@ import {
 	getAccusePrompt,
 	getInfoModelMessages,
 	getMessageAmountForUser,
+	loadBackendMessages,
 	setRating
 } from '$lib/supabase_full.server';
-import { ChatMode } from '$misc/shared';
+import { ChatMode, type ChatMessage } from '$misc/shared';
 import { createParser } from 'eventsource-parser';
 import type { Session } from '@supabase/supabase-js';
 
@@ -76,41 +77,53 @@ async function createGptResponseAndHandleError(completionOpts: CreateChatComplet
 	return response;
 }
 
-async function twoMessageAnswer(mysteryName: string, messages: ChatCompletionRequestMessage[], userId: string) {
+async function twoMessageAnswer(mysteryName: string, promptMessage: string, userId: string) {
+	console.log('rtwo message answer');
 	const infoModelMessages = await getInfoModelMessages(userId, mysteryName);
 	if (!infoModelMessages) {
 		throw error(500, 'Could not get info model messages');
 	}
-	console.log("infor model messages: ")
-	console.log(infoModelMessages)
-	const promptMessage = messages[messages.length - 1];
-	const completionOpts = createChatCompletionRequest(ChatMode.Request, [...infoModelMessages, promptMessage]);
+
+	const completionOpts = createChatCompletionRequest(ChatMode.Request, [...infoModelMessages, { role: 'user', content: promptMessage }]);
+
 	const responseJson = await (await createGptResponseAndHandleError(completionOpts)).json();
 	const responseMessage = responseJson.choices[0].message.content;
+	console.log('responseMessage: ', responseMessage);
 
 	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, responseMessage);
 	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
 
-	messages[messages.length - 1] = {
-		role: 'user',
-		content: '## Order\n' + promptMessage.content + '\n## Information\n' + responseMessage
-	};
-	const streamingCompletionOpts = createChatCompletionRequest(ChatMode.Letter, messages);
-	return handleStreamingAnswer(mysteryName,  userId, streamingCompletionOpts);
-}
-
-async function handleStreamingAnswer(
-	mysteryName: string,
-	userId: string,
-	completionOpts: CreateChatCompletionRequest,
-) {
-	const accusePrompt = getAccusePrompt(mysteryName);
-	if (!accusePrompt) {
-		throw error(500, 'Could not get accuse prompt');
+	const backendMessages = await loadBackendMessages(userId, mysteryName);
+	if (!backendMessages) {
+		throw error(500, 'Could not load backend messages');
+	}
+	const messages = backendMessages.promptMessages;
+	const ogLength = messages.length;
+	for (let i = ogLength; i < infoModelMessages.length; i += 2) {
+		messages.push({
+			role: 'user',
+			content: '## Order\n' + infoModelMessages[i].content + '\n## Information\n' + infoModelMessages[i + 1].content
+		});
+		messages.push(backendMessages.responseMessages[(i - ogLength) / 2]);
 	}
 
+	messages.push({
+		role: 'user',
+		content: '## Order\n' + promptMessage + '\n## Information\n' + responseMessage
+	});
+	const streamingCompletionOpts = createChatCompletionRequest(ChatMode.Letter, messages);
+	return handleStreamingAnswer(mysteryName, userId, streamingCompletionOpts);
+}
+
+async function handleStreamingAnswer(mysteryName: string, userId: string, completionOpts: CreateChatCompletionRequest) {
+	console.log('handling streaming answer');
+	console.log('completionOpts: ', completionOpts);
 	const response = await createGptResponseAndHandleError(completionOpts);
 	const encoder = new TextEncoder();
+	if (response.status !== 200) {
+		console.error(response.statusText);
+		throw error(500, 'Could not create gpt response');
+	}
 
 	const processedStream = new ReadableStream({
 		async start(controller) {
@@ -131,9 +144,6 @@ async function handleStreamingAnswer(
 				const content = JSON.parse(event.data).choices[0].delta?.content || '';
 				message += content;
 				controller.enqueue(formatData(content, encoder));
-			}
-			if (response.body == null) {
-				throw error(500, 'No response from OpenAI');
 			}
 			for await (const value of response.body.pipeThrough(new TextDecoderStream())) {
 				parser.feed(value);
@@ -242,14 +252,14 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	try {
 		const requestData = await request.json();
 		throwIfUnset('request data', requestData);
-		const messages: ChatCompletionRequestMessage[] = requestData.messages;
-		throwIfUnset('messages', messages);
+		const message: string = requestData.message;
+		throwIfUnset('messages', message);
 		const game_config = requestData.game_config;
 		throwIfUnset('game_config', game_config);
 		const suspectToAccuse = game_config.suspectToAccuse;
 		throwIfUnset('Mystery name', game_config.mysteryName);
 
-		const messageAdded = await addMessageForUser(session.user.id, messages[messages.length - 1].content, game_config.mysteryName);
+		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);
 		throwIfFalse(messageAdded, 'Could not add message to chat');
 
 		const chatMode = suspectToAccuse ? ChatMode.Accuse : ChatMode.Letter;
@@ -260,7 +270,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
 		throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
 
-		return await twoMessageAnswer(game_config.mysteryName, messages, session.user.id);
+		return await twoMessageAnswer(game_config.mysteryName, message, session.user.id);
 	} catch (err) {
 		throw error(500, getErrorMessage(err));
 	}
