@@ -27,7 +27,7 @@ export async function getInfoModelMessages(userId: string, mystery: string): Pro
 		return null;
 	}
 
-	const { data, error } = await supabase_full_access
+	const { data: infoMessageData, error } = await supabase_full_access
 		.from('user_mystery_info_messages')
 		.select('content')
 		.eq('conversation_id', conversationData.id);
@@ -46,35 +46,32 @@ export async function getInfoModelMessages(userId: string, mystery: string): Pro
 		return null;
 	}
 
-	const conversation: ChatMessage[] = [];
-
 	const { data: prompData, error: prompError } = await supabase_full_access
 		.from('mysteries')
-		.select('info_prompt, info_answer')
-		.eq('name', mystery);
+		.select('info_prompt')
+		.eq('name', mystery)
+		.limit(1)
+		.single();
 
 	if (prompError) {
 		console.error(prompError);
 		return null;
 	}
+	if (!prompData.info_prompt) {
+		console.error('no prompt data');
+		return null;
+	}
 
-	conversation.push({
-		role: 'user',
-		content: prompData[0].info_prompt
-	});
-	conversation.push({
-		role: 'assistant',
-		content: prompData[0].info_answer
-	});
+	const conversation: ChatMessage[] = [...prompData.info_prompt.messages];
 
-	data.forEach((item, index) => {
+	infoMessageData.forEach((item, index) => {
 		conversation.push({
 			role: 'user',
-			content: item.content
+			content: messageData[index].content
 		});
 		conversation.push({
 			role: 'assistant',
-			content: messageData[index].content
+			content: item.content
 		});
 	});
 
@@ -174,17 +171,17 @@ export async function cancelSubscription(userId: string, endDate: string): Promi
 	return true;
 }
 
-export async function getAccusePrompt(mysteryName: string): Promise<string | null> {
+export async function getAccusePrompt(mysteryName: string): Promise<ChatMessage[] | null> {
 	const { data, error } = await supabase_full_access.from('mysteries').select('accuse_prompt').eq('name', mysteryName).single();
 	if (error) {
 		console.error(error);
 		return null;
 	}
-	return data?.accuse_prompt || null;
+	return data?.accuse_prompt.messages || null;
 }
 
 //TODO cleanup or postgres function
-export async function loadChatForUser(userid: string, mystery: string): Promise<Chat | null> {
+export async function loadUserUIMessages(userid: string, mystery: string): Promise<ChatMessage[] | null> {
 	// Step 1: Get the conversation_id
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('user_mystery_conversations')
@@ -219,7 +216,7 @@ export async function loadChatForUser(userid: string, mystery: string): Promise<
 
 	const { data: mysteryData, error: mysteryError } = await supabase_full_access
 		.from('mysteries')
-		.select('prompt, answer')
+		.select('first_letter')
 		.eq('name', mystery)
 		.single();
 
@@ -240,37 +237,46 @@ export async function loadChatForUser(userid: string, mystery: string): Promise<
 
 	const messages: ChatMessage[] = [
 		{
-			content: mysteryData.prompt,
-			role: 'user'
-		},
-		{
-			content: mysteryData.answer,
-			role: 'assistant'
+			role: 'assistant',
+			content: mysteryData.first_letter
 		}
 	];
 
 	messages.push(
 		...messageData.map(
 			(message, index): ChatMessage => ({
-				id: String(index), // assuming messages have no unique ID in your database
 				content: message.content,
 				role: index % 2 === 0 ? 'user' : 'assistant'
 			})
 		)
 	);
 
-	// Construct and return the Chat object
-	return {
-		title: mystery,
-		contextMessage: {
-			role: 'system',
-			content: ''
-		},
-		created: new Date(createdAt),
-		messages,
-		prompt: '' // you might want to define how to derive or set this field
-		// other optional fields can be set as needed
-	};
+	return messages;
+}
+
+export async function loadBackendMessages(
+	userid: string,
+	mystery: string
+): Promise<{ promptMessages: ChatMessage[]; responseMessages: ChatMessage[] } | null> {
+	const { data, error } = await supabase_full_access.from('mysteries').select('letter_prompt').eq('name', mystery).single();
+
+	if (error) {
+		console.error(error);
+		return null;
+	}
+
+	if (!data || !data.letter_prompt) {
+		console.error('data is null');
+		return null;
+	}
+	//const messages: ChatMessage[] = [...data.letter_prompt.messages];
+	const uiMessages = await loadUserUIMessages(userid, mystery);
+	if (!uiMessages) {
+		console.error('uiMessages is null');
+		return null;
+	}
+	const responesMessages = uiMessages.filter((msg) => msg.role === 'assistant');
+	return { promptMessages: data.letter_prompt.messages, responseMessages: responesMessages };
 }
 
 export async function archiveLastConversation(userid: string, mystery: string): Promise<boolean> {
@@ -291,7 +297,6 @@ export async function archiveLastConversation(userid: string, mystery: string): 
 	return true;
 }
 
-//TODO cleanup or postgres function
 export async function addMessageForUser(userid: string, message: string, mystery: string): Promise<boolean> {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('user_mystery_conversations')
@@ -313,29 +318,9 @@ export async function addMessageForUser(userid: string, message: string, mystery
 		return false;
 	}
 
-	//TODO remove this existing messages crap. Was there because of bad design anyways
-	const conversationId = conversationData?.id;
-	const { data: existingMessageData, error: messageCheckError } = await supabase_full_access
-		.from('user_mystery_messages')
-		.select('id')
-		.eq('content', message)
-		.eq('conversation_id', conversationData.id);
-
-	if (messageCheckError) {
-		console.error('message check error: ');
-		console.error(messageCheckError);
-		return false;
-	}
-
-	// If the message already exists, return early to prevent duplicate insertion
-	if (existingMessageData && existingMessageData.length > 0) {
-		console.warn('Message already exists in the database for this conversation.');
-		return false;
-	}
-
 	const { error: messageError } = await supabase_full_access
 		.from('user_mystery_messages')
-		.insert({ content: message, conversation_id: conversationId });
+		.insert({ content: message, conversation_id: conversationData.id });
 
 	if (messageError) {
 		console.error('message error: ' + messageError);
