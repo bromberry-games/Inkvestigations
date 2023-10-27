@@ -4,7 +4,7 @@
 	import { textareaAutosizeAction } from 'svelte-legos';
 	import { PaperAirplane } from '@inqling/svelte-icons/heroicon-24-solid';
 	import type { ChatMessage } from '$misc/shared';
-	import { chatStore, eventSourceStore, isLoadingAnswerStore, liveAnswerStore, enhancedLiveAnswerStore } from '$misc/stores';
+	import { eventSourceStore, isLoadingAnswerStore, liveAnswerStore, enhancedLiveAnswerStore } from '$misc/stores';
 	import { countTokens } from '$misc/openai';
 	import { Toast, Button } from 'flowbite-svelte';
 	import SuspectModal from './SuspectModal.svelte';
@@ -55,7 +55,6 @@
 			if (event.data !== '[DONE]') {
 				const completionResponse: any = JSON.parse(event.data);
 				const delta = completionResponse.content;
-				console.log(delta);
 				liveAnswerStore.update((store) => {
 					const answer = { ...store };
 					answer.content += delta;
@@ -115,9 +114,6 @@
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
-		//clearTimeout(debounceTimer);
-		//debounceTimer = window.setTimeout(calculateMessageTokens, 750);
-
 		if ($isLoadingAnswerStore) {
 			return;
 		}

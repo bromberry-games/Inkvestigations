@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import { chatStore } from '$misc/stores';
 	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
 	import type { ChatMessage } from '$misc/shared';
@@ -14,11 +13,12 @@
 	$: messages = data.messages;
 
 	function addMessage(event: CustomEvent<ChatMessage>) {
-		console.log(messages);
 		messages = [...messages, event.detail];
-		console.log('added message');
-		console.log(event.detail);
-		console.log(messages);
+	}
+
+	async function updateUserMessageAmountAndAddMessage(event: CustomEvent<ChatMessage>) {
+		addMessage(event);
+		updateUserMessagesAmount();
 	}
 
 	async function updateUserMessagesAmount() {
@@ -37,4 +37,11 @@
 </script>
 
 <Chat {slug} {messages}></Chat>
-<ChatInput {slug} on:chatInput={addMessage} messagesAmount={userMessages} {suspectToAccuse} suspects={data.suspects} />
+<ChatInput
+	{slug}
+	on:chatInput={addMessage}
+	on:messageReceived={updateUserMessageAmountAndAddMessage}
+	messagesAmount={userMessages}
+	{suspectToAccuse}
+	suspects={data.suspects}
+/>

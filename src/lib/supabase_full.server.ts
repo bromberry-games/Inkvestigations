@@ -171,13 +171,13 @@ export async function cancelSubscription(userId: string, endDate: string): Promi
 	return true;
 }
 
-export async function getAccusePrompt(mysteryName: string): Promise<string | null> {
+export async function getAccusePrompt(mysteryName: string): Promise<ChatMessage[] | null> {
 	const { data, error } = await supabase_full_access.from('mysteries').select('accuse_prompt').eq('name', mysteryName).single();
 	if (error) {
 		console.error(error);
 		return null;
 	}
-	return data?.accuse_prompt || null;
+	return data?.accuse_prompt.messages || null;
 }
 
 //TODO cleanup or postgres function

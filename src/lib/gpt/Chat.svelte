@@ -9,7 +9,6 @@
 
 	export let slug: string;
 	export let messages: ChatMessage[];
-	$: console.log('messages from Chat: ', messages);
 
 	// Autoscroll: https://svelte.dev/tutorial/update
 	let div: HTMLElement | null | undefined;

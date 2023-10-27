@@ -50,13 +50,16 @@ function createChatCompletionRequest(chatMode: ChatMode, messages: ChatCompletio
 				temperature: 1,
 				top_p: 1,
 				messages,
-				stream: true
+				stream: false
 			};
 		}
 	}
 }
 
 function formatData(message: string, encoder: TextEncoder) {
+	if (typeof message !== 'string') {
+		throw error(500, 'Message is not a string');
+	}
 	return encoder.encode(`data: ${JSON.stringify({ content: message })}\n\n`);
 }
 
@@ -77,18 +80,15 @@ async function createGptResponseAndHandleError(completionOpts: CreateChatComplet
 	return response;
 }
 
-async function twoMessageAnswer(mysteryName: string, promptMessage: string, userId: string) {
-	console.log('rtwo message answer');
+async function infoModelAnswer(mysteryName: string, promptMessage: string, userId: string) {
 	const infoModelMessages = await getInfoModelMessages(userId, mysteryName);
 	if (!infoModelMessages) {
 		throw error(500, 'Could not get info model messages');
 	}
-
 	const completionOpts = createChatCompletionRequest(ChatMode.Request, [...infoModelMessages, { role: 'user', content: promptMessage }]);
 
 	const responseJson = await (await createGptResponseAndHandleError(completionOpts)).json();
 	const responseMessage = responseJson.choices[0].message.content;
-	console.log('responseMessage: ', responseMessage);
 
 	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, responseMessage);
 	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
@@ -102,22 +102,61 @@ async function twoMessageAnswer(mysteryName: string, promptMessage: string, user
 	for (let i = ogLength; i < infoModelMessages.length; i += 2) {
 		messages.push({
 			role: 'user',
-			content: '## Order\n' + infoModelMessages[i].content + '\n## Information\n' + infoModelMessages[i + 1].content
+			content: 'Order:\n' + infoModelMessages[i].content + '\nInformation:\n' + infoModelMessages[i + 1].content
 		});
 		messages.push(backendMessages.responseMessages[(i - ogLength) / 2]);
 	}
 
 	messages.push({
 		role: 'user',
-		content: '## Order\n' + promptMessage + '\n## Information\n' + responseMessage
+		content: 'Order:\n' + promptMessage + '\nInformation:\n' + responseMessage
 	});
-	const streamingCompletionOpts = createChatCompletionRequest(ChatMode.Letter, messages);
+	return createChatCompletionRequest(ChatMode.Letter, messages);
+}
+
+const RATING_REGEX = /Rating:\s?(\d+)/;
+
+async function accuseModelAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
+	const accusePrompt = await getAccusePrompt(mysteryName);
+	if (!accusePrompt) {
+		throw error(500, 'Could not get accuse prompt');
+	}
+	accusePrompt.push({
+		role: 'user',
+		content: accusePrompt + '\n' + 'The murderer is: ' + suspectToAccuse + '\n' + promptMessage
+	});
+
+	const completionOpts = createChatCompletionRequest(ChatMode.Accuse, accusePrompt);
+	const responseJson = await (await createGptResponseAndHandleError(completionOpts)).json();
+	const responseMessage = responseJson.choices[0].message.content;
+	const ratingMatch = responseMessage.match(RATING_REGEX);
+	if (!ratingMatch) {
+		throw error(500, 'Could not parse rating');
+	}
+	const parsedMessage = responseMessage.replace(RATING_REGEX, '').replace(/Epilogue:\s?/, '');
+	const ratingSet = await setRating(mysteryName, userId, parseInt(ratingMatch[1]));
+	throwIfFalse(ratingSet, 'Could not set rating');
+
+	const backendMessages = await loadBackendMessages(userId, mysteryName);
+	if (!backendMessages) {
+		throw error(500, 'Could not load backend messages');
+	}
+	backendMessages.promptMessages.push({
+		role: 'user',
+		content: 'Order:\n' + 'Accuse ' + suspectToAccuse + '\nInformation:\n' + parsedMessage
+	});
+	return createChatCompletionRequest(ChatMode.Letter, backendMessages.promptMessages);
+}
+
+async function twoMessageAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
+	const streamingCompletionOpts = suspectToAccuse
+		? await accuseModelAnswer(mysteryName, promptMessage, userId, suspectToAccuse)
+		: await infoModelAnswer(mysteryName, promptMessage, userId);
+
 	return handleStreamingAnswer(mysteryName, userId, streamingCompletionOpts);
 }
 
 async function handleStreamingAnswer(mysteryName: string, userId: string, completionOpts: CreateChatCompletionRequest) {
-	console.log('handling streaming answer');
-	console.log('completionOpts: ', completionOpts);
 	const response = await createGptResponseAndHandleError(completionOpts);
 	const encoder = new TextEncoder();
 	if (response.status !== 200) {
@@ -130,24 +169,35 @@ async function handleStreamingAnswer(mysteryName: string, userId: string, comple
 			const parser = createParser(onParse);
 
 			let message = '';
+			let closed = false;
 			async function onParse(event) {
-				if (event.type !== 'event') return;
+				if (event.type !== 'event' || closed) return;
 
 				if (event.data === '[DONE]') {
-					//TODO is this really needed?
+					closed = true;
 					controller.enqueue(encoder.encode('data: [DONE]\n\n'));
 					const addedMessage = await addMessageForUser(userId, message, mysteryName);
 					throwIfFalse(addedMessage, 'Could not add message to chat');
 					controller.close();
 					return;
+				} else {
+					try {
+						const content = JSON.parse(event.data).choices[0].delta?.content || '';
+						message += content;
+						if (content) {
+							controller.enqueue(formatData(content, encoder));
+						}
+					} catch (e) {
+						console.error(e);
+					}
 				}
-				const content = JSON.parse(event.data).choices[0].delta?.content || '';
-				message += content;
-				controller.enqueue(formatData(content, encoder));
 			}
 			for await (const value of response.body.pipeThrough(new TextDecoderStream())) {
 				parser.feed(value);
 			}
+		},
+		async cancel() {
+			console.log('canceled');
 		}
 	});
 
@@ -256,21 +306,19 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		throwIfUnset('messages', message);
 		const game_config = requestData.game_config;
 		throwIfUnset('game_config', game_config);
-		const suspectToAccuse = game_config.suspectToAccuse;
+		const suspectToAccuse = game_config.suspectToAccuse ? game_config.suspectToAccuse : '';
 		throwIfUnset('Mystery name', game_config.mysteryName);
 
 		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);
 		throwIfFalse(messageAdded, 'Could not add message to chat');
 
-		const chatMode = suspectToAccuse ? ChatMode.Accuse : ChatMode.Letter;
-		if (chatMode == ChatMode.Accuse) {
+		if (suspectToAccuse) {
 			await archiveLastConversation(session.user.id, game_config.mysteryName);
 		}
-		//return await oneMessageAnswer(game_config.mysteryName, chatMode, messages, session.user.id);
 		const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
 		throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
 
-		return await twoMessageAnswer(game_config.mysteryName, message, session.user.id);
+		return await twoMessageAnswer(game_config.mysteryName, message, session.user.id, suspectToAccuse);
 	} catch (err) {
 		throw error(500, getErrorMessage(err));
 	}
