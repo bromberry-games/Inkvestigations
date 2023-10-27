@@ -34,13 +34,337 @@ export interface Database {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      murderers: {
+        Row: {
+          id: number
+          murder_reasons: string
+          suspect_id: number
+        }
+        Insert: {
+          id?: number
+          murder_reasons: string
+          suspect_id: number
+        }
+        Update: {
+          id?: number
+          murder_reasons?: string
+          suspect_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "murderers_suspect_id_fkey"
+            columns: ["suspect_id"]
+            referencedRelation: "suspects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      mysteries: {
+        Row: {
+          accuse_prompt: Json
+          description: string
+          filepath: string
+          id: number
+          info_prompt: Json
+          letter_prompt: Json
+          name: string
+        }
+        Insert: {
+          accuse_prompt: Json
+          description: string
+          filepath: string
+          id?: number
+          info_prompt: Json
+          letter_prompt: Json
+          name: string
+        }
+        Update: {
+          accuse_prompt?: Json
+          description?: string
+          filepath?: string
+          id?: number
+          info_prompt?: Json
+          letter_prompt?: Json
+          name?: string
+        }
+        Relationships: []
+      }
+      solved: {
+        Row: {
+          id: number
+          mystery_name: string
+          rating: number | null
+          user_id: string
+        }
+        Insert: {
+          id?: number
+          mystery_name: string
+          rating?: number | null
+          user_id: string
+        }
+        Update: {
+          id?: number
+          mystery_name?: string
+          rating?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "solved_mystery_name_fkey"
+            columns: ["mystery_name"]
+            referencedRelation: "mysteries"
+            referencedColumns: ["name"]
+          },
+          {
+            foreignKeyName: "solved_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      subscription_tiers: {
+        Row: {
+          active: boolean
+          daily_message_limit: number
+          description: string
+          name: string
+          stripe_price_id: string
+          tier_id: number
+        }
+        Insert: {
+          active?: boolean
+          daily_message_limit: number
+          description: string
+          name: string
+          stripe_price_id: string
+          tier_id?: number
+        }
+        Update: {
+          active?: boolean
+          daily_message_limit?: number
+          description?: string
+          name?: string
+          stripe_price_id?: string
+          tier_id?: number
+        }
+        Relationships: []
+      }
+      suspects: {
+        Row: {
+          description: string
+          id: number
+          imagepath: string
+          mystery_name: string
+          name: string
+        }
+        Insert: {
+          description: string
+          id?: number
+          imagepath: string
+          mystery_name: string
+          name: string
+        }
+        Update: {
+          description?: string
+          id?: number
+          imagepath?: string
+          mystery_name?: string
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suspects_mystery_name_fkey"
+            columns: ["mystery_name"]
+            referencedRelation: "mysteries"
+            referencedColumns: ["name"]
+          }
+        ]
+      }
+      user_messages: {
+        Row: {
+          amount: number
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_messages_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      user_mystery_conversations: {
+        Row: {
+          archived: boolean
+          created_at: string
+          id: number
+          mystery_name: string
+          user_id: string | null
+        }
+        Insert: {
+          archived?: boolean
+          created_at?: string
+          id?: number
+          mystery_name: string
+          user_id?: string | null
+        }
+        Update: {
+          archived?: boolean
+          created_at?: string
+          id?: number
+          mystery_name?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_mystery_conversations_mystery_name_fkey"
+            columns: ["mystery_name"]
+            referencedRelation: "mysteries"
+            referencedColumns: ["name"]
+          },
+          {
+            foreignKeyName: "user_mystery_conversations_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      user_mystery_info_messages: {
+        Row: {
+          content: string
+          conversation_id: number | null
+          created_at: string
+          id: number
+        }
+        Insert: {
+          content: string
+          conversation_id?: number | null
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          content?: string
+          conversation_id?: number | null
+          created_at?: string
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_mystery_info_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            referencedRelation: "user_mystery_conversations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      user_mystery_messages: {
+        Row: {
+          content: string
+          conversation_id: number | null
+          created_at: string
+          id: number
+        }
+        Insert: {
+          content: string
+          conversation_id?: number | null
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          content?: string
+          conversation_id?: number | null
+          created_at?: string
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_mystery_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            referencedRelation: "user_mystery_conversations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      user_subscriptions: {
+        Row: {
+          active: boolean
+          end_date: string | null
+          start_date: string
+          subscription_id: number
+          tier_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          end_date?: string | null
+          start_date: string
+          subscription_id?: number
+          tier_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          end_date?: string | null
+          start_date?: string
+          subscription_id?: number
+          tier_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_subscriptions_tier_id_fkey"
+            columns: ["tier_id"]
+            referencedRelation: "subscription_tiers"
+            referencedColumns: ["tier_id"]
+          },
+          {
+            foreignKeyName: "user_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_subscription: {
+        Args: {
+          the_user_id: string
+          price_id: string
+        }
+        Returns: undefined
+      }
+      decrement_message_for_user: {
+        Args: {
+          the_user_id: string
+        }
+        Returns: undefined
+      }
+      increase_message_for_user_by_amount: {
+        Args: {
+          the_user_id: string
+          increase: number
+        }
+        Returns: undefined
+      }
+      update_daily_messages: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

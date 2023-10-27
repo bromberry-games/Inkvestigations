@@ -3,7 +3,7 @@ import type { OpenAiModel, OpenAiSettings } from './openai';
 import { generateSlug } from 'random-word-slugs';
 
 import { goto } from '$app/navigation';
-import { chatStore, } from './stores';
+import { chatStore } from './stores';
 import { get } from 'svelte/store';
 
 export interface ChatMessage extends ChatCompletionRequestMessage {
@@ -61,21 +61,26 @@ export function createNewChat(template: {
 	};
 
 	chatStore.updateChat(slug, chat);
-	const promptMessage : ChatMessage = {
+	const promptMessage: ChatMessage = {
 		role: 'user',
 		content: template.prompt
-	}
+	};
 	chatStore.addMessageToChat(slug, promptMessage, undefined);
 
-	chatStore.addMessageToChat(slug, {
-		role: 'assistant',
-		content: template.answer
-	}, promptMessage);
+	chatStore.addMessageToChat(
+		slug,
+		{
+			role: 'assistant',
+			content: template.answer
+		},
+		promptMessage
+	);
 
 	goto(`/${slug}`, { invalidateAll: true });
 }
 
 export enum ChatMode {
-	Chat = 'chat',
-	Accuse = 'accuse'
+	Letter = 'letter',
+	Accuse = 'accuse',
+	Request = 'request'
 }

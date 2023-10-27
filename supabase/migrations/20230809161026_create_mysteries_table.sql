@@ -2,14 +2,15 @@
 create extension pg_cron with schema extensions;
 
 -- Create tables
-
 CREATE TABLE mysteries (
-    name TEXT PRIMARY KEY UNIQUE,
-    description TEXT Not Null,
-    prompt TEXT NOT NULL,
-    answer TEXT NOT NULL,
-    filepath TEXT NOT NULL,
-    accuse_prompt TEXT NOT NULL
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    description TEXT Not NULL,
+    first_letter TEXT NOT NULL,
+    letter_prompt JSON NOT NULL,
+    info_prompt JSON NOT NULL,
+    accuse_prompt JSON NOT NULL,
+    filepath TEXT NOT NULL
 );
 
 CREATE TABLE suspects (
@@ -47,6 +48,13 @@ CREATE TABLE user_mystery_conversations (
 );
 
 CREATE TABLE user_mystery_messages (
+  id SERIAL PRIMARY KEY,
+  conversation_id INT REFERENCES user_mystery_conversations(id) ON UPDATE CASCADE,
+  content TEXT NOT NULL, 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE user_mystery_info_messages (
   id SERIAL PRIMARY KEY,
   conversation_id INT REFERENCES user_mystery_conversations(id) ON UPDATE CASCADE,
   content TEXT NOT NULL, 
