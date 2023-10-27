@@ -38,7 +38,7 @@ VALUES (
 
 INSERT INTO mysteries (Name, Description, filepath, first_letter, letter_prompt, info_prompt, accuse_prompt)
 VALUES(
-'Deadly Diner',
+'Deadly Dinner',
 'A deadly dining experience with a devious plan.',
 'images/mysteries/deadly_diner.webp',
 $$
@@ -138,19 +138,19 @@ $$
 
 
 INSERT INTO suspects (mystery_name, name, description, imagepath) VALUES
-('Deadly Diner', 'Karen King', 'Mike’s wife, a former marine biologist now housewife. Out of touch with the field due to inactivity.', 'karen_king.webp'),
-('Deadly Diner', 'Olivia Cooper', 'Mike’s stepdaughter. Felt financially neglected as Mike didn’t fund her husband’s restaurant.', 'olivia_cooper.webp'),
-('Deadly Diner', 'Nathan King', 'Mike’s son. Shared a good relationship with his father.', 'nathan_king.webp'),
-('Deadly Diner', 'Henry Cooper', 'Olivia’s husband, a chef. Fascinated with the use of poison in culinary arts. Running a struggling restaurant.', 'henry_cooper.webp'),
-('Deadly Diner', 'Dr. Marcus Lee', 'Mike’s colleague, harbors jealousy over Mike’s success.', 'marcus_lee.webp'),
-('Deadly Diner', 'Dr. Lauren Chen', 'Mike’s colleague, skeptical about Mike’s discovery.', 'lauren_chen.webp'),
-('Deadly Diner', 'Dr. James Kim', 'Mike’s colleague, indifferent to Mike’s discovery.', 'james_kim.webp'),
-('Deadly Diner', 'Adam Price', 'Mike’s best friend. Lent money to Mike for his initial research.', 'adam_price.webp'),
-('Deadly Diner', 'Emily Nguyen', 'Young volunteer from the Turtle Protection Facility (TPF).', 'emily_nguyen.webp'),
-('Deadly Diner', 'Peter Thompson', 'Director of the Turtle Protection Facility (TPF).', 'peter_thompson.webp');
+('Deadly Dinner', 'Karen King', 'Mike’s wife, a former marine biologist now housewife. Out of touch with the field due to inactivity.', 'karen_king.webp'),
+('Deadly Dinner', 'Olivia Cooper', 'Mike’s stepdaughter. Felt financially neglected as Mike didn’t fund her husband’s restaurant.', 'olivia_cooper.webp'),
+('Deadly Dinner', 'Nathan King', 'Mike’s son. Shared a good relationship with his father.', 'nathan_king.webp'),
+('Deadly Dinner', 'Henry Cooper', 'Olivia’s husband, a chef. Fascinated with the use of poison in culinary arts. Running a struggling restaurant.', 'henry_cooper.webp'),
+('Deadly Dinner', 'Dr. Marcus Lee', 'Mike’s colleague, harbors jealousy over Mike’s success.', 'marcus_lee.webp'),
+('Deadly Dinner', 'Dr. Lauren Chen', 'Mike’s colleague, skeptical about Mike’s discovery.', 'lauren_chen.webp'),
+('Deadly Dinner', 'Dr. James Kim', 'Mike’s colleague, indifferent to Mike’s discovery.', 'james_kim.webp'),
+('Deadly Dinner', 'Adam Price', 'Mike’s best friend. Lent money to Mike for his initial research.', 'adam_price.webp'),
+('Deadly Dinner', 'Emily Nguyen', 'Young volunteer from the Turtle Protection Facility (TPF).', 'emily_nguyen.webp'),
+('Deadly Dinner', 'Peter Thompson', 'Director of the Turtle Protection Facility (TPF).', 'peter_thompson.webp');
 
 INSERT INTO murderers (suspect_id, murder_reasons) VALUES
-((SELECT id FROM suspects WHERE name = 'Karen King' AND mystery_name = 'Deadly Diner'), 'Husbans affair and him stealing her research');
+((SELECT id FROM suspects WHERE name = 'Karen King' AND mystery_name = 'Deadly Dinner'), 'Husbans affair and him stealing her research');
 
 INSERT INTO mysteries (Name, Description, filepath, first_letter, letter_prompt, info_prompt, accuse_prompt)
 VALUES(
