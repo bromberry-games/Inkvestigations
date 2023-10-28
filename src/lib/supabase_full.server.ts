@@ -254,7 +254,7 @@ export async function loadUserUIMessages(userid: string, mystery: string): Promi
 	return messages;
 }
 
-export async function loadBackendMessages(
+export async function loadLetterMessages(
 	userid: string,
 	mystery: string
 ): Promise<{ promptMessages: ChatMessage[]; responseMessages: ChatMessage[] } | null> {
