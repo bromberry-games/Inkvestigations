@@ -19,21 +19,16 @@
 			{@html logo}
 		</div>
 	</NavBrand>
-	{#if session}
-		<Button
-			class="transform !rounded-full bg-quaternary !px-5 !py-3 font-primary text-xl !text-tertiary transition-transform hover:scale-110"
-			on:click={() => supabase.auth.signOut()}>LOGOUT</Button
-		>
-		<!-- <Button
-				class="transform !rounded-full bg-quaternary !px-5 !py-3 font-primary text-xl !text-tertiary transition-transform hover:scale-110"
-				href="/login">LOGIN</Button
-			> -->
-	{/if}
 	<NavHamburger on:click={toggle} />
 	<NavUl {hidden} class="justify-end text-end font-primary" activeClass="!text-tertiary" on:click={toggle}>
 		<NavLi href="/mysteries" class="ml-8 text-4xl !text-quaternary">MYSTERIES</NavLi>
 		<NavLi href="/pricing" class="ml-8 text-4xl !text-quaternary">PRICING</NavLi>
-		{#if !session}
+		{#if session}
+			<Button
+				class="transform !rounded-full bg-quaternary !px-5 !py-3 font-primary text-xl !text-tertiary transition-transform hover:scale-110"
+				on:click={() => supabase.auth.signOut()}>LOGOUT</Button
+			>
+		{:else}
 			<NavLi href="/login" class="ml-8 text-4xl !text-quaternary">LOGIN</NavLi>
 		{/if}
 	</NavUl>
