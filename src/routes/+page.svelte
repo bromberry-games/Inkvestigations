@@ -8,29 +8,6 @@
 	$: ({ supabase, session } = data);
 </script>
 
-<!-- <section class="relative bg-[url(/images/hero_page.webp)] bg-cover bg-center bg-no-repeat">
-	<div class="relative mx-auto max-w-screen-xl px-4 py-32 sm:px-6 lg:flex lg:h-screen lg:items-center lg:px-8">
-		<div class="max-w-xl">
-			<h1 class="text-3xl font-extrabold sm:text-5xl">INTERACTIVE MYSTERY GAMES</h1>
-			<p class="mt-4 max-w-lg sm:text-xl">
-				A new type of game's afoot in these AI powered mystery murder stories. Inkvestigation combines authored mysteries with dynamic
-				storytelling.
-			</p>
-			<button class="mt-8 rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-700">TRY FOR FREE</button>
-		</div>
-
-		<!-- <div class="max-w-xl text-center sm:text-left">
-			<h1 class="text-3xl font-extrabold sm:text-5xl">INTERACTIVE MYSTERY GAMES</h1>
-
-			<p class="mt-4 max-w-lg sm:text-xl/relaxed">
-				A new type of game's afoot in these AI powered mystery murder stories. Inkvestigation combines authored mysteries with dynamic
-				storytelling.
-			</p>
-		</div>
-	</div>
-</section>
--->
-
 <div class="flex h-full flex-1">
 	<div class="h-full flex-auto bg-tertiary md:w-11/12">
 		<section class="relative h-screen justify-center bg-[url(/images/hero_page.webp)] bg-cover bg-bottom bg-no-repeat">
