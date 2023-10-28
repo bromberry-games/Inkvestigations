@@ -12,7 +12,7 @@ import {
 	getAccusePrompt,
 	getInfoModelMessages,
 	getMessageAmountForUser,
-	loadBackendMessages,
+	loadLetterMessages,
 	setRating
 } from '$lib/supabase_full.server';
 import { ChatMode, type ChatMessage } from '$misc/shared';
@@ -93,11 +93,11 @@ async function infoModelAnswer(mysteryName: string, promptMessage: string, userI
 	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, responseMessage);
 	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
 
-	const backendMessages = await loadBackendMessages(userId, mysteryName);
+	const backendMessages = await loadLetterMessages(userId, mysteryName);
 	if (!backendMessages) {
 		throw error(500, 'Could not load backend messages');
 	}
-	const messages = backendMessages.promptMessages;
+	let messages = backendMessages.promptMessages;
 	const ogLength = messages.length;
 	for (let i = ogLength; i < infoModelMessages.length; i += 2) {
 		messages.push({
@@ -105,6 +105,13 @@ async function infoModelAnswer(mysteryName: string, promptMessage: string, userI
 			content: 'Order:\n' + infoModelMessages[i].content + '\nInformation:\n' + infoModelMessages[i + 1].content
 		});
 		messages.push(backendMessages.responseMessages[(i - ogLength) / 2]);
+	}
+
+	if (messages.length > 7) {
+		//This is needed to keep the token counts low
+		const firstElement = messages[0];
+		const lastSixElements = messages.slice(-6);
+		messages = [firstElement, ...lastSixElements];
 	}
 
 	messages.push({
@@ -137,7 +144,7 @@ async function accuseModelAnswer(mysteryName: string, promptMessage: string, use
 	const ratingSet = await setRating(mysteryName, userId, parseInt(ratingMatch[1]));
 	throwIfFalse(ratingSet, 'Could not set rating');
 
-	const backendMessages = await loadBackendMessages(userId, mysteryName);
+	const backendMessages = await loadLetterMessages(userId, mysteryName);
 	if (!backendMessages) {
 		throw error(500, 'Could not load backend messages');
 	}
