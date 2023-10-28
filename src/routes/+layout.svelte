@@ -23,7 +23,7 @@
 	});
 </script>
 
-<Navbar let:hidden let:toggle class="sticky top-0 w-full !bg-secondary" navDivClass="mx-auto flex flex-wrap justify-between items-center">
+<!-- <Navbar let:hidden let:toggle class="sticky top-0 w-full !bg-transparent" navDivClass="mx-auto flex flex-wrap justify-between items-center">
 	<NavBrand href="/" class="w-1/2">
 		<div class="inline font-tertiary md:w-1/2" id="logo-container">
 			{@html logo}
@@ -54,3 +54,5 @@
 		<slot />
 	</div>
 </div>
+-->
+<slot />
