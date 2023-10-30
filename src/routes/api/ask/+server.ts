@@ -171,42 +171,52 @@ async function handleStreamingAnswer(mysteryName: string, userId: string, comple
 		throw error(500, 'Could not create gpt response');
 	}
 
+	let savedController: ReadableStreamDefaultController;
+	let controllerOpen = true;
 	const processedStream = new ReadableStream({
 		async start(controller) {
-			const parser = createParser(onParse);
-
-			let message = '';
-			let closed = false;
-			async function onParse(event) {
-				if (event.type !== 'event' || closed) return;
-
-				if (event.data === '[DONE]') {
-					closed = true;
-					controller.enqueue(encoder.encode('data: [DONE]\n\n'));
-					const addedMessage = await addMessageForUser(userId, message, mysteryName);
-					throwIfFalse(addedMessage, 'Could not add message to chat');
-					controller.close();
-					return;
-				} else {
-					try {
-						const content = JSON.parse(event.data).choices[0].delta?.content || '';
-						message += content;
-						if (content) {
-							controller.enqueue(formatData(content, encoder));
-						}
-					} catch (e) {
-						console.error(e);
-					}
-				}
-			}
-			for await (const value of response.body.pipeThrough(new TextDecoderStream())) {
-				parser.feed(value);
-			}
+			savedController = controller;
 		},
-		async cancel() {
-			console.log('canceled');
+		async cancel(controller) {
+			controllerOpen = false;
 		}
 	});
+
+	async function parseStreamAndEnque() {
+		const parser = createParser(onParse);
+
+		let message = '';
+		let closed = false;
+		processedStream.on('error', (err) => {});
+		async function onParse(event) {
+			if (event.type !== 'event' || closed) return;
+
+			if (event.data === '[DONE]') {
+				closed = true;
+				const addedMessage = await addMessageForUser(userId, message, mysteryName);
+				throwIfFalse(addedMessage, 'Could not add message to chat');
+				if (controllerOpen) {
+					savedController.enqueue(encoder.encode('data: [DONE]\n\n'));
+					savedController.close();
+				}
+				return;
+			} else {
+				try {
+					const content = JSON.parse(event.data).choices[0].delta?.content || '';
+					message += content;
+					if (content && controllerOpen) {
+						savedController.enqueue(formatData(content, encoder));
+					}
+				} catch (e) {
+					console.error(e);
+				}
+			}
+		}
+		for await (const value of response.body.pipeThrough(new TextDecoderStream())) {
+			parser.feed(value);
+		}
+	}
+	parseStreamAndEnque();
 
 	return new Response(processedStream, {
 		headers: {

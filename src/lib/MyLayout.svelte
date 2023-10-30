@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, NavBrand, NavHamburger, NavLi, NavUl, Navbar } from 'flowbite-svelte';
 	import logo from '/src/images/logo_2.svg?src';
-	import type { Session } from '@supabase/supabase-js';
+	import type { Session, SupabaseClient } from '@supabase/supabase-js';
 
 	export let supabase: SupabaseClient;
 	export let session: Session | null;
