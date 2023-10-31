@@ -2,11 +2,12 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../schema';
 import { PUBLIC_SUPABASE_URL } from '$env/static/public';
 import { SUPABASE_SERVICE_KEY } from '$env/static/private';
-import type { Chat, ChatMessage } from '$misc/shared';
+import type { Chat } from '$misc/shared';
+import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from 'langchain/schema';
 
 const supabase_full_access = createClient<Database>(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-export async function getInfoModelMessages(userId: string, mystery: string): Promise<ChatMessage[] | null> {
+export async function getInfoModelMessages(userId: string, mystery: string): Promise<BaseMessage[] | null> {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('user_mystery_conversations')
 		.select('id')
@@ -62,23 +63,42 @@ export async function getInfoModelMessages(userId: string, mystery: string): Pro
 		return null;
 	}
 
-	const conversation: ChatMessage[] = [...prompData.info_prompt.messages];
+	const conversation: BaseMessage[] = prompData.info_prompt.messages.map((item) => {
+		switch (item.role) {
+			case 'assistant':
+				return new AIMessage({
+					content: item.content
+				});
+			case 'user':
+				return new HumanMessage({
+					content: item.content
+				});
+			case 'system':
+				return new SystemMessage({
+					content: item.content
+				});
+			default:
+				throw new Error('unknown role');
+		}
+	});
 
 	infoMessageData.forEach((item, index) => {
-		conversation.push({
-			role: 'user',
-			content: messageData[index].content
-		});
-		conversation.push({
-			role: 'assistant',
-			content: item.content
-		});
+		conversation.push(
+			new HumanMessage({
+				content: messageData[index].content
+			})
+		);
+		conversation.push(
+			new AIMessage({
+				content: item.content
+			})
+		);
 	});
 
 	return conversation;
 }
 
-export async function addInfoModelMessage(userId: string, mystery: string, message: ChatMessage): Promise<boolean> {
+export async function addInfoModelMessage(userId: string, mystery: string, message: string): Promise<boolean> {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('user_mystery_conversations')
 		.select('id')

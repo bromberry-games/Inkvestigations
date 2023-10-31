@@ -18,6 +18,8 @@ import {
 import { ChatMode, type ChatMessage } from '$misc/shared';
 import { createParser } from 'eventsource-parser';
 import type { Session } from '@supabase/supabase-js';
+import { nonStreamRequest } from './llangchain_ask';
+import { HumanMessage } from 'langchain/schema';
 
 const openAiKey: string = OPEN_AI_KEY;
 
@@ -85,39 +87,44 @@ async function infoModelAnswer(mysteryName: string, promptMessage: string, userI
 	if (!infoModelMessages) {
 		throw error(500, 'Could not get info model messages');
 	}
-	const completionOpts = createChatCompletionRequest(ChatMode.Request, [...infoModelMessages, { role: 'user', content: promptMessage }]);
+	infoModelMessages.push(new HumanMessage({ content: promptMessage }));
+	const response = await nonStreamRequest(infoModelMessages);
+	const responseMessage = response.content;
+	console.log('got message from langchain');
+	console.log(responseMessage);
+	//const completionOpts = createChatCompletionRequest(ChatMode.Request, [...infoModelMessages, { role: 'user', content: promptMessage }]);
 
-	const responseJson = await (await createGptResponseAndHandleError(completionOpts)).json();
-	const responseMessage = responseJson.choices[0].message.content;
+	//const responseJson = await (await createGptResponseAndHandleError(completionOpts)).json();
+	//const responseMessage = responseJson.choices[0].message.content;
 
 	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, responseMessage);
 	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
 
-	const backendMessages = await loadLetterMessages(userId, mysteryName);
-	if (!backendMessages) {
-		throw error(500, 'Could not load backend messages');
-	}
-	let messages = backendMessages.promptMessages;
-	const ogLength = messages.length;
-	for (let i = ogLength; i < infoModelMessages.length; i += 2) {
-		messages.push({
-			role: 'user',
-			content: 'Order:\n' + infoModelMessages[i].content + '\nInformation:\n' + infoModelMessages[i + 1].content
-		});
-		messages.push(backendMessages.responseMessages[(i - ogLength) / 2]);
-	}
+	//const backendMessages = await loadLetterMessages(userId, mysteryName);
+	//if (!backendMessages) {
+	//	throw error(500, 'Could not load backend messages');
+	//}
+	//let messages: ChatMessage[] = backendMessages.promptMessages;
+	//const ogLength = messages.length;
+	//for (let i = ogLength; i < infoModelMessages.length; i += 2) {
+	//	messages.push({
+	//		role: 'user',
+	//		content: 'Order:\n' + infoModelMessages[i].content + '\nInformation:\n' + infoModelMessages[i + 1].content
+	//	});
+	//	messages.push(backendMessages.responseMessages[(i - ogLength) / 2]);
+	//}
 
-	if (messages.length > 7) {
-		//This is needed to keep the token counts low
-		const firstElement = messages[0];
-		const lastSixElements = messages.slice(-6);
-		messages = [firstElement, ...lastSixElements];
-	}
+	//if (messages.length > 7) {
+	//	//This is needed to keep the token counts low
+	//	const firstElement = messages[0];
+	//	const lastSixElements = messages.slice(-6);
+	//	messages = [firstElement, ...lastSixElements];
+	//}
 
-	messages.push({
-		role: 'user',
-		content: 'Order:\n' + promptMessage + '\nInformation:\n' + responseMessage
-	});
+	//messages.push({
+	//	role: 'user',
+	//	content: 'Order:\n' + promptMessage + '\nInformation:\n' + responseMessage
+	//});
 	return createChatCompletionRequest(ChatMode.Letter, messages);
 }
 
