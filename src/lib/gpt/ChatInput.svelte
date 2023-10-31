@@ -114,6 +114,9 @@
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
+		clearTimeout(debounceTimer);
+		debounceTimer = window.setTimeout(calculateMessageTokens, 750);
+
 		if ($isLoadingAnswerStore) {
 			return;
 		}
@@ -168,7 +171,7 @@
 							<div
 								data-testid="message-counter"
 								aria-label="messages left counter"
-								class="ml-1 h-full bg-[url('/images/message_counter.svg')] bg-cover bg-center bg-no-repeat px-4 py-6 text-xl md:ml-2"
+								class="ml-1 h-full bg-[url('/images/message_counter.svg')] bg-cover bg-center bg-no-repeat px-4 py-6 font-tertiary text-xl md:ml-2"
 							>
 								{messagesAmount}
 							</div>

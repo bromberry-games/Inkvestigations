@@ -187,7 +187,6 @@ async function handleStreamingAnswer(mysteryName: string, userId: string, comple
 
 		let message = '';
 		let closed = false;
-		processedStream.on('error', (err) => {});
 		async function onParse(event) {
 			if (event.type !== 'event' || closed) return;
 

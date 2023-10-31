@@ -9,7 +9,7 @@
 	$: ({ supabase, session } = data);
 </script>
 
-<div class="bg-secondary">
+<div class="sticky top-0 w-full !bg-secondary">
 	<MyLayout {supabase} {session} />
 </div>
 
