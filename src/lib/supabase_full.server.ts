@@ -7,6 +7,27 @@ import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from 'langchain/s
 
 const supabase_full_access = createClient<Database>(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
+function convertMessagesToBaseMessages(messages: any[]): BaseMessage[] {
+	return messages.map((item) => {
+		switch (item.role) {
+			case 'assistant':
+				return new AIMessage({
+					content: item.content
+				});
+			case 'user':
+				return new HumanMessage({
+					content: item.content
+				});
+			case 'system':
+				return new SystemMessage({
+					content: item.content
+				});
+			default:
+				throw new Error('unknown role');
+		}
+	});
+}
+
 export async function getInfoModelMessages(userId: string, mystery: string): Promise<BaseMessage[] | null> {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('user_mystery_conversations')
@@ -63,24 +84,7 @@ export async function getInfoModelMessages(userId: string, mystery: string): Pro
 		return null;
 	}
 
-	const conversation: BaseMessage[] = prompData.info_prompt.messages.map((item) => {
-		switch (item.role) {
-			case 'assistant':
-				return new AIMessage({
-					content: item.content
-				});
-			case 'user':
-				return new HumanMessage({
-					content: item.content
-				});
-			case 'system':
-				return new SystemMessage({
-					content: item.content
-				});
-			default:
-				throw new Error('unknown role');
-		}
-	});
+	const conversation: BaseMessage[] = convertMessagesToBaseMessages(prompData.info_prompt.messages);
 
 	infoMessageData.forEach((item, index) => {
 		conversation.push(
@@ -191,13 +195,13 @@ export async function cancelSubscription(userId: string, endDate: string): Promi
 	return true;
 }
 
-export async function getAccusePrompt(mysteryName: string): Promise<ChatMessage[] | null> {
+export async function getAccusePrompt(mysteryName: string): Promise<BaseMessage[] | null> {
 	const { data, error } = await supabase_full_access.from('mysteries').select('accuse_prompt').eq('name', mysteryName).single();
 	if (error) {
 		console.error(error);
 		return null;
 	}
-	return data?.accuse_prompt.messages || null;
+	return data.accuse_prompt ? convertMessagesToBaseMessages(data?.accuse_prompt.messages) : null;
 }
 
 //TODO cleanup or postgres function

@@ -18,7 +18,7 @@ import {
 import { ChatMode, type ChatMessage } from '$misc/shared';
 import { createParser } from 'eventsource-parser';
 import type { Session } from '@supabase/supabase-js';
-import { nonStreamRequest } from './llangchain_ask';
+import { accuseModelRequest, infoModelRequest } from './llangchain_ask';
 import { HumanMessage } from 'langchain/schema';
 
 const openAiKey: string = OPEN_AI_KEY;
@@ -88,16 +88,9 @@ async function infoModelAnswer(mysteryName: string, promptMessage: string, userI
 		throw error(500, 'Could not get info model messages');
 	}
 	infoModelMessages.push(new HumanMessage({ content: promptMessage }));
-	const response = await nonStreamRequest(infoModelMessages);
-	const responseMessage = response.content;
-	console.log('got message from langchain');
-	console.log(responseMessage);
-	//const completionOpts = createChatCompletionRequest(ChatMode.Request, [...infoModelMessages, { role: 'user', content: promptMessage }]);
+	const response = await infoModelRequest(infoModelMessages);
 
-	//const responseJson = await (await createGptResponseAndHandleError(completionOpts)).json();
-	//const responseMessage = responseJson.choices[0].message.content;
-
-	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, responseMessage);
+	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, response);
 	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
 
 	//const backendMessages = await loadLetterMessages(userId, mysteryName);
@@ -128,27 +121,19 @@ async function infoModelAnswer(mysteryName: string, promptMessage: string, userI
 	return createChatCompletionRequest(ChatMode.Letter, messages);
 }
 
-const RATING_REGEX = /Rating:\s?(\d+)/;
-
 async function accuseModelAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
 	const accusePrompt = await getAccusePrompt(mysteryName);
 	if (!accusePrompt) {
 		throw error(500, 'Could not get accuse prompt');
 	}
-	accusePrompt.push({
-		role: 'user',
-		content: accusePrompt + '\n' + 'The murderer is: ' + suspectToAccuse + '\n' + promptMessage
-	});
+	accusePrompt.push(
+		new HumanMessage({
+			content: 'The murderer is: ' + suspectToAccuse + '\n' + promptMessage
+		})
+	);
 
-	const completionOpts = createChatCompletionRequest(ChatMode.Accuse, accusePrompt);
-	const responseJson = await (await createGptResponseAndHandleError(completionOpts)).json();
-	const responseMessage = responseJson.choices[0].message.content;
-	const ratingMatch = responseMessage.match(RATING_REGEX);
-	if (!ratingMatch) {
-		throw error(500, 'Could not parse rating');
-	}
-	const parsedMessage = responseMessage.replace(RATING_REGEX, '').replace(/Epilogue:\s?/, '');
-	const ratingSet = await setRating(mysteryName, userId, parseInt(ratingMatch[1]));
+	const response = await accuseModelRequest(accusePrompt);
+	const ratingSet = await setRating(mysteryName, userId, response.rating);
 	throwIfFalse(ratingSet, 'Could not set rating');
 
 	const backendMessages = await loadLetterMessages(userId, mysteryName);
@@ -157,7 +142,7 @@ async function accuseModelAnswer(mysteryName: string, promptMessage: string, use
 	}
 	backendMessages.promptMessages.push({
 		role: 'user',
-		content: 'Order:\n' + 'Accuse ' + suspectToAccuse + '\nInformation:\n' + parsedMessage
+		content: 'Order:\n' + 'Accuse ' + suspectToAccuse + '\nInformation:\n' + response.epilogue
 	});
 	return createChatCompletionRequest(ChatMode.Letter, backendMessages.promptMessages);
 }
