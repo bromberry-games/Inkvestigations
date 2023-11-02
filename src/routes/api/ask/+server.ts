@@ -1,219 +1,86 @@
-import type { ChatCompletionRequestMessage, CreateChatCompletionRequest } from 'openai';
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
-import { OpenAiModel, defaultOpenAiSettings } from '$misc/openai';
 import { getErrorMessage, throwIfFalse, throwIfUnset } from '$misc/error';
-import { OPEN_AI_KEY } from '$env/static/private';
+import type { Session } from '@supabase/supabase-js';
+import { brainModelRequest as brainModelRequest, letterModelRequest } from './llangchain_ask';
+import { AIMessage, BaseMessage, HumanMessage } from 'langchain/schema';
+import { loadGameInfo } from '$lib/supabase/mystery_data.server';
 import {
 	addInfoModelMessage,
 	addMessageForUser,
 	archiveLastConversation,
-	decreaseMessageForUser,
-	getAccusePrompt,
 	getInfoModelMessages,
-	getMessageAmountForUser,
-	loadLetterMessages,
-	setRating
-} from '$lib/supabase_full.server';
-import { ChatMode, type ChatMessage } from '$misc/shared';
-import { createParser } from 'eventsource-parser';
-import type { Session } from '@supabase/supabase-js';
-import { accuseModelRequest, infoModelRequest } from './llangchain_ask';
-import { HumanMessage } from 'langchain/schema';
+	loadDisplayMessages
+} from '$lib/supabase/conversations.server';
+import { getMessageAmountForUser, decreaseMessageForUser } from '$lib/supabase/message_amounts.server';
 
-const openAiKey: string = OPEN_AI_KEY;
-
-function createChatCompletionRequest(chatMode: ChatMode, messages: ChatCompletionRequestMessage[]): CreateChatCompletionRequest {
-	switch (chatMode) {
-		case ChatMode.Request: {
-			return {
-				model: OpenAiModel.Gpt4,
-				max_tokens: 200,
-				temperature: 1,
-				top_p: 1,
-				messages,
-				stream: false
-			};
-		}
-		case ChatMode.Letter: {
-			return {
-				model: OpenAiModel.Gpt35Turbo,
-				max_tokens: 512,
-				temperature: 1,
-				top_p: 1,
-				messages,
-				stream: true
-			};
-		}
-		case ChatMode.Accuse: {
-			return {
-				model: OpenAiModel.Gpt4,
-				max_tokens: 200,
-				temperature: 1,
-				top_p: 1,
-				messages,
-				stream: false
-			};
-		}
-	}
-}
-
-function formatData(message: string, encoder: TextEncoder) {
-	if (typeof message !== 'string') {
-		throw error(500, 'Message is not a string');
-	}
-	return encoder.encode(`data: ${JSON.stringify({ content: message })}\n\n`);
-}
-
-async function createGptResponseAndHandleError(completionOpts: CreateChatCompletionRequest) {
-	const apiUrl = 'https://api.openai.com/v1/chat/completions';
-	const response = await fetch(apiUrl, {
-		headers: {
-			Authorization: `Bearer ${openAiKey}`,
-			'Content-Type': 'application/json'
-		},
-		method: 'POST',
-		body: JSON.stringify(completionOpts)
-	});
-	if (!response.ok) {
-		const err = await response.json();
-		throw err.error;
-	}
-	return response;
-}
-
-async function infoModelAnswer(mysteryName: string, promptMessage: string, userId: string) {
+async function standardInvestigationAnswer(mysteryName: string, promptMessage: string, userId: string) {
 	const infoModelMessages = await getInfoModelMessages(userId, mysteryName);
 	if (!infoModelMessages) {
 		throw error(500, 'Could not get info model messages');
 	}
-	infoModelMessages.push(new HumanMessage({ content: promptMessage }));
-	const response = await infoModelRequest(infoModelMessages);
+	const gameInfo = await loadGameInfo(mysteryName);
+	if (!gameInfo) {
+		throw error(500, 'Could not get game info');
+	}
+	const brainResponse = await brainModelRequest(gameInfo, infoModelMessages, promptMessage);
 
-	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, response);
+	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
 	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
 
+	const assistantLetterAnswers = (await loadDisplayMessages(userId, mysteryName))?.filter((m) => m.role === 'assistant');
+	if (!assistantLetterAnswers) {
+		throw error(500, 'Could not load backend messages');
+	}
+
+	const messages: BaseMessage[] = [];
+	for (let i = 0; i < infoModelMessages.length; i += 2) {
+		messages.push(
+			new HumanMessage({
+				content: 'Order:\n' + infoModelMessages[i].content + '\nInformation:\n' + infoModelMessages[i + 1].content
+			})
+		);
+		messages.push(new AIMessage({ content: assistantLetterAnswers[i / 2].content }));
+	}
+	const addResult = async (message: string) => {
+		const addedMessage = await addMessageForUser(userId, message, mysteryName);
+		throwIfFalse(addedMessage, 'Could not add message to chat');
+	};
+
+	return letterModelRequest(gameInfo, messages, promptMessage, brainResponse, addResult);
+}
+
+async function accuseModelAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
+	//const accusePrompt = await loadAccusePrompt(mysteryName);
+	//if (!accusePrompt) {
+	//	throw error(500, 'Could not get accuse prompt');
+	//}
+	//accusePrompt.push(
+	//	new HumanMessage({
+	//		content: 'The murderer is: ' + suspectToAccuse + '\n' + promptMessage
+	//	})
+	//);
+	//const response = await accuseModelRequest(accusePrompt);
+	//const ratingSet = await setRating(mysteryName, userId, response.rating);
+	//throwIfFalse(ratingSet, 'Could not set rating');
 	//const backendMessages = await loadLetterMessages(userId, mysteryName);
 	//if (!backendMessages) {
 	//	throw error(500, 'Could not load backend messages');
 	//}
-	//let messages: ChatMessage[] = backendMessages.promptMessages;
-	//const ogLength = messages.length;
-	//for (let i = ogLength; i < infoModelMessages.length; i += 2) {
-	//	messages.push({
-	//		role: 'user',
-	//		content: 'Order:\n' + infoModelMessages[i].content + '\nInformation:\n' + infoModelMessages[i + 1].content
-	//	});
-	//	messages.push(backendMessages.responseMessages[(i - ogLength) / 2]);
-	//}
-
-	//if (messages.length > 7) {
-	//	//This is needed to keep the token counts low
-	//	const firstElement = messages[0];
-	//	const lastSixElements = messages.slice(-6);
-	//	messages = [firstElement, ...lastSixElements];
-	//}
-
-	//messages.push({
+	//backendMessages.promptMessages.push({
 	//	role: 'user',
-	//	content: 'Order:\n' + promptMessage + '\nInformation:\n' + responseMessage
+	//	content: 'Order:\n' + 'Accuse ' + suspectToAccuse + '\nInformation:\n' + response.epilogue
 	//});
-	return createChatCompletionRequest(ChatMode.Letter, messages);
-}
-
-async function accuseModelAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
-	const accusePrompt = await getAccusePrompt(mysteryName);
-	if (!accusePrompt) {
-		throw error(500, 'Could not get accuse prompt');
-	}
-	accusePrompt.push(
-		new HumanMessage({
-			content: 'The murderer is: ' + suspectToAccuse + '\n' + promptMessage
-		})
-	);
-
-	const response = await accuseModelRequest(accusePrompt);
-	const ratingSet = await setRating(mysteryName, userId, response.rating);
-	throwIfFalse(ratingSet, 'Could not set rating');
-
-	const backendMessages = await loadLetterMessages(userId, mysteryName);
-	if (!backendMessages) {
-		throw error(500, 'Could not load backend messages');
-	}
-	backendMessages.promptMessages.push({
-		role: 'user',
-		content: 'Order:\n' + 'Accuse ' + suspectToAccuse + '\nInformation:\n' + response.epilogue
-	});
-	return createChatCompletionRequest(ChatMode.Letter, backendMessages.promptMessages);
+	//return createChatCompletionRequest(ChatMode.Letter, backendMessages.promptMessages);
 }
 
 async function twoMessageAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
-	const streamingCompletionOpts = suspectToAccuse
-		? await accuseModelAnswer(mysteryName, promptMessage, userId, suspectToAccuse)
-		: await infoModelAnswer(mysteryName, promptMessage, userId);
+	return await standardInvestigationAnswer(mysteryName, promptMessage, userId);
+	//const streamingCompletionOpts = suspectToAccuse
+	//	? await accuseModelAnswer(mysteryName, promptMessage, userId, suspectToAccuse)
+	//	: await infoModelAnswer(mysteryName, promptMessage, userId);
 
-	return handleStreamingAnswer(mysteryName, userId, streamingCompletionOpts);
-}
-
-async function handleStreamingAnswer(mysteryName: string, userId: string, completionOpts: CreateChatCompletionRequest) {
-	const response = await createGptResponseAndHandleError(completionOpts);
-	const encoder = new TextEncoder();
-	if (response.status !== 200) {
-		console.error(response.statusText);
-		throw error(500, 'Could not create gpt response');
-	}
-
-	let savedController: ReadableStreamDefaultController;
-	let controllerOpen = true;
-	const processedStream = new ReadableStream({
-		async start(controller) {
-			savedController = controller;
-		},
-		async cancel(controller) {
-			controllerOpen = false;
-		}
-	});
-
-	async function parseStreamAndEnque() {
-		const parser = createParser(onParse);
-
-		let message = '';
-		let closed = false;
-		async function onParse(event) {
-			if (event.type !== 'event' || closed) return;
-
-			if (event.data === '[DONE]') {
-				closed = true;
-				const addedMessage = await addMessageForUser(userId, message, mysteryName);
-				throwIfFalse(addedMessage, 'Could not add message to chat');
-				if (controllerOpen) {
-					savedController.enqueue(encoder.encode('data: [DONE]\n\n'));
-					savedController.close();
-				}
-				return;
-			} else {
-				try {
-					const content = JSON.parse(event.data).choices[0].delta?.content || '';
-					message += content;
-					if (content && controllerOpen) {
-						savedController.enqueue(formatData(content, encoder));
-					}
-				} catch (e) {
-					console.error(e);
-				}
-			}
-		}
-		for await (const value of response.body.pipeThrough(new TextDecoderStream())) {
-			parser.feed(value);
-		}
-	}
-	parseStreamAndEnque();
-
-	return new Response(processedStream, {
-		headers: {
-			'Content-Type': 'text/event-stream'
-		}
-	});
+	//return handleStreamingAnswer(mysteryName, userId, streamingCompletionOpts);
 }
 
 export const POST: RequestHandler = async ({ request, locals: { getSession } }) => {

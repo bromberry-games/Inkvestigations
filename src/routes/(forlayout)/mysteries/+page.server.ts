@@ -1,4 +1,4 @@
-import { archiveLastConversation } from '$lib/supabase_full.server';
+import { archiveLastConversation } from '$lib/supabase/conversations.server';
 import { throwIfFalse } from '$misc/error.js';
 import type { Session } from '@supabase/supabase-js';
 import { error, redirect } from '@sveltejs/kit';

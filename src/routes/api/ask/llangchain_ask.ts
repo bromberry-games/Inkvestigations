@@ -5,68 +5,178 @@ import { ChatPromptTemplate, HumanMessagePromptTemplate } from 'langchain/prompt
 import { AIMessage, BaseMessage, ChatMessage, HumanMessage } from 'langchain/schema';
 import { OPEN_AI_KEY } from '$env/static/private';
 import { BaseOutputParser } from 'langchain/schema/output_parser';
-import { error } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
+import { OpenAiModel } from '$misc/openai';
 
-const prompt = ChatPromptTemplate.fromMessages([HumanMessagePromptTemplate.fromTemplate('{input}')]);
+const fewShotPromptLetter: BaseMessage[] = [
+	new ChatMessage({
+		role: 'user',
+		content:
+			'Order: interrogate the suspects\nInformation:\n- wife: morose and disturbed by what she saw\n\n- daughter: shocked and saddened by the news\n\n- son: mourns the loss of his hero and mentor\n\n- female colleague: struck but slightly unbothered\n\n- male colleague: very sad because the rivalry was purely professional\n\n- friend: sad but always suspected Terry might make enemies\n\n- mood: neutral'
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			"Dear Mr. Holmes,\n\nKaren King, his wife, appears deeply disturbed by something she witnessed. Olivia, his stepdaughter, is in shock and saddened by the news. Nathan, his son, mourns the loss of his hero and mentor. Dr. Lauren Chen seems struck but somewhat unbothered. Dr. Marcus Lee is very sad, citing that his rivalry with Mike was purely professional. And Adam Price, Mike's best friend, expresses sadness but also hints at the possibility of Terry making enemies.\n\nYours sincerely,\n\nWilliam Wellington\n\nPolice Chief of Zlockingbury"
+	}),
+	new ChatMessage({
+		role: 'user',
+		content: "Order: search the victim's garbage\nInformation:\n- it's full of trash\n\n- mood: bored"
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			'Mr. Holmes,\n\nIndeed...the rubbish bin was full of rubbish.\n\nYours sincerely,\n\nWilliam Wellington\n\nPolice Chief of Zlockingbury'
+	})
+];
 
-async function llangRequest(req): Promise<Response> {
-	try {
-		const { input } = await req.json();
-		// Check if the request is for a streaming response.
-		const streaming = req.headers.get('accept') === 'text/event-stream';
-
-		if (streaming) {
-			// For a streaming response we need to use a TransformStream to
-			// convert the LLM's callback-based API into a stream-based API.
-			const encoder = new TextEncoder();
-			const stream = new TransformStream();
-			const writer = stream.writable.getWriter();
-
-			const llm = new ChatOpenAI({
-				streaming,
-				callbackManager: CallbackManager.fromHandlers({
-					handleLLMNewToken: async (token) => {
-						await writer.ready;
-						await writer.write(encoder.encode(`data: ${token}\n\n`));
-					},
-					handleLLMEnd: async () => {
-						await writer.ready;
-						await writer.close();
-					},
-					handleLLMError: async (e) => {
-						await writer.ready;
-						await writer.abort(e);
-					}
-				})
-			});
-			const chain = new LLMChain({ prompt, llm });
-			// We don't need to await the result of the chain.run() call because
-			// the LLM will invoke the callbackManager's handleLLMEnd() method
-			chain.call({ input }).catch((e) => console.error(e));
-
-			return new Response(stream.readable, {
-				headers: { 'Content-Type': 'text/event-stream' }
-			});
-		} else {
-			// For a non-streaming response we can just await the result of the
-			// chain.run() call and return it.
-			const llm = new ChatOpenAI();
-			const chain = new LLMChain({ prompt, llm });
-			const response = await chain.call({ input });
-
-			return new Response(JSON.stringify(response), {
-				headers: { 'Content-Type': 'application/json' }
-			});
-		}
-	} catch (e) {
-		return new Response(JSON.stringify({ error: e.message }), {
-			status: 500,
-			headers: { 'Content-Type': 'application/json' }
-		});
+export async function letterModelRequest(
+	gameInfo: string,
+	previousConversation: BaseMessage[],
+	question: string,
+	brainAnswer: string,
+	onResponseGenerated: (input: string) => void
+) {
+	console.log('letter model request');
+	const encoder = new TextEncoder();
+	const stream = new TransformStream();
+	const writer = stream.writable.getWriter();
+	if (previousConversation.length > 5) {
+		previousConversation = previousConversation.slice(-4);
 	}
+
+	const systemTemplate = `
+		We're playing a game. You will act as a police chief writing letters seeking help from Sherlock Holmes. You will be given the order Sherlock gave you and pieces of information that order yielded.
+
+		Here is some initial information:
+
+		"""
+		{information}
+		"""
+
+		Your letters will be conversational, your tone for writing them is set by the mood attached at the end of the information. However, they will have **no preamble or suggestions of your own**.
+	`;
+	const userTemplate = `Order: 
+		{question}
+		Information: 
+		{brainAnswer}
+	`;
+
+	const prompt = ChatPromptTemplate.fromMessages([
+		['system', systemTemplate],
+		...fewShotPromptLetter,
+		...previousConversation,
+		['user', userTemplate]
+	]);
+
+	const llm = new ChatOpenAI({
+		streaming: true,
+		modelName: OpenAiModel.Gpt35Turbo,
+		openAIApiKey: OPEN_AI_KEY,
+		callbackManager: CallbackManager.fromHandlers({
+			handleLLMNewToken: async (token) => {
+				await writer.ready;
+				await writer.write(encoder.encode(`data: ${JSON.stringify(token)}\n\n`));
+			},
+			handleLLMEnd: async (output) => {
+				await writer.ready;
+				await writer.write(encoder.encode(`data: [DONE]\n\n`));
+				await writer.ready;
+				await writer.close();
+				onResponseGenerated(output.generations[0][0].text);
+			},
+			handleLLMError: async (e) => {
+				await writer.ready;
+				await writer.abort(e);
+			}
+		})
+	});
+	const chain = new LLMChain({ prompt, llm, verbose: true });
+	// We don't need to await the result of the chain.run() call because
+	// the LLM will invoke the callbackManager's handleLLMEnd() method
+	chain.call({ information: gameInfo, question, brainAnswer }).catch((e) => console.error(e));
+
+	return new Response(stream.readable, {
+		headers: { 'Content-Type': 'text/event-stream' }
+	});
 }
 
-export async function infoModelRequest(gameInfo: string): Promise<string> {
+const fewShotPromptBrain = [
+	new ChatMessage({
+		role: 'user',
+		content: "search victim's car"
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			"1) Do I know anything about that? No, I have to make it up. \n2) What would his car look like? Mike King was a regular marine biologist until he had a breakthrough. It would look normal.\nInformation:\n- it is a middle class car, it's not very neat\n- mood: neutral"
+	}),
+	new ChatMessage({
+		role: 'user',
+		content: "search mike's office"
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			'1) I check the information I have. The "question the suspects" action fits \n2) What information do I get? "a handwritten notebook that doesn\'t match Mike\'s handwriting"\nInformation:\n- I found a handwritten notebook that doesn\'t match Mike\'s handwriting\n- mood: intrigued'
+	}),
+	new ChatMessage({
+		role: 'user',
+		content: 'Who does the handwriting match?'
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			"1) Do I know anything about that? No, Wellington is an amnesiac, he can't answer questions. \n2) What does he do? He asks Sherlock to provide a way to find this out.\nInformation:\n- I do not know, but if you give me an idea how to find this out, I will follow your order.\n- mood: confused"
+	}),
+	new ChatMessage({
+		role: 'user',
+		content: 'get handwriting samples from all the suspects'
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			'1) I check the information I have. The "comparing every suspects handwriting to the notebook" is closely related.\n2) What information do I get? "it\'s Karen\'s handwriting"\nInformation:\n- the handwriting best matches Karen King\n- mood: eager'
+	}),
+	new ChatMessage({
+		role: 'user',
+		content: 'question Karen about notebook'
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			"1) Do I know anything about that? No, I make it up. \n2) How would Karen react to being questioned about this? A bit embarrassed because she said she didn't really know a lot about marine biology anymore.\nInformation:\n- seems embarrassed that we found out she dabbled in marinebiology, but said it was natural for her to keep at least a little up with it, didn't want to challenge Mike's status\n- mood: suspicious "
+	}),
+	new ChatMessage({
+		role: 'user',
+		content: "accuse Karen, she must have done it, I'm sure"
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			'1) Do I know anything about that? No, I make it up. \n2) How would Wellington react to this? He would want to follow proper procedure. He would want evidence before making any such claims.\nInformation:\n- I understand your suspicion Sherlock, but we need evidence.\n- Mood: interested'
+	}),
+	new ChatMessage({
+		role: 'user',
+		content: 'investigate your own mother'
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			'1) Do I know anything about that? No, I make it up. This is a weird request: indulge it and make it humorous. \n2) How would Wellington feel about investigating his own mother? Confused and amused, but determined to follow Sherlock. She is dead but Wellington follows through.\nInformation:\n- my mother has been dead for a while\n- I visited her grave and made sure she was not involved \n- Mood: bemused'
+	}),
+	new ChatMessage({
+		role: 'user',
+		content: "search mike's bedroom"
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			'1) I check the information I have. The "inspecting the laptop" actions suits this. \n2) What information do I get? "finds Mike\'s laptop and a printed financial report from the TPF with a cryptic note saying \'let\'s return it to how it was\' in black pen."\nInformation:\n- I found Mike\'s laptop and a printed financial report from the TPF with a cryptic note\n- The note says "let\'s return it to how it was"\n- Mood: intrigued'
+	})
+];
+
+export async function brainModelRequest(gameInfo: string, previousConversation: BaseMessage[], question: string): Promise<string> {
 	const systemTemplate = `# Mystery game
 		
 		"""##Game information
@@ -87,46 +197,26 @@ export async function infoModelRequest(gameInfo: string): Promise<string> {
 		
 		The overall goal is for thoe player to have a successful and enjoyable experience of solving a mystery. This is achieved when they have to think things through and make connections themselves.`;
 
-	const fewShotPrompts: BaseMessage[] = [
-		new HumanMessage({
-			content: 'interrogate the suspects'
-		}),
-		new AIMessage({
-			content: `- wife: morose and disturbed by what she saw
-
-				- daughter: shocked and saddened by the news
-
-				- son: mourns the loss of his hero and mentor
-
-				- female colleague: struck but slightly unbothered
-
-				- male colleague: very sad because the rivalry was purely professional
-
-				- friend: sad but always suspected Terry might make enemies
-
-				- mood: neutral`
-		}),
-		new HumanMessage({
-			content: "search victim's car"
-		}),
-		new AIMessage({
-			content: `- it's very neglected and full of trash, among it are random notes
-				- mood: eager
-			`
-		})
-	];
-
 	const userTemplate = '{text}';
 
-	const prompt = ChatPromptTemplate.fromMessages([['system', systemTemplate], ...fewShotPrompts, ['user', userTemplate]]);
+	const prompt = ChatPromptTemplate.fromMessages([
+		['system', systemTemplate],
+		...fewShotPromptBrain,
+		...previousConversation,
+		['user', userTemplate]
+	]);
 
 	const llm = new ChatOpenAI({
-		temperature: 1.1,
+		temperature: 0.8,
 		openAIApiKey: OPEN_AI_KEY,
-		modelName: 'gpt-4',
+		modelName: OpenAiModel.Gpt35Turbo,
 		maxTokens: 200
 	});
-	return (await llm.predictMessages(messages)).content;
+	const chain = new LLMChain({ prompt, llm, verbose: false });
+	const res = await chain.call({ information: gameInfo, text: question });
+	console.log(res);
+	return res.text;
+	//return await chain.call({ information: gameInfo, text: question }).text;
 }
 
 interface RatingWithEpilogue {

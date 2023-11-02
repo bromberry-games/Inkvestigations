@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
 import { STRIPE_TEST_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private';
-import { cancelSubscription, createSubscription } from '$lib/supabase_full.server';
+import { cancelSubscription, createSubscription } from '$lib/supabase/supabase_full.server';
 import { error } from '@sveltejs/kit';
 
 const stripe = new Stripe(STRIPE_TEST_KEY, {
