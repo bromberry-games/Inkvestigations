@@ -12,5 +12,5 @@ test('test gpt connection and expect message counter to go down', async ({ page 
 
 	await expect(page.getByText('Police chief:').nth(1)).toBeVisible();
 	const newMessageCount = await page.getByTestId('message-counter').innerText();
-	expect(parseInt(newMessageCount) + 1).toBe(parseInt(messageCount));
+	expect(parseInt(newMessageCount) + 2).toBe(parseInt(messageCount));
 });
