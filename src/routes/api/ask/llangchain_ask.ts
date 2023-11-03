@@ -3,10 +3,11 @@ import { LLMChain } from 'langchain/chains';
 import { CallbackManager } from 'langchain/callbacks';
 import { ChatPromptTemplate, HumanMessagePromptTemplate } from 'langchain/prompts';
 import { AIMessage, BaseMessage, ChatMessage, HumanMessage } from 'langchain/schema';
-import { OPEN_AI_KEY } from '$env/static/private';
+import { FIREWORKS_AI_KEY, OPEN_AI_KEY } from '$env/static/private';
 import { BaseOutputParser } from 'langchain/schema/output_parser';
 import { error, json } from '@sveltejs/kit';
 import { OpenAiModel } from '$misc/openai';
+import { ChatFireworks } from 'langchain/chat_models/fireworks';
 
 const fewShotPromptLetter: BaseMessage[] = [
 	new ChatMessage({
@@ -37,10 +38,10 @@ export async function letterModelRequest(
 	brainAnswer: string,
 	onResponseGenerated: (input: string) => void
 ) {
-	console.log('letter model request');
 	const encoder = new TextEncoder();
 	const stream = new TransformStream();
 	const writer = stream.writable.getWriter();
+	//Shorten length for context length
 	if (previousConversation.length > 5) {
 		previousConversation = previousConversation.slice(-4);
 	}
@@ -69,28 +70,7 @@ export async function letterModelRequest(
 		['user', userTemplate]
 	]);
 
-	const llm = new ChatOpenAI({
-		streaming: true,
-		modelName: OpenAiModel.Gpt35Turbo,
-		openAIApiKey: OPEN_AI_KEY,
-		callbackManager: CallbackManager.fromHandlers({
-			handleLLMNewToken: async (token) => {
-				await writer.ready;
-				await writer.write(encoder.encode(`data: ${JSON.stringify(token)}\n\n`));
-			},
-			handleLLMEnd: async (output) => {
-				await writer.ready;
-				await writer.write(encoder.encode(`data: [DONE]\n\n`));
-				await writer.ready;
-				await writer.close();
-				onResponseGenerated(output.generations[0][0].text);
-			},
-			handleLLMError: async (e) => {
-				await writer.ready;
-				await writer.abort(e);
-			}
-		})
-	});
+	const llm = createLetterModel(writer, encoder, onResponseGenerated);
 	const chain = new LLMChain({ prompt, llm, verbose: true });
 	// We don't need to await the result of the chain.run() call because
 	// the LLM will invoke the callbackManager's handleLLMEnd() method
@@ -176,6 +156,56 @@ const fewShotPromptBrain = [
 	})
 ];
 
+function createLetterModel(writer: WritableStreamDefaultWriter<any>, encoder: TextEncoder, onResponseGenerated: (input: string) => void) {
+	//return new ChatFireworks({
+	//	streaming: true,
+	//	modelName: 'accounts/fireworks/models/mistral-7b-instruct-4k',
+	//	fireworksApiKey: FIREWORKS_AI_KEY,
+	//	temperature: 0.5,
+	//	callbackManager: CallbackManager.fromHandlers({
+	//		handleLLMNewToken: async (token) => {
+	//			await writer.ready;
+	//			//Don't know why but I have to stringify token to preserve spacing. Might be related to sse.js but won't investigate
+	//			await writer.write(encoder.encode(`data: ${JSON.stringify(token)}\n\n`));
+	//		},
+	//		handleLLMEnd: async (output) => {
+	//			await writer.ready;
+	//			await writer.write(encoder.encode(`data: [DONE]\n\n`));
+	//			await writer.ready;
+	//			await writer.close();
+	//			onResponseGenerated(output.generations[0][0].text);
+	//		},
+	//		handleLLMError: async (e) => {
+	//			await writer.ready;
+	//			await writer.abort(e);
+	//		}
+	//	})
+	//});
+	return new ChatOpenAI({
+		streaming: true,
+		modelName: OpenAiModel.Gpt35Turbo,
+		openAIApiKey: OPEN_AI_KEY,
+		callbackManager: CallbackManager.fromHandlers({
+			handleLLMNewToken: async (token) => {
+				await writer.ready;
+				//Don't know why but I have to stringify token to preserve spacing. Might be related to sse.js but won't investigate
+				await writer.write(encoder.encode(`data: ${JSON.stringify(token)}\n\n`));
+			},
+			handleLLMEnd: async (output) => {
+				await writer.ready;
+				await writer.write(encoder.encode(`data: [DONE]\n\n`));
+				await writer.ready;
+				await writer.close();
+				onResponseGenerated(output.generations[0][0].text);
+			},
+			handleLLMError: async (e) => {
+				await writer.ready;
+				await writer.abort(e);
+			}
+		})
+	});
+}
+
 export async function brainModelRequest(gameInfo: string, previousConversation: BaseMessage[], question: string): Promise<string> {
 	const systemTemplate = `# Mystery game
 		
@@ -214,9 +244,7 @@ export async function brainModelRequest(gameInfo: string, previousConversation: 
 	});
 	const chain = new LLMChain({ prompt, llm, verbose: false });
 	const res = await chain.call({ information: gameInfo, text: question });
-	console.log(res);
 	return res.text;
-	//return await chain.call({ information: gameInfo, text: question }).text;
 }
 
 interface RatingWithEpilogue {
@@ -239,8 +267,55 @@ class RatingParser extends BaseOutputParser<RatingWithEpilogue> {
 	}
 }
 
-export async function accuseModelRequest(messages: BaseMessage[]): Promise<{ rating: number; epilogue: string }> {
-	const prompt = ChatPromptTemplate.fromMessages(messages);
+const accusePromptMessages: BaseMessage[] = [
+	new ChatMessage({
+		role: 'user',
+		content: "It was Oliver Smith because he was disappointed Terry's dramatics won over the truth!"
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			"Rating: 0 stars\nEpilogue:\n- Spotlight on Wellington as he accuses Oliver of murder out of disappointment towards Terry.\n- Room falls silent, accusation hangs in the air.\n- Oliver, unfazed, retorts back, questioning the evidence, leaving Wellington’s accusation hanging by a thread.\n- Wellington proudly announces the fingerprints in the study!\n- Awkward silence pervades the room, accusation falls flat.\n- Bianca softly says \"but everyone's fingerprints were there.\n- Uncomfortable shifting among characters, eyes darting, doubt filling the room.\n- Outside storm mirrors the internal turmoil, truth remains elusive.\n- Wellington’s realization: accusation was a shot in the dark, truth slips through leaving a room filled with lingering doubts and a tinge of humor at the detective's hasty conclusion"
+	}),
+	new ChatMessage({
+		role: 'user',
+		content:
+			"It was Oliver Smith because he was shaken to the core when he realized that Terry was chasing big, dramatic stories instead of the truth. Terry's twisting of facts turned Olivers idolization into hatred and he decided to put an end to him by poisoning Terry with cyanide in his ink since he knew his habit of licking it. He placed it there on sunday and engineered it to take its time to dissolve. His second pen proves this as it still contains traces of the poison."
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			"Rating: 3 stars\nEpilogue:\n- The room buzzes with anticipation as Wellington points a finger at Oliver Smith, laying out his accusation with sharp precision.\n- A hush falls when Wellington reveals Oliver's disillusionment and the depths it pushed him to, a motive that shocks everyone in the room.\n- An audible gasp fills the room when Wellington details Oliver's calculated method of murder. The cyanide. The ink. Sunday. It all fits too well. \n- Oliver’s pale face and violent protests only seem to confirm Wellington’s accusation even more.\n- Wellington's reveal of cyanide on the second pen lands like a bombshell, leaving no room for doubt.\n- Shock ripples through everyone present at the magnitude of this revelation.\n- Wellington sit back, satisfied with his work, leaving everyone else scrambling to understand what just happened."
+	})
+];
+
+export async function accuseModelRequest(suspect: string, promptMessage: string): Promise<{ rating: number; epilogue: string }> {
+	const systemTemplate = `
+		# Mystery Game Rating
+		"""
+		## Characters
+		Michael Terry: Victim. Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.
+		Bianca White: Best friend who always gets the first draft, also wanted to be a journalist. Works in marketing now. 
+		Dexter Tin:Politician disgraced by Terry. 
+		Oliver Smith: Biggest fan before becoming his apprentice. Extremely strong drive for journalistic ethics and professionalism. 
+		Maria Payton: Long-time maid. 
+		Angela Videl: Rival columnist. Peter 
+		O'Ranner: Retired detective who helped with articles sometimes.
+		## Solution
+		Here is the solution to the mystery.
+		**Murderer**: Oliver Smith
+		**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.
+		**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.
+		**Evidence**: The second pen in his home with traces of cyanide."""
+		## Rating rules
+		0 stars: the player names any person except Oliver Smith.
+		## Your behavior
+		You task is to rate the deduction of a player from 0 to 3 stars. They will say who it was and provide reasons. It is very important that your rating is accurate. Based on the rating you've given, write bullet points of a dramatic and humorous scene that unfolds as the police chief Wellington makes his accusation on the orders of Sherlock Holmes. You never give away the true solution! You write nothing else. 	
+	`;
+
+	const userTemplate = 'It was {suspect}. {text}';
+
+	const prompt = ChatPromptTemplate.fromMessages([['system', systemTemplate], ...accusePromptMessages, ['user', userTemplate]]);
 	const llm = new ChatOpenAI({
 		temperature: 0.9,
 		openAIApiKey: OPEN_AI_KEY,
@@ -249,7 +324,7 @@ export async function accuseModelRequest(messages: BaseMessage[]): Promise<{ rat
 	});
 
 	const parser = new RatingParser();
-	const chain = prompt.pipe(llm).pipe(parser);
-
-	return await chain.invoke({});
+	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: false });
+	const res = await chain.call({ suspect, text: promptMessage });
+	return res.text;
 }

@@ -2,7 +2,7 @@ import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import { getErrorMessage, throwIfFalse, throwIfUnset } from '$misc/error';
 import type { Session } from '@supabase/supabase-js';
-import { brainModelRequest as brainModelRequest, letterModelRequest } from './llangchain_ask';
+import { accuseModelRequest, brainModelRequest as brainModelRequest, letterModelRequest } from './llangchain_ask';
 import { AIMessage, BaseMessage, HumanMessage } from 'langchain/schema';
 import { loadGameInfo } from '$lib/supabase/mystery_data.server';
 import {
@@ -10,7 +10,8 @@ import {
 	addMessageForUser,
 	archiveLastConversation,
 	getInfoModelMessages,
-	loadDisplayMessages
+	loadDisplayMessages,
+	setRating
 } from '$lib/supabase/conversations.server';
 import { getMessageAmountForUser, decreaseMessageForUser } from '$lib/supabase/message_amounts.server';
 
@@ -51,31 +52,21 @@ async function standardInvestigationAnswer(mysteryName: string, promptMessage: s
 }
 
 async function accuseModelAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
-	//const accusePrompt = await loadAccusePrompt(mysteryName);
-	//if (!accusePrompt) {
-	//	throw error(500, 'Could not get accuse prompt');
-	//}
-	//accusePrompt.push(
-	//	new HumanMessage({
-	//		content: 'The murderer is: ' + suspectToAccuse + '\n' + promptMessage
-	//	})
-	//);
-	//const response = await accuseModelRequest(accusePrompt);
-	//const ratingSet = await setRating(mysteryName, userId, response.rating);
-	//throwIfFalse(ratingSet, 'Could not set rating');
-	//const backendMessages = await loadLetterMessages(userId, mysteryName);
-	//if (!backendMessages) {
-	//	throw error(500, 'Could not load backend messages');
-	//}
-	//backendMessages.promptMessages.push({
-	//	role: 'user',
-	//	content: 'Order:\n' + 'Accuse ' + suspectToAccuse + '\nInformation:\n' + response.epilogue
-	//});
-	//return createChatCompletionRequest(ChatMode.Letter, backendMessages.promptMessages);
+	const response = await accuseModelRequest(suspectToAccuse, promptMessage);
+	const ratingSet = await setRating(mysteryName, userId, response.rating);
+	throwIfFalse(ratingSet, 'Could not set rating');
+	const addResult = async (message: string) => {
+		const addedMessage = await addMessageForUser(userId, message, mysteryName);
+		throwIfFalse(addedMessage, 'Could not add message to chat');
+	};
+
+	return letterModelRequest(mysteryName, [], promptMessage, response.epilogue, addResult);
 }
 
-async function twoMessageAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
-	return await standardInvestigationAnswer(mysteryName, promptMessage, userId);
+async function getAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
+	return suspectToAccuse
+		? await accuseModelAnswer(mysteryName, promptMessage, userId, suspectToAccuse)
+		: await standardInvestigationAnswer(mysteryName, promptMessage, userId);
 	//const streamingCompletionOpts = suspectToAccuse
 	//	? await accuseModelAnswer(mysteryName, promptMessage, userId, suspectToAccuse)
 	//	: await infoModelAnswer(mysteryName, promptMessage, userId);
@@ -110,7 +101,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
 		throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
 
-		return await twoMessageAnswer(game_config.mysteryName, message, session.user.id, suspectToAccuse);
+		return await getAnswer(game_config.mysteryName, message, session.user.id, suspectToAccuse);
 	} catch (err) {
 		throw error(500, getErrorMessage(err));
 	}
