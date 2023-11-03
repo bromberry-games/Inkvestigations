@@ -5,7 +5,7 @@ const commonConfig: PlaywrightTestConfig = {
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 1 : 1,
-	workers: process.env.CI ? 1 : undefined,
+	workers: process.env.CI ? 1 : 1,
 	reporter: 'html',
 	testDir: 'tests',
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/
@@ -103,6 +103,4 @@ const dev_config: PlaywrightTestConfig = {
 };
 
 const config = process.env.ENV_TO_TEST == 'DEV' ? dev_config : local_config;
-console.log(config);
-console.log(config.projects);
 export default config;
