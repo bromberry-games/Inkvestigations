@@ -6,10 +6,8 @@ CREATE TABLE mysteries (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     description TEXT Not NULL,
-    first_letter TEXT NOT NULL,
-    letter_prompt JSON NOT NULL,
-    info_prompt JSON NOT NULL,
-    accuse_prompt JSON NOT NULL,
+    game_info TEXT NOT NULL,
+    letter_info TEXT NOT NULL,
     filepath TEXT NOT NULL
 );
 
@@ -100,6 +98,9 @@ ALTER TABLE user_mystery_conversations
   ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE user_mystery_messages 
+  ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE user_mystery_info_messages 
   ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE user_subscriptions 

@@ -2,12 +2,7 @@
 	import type { SupabaseClient } from '@supabase/supabase-js';
 	import Container from '$lib/../auth-ui/UI/Container.svelte';
 	import Message from '$lib/../auth-ui/UI/Message.svelte';
-	import {
-		VIEWS,
-		type I18nVariables,
-		type ViewType,
-		type RedirectTo
-	} from '@supabase/auth-ui-shared';
+	import { VIEWS, type I18nVariables, type ViewType, type RedirectTo } from '@supabase/auth-ui-shared';
 	import type { Appearance } from '$lib/types';
 	import { Button, Input } from 'flowbite-svelte';
 
@@ -68,32 +63,33 @@
 </script>
 
 <form method="post" on:submit|preventDefault={handleSubmit}>
-	<Container direction="vertical" gap="large" {appearance}>
-			<p class="text-center text-2xl font-secondary">Log in with e-mail</p>
-			<div>
-				<Input
-					id="email"
-					type="email"
-					name="email"
-					autofocus
-					placeholder={i18n?.[lngKey]?.email_input_placeholder}
-					bind:value={email}
-					autocomplete="email"
-					class="text-white bg-gray-800 border-gray-600 font-secondary"
-				/>
-			</div>
-			<div>
-				<Input
-					id="password"
-					type="password"
-					name="password"
-					placeholder={i18n?.[lngKey]?.password_input_placeholder}
-					bind:value={password}
-					autocomplete={authView === VIEWS.SIGN_IN ? 'current-password' : 'new-password'}
-					class="text-white bg-gray-800 border-gray-600 font-secondary"
-				/>
-			</div>
-			<slot />
+	<!-- <Container direction="vertical" gap="large" {appearance}> -->
+	<div class="flex flex-col gap-2">
+		<p class="text-center font-secondary text-2xl">Log in with e-mail</p>
+		<div>
+			<Input
+				id="email"
+				type="email"
+				name="email"
+				autofocus
+				placeholder={i18n?.[lngKey]?.email_input_placeholder}
+				bind:value={email}
+				autocomplete="email"
+				class="border-gray-600 bg-gray-800 font-secondary text-white"
+			/>
+		</div>
+		<div>
+			<Input
+				id="password"
+				type="password"
+				name="password"
+				placeholder={i18n?.[lngKey]?.password_input_placeholder}
+				bind:value={password}
+				autocomplete={authView === VIEWS.SIGN_IN ? 'current-password' : 'new-password'}
+				class="border-gray-600 bg-gray-800 font-secondary text-white"
+			/>
+		</div>
+		<slot />
 		<div class="flex justify-center">
 			<Button type="submit" btnClass="bg-tertiary text-2xl w-2/5 py-4 rounded text-center font-primary">
 				{i18n?.[lngKey]?.button_label}
@@ -101,52 +97,54 @@
 		</div>
 
 		{#if showLinks}
-				{#if authView === VIEWS.SIGN_IN && magicLink}
-					<a
-						on:click={(e) => {
-							e.preventDefault();
-							authView = VIEWS.MAGIC_LINK;
-						}}
-						href="#auth-magic-link"
-
-						>{i18n?.magic_link?.link_text}
-					</a>
-				{/if}
-				{#if authView === VIEWS.SIGN_IN}
-					<hr class="border-slate-900">
-					<a
-						on:click={(e) => {
-							e.preventDefault();
-							authView = VIEWS.FORGOTTEN_PASSWORD;
-						}}
-						href="#auth-forgot-password"
-						class="text-center font-secondary"
-					>
-						{i18n?.forgotten_password?.link_text}</a>
-					<Button btnClass="bg-tertiary text-2xl py-4 rounded text-center font-primary"
-						on:click={(e) => {
-							e.preventDefault();
-							authView = VIEWS.SIGN_UP;
-						}}
-						href="#auth-sign-up"
-						{appearance}
-					>
-						Create new Account
-					</Button>
-				{:else}
-					<a
-						on:click={(e) => {
-							e.preventDefault();
-							authView = VIEWS.SIGN_IN;
-						}}
-						href="#auth-sign-in"
-						class="text-center font-secondary"
-					>
-						{i18n?.sign_in?.link_text}
-					</a>
-				{/if}
+			{#if authView === VIEWS.SIGN_IN && magicLink}
+				<a
+					on:click={(e) => {
+						e.preventDefault();
+						authView = VIEWS.MAGIC_LINK;
+					}}
+					href="#auth-magic-link"
+					>{i18n?.magic_link?.link_text}
+				</a>
+			{/if}
+			{#if authView === VIEWS.SIGN_IN}
+				<hr class="border-slate-900" />
+				<a
+					on:click={(e) => {
+						e.preventDefault();
+						authView = VIEWS.FORGOTTEN_PASSWORD;
+					}}
+					href="#auth-forgot-password"
+					class="text-center font-secondary"
+				>
+					{i18n?.forgotten_password?.link_text}</a
+				>
+				<Button
+					btnClass="bg-tertiary text-2xl py-4 rounded text-center font-primary"
+					on:click={(e) => {
+						e.preventDefault();
+						authView = VIEWS.SIGN_UP;
+					}}
+					href="#auth-sign-up"
+					{appearance}
+				>
+					Create new Account
+				</Button>
+			{:else}
+				<a
+					on:click={(e) => {
+						e.preventDefault();
+						authView = VIEWS.SIGN_IN;
+					}}
+					href="#auth-sign-in"
+					class="text-center font-secondary"
+				>
+					{i18n?.sign_in?.link_text}
+				</a>
+			{/if}
 		{/if}
-	</Container>
+		<!-- </Container> -->
+	</div>
 
 	{#if message}
 		<Message {appearance}>

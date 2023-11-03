@@ -53,8 +53,10 @@
 		try {
 			// streaming...
 			if (event.data !== '[DONE]') {
-				const completionResponse: any = JSON.parse(event.data);
-				const delta = completionResponse.content;
+				//const completionResponse: any = JSON.parse(event.data);
+				//const delta = completionResponse.token;
+				const delta = JSON.parse(event.data);
+				console.log(delta);
 				liveAnswerStore.update((store) => {
 					const answer = { ...store };
 					answer.content += delta;
@@ -114,8 +116,8 @@
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
-		clearTimeout(debounceTimer);
-		debounceTimer = window.setTimeout(calculateMessageTokens, 750);
+		//clearTimeout(debounceTimer);
+		//debounceTimer = window.setTimeout(calculateMessageTokens, 750);
 
 		if ($isLoadingAnswerStore) {
 			return;
@@ -126,11 +128,11 @@
 		}
 	}
 
-	function calculateMessageTokens() {
-		messageTokens = countTokens(message);
-		clearTimeout(debounceTimer);
-		debounceTimer = undefined;
-	}
+	//function calculateMessageTokens() {
+	//	messageTokens = countTokens(message);
+	//	clearTimeout(debounceTimer);
+	//	debounceTimer = undefined;
+	//}
 
 	let clickOutsideModal = false;
 	let toastOpen = true;
