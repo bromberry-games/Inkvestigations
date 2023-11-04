@@ -1,19 +1,14 @@
 <script lang="ts">
 	//import { Auth } from '@supabase/auth-ui-svelte';
-	import  Auth  from '$lib/../auth-ui/Auth/Auth.svelte';
+	import Auth from '$lib/../auth-ui/Auth/Auth.svelte';
 	import { ThemeSupa, type SocialLayout, type ViewType } from '@supabase/auth-ui-shared';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import logo from "/src/images/logo_2.svg?src";
+	import logo from '/src/images/logo_2.svg?src';
 
-    export let data;
+	export let data;
 
-	const colors = [
-		'rgb(202, 37, 37)',
-		'rgb(65, 163, 35)',
-		'rgb(8, 107, 177)',
-		'rgb(235, 115, 29)'
-	] as const;
+	const colors = ['rgb(202, 37, 37)', 'rgb(65, 163, 35)', 'rgb(8, 107, 177)', 'rgb(235, 115, 29)'] as const;
 
 	const socialAlignments = ['horizontal', 'vertical'] as const;
 
@@ -33,46 +28,31 @@
 	let borderRadius = radii[0];
 	let view = views[0];
 
-	let gotoHome: boolean = false;
-
-	onMount(() => {
-		gotoHome = false;
-		data.supabase.auth.onAuthStateChange((event, session) => {
-        	if (event === 'SIGNED_IN' && session) {
-				gotoHome = true;
-        	} 
-      });  
-	});
-
 	$: {
-		if (gotoHome) {
+		if (data.session) {
 			goto('/');
 		}
 	}
-
 </script>
-
 
 <svelte:head>
 	<title>Auth UI Svelte</title>
 </svelte:head>
 
 <div class="dark:bg-scale-200 bg-scale-100 relative py-2">
-	<div
-		class="gap container relative mx-auto grid grid-cols-12 px-6 md:gap-16 lg:gap-16 pt-8"
-	>
-	    <div class="relative col-span-12 mb-16 md:col-start-5 md:col-end-9 lg:col-start-4 lg:col-end-10">
-			<div class="relative lg:mx-auto lg:max-w-md bg-secondary rounded-lg">
-				<div >
-					<div class="border-scale-400 bg-scale-300 relative rounded-xl px-8 pt-4 pb-8 drop-shadow-sm">
+	<div class="gap container relative mx-auto grid grid-cols-12 px-6 pt-8 md:gap-16 lg:gap-16">
+		<div class="relative col-span-12 mb-16 md:col-start-5 md:col-end-9 lg:col-start-4 lg:col-end-10">
+			<div class="relative rounded-lg bg-secondary lg:mx-auto lg:max-w-md">
+				<div>
+					<div class="border-scale-400 bg-scale-300 relative rounded-xl px-8 pb-8 pt-4 drop-shadow-sm">
 						<div class="mb-6 flex flex-col">
 							<div class="flex items-center gap-3 font-tertiary">
 								{@html logo}
 							</div>
-							<p class="text-auth-widget-test text-center text-2xl font-secondary">Sign in with existing account</p>
+							<p class="text-auth-widget-test text-center font-secondary text-2xl">Sign in with existing account</p>
 						</div>
 						<Auth
-                            supabaseClient={data.supabase}
+							supabaseClient={data.supabase}
 							theme="dark"
 							view={view.id}
 							appearance={{
@@ -96,8 +76,9 @@
 							}}
 							providers={['apple', 'google', 'facebook']}
 							{socialLayout}
-                            redirectTo={`${data.url}/auth/callback`}
+							redirectTo={`${data.url}/auth/callback?next=/mysteries`}
 							forgottenPasswordRedirect={`${data.url}/auth/callback?next=/update-password`}
+							next={'/mysteries'}
 						/>
 					</div>
 				</div>

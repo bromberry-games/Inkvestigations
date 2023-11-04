@@ -20,10 +20,10 @@
 						<!-- Adjusting margin to push content to the left -->
 						<h1 class="mb-4 text-end text-7xl font-extrabold tracking-wide text-tertiary">INTERACTIVE MYSTERY GAMES</h1>
 						<div class="flex justify-end">
-							<p class="mb-8 mt-4 max-w-sm text-end text-tertiary sm:text-xl md:max-w-2xl">
+							<h2 class="mb-8 mt-4 max-w-sm text-end text-tertiary sm:text-xl md:max-w-2xl">
 								A new type of game's afoot in these AI powered mystery murder stories. Inkvestigation combines authored mysteries with
 								dynamic storytelling.
-							</p>
+							</h2>
 						</div>
 						<div class="mt-16 flex justify-end">
 							<Button class="w-1/2 rounded-none bg-tertiary py-4 font-primary !text-4xl !text-quaternary lg:w-1/4" href="/login"

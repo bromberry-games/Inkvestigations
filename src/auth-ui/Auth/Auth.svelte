@@ -34,8 +34,9 @@
 	export let theme: 'default' | string = 'default';
 	export let localization: { variables?: I18nVariables } = {};
 	export let otpType: OtpType = 'email';
-	export let forgottenPasswordRedirect : string | undefined = undefined;
+	export let forgottenPasswordRedirect: string | undefined = undefined;
 	export let additionalData: { [key: string]: any } | undefined;
+	export let next: string;
 
 	onMount(() => {
 		const { data: authListener } = supabaseClient.auth.onAuthStateChange((event) => {
@@ -87,34 +88,18 @@
 	{/if}
 	{#if view === VIEWS.SIGN_IN}
 		{#if !onlyThirdPartyProviders}
-			<EmailAuth
-				{appearance}
-				{supabaseClient}
-				bind:authView={view}
-				{redirectTo}
-				{magicLink}
-				{showLinks}
-				{i18n}
-				{additionalData}
-			/>
+			<EmailAuth {supabaseClient} bind:authView={view} {redirectTo} {magicLink} {showLinks} {i18n} {additionalData} {next} />
 		{/if}
 	{/if}
 	{#if view === VIEWS.SIGN_UP}
 		{#if !onlyThirdPartyProviders}
-			<EmailAuth
-				{appearance}
-				{supabaseClient}
-				bind:authView={view}
-				{redirectTo}
-				{magicLink}
-				{showLinks}
-				{additionalData}
-				{i18n}><slot /></EmailAuth
+			<EmailAuth {supabaseClient} bind:authView={view} {redirectTo} {magicLink} {showLinks} {additionalData} {i18n} {next}
+				><slot /></EmailAuth
 			>
 		{/if}
 	{/if}
 	{#if view === VIEWS.FORGOTTEN_PASSWORD}
-		<ForgottenPassword {i18n} {supabaseClient} bind:authView={view} {showLinks} {appearance} redirectTo={forgottenPasswordRedirect}/>
+		<ForgottenPassword {i18n} {supabaseClient} bind:authView={view} {showLinks} {appearance} redirectTo={forgottenPasswordRedirect} />
 	{/if}
 	{#if view === VIEWS.MAGIC_LINK}
 		<MagicLink {i18n} {supabaseClient} bind:authView={view} {appearance} {redirectTo} {showLinks} />

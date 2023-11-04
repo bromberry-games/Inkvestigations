@@ -1,18 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import {
-		Avatar,
-		Button,
-		Dropdown,
-		DropdownDivider,
-		DropdownHeader,
-		DropdownItem,
-		NavBrand,
-		NavHamburger,
-		NavLi,
-		NavUl,
-		Navbar
-	} from 'flowbite-svelte';
+	import { Avatar, Dropdown, DropdownHeader, DropdownItem, NavBrand, NavHamburger, NavLi, NavUl, Navbar } from 'flowbite-svelte';
 	import logo from '/src/images/logo_2.svg?src';
 	import type { Session, SupabaseClient } from '@supabase/supabase-js';
 

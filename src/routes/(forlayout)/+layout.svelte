@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { Button, NavBrand, NavHamburger, NavLi, NavUl, Navbar } from 'flowbite-svelte';
-	import logo from '/src/images/logo_2.svg?src';
 	import MyLayout from '$lib/MyLayout.svelte';
 
 	export let data;
