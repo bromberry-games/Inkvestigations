@@ -67,11 +67,6 @@ async function getAnswer(mysteryName: string, promptMessage: string, userId: str
 	return suspectToAccuse
 		? await accuseModelAnswer(mysteryName, promptMessage, userId, suspectToAccuse)
 		: await standardInvestigationAnswer(mysteryName, promptMessage, userId);
-	//const streamingCompletionOpts = suspectToAccuse
-	//	? await accuseModelAnswer(mysteryName, promptMessage, userId, suspectToAccuse)
-	//	: await infoModelAnswer(mysteryName, promptMessage, userId);
-
-	//return handleStreamingAnswer(mysteryName, userId, streamingCompletionOpts);
 }
 
 export const POST: RequestHandler = async ({ request, locals: { getSession } }) => {
