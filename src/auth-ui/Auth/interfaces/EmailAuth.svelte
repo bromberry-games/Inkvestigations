@@ -3,18 +3,15 @@
 	import Message from '$lib/../auth-ui/UI/Message.svelte';
 	import { VIEWS, type I18nVariables, type ViewType, type RedirectTo } from '@supabase/auth-ui-shared';
 	import { Button, Input } from 'flowbite-svelte';
-	import { redirect } from '@sveltejs/kit';
 
 	export let authView: ViewType = 'sign_in';
 	export let email = '';
 	export let password = '';
 	export let supabaseClient: SupabaseClient;
 	export let redirectTo: RedirectTo = undefined;
-	export let additionalData: { [key: string]: any } | undefined = undefined;
 	export let showLinks = false;
 	export let magicLink = true;
 	export let i18n: I18nVariables;
-	export let next: string;
 
 	let message = '';
 	let error = '';
@@ -40,9 +37,6 @@
 				let options: { emailRedirectTo: RedirectTo; data?: object } = {
 					emailRedirectTo: redirectTo
 				};
-				if (additionalData) {
-					options.data = additionalData;
-				}
 				const {
 					data: { user: signUpUser, session: signUpSession },
 					error: signUpError

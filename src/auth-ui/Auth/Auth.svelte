@@ -35,8 +35,6 @@
 	export let localization: { variables?: I18nVariables } = {};
 	export let otpType: OtpType = 'email';
 	export let forgottenPasswordRedirect: string | undefined = undefined;
-	export let additionalData: { [key: string]: any } | undefined;
-	export let next: string;
 
 	onMount(() => {
 		const { data: authListener } = supabaseClient.auth.onAuthStateChange((event) => {
@@ -88,14 +86,12 @@
 	{/if}
 	{#if view === VIEWS.SIGN_IN}
 		{#if !onlyThirdPartyProviders}
-			<EmailAuth {supabaseClient} bind:authView={view} {redirectTo} {magicLink} {showLinks} {i18n} {additionalData} {next} />
+			<EmailAuth {supabaseClient} bind:authView={view} {redirectTo} {magicLink} {showLinks} {i18n} />
 		{/if}
 	{/if}
 	{#if view === VIEWS.SIGN_UP}
 		{#if !onlyThirdPartyProviders}
-			<EmailAuth {supabaseClient} bind:authView={view} {redirectTo} {magicLink} {showLinks} {additionalData} {i18n} {next}
-				><slot /></EmailAuth
-			>
+			<EmailAuth {supabaseClient} bind:authView={view} {redirectTo} {magicLink} {showLinks} {i18n}><slot /></EmailAuth>
 		{/if}
 	{/if}
 	{#if view === VIEWS.FORGOTTEN_PASSWORD}

@@ -78,7 +78,6 @@
 							{socialLayout}
 							redirectTo={`${data.url}/auth/callback?next=/mysteries`}
 							forgottenPasswordRedirect={`${data.url}/auth/callback?next=/update-password`}
-							next={'/mysteries'}
 						/>
 					</div>
 				</div>
