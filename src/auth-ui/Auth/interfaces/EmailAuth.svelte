@@ -1,10 +1,9 @@
 <script lang="ts">
 	import type { SupabaseClient } from '@supabase/supabase-js';
-	import Container from '$lib/../auth-ui/UI/Container.svelte';
 	import Message from '$lib/../auth-ui/UI/Message.svelte';
 	import { VIEWS, type I18nVariables, type ViewType, type RedirectTo } from '@supabase/auth-ui-shared';
-	import type { Appearance } from '$lib/types';
 	import { Button, Input } from 'flowbite-svelte';
+	import { redirect } from '@sveltejs/kit';
 
 	export let authView: ViewType = 'sign_in';
 	export let email = '';
@@ -15,7 +14,7 @@
 	export let showLinks = false;
 	export let magicLink = true;
 	export let i18n: I18nVariables;
-	export let appearance: Appearance;
+	export let next: string;
 
 	let message = '';
 	let error = '';
@@ -126,7 +125,6 @@
 						authView = VIEWS.SIGN_UP;
 					}}
 					href="#auth-sign-up"
-					{appearance}
 				>
 					Create new Account
 				</Button>
@@ -147,12 +145,12 @@
 	</div>
 
 	{#if message}
-		<Message {appearance}>
+		<Message>
 			{message}
 		</Message>
 	{/if}
 	{#if error}
-		<Message color="danger" {appearance}>
+		<Message color="danger">
 			{error}
 		</Message>
 	{/if}
