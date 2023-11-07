@@ -5,9 +5,9 @@ test('test gpt connection and expect message counter to go down', async ({ page 
 
 	await page.waitForTimeout(100);
 	await page.getByRole('button', { name: 'RESTART' }).first().click();
-	const messageCount = await page.getByTestId('message-counter').innerText();
 	await page.getByPlaceholder('Enter to send, Shift+Enter for newline').fill('test');
 
+	const messageCount = await page.getByTestId('message-counter').innerText();
 	await page.locator('button[type="submit"]').click();
 
 	const message = page.getByText('Police chief:').nth(1);
