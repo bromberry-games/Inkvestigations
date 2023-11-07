@@ -31,7 +31,10 @@
 			case VIEWS.SIGN_IN:
 				const { error: signInError } = await supabaseClient.auth.signInWithPassword({
 					email,
-					password
+					password,
+					options: {
+						captchaToken
+					}
 				});
 				if (signInError) error = signInError.message;
 				loading = false;
