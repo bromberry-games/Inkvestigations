@@ -58,11 +58,12 @@ export const models: { [key in OpenAiModel]: OpenAiModelStats } = {
  * see https://platform.openai.com/docs/guides/chat/introduction > Deep Dive Expander
  * see https://github.com/syonfox/GPT-3-Encoder/issues/2
  */
-export function countTokens(message: ChatCompletionRequestMessage): number {
+export function countTokens(message: string): number {
 	// see comment above
 	if (!tokenizer) {
 		tokenizer = new GPT3Tokenizer({ type: 'gpt3' });
 	}
+	return tokenizer.encode(message).text.length;
 
 	//let num_tokens = 4; // every message follows <im_start>{role/name}\n{content}<im_end>\n
 	//for (const [key, value] of Object.entries(message)) {
@@ -75,8 +76,6 @@ export function countTokens(message: ChatCompletionRequestMessage): number {
 	//		num_tokens--; // if there's a name, the role is omitted
 	//	}
 	//}
-
-	return num_tokens;
 }
 
 export function estimateChatCost(chat: Chat): ChatCost {

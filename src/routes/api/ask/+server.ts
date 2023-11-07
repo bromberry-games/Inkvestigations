@@ -14,6 +14,8 @@ import {
 	setRating
 } from '$lib/supabase/conversations.server';
 import { getMessageAmountForUser, decreaseMessageForUser } from '$lib/supabase/message_amounts.server';
+import { countTokens } from '$misc/openai';
+import { MAX_TOKENS } from '../../../constants';
 
 async function standardInvestigationAnswer(mysteryName: string, promptMessage: string, userId: string) {
 	const infoModelMessages = await getInfoModelMessages(userId, mysteryName);
@@ -82,6 +84,9 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		throwIfUnset('request data', requestData);
 		const message: string = requestData.message;
 		throwIfUnset('messages', message);
+		if (countTokens(message) > MAX_TOKENS) {
+			throw error(400, 'Message is too long.');
+		}
 		const game_config = requestData.game_config;
 		throwIfUnset('game_config', game_config);
 		const suspectToAccuse = game_config.suspectToAccuse ? game_config.suspectToAccuse : '';

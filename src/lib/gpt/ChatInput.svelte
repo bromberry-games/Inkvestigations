@@ -8,6 +8,7 @@
 	import { countTokens } from '$misc/openai';
 	import { Toast, Button } from 'flowbite-svelte';
 	import SuspectModal from './SuspectModal.svelte';
+	import { MAX_TOKENS } from '../../constants';
 
 	const dispatch = createEventDispatcher();
 
@@ -27,6 +28,9 @@
 	$: message = input.trim();
 
 	function handleSubmit() {
+		messageTokens = countTokens(message);
+		if (messageTokens > MAX_TOKENS) return;
+
 		if (suspectToAccuse) {
 			gameOver = true;
 		}
@@ -36,7 +40,6 @@
 		lastUserMessage = message;
 
 		const payload = {
-			// OpenAI API complains if we send additionale props
 			game_config: {
 				suspectToAccuse: suspectToAccuse,
 				mysteryName: slug.replace(/_/g, ' ')
@@ -116,8 +119,8 @@
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
-		//clearTimeout(debounceTimer);
-		//debounceTimer = window.setTimeout(calculateMessageTokens, 750);
+		clearTimeout(debounceTimer);
+		debounceTimer = window.setTimeout(calculateMessageTokens, 750);
 
 		if ($isLoadingAnswerStore) {
 			return;
@@ -128,17 +131,28 @@
 		}
 	}
 
-	//function calculateMessageTokens() {
-	//	messageTokens = countTokens(message);
-	//	clearTimeout(debounceTimer);
-	//	debounceTimer = undefined;
-	//}
+	function calculateMessageTokens() {
+		messageTokens = countTokens(message);
+		clearTimeout(debounceTimer);
+		debounceTimer = undefined;
+	}
 
 	let clickOutsideModal = false;
 	let toastOpen = true;
 	$: if (!toastOpen) {
 		suspectToAccuse = '';
 		toastOpen = true;
+	}
+
+	let placeholderText = 'Enter to send, Shift+Enter for newline';
+	$: {
+		if (gameOver) {
+			placeholderText = 'Game Over';
+		} else if (messagesAmount <= 0) {
+			placeholderText = 'No messages';
+		} else if (messagesAmount > 0) {
+			placeholderText = 'Enter to send, Shift+Enter for newline';
+		}
 	}
 </script>
 
@@ -148,55 +162,44 @@
 		<div></div>
 	{:else}
 		<div class="flex flex-col space-y-2 px-2 md:mx-auto md:w-3/4 md:px-8 xl:w-1/2">
-			{#if !gameOver}
-				{#if messagesAmount > 0}
-					<form on:submit|preventDefault={handleSubmit}>
-						<div class="flex flex-wrap items-center">
-							<!-- Input -->
-							{#if suspectToAccuse}
-								<Toast class="!md:p-3 w-full !max-w-md grow-0 md:mx-2 md:w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
-							{:else}
-								<Button
-									class="mr-1 bg-secondary !p-2 font-primary text-xl text-quaternary md:mx-2 md:px-5"
-									on:click={() => (clickOutsideModal = true)}>ACCUSE</Button
-								>
-							{/if}
-							<textarea
-								class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary"
-								rows="1"
-								placeholder="Enter to send, Shift+Enter for newline"
-								use:textareaAutosizeAction
-								on:keydown={handleKeyDown}
-								bind:value={input}
-								bind:this={textarea}
-							/>
-							<div
-								data-testid="message-counter"
-								aria-label="messages left counter"
-								class="ml-1 h-full bg-[url('/images/message_counter.svg')] bg-cover bg-center bg-no-repeat px-4 py-6 font-tertiary text-xl md:ml-2"
-							>
-								{messagesAmount}
-							</div>
-							<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
-								<button type="submit" class="btn btn-sm ml-2">
-									<PaperAirplane class="h-6 w-6" />
-								</button>
-							</div>
-						</div>
-					</form>
-				{:else}
-					<div class="text-center">No more messages</div>
-					<div class="grid grid-cols-[1fr_auto]">
-						<!-- Input -->
-						<textarea class="textarea min-h-[42px] overflow-hidden" rows="1" placeholder="No more messages left" disabled />
-						<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
-							<!-- Send button -->
-							<button type="submit" class="btn btn-sm ml-2">
-								<PaperAirplane class="h-6 w-6" />
-							</button>
-						</div>
+			<form on:submit|preventDefault={handleSubmit}>
+				<div class="flex flex-wrap items-center">
+					<!-- Input -->
+					{#if suspectToAccuse}
+						<Toast class="!md:p-3 w-full !max-w-md grow-0 md:mx-2 md:w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
+					{:else}
+						<Button
+							disabled={gameOver}
+							class="mr-1 bg-secondary !p-2 font-primary text-xl text-quaternary md:mx-2 md:px-5"
+							on:click={() => (clickOutsideModal = true)}>ACCUSE</Button
+						>
+					{/if}
+					<textarea
+						class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary"
+						rows="1"
+						placeholder={placeholderText}
+						use:textareaAutosizeAction
+						on:keydown={handleKeyDown}
+						bind:value={input}
+						bind:this={textarea}
+						disabled={gameOver || messagesAmount <= 0}
+					/>
+					<div
+						data-testid="message-counter"
+						aria-label="messages left counter"
+						class="ml-1 h-full bg-[url('/images/message_counter.svg')] bg-cover bg-center bg-no-repeat px-4 py-6 font-tertiary text-xl md:ml-2"
+					>
+						{messagesAmount}
 					</div>
-				{/if}
+					<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
+						<button type="submit" class="btn btn-sm ml-2">
+							<PaperAirplane class="h-6 w-6" />
+						</button>
+					</div>
+				</div>
+			</form>
+			{#if messageTokens > 50}
+				<div class="text-center text-red-700">Input text too long</div>
 			{/if}
 		</div>
 	{/if}

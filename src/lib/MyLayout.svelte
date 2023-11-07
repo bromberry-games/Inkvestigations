@@ -30,7 +30,7 @@
 			<Avatar id="avatar-menu" src="/images/mysteries/police_captain.webp" />
 			<Dropdown placement="bottom" triggeredBy="#avatar-menu">
 				<DropdownHeader>
-					<span class="block truncate text-sm font-medium">name@flowbite.com</span>
+					<span class="block truncate text-sm font-medium">{session.user.email}</span>
 				</DropdownHeader>
 				<DropdownItem on:click={() => supabase.auth.signOut()}>Sign out</DropdownItem>
 			</Dropdown>
