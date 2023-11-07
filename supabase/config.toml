@@ -60,6 +60,14 @@ refresh_token_reuse_interval = 10
 # Allow/disallow new user signups to your project.
 enable_signup = true
 
+
+SECURITY_CAPTCHA_ENABLED = "true"
+SECURITY_CAPTCHA_PROVIDER = "turnstile"
+SECURITY_CAPTCHA_SECRET = "your_captcha_secret_key"
+SECURITY_CAPTCHA_TIMEOUT = "30"
+#SECURITY_CAPTCHA_TURNSTILE_SITEKEY = "env(SUPABASE_SECURITY_CAPTCHA_TURNSTILE_SITEKEY)"
+#SECURITY_CAPTCHA_TURNSTILE_SECRET = "env(SUPABASE_SECURITY_CAPTCHA_TURNSTILE_SECRET)"
+
 [auth.email]
 # Allow/disallow new user signups via email to your project.
 enable_signup = true

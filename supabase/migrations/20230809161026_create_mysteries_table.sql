@@ -109,6 +109,9 @@ ALTER TABLE user_subscriptions
 ALTER TABLE subscription_tiers 
   ENABLE ROW LEVEL SECURITY;
 
+ALTER TABLE solved
+  ENABLE ROW LEVEL SECURITY;
+
 create policy "everybody can view mysteries."
     on mysteries for select
     using ( true );
