@@ -20,8 +20,8 @@
 	id="nav"
 	navDivClass="mx-auto flex flex-wrap justify-between items-center"
 >
-	<NavBrand href="/" class="w-1/2">
-		<div class="inline font-tertiary md:w-1/2" id="logo-container">
+	<NavBrand href="/" class="md:1/4 xl:w-1/2">
+		<div class="inline font-tertiary" id="logo-container">
 			{@html logo}
 		</div>
 	</NavBrand>
@@ -37,7 +37,12 @@
 		{/if}
 		<NavHamburger on:click={toggle} class="!focus:outline-none !bg-transparent" />
 	</div>
-	<NavUl {hidden} {activeClass} class="justify-end border-none !bg-transparent text-end font-primary" on:click={toggle}>
+	<NavUl
+		{hidden}
+		{activeClass}
+		class="ml-0 justify-end border-none !bg-transparent text-end font-primary lg:ml-8 2xl:ml-24"
+		on:click={toggle}
+	>
 		<NavLi href="/mysteries" class="ml-8 text-4xl !text-quaternary" active={activeUrl === '/mysteries'}>MYSTERIES</NavLi>
 		<NavLi href="/pricing" class="ml-8 text-4xl !text-quaternary" active={activeUrl === '/pricing'}>PRICING</NavLi>
 		{#if !session}
