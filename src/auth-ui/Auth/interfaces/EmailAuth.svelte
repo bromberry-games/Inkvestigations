@@ -3,6 +3,8 @@
 	import Message from '$lib/../auth-ui/UI/Message.svelte';
 	import { VIEWS, type I18nVariables, type ViewType, type RedirectTo } from '@supabase/auth-ui-shared';
 	import { Button, Input } from 'flowbite-svelte';
+	import { Turnstile } from 'svelte-turnstile';
+	import { PUBLIC_TURNSTILE_SITE_KEY } from '$env/static/public';
 
 	export let authView: ViewType = 'sign_in';
 	export let email = '';
@@ -13,6 +15,7 @@
 	export let magicLink = true;
 	export let i18n: I18nVariables;
 
+	let captchaToken = '';
 	let message = '';
 	let error = '';
 	let loading = false;
@@ -34,8 +37,9 @@
 				loading = false;
 				break;
 			case VIEWS.SIGN_UP:
-				let options: { emailRedirectTo: RedirectTo; data?: object } = {
-					emailRedirectTo: redirectTo
+				let options: { emailRedirectTo: RedirectTo; data?: object; captchaToken?: string } = {
+					emailRedirectTo: redirectTo,
+					captchaToken
 				};
 				const {
 					data: { user: signUpUser, session: signUpSession },
@@ -57,6 +61,7 @@
 
 <form method="post" on:submit|preventDefault={handleSubmit}>
 	<!-- <Container direction="vertical" gap="large" {appearance}> -->
+
 	<div class="flex flex-col gap-2">
 		<p class="text-center font-secondary text-2xl">Log in with e-mail</p>
 		<div>
@@ -83,6 +88,7 @@
 			/>
 		</div>
 		<slot />
+		<Turnstile on:turnstile-callback={(e) => (captchaToken = e.detail.token)} siteKey={PUBLIC_TURNSTILE_SITE_KEY} />
 		<div class="flex justify-center">
 			<Button type="submit" btnClass="bg-tertiary text-2xl w-2/5 py-4 rounded text-center font-primary">
 				{i18n?.[lngKey]?.button_label}
