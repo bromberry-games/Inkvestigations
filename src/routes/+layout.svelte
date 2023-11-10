@@ -1,12 +1,8 @@
 <script>
-	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button, Img } from 'flowbite-svelte';
 	import '../app.css';
 	import { invalidate } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import logo from '/src/images/logo_2.svg?src';
-	import { page } from '$app/stores';
 
-	$: activeUrl = $page.url.pathname;
 	export let data;
 
 	let { supabase, session } = data;

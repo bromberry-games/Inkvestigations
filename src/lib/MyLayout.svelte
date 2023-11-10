@@ -3,12 +3,13 @@
 	import { Avatar, Dropdown, DropdownHeader, DropdownItem, NavBrand, NavHamburger, NavLi, NavUl, Navbar } from 'flowbite-svelte';
 	import logo from '/src/images/logo_2.svg?src';
 	import type { Session, SupabaseClient } from '@supabase/supabase-js';
+	import { AuthStatus, getAuthStatus } from './auth-helper';
 
 	export let supabase: SupabaseClient;
 	export let session: Session | null;
+	$: authStatus = getAuthStatus(session);
 
 	$: activeUrl = $page.url.pathname;
-	$: console.log(activeUrl);
 	let activeClass =
 		'!text-white bg-green-700 md:bg-transparent md:text-green-700 md:dark:text-white dark:bg-green-600 md:dark:bg-transparent';
 </script>
@@ -26,7 +27,7 @@
 		</div>
 	</NavBrand>
 	<div class="flex items-center md:order-2">
-		{#if session}
+		{#if authStatus == AuthStatus.LoggedIn}
 			<Avatar id="avatar-menu" src="/images/mysteries/police_captain.webp" />
 			<Dropdown placement="bottom" triggeredBy="#avatar-menu">
 				<DropdownHeader>
@@ -45,7 +46,7 @@
 	>
 		<NavLi href="/mysteries" class="ml-8 text-4xl !text-quaternary" active={activeUrl === '/mysteries'}>MYSTERIES</NavLi>
 		<NavLi href="/pricing" class="ml-8 text-4xl !text-quaternary" active={activeUrl === '/pricing'}>PRICING</NavLi>
-		{#if !session}
+		{#if authStatus != AuthStatus.LoggedIn}
 			<NavLi href="/login" class="ml-8 text-4xl !text-quaternary" active={activeUrl === '/login'}>LOGIN</NavLi>
 		{/if}
 	</NavUl>

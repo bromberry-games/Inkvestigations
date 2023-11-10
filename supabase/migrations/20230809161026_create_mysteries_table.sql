@@ -28,18 +28,18 @@ CREATE TABLE murderers (
 CREATE TABLE solved (
     id SERIAL PRIMARY KEY,
     mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE,
-    user_id uuid NOT NULL REFERENCES auth.users(id) ON UPDATE CASCADE,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     rating INTEGER CHECK (rating >= 0)
 );
 
 CREATE TABLE user_messages (
-    user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON UPDATE CASCADE,
+    user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     amount INTEGER CHECK (amount >= 0) NOT NULL
 );
 
 CREATE TABLE user_mystery_conversations (
     id SERIAL PRIMARY KEY,
-    user_id uuid REFERENCES auth.users(id) ON UPDATE CASCADE,
+    user_id uuid REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE,
     archived BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL

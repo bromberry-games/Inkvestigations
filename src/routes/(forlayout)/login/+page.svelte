@@ -2,9 +2,9 @@
 	//import { Auth } from '@supabase/auth-ui-svelte';
 	import Auth from '$lib/../auth-ui/Auth/Auth.svelte';
 	import { ThemeSupa, type SocialLayout, type ViewType } from '@supabase/auth-ui-shared';
-	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import logo from '/src/images/logo_2.svg?src';
+	import { AuthStatus, getAuthStatus } from '$lib/auth-helper.js';
 
 	export let data;
 
@@ -29,8 +29,11 @@
 	let view = views[0];
 
 	$: {
-		if (data.session) {
+		const authStatus = getAuthStatus(data.session);
+		if (authStatus == AuthStatus.LoggedIn) {
 			goto('/');
+		} else if (authStatus == AuthStatus.AnonymousLogin) {
+			view = views[1];
 		}
 	}
 </script>
@@ -78,6 +81,7 @@
 							{socialLayout}
 							redirectTo={`${data.url}/auth/callback?next=/mysteries`}
 							forgottenPasswordRedirect={`${data.url}/auth/callback?next=/update-password`}
+							oldUserId={data.session && data.session.user.user_metadata.anonymous == true ? data.session.user.id : undefined}
 						/>
 					</div>
 				</div>

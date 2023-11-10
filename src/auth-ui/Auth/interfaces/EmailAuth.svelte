@@ -14,6 +14,7 @@
 	export let showLinks = false;
 	export let magicLink = true;
 	export let i18n: I18nVariables;
+	export let oldUserId: string | undefined = undefined;
 
 	let captchaToken = '';
 	let message = '';
@@ -40,9 +41,16 @@
 				loading = false;
 				break;
 			case VIEWS.SIGN_UP:
-				let options: { emailRedirectTo: RedirectTo; data?: object; captchaToken?: string } = {
+				if (oldUserId) {
+					await supabaseClient.auth.signOut();
+				}
+				//let options: { emailRedirectTo: RedirectTo; data?: object; captchaToken?: string } = {
+				let options = {
 					emailRedirectTo: redirectTo,
-					captchaToken
+					captchaToken,
+					data: {
+						old_user_id: oldUserId
+					}
 				};
 				const {
 					data: { user: signUpUser, session: signUpSession },
@@ -63,8 +71,6 @@
 </script>
 
 <form method="post" on:submit|preventDefault={handleSubmit}>
-	<!-- <Container direction="vertical" gap="large" {appearance}> -->
-
 	<div class="flex flex-col gap-2">
 		<p class="text-center font-secondary text-2xl">Log in with e-mail</p>
 		<div>
@@ -144,7 +150,6 @@
 				</a>
 			{/if}
 		{/if}
-		<!-- </Container> -->
 	</div>
 
 	{#if message}
