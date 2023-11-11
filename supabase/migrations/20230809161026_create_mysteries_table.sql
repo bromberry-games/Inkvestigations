@@ -152,6 +152,54 @@ AFTER INSERT ON auth.users
 FOR EACH ROW
 EXECUTE FUNCTION add_user_to_user_messages();
 
+CREATE OR REPLACE FUNCTION migrate_anonymous_user_to_new_user()
+RETURNS TRIGGER 
+security definer set search_path = public
+AS $$
+DECLARE
+    new_user_id uuid;
+    old_user_id uuid;
+    is_anonymous BOOLEAN;
+BEGIN
+    -- Extract the old_user_id from the newly inserted user's metadata
+    new_user_id := NEW.id;
+    old_user_id := NEW.raw_user_meta_data->>'old_user_id';
+
+    -- If old_user_id is not set, do nothing
+    IF old_user_id IS NULL THEN
+        RETURN NEW;
+    END IF;
+
+    -- Retrieve the anonymous flag from the old user's metadata
+    SELECT raw_user_meta_data->>'anonymous' = 'true' INTO is_anonymous
+    FROM auth.users
+    WHERE id = old_user_id;
+
+    -- If the old user is not anonymous, do nothing
+    IF NOT is_anonymous THEN
+        RETURN NEW;
+    END IF;
+
+        -- Update user_id in user_mystery_conversations
+    UPDATE public.user_mystery_conversations
+    SET user_id = new_user_id
+    WHERE user_id = old_user_id;
+
+        -- Delete the old user
+    DELETE FROM auth.users
+    WHERE id = old_user_id;
+
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_migrate_anonymous_user
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION migrate_anonymous_user_to_new_user();
+
+
 -- functions
 
 create function decrement_message_for_user(the_user_id uuid) 
