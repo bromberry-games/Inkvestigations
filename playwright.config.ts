@@ -5,7 +5,7 @@ const commonConfig: PlaywrightTestConfig = {
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 1 : 1,
-	workers: process.env.CI ? 1 : 1,
+	workers: process.env.CI ? 1 : undefined,
 	reporter: 'html',
 	testDir: 'tests',
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/
@@ -75,7 +75,7 @@ function addDependencies(projects, dependencies: string[]) {
 }
 
 const localLogin = addTestMatches(createBaseProjects(' login'));
-const localElse = addDependencies(addTestIgnores(addStorageStates(createBaseProjects(''))), ['setup login']);
+const localElse = addTestIgnores(createBaseProjects(''));
 const local_config: PlaywrightTestConfig = {
 	...commonConfig,
 	use: {

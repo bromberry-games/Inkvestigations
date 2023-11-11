@@ -185,6 +185,7 @@ function createLetterModel(writer: WritableStreamDefaultWriter<any>, encoder: Te
 		streaming: true,
 		modelName: OpenAiModel.Gpt35Turbo,
 		openAIApiKey: OPEN_AI_KEY,
+		maxTokens: 300,
 		callbackManager: CallbackManager.fromHandlers({
 			handleLLMNewToken: async (token) => {
 				await writer.ready;

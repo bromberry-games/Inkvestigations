@@ -26,7 +26,7 @@
 							</h2>
 						</div>
 						<div class="mt-16 flex justify-end">
-							<Button class="w-1/2 rounded-none bg-tertiary py-4 font-primary !text-4xl !text-quaternary lg:w-1/4" href="/login"
+							<Button class="w-1/2 rounded-none bg-tertiary py-4 font-primary !text-4xl !text-quaternary lg:w-1/4" href="/try-for-free"
 								>TRY FOR FREE</Button
 							>
 						</div>

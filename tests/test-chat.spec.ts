@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../playwright/fixtures';
 
 test('test gpt connection and expect message counter to go down', async ({ page }) => {
 	await page.goto('/mysteries');
@@ -11,7 +11,7 @@ test('test gpt connection and expect message counter to go down', async ({ page 
 	await page.locator('button[type="submit"]').click();
 
 	const message = page.getByText('Police chief:').nth(1);
-	await message.waitFor({ timeout: 10000 });
+	await message.waitFor({ timeout: 30000 });
 	await expect(page.getByText('Police chief:').nth(1)).toBeVisible();
 	const newMessageCount = await page.getByTestId('message-counter').innerText();
 	expect(parseInt(newMessageCount) + 1).toBe(parseInt(messageCount));
