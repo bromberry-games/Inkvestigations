@@ -5,7 +5,7 @@ const commonConfig: PlaywrightTestConfig = {
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 1 : 1,
-	workers: process.env.CI ? 1 : undefined,
+	workers: process.env.CI ? 1 : 1,
 	reporter: 'html',
 	testDir: 'tests',
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/
@@ -35,15 +35,6 @@ function createBaseProjects(additionalName: string) {
 	];
 }
 
-function addTestMatches(projects) {
-	return projects.map((project) => {
-		return {
-			...project,
-			testMatch: /.*login.spec.ts/
-		};
-	});
-}
-
 function addStorageStates(projects) {
 	return projects.map((project) => {
 		return {
@@ -52,15 +43,6 @@ function addStorageStates(projects) {
 				...project.use,
 				storageState: 'playwright/.auth/user.json'
 			}
-		};
-	});
-}
-
-function addTestIgnores(projects) {
-	return projects.map((project) => {
-		return {
-			...project,
-			testIgnore: /.*login.spec.ts/
 		};
 	});
 }
@@ -74,8 +56,7 @@ function addDependencies(projects, dependencies: string[]) {
 	});
 }
 
-const localLogin = addTestMatches(createBaseProjects(' login'));
-const localElse = addTestIgnores(createBaseProjects(''));
+const localLogin = createBaseProjects(' login');
 const local_config: PlaywrightTestConfig = {
 	...commonConfig,
 	use: {
@@ -83,14 +64,14 @@ const local_config: PlaywrightTestConfig = {
 		trace: 'on-first-retry'
 	},
 	// Configure projects for major browsers.
-	projects: [...localLogin, { name: 'setup login', testMatch: /.*login\.setup\.ts/ }, ...localElse]
+	projects: [...localLogin]
 	//webServer: {
 	//	command: 'npm run build && npm run preview',
 	//	port: 4173
 	//},
 };
 
-const loginDev = addDependencies(addTestMatches(addStorageStates(createBaseProjects('login'))), ['setup_cloudflare_access']);
+const loginDev = addDependencies(addStorageStates(createBaseProjects('login')), ['setup_cloudflare_access']);
 const dev_config: PlaywrightTestConfig = {
 	...commonConfig,
 

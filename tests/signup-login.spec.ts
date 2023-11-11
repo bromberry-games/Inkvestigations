@@ -1,6 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
 import { fillOutSingupFormConfirmMailLogin, generateRandomUserMail, loginOnPage, navToLogin, signUpAndConfirmUser } from './helpers';
-import { supabase_full_access } from './supabase_test_access';
 
 async function logoutOfPage(page: Page, isMobile: boolean) {
 	await page.locator('#avatar-menu').click();

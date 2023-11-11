@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { supabase_full_access } from './supabase_test_access';
+import 'dotenv/config';
 
 export async function loginOnPage(page: Page, isMobile: boolean, email: string, password: string) {
 	await page.evaluate(() => document.fonts.ready);
@@ -42,8 +43,9 @@ export async function fillOutSingupFormConfirmMailLogin(page: Page, isMobile: bo
 	await fillOutLoginOrSignupForm(page, email, 'password-new-user');
 	await page.getByRole('button', { name: 'Sign up' }).click();
 	await page.waitForTimeout(100);
-	if (isMobile) {
+	if (isMobile || process.env.ENV_TO_TEST == 'DEV') {
 		const users = (await supabase_full_access.auth.admin.listUsers()).data.users;
+		console.log(users);
 		const user = users.find((user) => {
 			return user.email == email;
 		});
