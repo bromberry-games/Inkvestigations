@@ -5,7 +5,7 @@ const commonConfig: PlaywrightTestConfig = {
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 1 : 1,
-	workers: process.env.CI ? 1 : 1,
+	workers: process.env.CI ? 1 : undefined,
 	reporter: 'html',
 	testDir: 'tests',
 	testMatch: /(.+\.)?(test|spec)\.[jt]s/
@@ -63,6 +63,7 @@ const local_config: PlaywrightTestConfig = {
 		baseURL: 'http://localhost:5173',
 		trace: 'on-first-retry'
 	},
+	timeout: 45000,
 	// Configure projects for major browsers.
 	projects: [...localLogin]
 	//webServer: {

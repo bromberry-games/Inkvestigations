@@ -1,7 +1,7 @@
 import { test as baseTest, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import { fillOutSingupFormConfirmMailLogin } from '../tests/helpers';
+import { createNeUserAndLoginViaUrl, createNewUserAndLogin, fillOutSingupFormConfirmMailLogin } from '../tests/helpers';
 
 export * from '@playwright/test';
 export const test = baseTest.extend<{}, { workerStorageState: string }>({
@@ -24,11 +24,8 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 			// Important: make sure we authenticate in a clean environment by unsetting storage state.
 			const page = await browser.newPage({ storageState: undefined });
 
+			await createNeUserAndLoginViaUrl(page, 'http://localhost:5173');
 			// Perform authentication steps. Replace these actions with your own.
-			await page.goto('http://localhost:5173/login');
-			await page.getByRole('link', { name: 'Create new Account' }).click();
-			await page.waitForTimeout(200);
-			await fillOutSingupFormConfirmMailLogin(page, true);
 			await page.waitForTimeout(1000);
 
 			await page.context().storageState({ path: fileName });

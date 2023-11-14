@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { fillOutSingupFormConfirmMailLogin, generateRandomUserMail, loginOnPage, navToLogin, signUpAndConfirmUser } from './helpers';
+import { createNewUserAndLogin, fillOutSingupFormConfirmMailLogin, loginOnPage, navToLogin } from './helpers';
 
 async function logoutOfPage(page: Page, isMobile: boolean) {
 	await page.locator('#avatar-menu').click();
@@ -11,29 +11,20 @@ async function logoutOfPage(page: Page, isMobile: boolean) {
 }
 
 test('login', async ({ page, isMobile }) => {
-	const mail = generateRandomUserMail();
-	const password = 'password-test-user';
-	await signUpAndConfirmUser(mail, password);
-	await loginOnPage(page, isMobile, mail, password);
+	await createNewUserAndLogin(page, isMobile);
 
 	await expect(page.locator('#avatar-menu')).toBeVisible();
 });
 
 test('logout', async ({ page, isMobile }) => {
-	const mail = generateRandomUserMail();
-	const password = 'password-test-user';
-	await signUpAndConfirmUser(mail, password);
-	await loginOnPage(page, isMobile, mail, password);
+	await createNewUserAndLogin(page, isMobile);
 	await logoutOfPage(page, isMobile);
 
 	await expect(page.getByRole('link', { name: 'LOGIN', exact: true })).toBeVisible();
 });
 
 test('login logout and login should redirect', async ({ page, isMobile }) => {
-	const mail = generateRandomUserMail();
-	const password = 'password-test-user';
-	await signUpAndConfirmUser(mail, password);
-	await loginOnPage(page, isMobile, mail, password);
+	const { mail, password } = await createNewUserAndLogin(page, isMobile);
 	await logoutOfPage(page, isMobile);
 	await loginOnPage(page, isMobile, mail, password);
 	await page.waitForURL('/mysteries');
