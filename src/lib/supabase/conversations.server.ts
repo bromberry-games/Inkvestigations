@@ -152,5 +152,6 @@ export async function addMessageForUser(userid: string, message: string, mystery
 		console.error('message error: ' + messageError);
 		return false;
 	}
+	console.log('succesfully added message for user');
 	return true;
 }

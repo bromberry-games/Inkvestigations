@@ -36,7 +36,7 @@ export async function letterModelRequest(
 	previousConversation: BaseMessage[],
 	question: string,
 	brainAnswer: string,
-	onResponseGenerated: (input: string) => void
+	onResponseGenerated: (input: string) => Promise<any>
 ) {
 	const encoder = new TextEncoder();
 	const stream = new TransformStream();
@@ -156,7 +156,11 @@ const fewShotPromptBrain = [
 	})
 ];
 
-function createLetterModel(writer: WritableStreamDefaultWriter<any>, encoder: TextEncoder, onResponseGenerated: (input: string) => void) {
+function createLetterModel(
+	writer: WritableStreamDefaultWriter<any>,
+	encoder: TextEncoder,
+	onResponseGenerated: (input: string) => Promise<any>
+) {
 	return new ChatOpenAI({
 		streaming: true,
 		modelName: OpenAiModel.Gpt35Turbo,
@@ -175,7 +179,7 @@ function createLetterModel(writer: WritableStreamDefaultWriter<any>, encoder: Te
 				await writer.close();
 				console.log('awaiting to generate response with function: ');
 				console.log(onResponseGenerated);
-				onResponseGenerated(output.generations[0][0].text);
+				await onResponseGenerated(output.generations[0][0].text);
 			},
 			handleLLMError: async (e) => {
 				await writer.ready;
