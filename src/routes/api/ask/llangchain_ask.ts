@@ -157,30 +157,6 @@ const fewShotPromptBrain = [
 ];
 
 function createLetterModel(writer: WritableStreamDefaultWriter<any>, encoder: TextEncoder, onResponseGenerated: (input: string) => void) {
-	//return new ChatFireworks({
-	//	streaming: true,
-	//	modelName: 'accounts/fireworks/models/mistral-7b-instruct-4k',
-	//	fireworksApiKey: FIREWORKS_AI_KEY,
-	//	temperature: 0.5,
-	//	callbackManager: CallbackManager.fromHandlers({
-	//		handleLLMNewToken: async (token) => {
-	//			await writer.ready;
-	//			//Don't know why but I have to stringify token to preserve spacing. Might be related to sse.js but won't investigate
-	//			await writer.write(encoder.encode(`data: ${JSON.stringify(token)}\n\n`));
-	//		},
-	//		handleLLMEnd: async (output) => {
-	//			await writer.ready;
-	//			await writer.write(encoder.encode(`data: [DONE]\n\n`));
-	//			await writer.ready;
-	//			await writer.close();
-	//			onResponseGenerated(output.generations[0][0].text);
-	//		},
-	//		handleLLMError: async (e) => {
-	//			await writer.ready;
-	//			await writer.abort(e);
-	//		}
-	//	})
-	//});
 	return new ChatOpenAI({
 		streaming: true,
 		modelName: OpenAiModel.Gpt35Turbo,
@@ -197,6 +173,8 @@ function createLetterModel(writer: WritableStreamDefaultWriter<any>, encoder: Te
 				await writer.write(encoder.encode(`data: [DONE]\n\n`));
 				await writer.ready;
 				await writer.close();
+				console.log('awaiting to generate response with function: ');
+				console.log(onResponseGenerated);
 				onResponseGenerated(output.generations[0][0].text);
 			},
 			handleLLMError: async (e) => {

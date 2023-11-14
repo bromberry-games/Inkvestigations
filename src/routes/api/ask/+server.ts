@@ -46,6 +46,7 @@ async function standardInvestigationAnswer(mysteryName: string, promptMessage: s
 		messages.push(new AIMessage({ content: assistantLetterAnswers[i / 2].content }));
 	}
 	const addResult = async (message: string) => {
+		console.log('adding result from callback');
 		const addedMessage = await addMessageForUser(userId, message, mysteryName);
 		throwIfFalse(addedMessage, 'Could not add message to chat');
 	};
