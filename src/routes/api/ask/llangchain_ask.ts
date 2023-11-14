@@ -8,6 +8,7 @@ import { BaseOutputParser } from 'langchain/schema/output_parser';
 import { error, json } from '@sveltejs/kit';
 import { OpenAiModel } from '$misc/openai';
 import { ChatFireworks } from 'langchain/chat_models/fireworks';
+import { createFakeLLM } from './fake_llm';
 
 const fewShotPromptLetter: BaseMessage[] = [
 	new ChatMessage({
@@ -161,31 +162,31 @@ function createLetterModel(
 	encoder: TextEncoder,
 	onResponseGenerated: (input: string) => Promise<any>
 ) {
+	const callbackManager = CallbackManager.fromHandlers({
+		handleLLMNewToken: async (token) => {
+			await writer.ready;
+			//Don't know why but I have to stringify token to preserve spacing. Might be related to sse.js but won't investigate
+			await writer.write(encoder.encode(`data: ${JSON.stringify(token)}\n\n`));
+		},
+		handleLLMEnd: async (output) => {
+			await writer.ready;
+			await writer.write(encoder.encode(`data: [DONE]\n\n`));
+			await onResponseGenerated(output.generations[0][0].text);
+			await writer.ready;
+			await writer.close();
+		},
+		handleLLMError: async (e) => {
+			await writer.ready;
+			await writer.abort(e);
+		}
+	});
+	//return createFakeLLM(callbackManager);
 	return new ChatOpenAI({
 		streaming: true,
 		modelName: OpenAiModel.Gpt35Turbo,
 		openAIApiKey: OPEN_AI_KEY,
 		maxTokens: 300,
-		callbackManager: CallbackManager.fromHandlers({
-			handleLLMNewToken: async (token) => {
-				await writer.ready;
-				//Don't know why but I have to stringify token to preserve spacing. Might be related to sse.js but won't investigate
-				await writer.write(encoder.encode(`data: ${JSON.stringify(token)}\n\n`));
-			},
-			handleLLMEnd: async (output) => {
-				await writer.ready;
-				await writer.write(encoder.encode(`data: [DONE]\n\n`));
-				await writer.ready;
-				await writer.close();
-				console.log('awaiting to generate response with function: ');
-				console.log(onResponseGenerated);
-				await onResponseGenerated(output.generations[0][0].text);
-			},
-			handleLLMError: async (e) => {
-				await writer.ready;
-				await writer.abort(e);
-			}
-		})
+		callbackManager
 	});
 }
 
@@ -219,13 +220,15 @@ export async function brainModelRequest(gameInfo: string, previousConversation: 
 		['user', userTemplate]
 	]);
 
-	const llm = new ChatOpenAI({
-		temperature: 0.8,
-		openAIApiKey: OPEN_AI_KEY,
-		modelName: OpenAiModel.Gpt35Turbo,
-		maxTokens: 200
-	});
-	const chain = new LLMChain({ prompt, llm, verbose: false });
+	const llm = createFakeLLM();
+
+	// const llm = new ChatOpenAI({
+	// temperature: 0.8,
+	// openAIApiKey: OPEN_AI_KEY,
+	// modelName: OpenAiModel.Gpt35Turbo,
+	// maxTokens: 200
+	// });
+	const chain = new LLMChain({ prompt, llm, verbose: true });
 	const res = await chain.call({ information: gameInfo, text: question });
 	return res.text;
 }
