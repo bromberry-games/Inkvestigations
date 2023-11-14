@@ -45,13 +45,16 @@ async function standardInvestigationAnswer(mysteryName: string, promptMessage: s
 		);
 		messages.push(new AIMessage({ content: assistantLetterAnswers[i / 2].content }));
 	}
-	const addResult = async (message: string) => {
+
+	//const addResult = async (message: string) => {};
+	async function addResultFunction(message: string) {
 		console.log('adding result from callback');
 		const addedMessage = await addMessageForUser(userId, message, mysteryName);
 		throwIfFalse(addedMessage, 'Could not add message to chat');
-	};
+		console.log('with new function added message: ', addedMessage);
+	}
 
-	return letterModelRequest(gameInfo, messages, promptMessage, brainResponse, addResult);
+	return letterModelRequest(gameInfo, messages, promptMessage, brainResponse, addResultFunction);
 }
 
 async function accuseModelAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
