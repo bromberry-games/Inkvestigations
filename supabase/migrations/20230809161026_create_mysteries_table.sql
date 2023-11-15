@@ -6,8 +6,11 @@ CREATE TABLE mysteries (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     description TEXT Not NULL,
-    game_info TEXT NOT NULL,
+    brain_prompt TEXT NOT NULL,
     letter_info TEXT NOT NULL,
+    letter_prompt TEXT NOT NULL,
+    accuse_prompt TEXT NOT NULL,
+    accuse_letter_prompt TEXT NOT NULL,
     filepath TEXT NOT NULL
 );
 
@@ -76,8 +79,6 @@ CREATE TABLE user_subscriptions (
     end_date DATE,
     active BOOLEAN NOT NULL DEFAULT TRUE
 );
-
-
 
 -- policies
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;

@@ -9,7 +9,8 @@ import { OpenAiModel } from '$misc/openai';
 import { createFakeLLM } from './fake_llm';
 import { createBrainPrompt } from './prompt_templates/brain';
 import { createLetterPrompt } from './prompt_templates/letter';
-import { createAccusePrompt } from './prompt_templates/accusation';
+import { createAccusePrompt } from './prompt_templates/accusation_brain';
+import { createAccuseLetterPrompt } from './prompt_templates/accusation_letter';
 
 export async function letterModelRequest(
 	gameInfo: string,
@@ -59,7 +60,6 @@ function createLetterModel(
 			await writer.abort(e);
 		}
 	});
-	//return createFakeLLM(callbackManager);
 	return new ChatOpenAI({
 		streaming: true,
 		modelName: OpenAiModel.Gpt35Turbo,
@@ -72,7 +72,6 @@ function createLetterModel(
 export async function brainModelRequest(gameInfo: string, previousConversation: BaseMessage[], question: string): Promise<string> {
 	const prompt = createBrainPrompt(previousConversation);
 
-	// const llm = createFakeLLM();
 	const llm = new ChatOpenAI({
 		temperature: 0.8,
 		openAIApiKey: OPEN_AI_KEY,
@@ -105,7 +104,11 @@ class RatingParser extends BaseOutputParser<RatingWithEpilogue> {
 	}
 }
 
-export async function accuseModelRequest(suspect: string, promptMessage: string): Promise<{ rating: number; epilogue: string }> {
+export async function accuseModelRequest(
+	suspect: string,
+	promptMessage: string,
+	accuseInfo: string
+): Promise<{ rating: number; epilogue: string }> {
 	const prompt = createAccusePrompt();
 	const llm = new ChatOpenAI({
 		temperature: 0.9,
@@ -116,6 +119,26 @@ export async function accuseModelRequest(suspect: string, promptMessage: string)
 
 	const parser = new RatingParser();
 	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: false });
-	const res = await chain.call({ suspect, text: promptMessage });
+	const res = await chain.call({ information: accuseInfo, suspect, text: promptMessage });
 	return res.text;
+}
+
+export async function accuseLetterModelRequest(
+	accusation: string,
+	epilogue: string,
+	accuseLetterInfo: string,
+	onResponseGenerated: (input: string) => Promise<any>
+) {
+	const encoder = new TextEncoder();
+	const stream = new TransformStream();
+	const writer = stream.writable.getWriter();
+
+	const prompt = createAccuseLetterPrompt();
+	const llm = createLetterModel(writer, encoder, onResponseGenerated);
+	const chain = new LLMChain({ prompt, llm, verbose: true });
+	chain.call({ information: accuseLetterInfo, accusation, epilogue }).catch((e) => console.error(e));
+
+	return new Response(stream.readable, {
+		headers: { 'Content-Type': 'text/event-stream' }
+	});
 }

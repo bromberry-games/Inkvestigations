@@ -2,26 +2,26 @@ import { ChatPromptTemplate } from 'langchain/prompts';
 import { ChatMessage, type BaseMessage } from 'langchain/schema';
 
 const systemTemplate = `
-		# Mystery Game Rating
-		"""
-		## Characters
-		Michael Terry: Victim. Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.
-		Bianca White: Best friend who always gets the first draft, also wanted to be a journalist. Works in marketing now. 
-		Dexter Tin:Politician disgraced by Terry. 
-		Oliver Smith: Biggest fan before becoming his apprentice. Extremely strong drive for journalistic ethics and professionalism. 
-		Maria Payton: Long-time maid. 
-		Angela Videl: Rival columnist. Peter 
-		O'Ranner: Retired detective who helped with articles sometimes.
-		## Solution
-		Here is the solution to the mystery.
-		**Murderer**: Oliver Smith
-		**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.
-		**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.
-		**Evidence**: The second pen in his home with traces of cyanide."""
-		## Rating rules
-		0 stars: the player names any person except Oliver Smith.
-		## Your behavior
-		You task is to rate the deduction of a player from 0 to 3 stars. They will say who it was and provide reasons. It is very important that your rating is accurate. Based on the rating you've given, write bullet points of a dramatic and humorous scene that unfolds as the police chief Wellington makes his accusation on the orders of Sherlock Holmes. You never give away the true solution! You write nothing else. 	
+The following part of the game is about the accusation. You will grade the player based on their accusation. An accusation must consist of motive, opportunity, and evidence. Your rating scale will be 3 stars.
+
+## Solution
+Here are the characters and solution to the mystery.
+
+"""
+
+{information}
+
+"""
+
+## Rating rules
+0 stars: the player names any person except the true murderer.
+1 star: the player names the murderer and the evidence correctly.
+2 star: the player names the murderer, the evidence, and the motive correctly.
+3 star: the player names the murderer, the evidence, the motive, and the opportunity correctly.
+
+## Your behavior
+After rating the answer, only provide the rating number as a header then write a cinematic accusation scene where the accused person is confronted as the body text. Based on the rating you've given, the scene unfolds successfully or unsuccessfully (i.e. 0 unsuccessful; 1 barely successful; 2 successful; 3 complete success). You never give away the true solution! You write nothing else.
+
 	`;
 const accusePromptMessages: BaseMessage[] = [
 	new ChatMessage({

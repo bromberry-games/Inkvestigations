@@ -29,7 +29,7 @@
 
 	function handleSubmit() {
 		messageTokens = countTokens(message);
-		if (messageTokens > MAX_TOKENS) return;
+		if (messageTokens > MAX_TOKENS || message.length === 0) return;
 
 		if (suspectToAccuse) {
 			gameOver = true;
