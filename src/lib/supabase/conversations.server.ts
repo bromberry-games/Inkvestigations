@@ -1,10 +1,6 @@
-import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from 'langchain/schema';
+import { AIMessage, BaseMessage, HumanMessage } from 'langchain/schema';
 import { supabase_full_access } from './supabase_full_access.server';
 import type { ChatMessage } from '$misc/shared';
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from '../../schema';
-import { PUBLIC_SUPABASE_URL } from '$env/static/public';
-import { SUPABASE_SERVICE_KEY } from '$env/static/private';
 
 export async function getInfoModelMessages(userId: string, mystery: string): Promise<BaseMessage[] | null> {
 	const conversationId = await getOrCreateConversationId(userId, mystery);
@@ -70,15 +66,6 @@ export async function setRating(mystery: string, user_id: string, rating: number
 }
 
 async function getOrCreateConversationId(userid: string, mystery: string): Promise<number | null> {
-	console.log('getting or creating conversation id');
-	console.log(userid, mystery);
-	console.log(supabase_full_access);
-
-	const { data: mysteryData, error: mysteryError } = await supabase_full_access.from('user_messages').select('*');
-	console.log('mystery data: from different select');
-	console.log(mysteryData);
-
-	console.log('other select');
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('user_mystery_conversations')
 		.select('id, archived')
@@ -87,18 +74,15 @@ async function getOrCreateConversationId(userid: string, mystery: string): Promi
 		.order('created_at', { ascending: false })
 		.limit(1);
 
-	console.log('got conversation id');
 	if (conversationError) {
 		console.error('error querying conversation: ');
 		console.error(conversationError);
 		return null;
 	}
-	console.log(conversationData);
 
 	if (conversationData && conversationData.length > 0 && !conversationData[0].archived) {
 		return conversationData[0].id;
 	}
-	console.log('creating new conversation');
 
 	const { data: conversationInsertData, error: conversationInsertError } = await supabase_full_access
 		.from('user_mystery_conversations')
@@ -159,14 +143,7 @@ export async function archiveLastConversation(userid: string, mystery: string): 
 }
 
 export async function addMessageForUser(userid: string, message: string, mystery: string): Promise<boolean> {
-	console.log('adding message for user');
 	const conversationId = await getOrCreateConversationId(userid, mystery);
-	if (!conversationId) {
-		console.log('no conversation id');
-		return false;
-	}
-	console.log('conversation id: ');
-	console.log(conversationId);
 
 	const { error: messageError } = await supabase_full_access
 		.from('user_mystery_messages')
@@ -176,6 +153,5 @@ export async function addMessageForUser(userid: string, message: string, mystery
 		console.error('message error: ' + messageError);
 		return false;
 	}
-	console.log('succesfully added message for user');
 	return true;
 }

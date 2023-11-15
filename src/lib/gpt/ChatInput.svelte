@@ -59,7 +59,6 @@
 				//const completionResponse: any = JSON.parse(event.data);
 				//const delta = completionResponse.token;
 				const delta = JSON.parse(event.data);
-				console.log(delta);
 				liveAnswerStore.update((store) => {
 					const answer = { ...store };
 					answer.content += delta;
@@ -87,7 +86,6 @@
 		// always true, check just for TypeScript
 
 		console.error(event);
-		console.log('data: ');
 		console.error(event.data);
 
 		const data = JSON.parse(event.data);

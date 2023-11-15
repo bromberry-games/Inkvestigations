@@ -46,45 +46,12 @@ async function standardInvestigationAnswer(mysteryName: string, promptMessage: s
 		messages.push(new AIMessage({ content: assistantLetterAnswers[i / 2].content }));
 	}
 
-	//const addResult = async (message: string) => {};
-	async function addResultFunction(message: string) {
-		console.log('adding result from callback');
-		console.log('user id is: ');
-		console.log(mysteryName);
-		console.log(userId);
-		console.log(message);
-		if (!userId) {
-			console.error('no user id');
-			throw error(500, 'Could not get user id');
-		}
-		if (!mysteryName) {
-			console.error('no mystery name');
-			throw error(500, 'Could not get mystery name');
-		}
-		console.log('user id is: ');
-		console.log(userId);
-		await localFun(userId, mysteryName, message);
-		// const addedMessage = await addMessageForUser(userId, message, mysteryName);
-		// throwIfFalse(addedMessage, 'Could not add message to chat');
-		// console.log('with new function added message: ', addedMessage);
-	}
-
-	return letterModelRequest(gameInfo, messages, promptMessage, brainResponse, addResultFunction);
-}
-
-async function localFun(userId: string, mysteryName: string, message: string) {
-	console.log('logging user from local fun ' + userId);
-	try {
-		console.log('yeheheheheheheh');
+	async function addResult(message: string) {
 		const addedMessage = await addMessageForUser(userId, message, mysteryName);
-		if (!addedMessage) {
-			throw error(500, 'Could not add message to chat');
-		}
-		console.log('with new function added message: ', addedMessage);
-	} catch (e) {
-		console.error(e);
-		throw error(500, getErrorMessage(e));
+		throwIfFalse(addedMessage, 'Could not add message to chat');
 	}
+
+	return letterModelRequest(gameInfo, messages, promptMessage, brainResponse, addResult);
 }
 
 async function accuseModelAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {

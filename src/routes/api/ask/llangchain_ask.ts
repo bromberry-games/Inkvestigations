@@ -1,13 +1,12 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { LLMChain } from 'langchain/chains';
 import { CallbackManager } from 'langchain/callbacks';
-import { ChatPromptTemplate, HumanMessagePromptTemplate } from 'langchain/prompts';
-import { AIMessage, BaseMessage, ChatMessage, HumanMessage } from 'langchain/schema';
-import { FIREWORKS_AI_KEY, OPEN_AI_KEY } from '$env/static/private';
+import { ChatPromptTemplate } from 'langchain/prompts';
+import { BaseMessage, ChatMessage } from 'langchain/schema';
+import { OPEN_AI_KEY } from '$env/static/private';
 import { BaseOutputParser } from 'langchain/schema/output_parser';
-import { error, json } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { OpenAiModel } from '$misc/openai';
-import { ChatFireworks } from 'langchain/chat_models/fireworks';
 import { createFakeLLM } from './fake_llm';
 
 const fewShotPromptLetter: BaseMessage[] = [

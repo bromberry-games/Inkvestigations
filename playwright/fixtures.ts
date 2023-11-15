@@ -1,7 +1,7 @@
-import { test as baseTest, expect } from '@playwright/test';
+import { test as baseTest } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import { createNeUserAndLoginViaUrl, createNewUserAndLogin, fillOutSingupFormConfirmMailLogin } from '../tests/helpers';
+import { createNeUserAndLoginViaUrl } from '../tests/helpers';
 
 export * from '@playwright/test';
 export const test = baseTest.extend<{}, { workerStorageState: string }>({
@@ -14,7 +14,6 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 			// Use parallelIndex as a unique identifier for each worker.
 			const id = test.info().parallelIndex;
 			const fileName = path.resolve(test.info().project.outputDir, `.auth/${id}.json`);
-			console.log(fileName);
 
 			if (fs.existsSync(fileName)) {
 				// Reuse existing authentication state if any.
