@@ -72,8 +72,6 @@ export async function letterModelRequest(
 
 	const llm = createLetterModel(writer, encoder, onResponseGenerated);
 	const chain = new LLMChain({ prompt, llm, verbose: true });
-	// We don't need to await the result of the chain.run() call because
-	// the LLM will invoke the callbackManager's handleLLMEnd() method
 	chain.call({ information: gameInfo, question, brainAnswer }).catch((e) => console.error(e));
 
 	return new Response(stream.readable, {
@@ -219,14 +217,14 @@ export async function brainModelRequest(gameInfo: string, previousConversation: 
 		['user', userTemplate]
 	]);
 
-	const llm = createFakeLLM();
+	// const llm = createFakeLLM();
 
-	// const llm = new ChatOpenAI({
-	// temperature: 0.8,
-	// openAIApiKey: OPEN_AI_KEY,
-	// modelName: OpenAiModel.Gpt35Turbo,
-	// maxTokens: 200
-	// });
+	const llm = new ChatOpenAI({
+		temperature: 0.8,
+		openAIApiKey: OPEN_AI_KEY,
+		modelName: OpenAiModel.Gpt35Turbo,
+		maxTokens: 200
+	});
 	const chain = new LLMChain({ prompt, llm, verbose: true });
 	const res = await chain.call({ information: gameInfo, text: question });
 	return res.text;
