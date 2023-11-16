@@ -61,30 +61,36 @@ export interface Database {
       }
       mysteries: {
         Row: {
-          accuse_prompt: Json
+          accuse_letter_prompt: string
+          accuse_prompt: string
+          brain_prompt: string
           description: string
           filepath: string
           id: number
-          info_prompt: Json
-          letter_prompt: Json
+          letter_info: string
+          letter_prompt: string
           name: string
         }
         Insert: {
-          accuse_prompt: Json
+          accuse_letter_prompt: string
+          accuse_prompt: string
+          brain_prompt: string
           description: string
           filepath: string
           id?: number
-          info_prompt: Json
-          letter_prompt: Json
+          letter_info: string
+          letter_prompt: string
           name: string
         }
         Update: {
-          accuse_prompt?: Json
+          accuse_letter_prompt?: string
+          accuse_prompt?: string
+          brain_prompt?: string
           description?: string
           filepath?: string
           id?: number
-          info_prompt?: Json
-          letter_prompt?: Json
+          letter_info?: string
+          letter_prompt?: string
           name?: string
         }
         Relationships: []

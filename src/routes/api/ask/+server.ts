@@ -2,7 +2,7 @@ import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import { getErrorMessage, throwIfFalse, throwIfUnset } from '$misc/error';
 import type { Session } from '@supabase/supabase-js';
-import { accuseModelRequest, brainModelRequest as brainModelRequest, letterModelRequest } from './llangchain_ask';
+import { accuseLetterModelRequest, accuseModelRequest, brainModelRequest as brainModelRequest, letterModelRequest } from './llangchain_ask';
 import { AIMessage, BaseMessage, HumanMessage } from 'langchain/schema';
 import { loadGameInfo } from '$lib/supabase/mystery_data.server';
 import {
@@ -17,16 +17,18 @@ import { getMessageAmountForUser, decreaseMessageForUser } from '$lib/supabase/m
 import { countTokens } from '$misc/openai';
 import { MAX_TOKENS } from '../../../constants';
 
-async function standardInvestigationAnswer(mysteryName: string, promptMessage: string, userId: string) {
+async function standardInvestigationAnswer(
+	mysteryName: string,
+	promptMessage: string,
+	userId: string,
+	brainInfo: string,
+	letter_info: string
+) {
 	const infoModelMessages = await getInfoModelMessages(userId, mysteryName);
 	if (!infoModelMessages) {
 		throw error(500, 'Could not get info model messages');
 	}
-	const gameInfo = await loadGameInfo(mysteryName);
-	if (!gameInfo) {
-		throw error(500, 'Could not get game info');
-	}
-	const brainResponse = await brainModelRequest(gameInfo, infoModelMessages, promptMessage);
+	const brainResponse = await brainModelRequest(brainInfo, infoModelMessages, promptMessage);
 
 	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
 	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
@@ -51,25 +53,27 @@ async function standardInvestigationAnswer(mysteryName: string, promptMessage: s
 		throwIfFalse(addedMessage, 'Could not add message to chat');
 	}
 
-	return letterModelRequest(gameInfo, messages, promptMessage, brainResponse, addResult);
+	return letterModelRequest(letter_info, messages, promptMessage, brainResponse, addResult);
 }
 
-async function accuseModelAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
-	const response = await accuseModelRequest(suspectToAccuse, promptMessage);
+async function accuseModelAnswer(
+	mysteryName: string,
+	promptMessage: string,
+	userId: string,
+	suspectToAccuse: string,
+	accuseInfo: string,
+	accuseLetterInfo: string
+) {
+	const response = await accuseModelRequest(suspectToAccuse, promptMessage, accuseInfo);
 	const ratingSet = await setRating(mysteryName, userId, response.rating);
 	throwIfFalse(ratingSet, 'Could not set rating');
 	const addResult = async (message: string) => {
 		const addedMessage = await addMessageForUser(userId, message, mysteryName);
 		throwIfFalse(addedMessage, 'Could not add message to chat');
+		await archiveLastConversation(userId, mysteryName);
 	};
 
-	return letterModelRequest(mysteryName, [], promptMessage, response.epilogue, addResult);
-}
-
-async function getAnswer(mysteryName: string, promptMessage: string, userId: string, suspectToAccuse: string) {
-	return suspectToAccuse
-		? await accuseModelAnswer(mysteryName, promptMessage, userId, suspectToAccuse)
-		: await standardInvestigationAnswer(mysteryName, promptMessage, userId);
+	return accuseLetterModelRequest(accuseLetterInfo, promptMessage, response.epilogue, addResult);
 }
 
 export const POST: RequestHandler = async ({ request, locals: { getSession } }) => {
@@ -92,17 +96,25 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		throwIfUnset('game_config', game_config);
 		const suspectToAccuse = game_config.suspectToAccuse ? game_config.suspectToAccuse : '';
 		throwIfUnset('Mystery name', game_config.mysteryName);
-
 		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);
 		throwIfFalse(messageAdded, 'Could not add message to chat');
-
-		if (suspectToAccuse) {
-			await archiveLastConversation(session.user.id, game_config.mysteryName);
-		}
 		const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
 		throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
+		const gameInfo = await loadGameInfo(game_config.mysteryName);
+		if (!gameInfo) {
+			throw error(500, 'Could not get game info');
+		}
 
-		return await getAnswer(game_config.mysteryName, message, session.user.id, suspectToAccuse);
+		return suspectToAccuse
+			? await accuseModelAnswer(
+					game_config.mysteryName,
+					message,
+					session.user.id,
+					suspectToAccuse,
+					gameInfo.accuse_prompt,
+					gameInfo.accuse_letter_prompt
+			  )
+			: await standardInvestigationAnswer(game_config.mysteryName, message, session.user.id, gameInfo.brain_prompt, gameInfo.letter_prompt);
 	} catch (err) {
 		throw error(500, getErrorMessage(err));
 	}

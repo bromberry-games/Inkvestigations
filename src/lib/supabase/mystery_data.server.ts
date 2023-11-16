@@ -13,10 +13,12 @@ export async function loadSuspects(mysterName: string): Promise<suspects[] | nul
 	return data;
 }
 
-export async function loadGameInfo(mystery: string): Promise<string | null> {
+export async function loadGameInfo(
+	mystery: string
+): Promise<{ brain_prompt: string; letter_prompt: string; accuse_prompt: string; accuse_letter_prompt: string } | null> {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('mysteries')
-		.select('game_info')
+		.select('brain_prompt, letter_prompt, accuse_prompt, accuse_letter_prompt')
 		.eq('name', mystery)
 		.limit(1)
 		.single();
@@ -27,7 +29,7 @@ export async function loadGameInfo(mystery: string): Promise<string | null> {
 		return null;
 	}
 
-	return conversationData?.game_info;
+	return conversationData;
 }
 
 export async function loadMysteryLetterInfo(userid: string, mystery: string): Promise<string | null> {

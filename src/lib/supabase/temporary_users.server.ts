@@ -31,6 +31,10 @@ export async function createTemporaryUser() {
 
 export async function migrateAnoynmousUserToNewUser(newUserId: string, oldUserId: string): Promise<boolean> {
 	const { data: userData, error: userError } = await supabase_full_access.auth.admin.getUserById(oldUserId);
+	if (userError) {
+		console.error(userError);
+		return false;
+	}
 	if (userData.user?.user_metadata.anonymous) {
 		const { error } = await supabase_full_access.from('user_mystery_conversations').update({ user_id: newUserId }).eq('user_id', oldUserId);
 		if (error) {
