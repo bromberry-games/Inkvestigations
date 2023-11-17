@@ -111,29 +111,32 @@ INSERT INTO murderers (suspect_id, murder_reasons) VALUES
 
 
 
-INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
+INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id, unit_amount)
 VALUES
 (
     'Rookie',
     'For those who are new to the game',
     10,
-    'price_1NgTQsKIDbJkcynJPpFoFZNz'
+    'price_1NgTQsKIDbJkcynJPpFoFZNz',
+    499
 );
-INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
+INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id, unit_amount)
 VALUES
 (
     'Detective',
     'For moderate players',
     20,
-    'price_1Ng9UfKIDbJkcynJYsE9jPMZ'
+    'price_1Ng9UfKIDbJkcynJYsE9jPMZ',
+    999
 );
-INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
+INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id, unit_amount)
 VALUES
 (
     'Chief',
     'For the most experienced players',
     30,
-    'price_1NgSRVKIDbJkcynJkhJJb1E3'
+    'price_1NgSRVKIDbJkcynJkhJJb1E3',
+    1999
 );
 
 DELETE FROM auth.users;

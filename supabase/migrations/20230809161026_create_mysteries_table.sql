@@ -68,7 +68,8 @@ CREATE TABLE subscription_tiers (
     description TEXT NOT NULL,
     daily_message_limit INTEGER CHECK (daily_message_limit >= 0) NOT NULL,
     stripe_price_id TEXT NOT NULL,
-    active BOOLEAN NOT NULL DEFAULT TRUE
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    unit_amount INTEGER CHECK (unit_amount >= 0) NOT NULL,
 );
 
 CREATE TABLE user_subscriptions (
