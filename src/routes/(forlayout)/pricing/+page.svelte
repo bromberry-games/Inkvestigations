@@ -1,6 +1,7 @@
 <script>
 	import { Button } from 'flowbite-svelte';
 	import Pricing from './pricing.svelte';
+	import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
 
 	export let data;
 </script>
@@ -19,8 +20,10 @@
 				name={price.product_name}
 				amount={price.unit_amount / 100}
 				price_id={price.id}
-				login={data.session != null}
+				login={getAuthStatus(data.session) == AuthStatus.LoggedIn}
 				daily_messages={price.daily_message_limit}
+				currentPlan={price.currentPlan}
+				hasSub={data.hasSub}
 			></Pricing>
 		</div>
 	{/each}

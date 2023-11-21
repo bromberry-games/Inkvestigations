@@ -42,17 +42,23 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 	}
 	const { slug } = params;
 	const mysteryName = slug.replace(/_/g, ' ');
-	const letterInfo = await loadMysteryLetterInfo(session.user.id, mysteryName);
+
+	const [letterInfo, messages, suspects] = await Promise.all([
+		loadMysteryLetterInfo(session.user.id, mysteryName),
+		loadDisplayMessages(session.user.id, mysteryName),
+		loadSuspects(mysteryName)
+	]);
+	//const letterInfo = await loadMysteryLetterInfo(session.user.id, mysteryName);
 	if (!letterInfo) {
 		throw error(500, 'could not load letter info from data');
 	}
-	const messages = await loadDisplayMessages(session.user.id, mysteryName);
+	//const messages = await loadDisplayMessages(session.user.id, mysteryName);
 	if (!messages) {
 		throw error(500, 'could not load chat from data');
 	}
-	const suspects = await loadSuspects(mysteryName);
+	//const suspects = await loadSuspects(mysteryName);
 	if (!suspects) {
-		throw error(500, 'could not suspects chat from data');
+		throw error(500, 'could not load suspects chat from data');
 	}
 	return { messages: [createLetter(letterInfo), ...messages], suspects: suspects };
 };
