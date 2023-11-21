@@ -51,6 +51,7 @@ export async function createNewUserAndLogin(page: Page, isMobile: boolean) {
 }
 
 export async function createNeUserAndLoginViaUrl(page: Page, url: string) {
+	console.log('created user and login');
 	const email = generateRandomUserMail();
 	const password = 'password-new-user';
 	await signUpAndConfirmUser(email, password);

@@ -1,7 +1,9 @@
 import Stripe from 'stripe';
 import { STRIPE_TEST_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private';
 import { error } from '@sveltejs/kit';
-import { cancelSubscription, createSubscription } from '$lib/supabase/subscription.server';
+import { cancelSubscription, createSubscription, updateSubscription } from '$lib/supabase/subscription.server';
+import { checkIfEventExists, insertEvent, linkCustomerToUser } from '$lib/supabase/prcing.server';
+import { throwIfFalse } from '$misc/error.js';
 
 const stripe = new Stripe(STRIPE_TEST_KEY, {
 	apiVersion: '2022-11-15'
@@ -20,18 +22,37 @@ export async function POST({ request }) {
 
 		return new Response(undefined, { status: 400 });
 	}
+	const eventExists = await checkIfEventExists(event.id);
+	if (eventExists === null) {
+		return new Response('could not load event from db', { status: 400 });
+	}
+	if (eventExists === true) {
+		return new Response('event already exists', { status: 400 });
+	}
+	const eventInserted = await insertEvent(event.id);
+	if (!eventInserted) {
+		return new Response('could not insert event', { status: 400 });
+	}
 	switch (event.type) {
 		case 'checkout.session.completed':
 			{
 				const checkoutSession: Stripe.Checkout.Session = event.data.object;
 				if (checkoutSession.payment_status === 'paid') {
-					const session = await stripe.checkout.sessions.retrieve(checkoutSession.id, { expand: ['line_items'] });
-					console.log(checkoutSession);
-					console.log(session);
-					if (session.line_items == null || session.line_items.data[0].price == null) {
-						return new Response(undefined, { status: 500 });
+					console.log('Checkout session completed');
+					if (!checkoutSession.customer) {
+						return new Response('no customer found', { status: 500 });
 					}
 					if (checkoutSession.metadata == null) {
+						return new Response('no user id found', { status: 500 });
+					}
+					const [addedCustomer, session] = await Promise.all([
+						linkCustomerToUser(checkoutSession.customer, checkoutSession.metadata.user_id),
+						stripe.checkout.sessions.retrieve(checkoutSession.id, { expand: ['line_items'] })
+					]);
+					if (!addedCustomer) {
+						return new Response('Could not add customer to user', { status: 500 });
+					}
+					if (session.line_items == null || session.line_items.data[0].price == null) {
 						return new Response(undefined, { status: 500 });
 					}
 					const price_id = session.line_items.data[0].price.id;
@@ -63,7 +84,14 @@ export async function POST({ request }) {
 					if (!canceledSubscription) {
 						return new Response('Could not cancel subscription', { status: 500 });
 					}
-					subscription.current_period_end;
+				} else {
+					if (!subscription.customer || typeof subscription.customer !== 'string') {
+						return new Response('no customer found', { status: 500 });
+					}
+					const updatedSubscription = await updateSubscription(subscription.items.data[0].price.id, subscription.customer);
+					if (!updatedSubscription) {
+						return new Response('Could not update subscription', { status: 500 });
+					}
 				}
 			}
 			break;

@@ -71,13 +71,24 @@ CREATE TABLE subscription_tiers (
     active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
+CREATE TABLE stripe_customers (
+  user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  customer_id TEXT NOT NULL UNIQUE
+);
+
 CREATE TABLE user_subscriptions (
     subscription_id SERIAL PRIMARY KEY,
-    user_id uuid REFERENCES auth.users(id) ON UPDATE CASCADE,
+    user_id uuid,
     tier_id INT REFERENCES subscription_tiers(tier_id) ON UPDATE CASCADE,
     start_date DATE NOT NULL,
     end_date DATE,
-    active BOOLEAN NOT NULL DEFAULT TRUE
+    active BOOLEAN NOT NULL DEFAULT TRUE,
+    FOREIGN KEY (user_id) REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE stripe_events (
+  id SERIAL PRIMARY KEY,
+  event_id TEXT NOT NULL UNIQUE
 );
 
 -- policies
@@ -111,6 +122,12 @@ ALTER TABLE subscription_tiers
   ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE solved
+  ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE stripe_customers
+  ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE stripe_events
   ENABLE ROW LEVEL SECURITY;
 
 create policy "everybody can view mysteries."
@@ -250,6 +267,31 @@ VALUES (
 
 $$ 
 language sql volatile;
+
+CREATE OR REPLACE function update_subscription(stripe_customer text, price_id text)
+returns void as $$
+DECLARE
+    the_user_id uuid;
+BEGIN
+
+the_user_id := (SELECT user_id FROM stripe_customers WHERE customer_id = stripe_customer LIMIT 1);
+
+UPDATE user_subscriptions
+SET active = FALSE, 
+    end_date = CURRENT_DATE  
+WHERE user_id = the_user_id AND active = TRUE;
+
+INSERT INTO user_subscriptions(user_id, tier_id, start_date, end_date, active)
+VALUES (
+    the_user_id, 
+    (SELECT tier_id FROM subscription_tiers WHERE stripe_price_id = price_id LIMIT 1), 
+    CURRENT_DATE, 
+    NULL,  
+    TRUE
+);
+END
+$$ 
+language plpgsql;
 
 CREATE OR REPLACE FUNCTION update_daily_messages()
 RETURNS VOID

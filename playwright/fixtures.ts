@@ -17,6 +17,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 
 			if (fs.existsSync(fileName)) {
 				// Reuse existing authentication state if any.
+				console.log(fileName);
 				await use(fileName);
 				return;
 			}
