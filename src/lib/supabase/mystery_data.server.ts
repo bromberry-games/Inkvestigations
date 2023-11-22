@@ -46,3 +46,7 @@ export async function loadMysteryLetterInfo(userid: string, mystery: string): Pr
 
 	return mysteryData.letter_info;
 }
+
+export async function saveMystery() {}
+
+export async function publishMystery() {}
