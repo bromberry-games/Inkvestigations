@@ -3,6 +3,7 @@
 	import type { PageData } from './$types';
 	import { superForm } from 'sveltekit-superforms/client';
 	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
+	import Error from '../error.svelte';
 
 	export let data: PageData;
 
@@ -43,6 +44,18 @@
 
 <div class="mt-16 flex justify-center">
 	<form method="POST" action={save ? '?/save' : '?/submit'} class="grid grid-cols-[1fr_10fr] gap-4 lg:w-1/2" use:enhance>
+		<input type="hidden" name="id" bind:value={$form.id} />
+		<h2 class="col-span-2 text-lg font-bold">Name</h2>
+		<input
+			name="name"
+			class="col-span-2 rounded border border-gray-300 px-2 py-1"
+			placeholder="Mirror Mirror"
+			aria-invalid={$errors.name ? true : undefined}
+			bind:value={$form.name}
+			{...$constraints.name}
+		/>
+		<Error error={$errors.name} />
+		<hr class="col-span-2 border-slate-900" />
 		<h2 class="col-span-2 text-lg font-bold">Setting</h2>
 		<input
 			name="setting"
@@ -52,9 +65,7 @@
 			bind:value={$form.setting}
 			{...$constraints.setting}
 		/>
-		{#if $errors.setting}
-			<p class="text-red-500">{$errors.setting}</p>
-		{/if}
+		<Error error={$errors.setting} />
 		<hr class="col-span-2 border-slate-900" />
 
 		<h2 class="font-size col-span-2 text-lg font-bold">Murderer</h2>
@@ -83,9 +94,7 @@
 			{...$constraints.murdererReason}
 			aria-invalid={$errors.murdererReason ? true : undefined}
 		></textarea>
-		{#if $errors.murdererReason}
-			<p class="text-red-500">{$errors.murdererReason}</p>
-		{/if}
+		<Error error={$errors.murdererName} />
 
 		<hr class="col-span-2 border-slate-900" />
 		<h2 class="col-span-2 text-lg font-bold">Suspects</h2>
@@ -98,7 +107,6 @@
 				placeholder="Name"
 				{...$constraints.suspects.name}
 			/>
-
 			<label for={`suspect-description-${index}`}>Description</label>
 			<input
 				id={`suspect-description-${index}`}
@@ -106,16 +114,12 @@
 				bind:value={suspect.description}
 				{...$constraints.suspects.description}
 			/>
-			{#if $errors.suspects?.[index]?.description}
-				<br />
-				<span class="text-red-500">{$errors.suspects?.[index]?.description}</span>
-			{/if}
+			<Error error={$errors.suspects?.[index]?.name} classes="col-start-2" />
 			<button type="button" class="col-span-2 bg-red-500" on:click={() => removeItem('suspects', index)}>Remove Suspect</button>
 		{/each}
 		<button type="button" class="col-span-2 bg-green-500" on:click={addSuspect}>Add Suspect</button>
-
 		<hr class="col-span-2 border-slate-900" />
-		<!-- Timeframe Section -->
+
 		<h2 class="col-span-2 text-lg font-bold">Timeframe</h2>
 		{#each $form.events as event, index (index)}
 			<label for={`event-time-${index}`}>Time</label>
@@ -125,9 +129,7 @@
 				{...$constraints.events.time}
 				class="rounded border border-gray-300 px-2 py-1"
 			/>
-			{#if $errors.events?.[index]?.time}
-				<span class="text-red-500">{$errors.events?.[index]?.time}</span>
-			{/if}
+			<Error error={$errors.events?.[index]?.time} classes="col-start-2" />
 
 			<label for={`event-description-${index}`}>Description</label>
 			<input
@@ -137,15 +139,12 @@
 				{...$constraints.events.description}
 				class="rounded border border-gray-300 px-2 py-1"
 			/>
-			{#if $errors.events?.[index]?.description}
-				<span class="text-red-500">{$errors.events?.[index]?.description}</span>
-			{/if}
+			<Error error={$errors.events?.[index]?.description} classes="col-start-2" />
 			<button type="button" class="col-span-2 bg-red-500" on:click={() => removeItem('events', index)}>Remove Event</button>
 		{/each}
 		<button type="button" on:click={addEvent} class="4 col-span-2 bg-green-500">Add Event</button>
 
 		<hr class="col-span-2 border-slate-900" />
-		<!-- Inspector Actions Section -->
 		<h2 class="col-span-2 text-lg font-bold">Inspector Actions</h2>
 		{#each $form.inspectorActions as action, index (index)}
 			<label for={`action-action-${index}`}>Action</label>
@@ -156,9 +155,7 @@
 				{...$constraints.inspectorActions.action}
 				class="rounded border border-gray-300 px-2 py-1"
 			/>
-			{#if $errors.inspectorActions?.[index]?.action}
-				<span class="text-red-500">{$errors.inspectorActions?.[index]?.action}</span>
-			{/if}
+			<Error error={$errors.inspectorActions?.[index]?.action} classes="col-start-2" />
 
 			<label for={`action-outcome-${index}`}>Outcome</label>
 			<input
@@ -168,9 +165,7 @@
 				{...$constraints.inspectorActions.outcome}
 				class="rounded border border-gray-300 px-2 py-1"
 			/>
-			{#if $errors.inspectorActions?.[index]?.outcome}
-				<span class="text-red-500">{$errors.inspectorActions?.[index]?.outcome}</span>
-			{/if}
+			<Error error={$errors.inspectorActions?.[index]?.outcome} classes="col-start-2" />
 			<button type="button" class="col-span-2 bg-red-500" on:click={() => removeItem('inspectorActions', index)}>Remove Event</button>
 		{/each}
 		<button type="button" on:click={addAction} class="col-span-2 bg-green-500">Add Action</button>

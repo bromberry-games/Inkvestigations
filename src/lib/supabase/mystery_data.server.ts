@@ -47,6 +47,54 @@ export async function loadMysteryLetterInfo(userid: string, mystery: string): Pr
 	return mysteryData.letter_info;
 }
 
-export async function saveMystery() {}
+export async function loadMysteries(userId: string) {
+	const { data, error } = await supabase_full_access.from('user_mysteries').select('name, published').eq('user_id', userId);
+	if (error) {
+		console.error(error);
+		return null;
+	}
+	return data ? data : [];
+}
 
-export async function publishMystery() {}
+export async function saveMystery(uuid: string, mysteryName: string, userid: string, json: string): Promise<boolean> {
+	const { error } = await supabase_full_access
+		.from('user_mysteries')
+		.upsert({ id: uuid, user_id: userid, name: mysteryName, info: json }, { onConflict: 'id' });
+	if (error) {
+		console.error('error saving mystery', error);
+		return false;
+	}
+	return true;
+}
+
+export async function loadyMystery(name: string, userid: string) {
+	const { data, error } = await supabase_full_access
+		.from('user_mysteries')
+		.select('name, info, id')
+		.eq('user_id', userid)
+		.eq('name', name)
+		.limit(1);
+	if (error) {
+		console.error(error);
+		return null;
+	}
+	return data && data.length > 0 ? data[0] : { name: '', info: '' };
+}
+
+export async function publishMystery(mystery: string, userid: string): Promise<boolean> {
+	const { error } = await supabase_full_access.from('user_mysteries').update({ published: true }).eq('user_id', userid).eq('name', mystery);
+	if (error) {
+		console.error(error);
+		return false;
+	}
+	return true;
+}
+
+export async function deleteMystery(mystery: string, userid: string): Promise<boolean> {
+	const { error } = await supabase_full_access.from('user_mysteries').delete().eq('user_id', userid).eq('name', mystery);
+	if (error) {
+		console.error(error);
+		return false;
+	}
+	return true;
+}

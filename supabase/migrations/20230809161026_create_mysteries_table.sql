@@ -14,6 +14,18 @@ CREATE TABLE mysteries (
     filepath TEXT NOT NULL
 );
 
+CREATE TABLE user_mysteries (
+    id uuid UNIQUE NOT NULL,
+    user_id uuid REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    published BOOLEAN NOT NULL DEFAULT FALSE,
+    info JSON NOT NULL,
+    UNIQUE (user_id, name)
+);
+
+ALTER TABLE user_mysteries
+  ENABLE ROW LEVEL SECURITY;
+
 CREATE TABLE suspects (
     id SERIAL PRIMARY KEY,
     mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE ON DELETE CASCADE,
