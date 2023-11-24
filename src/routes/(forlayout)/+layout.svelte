@@ -1,4 +1,5 @@
 <script lang="ts">
+	import MyFooter from '$lib/MyFooter.svelte';
 	import MyLayout from '$lib/MyLayout.svelte';
 
 	export let data;
@@ -16,3 +17,5 @@
 		<slot />
 	</div>
 </div>
+
+<MyFooter></MyFooter>

@@ -1,5 +1,12 @@
 import { test, expect, type Page } from '@playwright/test';
-import { createNewUserAndLogin, fillOutSingupFormConfirmMailLogin, loginOnPage, navToLogin } from './helpers';
+import {
+	createNewUserAndLogin,
+	fillOutLoginOrSignupForm,
+	fillOutSingupFormConfirmMailLogin,
+	generateRandomUserMail,
+	loginOnPage,
+	navToLogin
+} from './helpers';
 
 async function logoutOfPage(page: Page, isMobile: boolean) {
 	await page.locator('#avatar-menu').click();
@@ -39,6 +46,17 @@ test('signup user and confirm email', async ({ page, isMobile }) => {
 	await page.waitForTimeout(200);
 	await fillOutSingupFormConfirmMailLogin(page, isMobile);
 	await expect(page.locator('#avatar-menu')).toBeVisible();
+});
+
+test('signup without aggreeing to terms should display error', async ({ page, isMobile }) => {
+	await page.goto('/login');
+	await page.waitForTimeout(200);
+	await page.getByRole('link', { name: 'Create new Account' }).click();
+	const email = generateRandomUserMail();
+	await fillOutLoginOrSignupForm(page, email, 'password-new-user');
+	await page.getByRole('button', { name: 'Sign up' }).click();
+
+	await expect(page.getByText('You must agree to the terms and conditions and privacy policy to use the service.')).toBeVisible();
 });
 
 test('test try for free', async ({ page, isMobile }) => {

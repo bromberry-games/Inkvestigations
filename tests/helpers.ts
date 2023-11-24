@@ -64,6 +64,7 @@ export async function createNeUserAndLoginViaUrl(page: Page, url: string) {
 export async function fillOutSingupFormConfirmMailLogin(page: Page, isMobile: boolean) {
 	const email = generateRandomUserMail();
 	await fillOutLoginOrSignupForm(page, email, 'password-new-user');
+	await page.getByRole('checkbox').click();
 	await page.getByRole('button', { name: 'Sign up' }).click();
 	await page.waitForTimeout(100);
 	if (isMobile || process.env.ENV_TO_TEST == 'DEV') {

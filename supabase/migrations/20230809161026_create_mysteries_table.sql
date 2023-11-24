@@ -91,6 +91,15 @@ CREATE TABLE stripe_events (
   event_id TEXT NOT NULL UNIQUE
 );
 
+CREATE TABLE terms_and_conditions_privacy_policy_consent (
+  user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  accepted BOOLEAN NOT NULL DEFAULT FALSE,
+  accepted_on DATE NOT NULL DEFAULT CURRENT_DATE
+);
+
+ALTER TABLE terms_and_conditions_privacy_policy_consent
+  ENABLE ROW LEVEL SECURITY;
+
 -- policies
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
 
@@ -164,11 +173,29 @@ BEGIN
 END;
 $$;
 
-
 CREATE OR REPLACE TRIGGER tr_insert_user_messages
 AFTER INSERT ON auth.users
 FOR EACH ROW
 EXECUTE FUNCTION add_user_to_user_messages();
+
+CREATE OR REPLACE FUNCTION add_to_consent()
+RETURNS TRIGGER
+language plpgsql
+security definer set search_path = public
+AS $$
+BEGIN
+    INSERT INTO terms_and_conditions_privacy_policy_consent(user_id, accepted) VALUES (NEW.id, true);
+    RETURN NEW;
+END;
+$$;
+
+-- This is possible because users can't sign up with consenting
+CREATE OR REPLACE TRIGGER tr_consent
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION add_to_consent();
+
+
 
 CREATE OR REPLACE FUNCTION migrate_anonymous_user_to_new_user()
 RETURNS TRIGGER 
