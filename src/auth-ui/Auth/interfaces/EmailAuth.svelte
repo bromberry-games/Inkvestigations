@@ -107,8 +107,8 @@
 			<div class="flex items-center">
 				<input type="checkbox" name="consent" class="mr-2" bind:checked={aggreedToConditions} />
 				<p>
-					I have read and agree to the <a href="/terms" class="text-blue-700">Terms and Conditions</a> and
-					<a href="/privacy" class="text-blue-700">Privacy Policy</a>.
+					I have read and agree to the <a href="/legal/terms-and-conditions" class="text-blue-700">Terms and Conditions</a> and
+					<a href="/legal/privacy-policy" class="text-blue-700">Privacy Policy</a>.
 				</p>
 			</div>
 		{/if}

@@ -27,8 +27,9 @@
 			<div>
 				<h2 class="mb-6 text-sm font-semibold uppercase text-gray-900 dark:text-white">Legal</h2>
 				<FooterLinkGroup>
-					<FooterLink liClass="mb-4" href="/">Privacy Policy</FooterLink>
-					<FooterLink liClass="mb-4" href="/">Terms & Conditions</FooterLink>
+					<FooterLink liClass="mb-4" href="/legal/privacy-policy">Privacy Policy</FooterLink>
+					<FooterLink liClass="mb-4" href="/legal/terms-and-conditions">Terms & Conditions</FooterLink>
+					<FooterLink liClass="mb-4" href="/legal/dmca-policy">DMCA Policy</FooterLink>
 				</FooterLinkGroup>
 			</div>
 		</div>
