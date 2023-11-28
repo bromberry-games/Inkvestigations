@@ -1,11 +1,10 @@
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper.js';
-import { fail, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { supabase_full_access } from '$lib/supabase/supabase_full_access.server.js';
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server.js';
-import { error } from 'console';
 
 const mainSchema = z.object({
 	email: z.string().email()
