@@ -1,6 +1,18 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { Avatar, Button, Dropdown, DropdownHeader, DropdownItem, NavBrand, NavHamburger, NavLi, NavUl, Navbar } from 'flowbite-svelte';
+	import {
+		Avatar,
+		Button,
+		Dropdown,
+		DropdownDivider,
+		DropdownHeader,
+		DropdownItem,
+		NavBrand,
+		NavHamburger,
+		NavLi,
+		NavUl,
+		Navbar
+	} from 'flowbite-svelte';
 	import logo from '/src/images/logo_2.svg?src';
 	import type { Session, SupabaseClient } from '@supabase/supabase-js';
 	import { AuthStatus, getAuthStatus } from './auth-helper';
@@ -36,6 +48,8 @@
 				<form action="/pricing?/cancel" method="POST">
 					<DropdownItem type="submit">Payments</DropdownItem>
 				</form>
+				<DropdownItem type="submit" href="/user/edit">Edit profile</DropdownItem>
+				<DropdownDivider></DropdownDivider>
 				<DropdownItem type="submit" on:click={() => supabase.auth.signOut()}>Sign out</DropdownItem>
 			</Dropdown>
 		{/if}
