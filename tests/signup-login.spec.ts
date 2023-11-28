@@ -7,6 +7,7 @@ import {
 	loginOnPage,
 	navToLogin
 } from './helpers';
+import { goto } from '$app/navigation';
 
 async function logoutOfPage(page: Page, isMobile: boolean) {
 	await page.locator('#avatar-menu').click();
@@ -73,4 +74,18 @@ test('test try for free', async ({ page, isMobile }) => {
 	await expect(page.locator('#avatar-menu')).toBeVisible();
 	await page.getByRole('link', { name: 'PLAY' }).click();
 	await expect(page.getByText('Police chief:').nth(1)).toBeVisible();
+});
+
+test('delete user cant log back in', async ({ page, isMobile }) => {
+	const { mail, password } = await createNewUserAndLogin(page, isMobile);
+	await expect(page.locator('#avatar-menu')).toBeVisible();
+	await page.goto('/user/edit');
+
+	await page.getByRole('button', { name: 'Delete my account' }).click();
+	await page.getByRole('button', { name: 'Delete my account and all account data' }).click();
+
+	await expect(new URL(page.url()).pathname).toBe('/confirmations/account-deleted');
+	await page.goto('/login');
+	await loginOnPage(page, isMobile, mail, password);
+	await expect(page.getByText('Invalid login credentials')).toBeVisible();
 });

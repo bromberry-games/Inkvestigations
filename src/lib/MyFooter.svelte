@@ -35,7 +35,7 @@
 		</div>
 	</div>
 	<div class="sm:flex sm:items-center sm:justify-between">
-		<FooterCopyright href="/" by="Flowbite™" />
+		<FooterCopyright href="/" by="Bromberry games™" />
 		<div class="mt-4 flex space-x-6 sm:mt-0 sm:justify-center">
 			<FooterIcon href="/">
 				<FacebookSolid class="h-4 w-4 text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white" />
