@@ -36,6 +36,7 @@
 				<form action="/pricing?/cancel" method="POST">
 					<DropdownItem type="submit">Payments</DropdownItem>
 				</form>
+				<DropdownItem type="submit" href="/user/edit">Edit profile</DropdownItem>
 				<DropdownItem type="submit" on:click={() => supabase.auth.signOut()}>Sign out</DropdownItem>
 			</Dropdown>
 		{/if}
