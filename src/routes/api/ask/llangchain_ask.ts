@@ -75,7 +75,7 @@ export async function brainModelRequest(gameInfo: string, previousConversation: 
 	const llm = new ChatOpenAI({
 		temperature: 0.8,
 		openAIApiKey: OPEN_AI_KEY,
-		modelName: OpenAiModel.Gpt35Turbo,
+		modelName: OpenAiModel.Gpt35Turbo1106,
 		maxTokens: 200
 	});
 
