@@ -1,0 +1,13 @@
+<html>
+	<body>
+		<h2>You have been invited to join inkvestigations.com</h2>
+		<p>
+			You have been invited to create a user on {{ .SiteURL }}. If you accept the invite you agree to the
+			<a href="{{ .SiteURL }}/legal/terms-and-conditions">Terms and Conditions</a> and
+			<a href="{{ .SiteURL }}/legal/privacy-policy">Privacy Policy</a> :
+		</p>
+		<p>
+			<a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=/update-password">Accept the invite</a>
+		</p>
+	</body>
+</html>
