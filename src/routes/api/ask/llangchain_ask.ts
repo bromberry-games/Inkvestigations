@@ -62,7 +62,7 @@ function createLetterModel(
 	});
 	return new ChatOpenAI({
 		streaming: true,
-		modelName: OpenAiModel.Gpt35Turbo,
+		modelName: OpenAiModel.Gpt35Turbo1106,
 		openAIApiKey: OPEN_AI_KEY,
 		maxTokens: 300,
 		callbackManager
@@ -113,7 +113,7 @@ export async function accuseModelRequest(
 	const llm = new ChatOpenAI({
 		temperature: 0.9,
 		openAIApiKey: OPEN_AI_KEY,
-		modelName: 'gpt-4',
+		modelName: OpenAiModel.Gpt35Turbo1106,
 		maxTokens: 200
 	});
 
