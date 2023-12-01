@@ -16,7 +16,7 @@ interface LetterModelRequestParams {
 	gameInfo: string;
 	previousConversation: BaseMessage[];
 	question: string;
-	brainAnswer: string;
+	brainAnswer: BrainOutput;
 	suspects: string;
 	victim: Victim;
 	onResponseGenerated: (input: string) => Promise<any>;
@@ -48,7 +48,15 @@ export async function letterModelRequest({
 	const llm = createLetterModel(writer, encoder, onResponseGenerated);
 	const chain = new LLMChain({ prompt, llm, verbose: true });
 	chain
-		.call({ information: gameInfo, suspects, question, brainAnswer, victimName: victim.name, victimDescription: victim.description })
+		.call({
+			information: gameInfo,
+			suspects,
+			question,
+			mood: brainAnswer.mood,
+			brainInfo: brainAnswer.info,
+			victimName: victim.name,
+			victimDescription: victim.description
+		})
 		.catch((e) => console.error(e));
 
 	return new Response(stream.readable, {
@@ -88,6 +96,28 @@ function createLetterModel(
 	});
 }
 
+export interface BrainOutput {
+	chainOfThought: string;
+	info: string;
+	mood: string;
+}
+
+const INFO_REGEX = /([\s\S]*)Information:\s?([\s\S]*)mood:\s?(\w+)/;
+
+class BrainParser extends BaseOutputParser<BrainOutput> {
+	async parse(text: string): Promise<BrainOutput> {
+		const infoMatch = text.match(INFO_REGEX);
+		if (!infoMatch) {
+			throw error(500, 'Could not parse rating');
+		}
+		return {
+			chainOfThought: infoMatch[1],
+			info: infoMatch[2],
+			mood: infoMatch[3]
+		};
+	}
+}
+
 export interface brainModelRequestParams {
 	theme: string;
 	setting: string;
@@ -98,7 +128,7 @@ export interface brainModelRequestParams {
 	actionClues: { action: string; clue: string }[];
 }
 
-export async function brainModelRequest(brainParams: brainModelRequestParams, previousConversation: BaseMessage[]): Promise<string> {
+export async function brainModelRequest(brainParams: brainModelRequestParams, previousConversation: BaseMessage[]): Promise<BrainOutput> {
 	const timeframe = brainParams.timeframe.reduce((acc, curr) => {
 		return acc + curr.timeframe + ': ' + curr.event_happened + '\n';
 	}, '');
@@ -106,6 +136,7 @@ export async function brainModelRequest(brainParams: brainModelRequestParams, pr
 		return acc + curr.action + '--' + curr.clue + '\n';
 	}, '');
 	const prompt = createBrainPrompt(previousConversation);
+	const parser = new BrainParser();
 
 	const llm = new ChatOpenAI({
 		temperature: 0.8,
@@ -114,7 +145,7 @@ export async function brainModelRequest(brainParams: brainModelRequestParams, pr
 		maxTokens: 200
 	});
 
-	const chain = new LLMChain({ prompt, llm, verbose: true });
+	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
 	const res = await chain.call({
 		theme: brainParams.theme,
 		setting: brainParams.setting,
@@ -173,7 +204,7 @@ export async function accuseBrainRequest({
 	murderer,
 	accusedSuspect,
 	promptMessage
-}: AccuseModelRequestParams): Promise<{ rating: number; epilogue: string }> {
+}: AccuseModelRequestParams): Promise<RatingWithEpilogue> {
 	const prompt = createAccusePrompt();
 	const llm = new ChatOpenAI({
 		temperature: 0.9,

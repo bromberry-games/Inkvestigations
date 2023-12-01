@@ -233,6 +233,40 @@ export interface Database {
           }
         ]
       }
+      user_mystery_brain_messages: {
+        Row: {
+          chain_of_thought: string
+          conversation_id: number | null
+          created_at: string
+          id: number
+          info: string
+          mood: string
+        }
+        Insert: {
+          chain_of_thought: string
+          conversation_id?: number | null
+          created_at?: string
+          id?: number
+          info: string
+          mood: string
+        }
+        Update: {
+          chain_of_thought?: string
+          conversation_id?: number | null
+          created_at?: string
+          id?: number
+          info?: string
+          mood?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_mystery_brain_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            referencedRelation: "user_mystery_conversations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       user_mystery_conversations: {
         Row: {
           archived: boolean
@@ -266,34 +300,6 @@ export interface Database {
             foreignKeyName: "user_mystery_conversations_user_id_fkey"
             columns: ["user_id"]
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      user_mystery_info_messages: {
-        Row: {
-          content: string
-          conversation_id: number | null
-          created_at: string
-          id: number
-        }
-        Insert: {
-          content: string
-          conversation_id?: number | null
-          created_at?: string
-          id?: number
-        }
-        Update: {
-          content?: string
-          conversation_id?: number | null
-          created_at?: string
-          id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_mystery_info_messages_conversation_id_fkey"
-            columns: ["conversation_id"]
-            referencedRelation: "user_mystery_conversations"
             referencedColumns: ["id"]
           }
         ]

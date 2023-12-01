@@ -70,10 +70,12 @@ CREATE TABLE user_mystery_messages (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE user_mystery_info_messages (
+CREATE TABLE user_mystery_brain_messages (
   id SERIAL PRIMARY KEY,
   conversation_id INT REFERENCES user_mystery_conversations(id) ON UPDATE CASCADE,
-  content TEXT NOT NULL, 
+  chain_of_thought TEXT NOT NULL,
+  info TEXT NOT NULL, 
+  mood TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -130,7 +132,7 @@ ALTER TABLE user_mystery_conversations
 ALTER TABLE user_mystery_messages 
   ENABLE ROW LEVEL SECURITY;
 
-ALTER TABLE user_mystery_info_messages 
+ALTER TABLE user_mystery_brain_messages 
   ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE user_subscriptions 

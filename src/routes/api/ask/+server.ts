@@ -2,70 +2,14 @@ import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import { getErrorMessage, throwIfFalse, throwIfUnset } from '$misc/error';
 import type { Session } from '@supabase/supabase-js';
-import {
-	accuseLetterModelRequest,
-	accuseBrainRequest,
-	brainModelRequest as brainModelRequest,
-	letterModelRequest,
-	type AccuseModelRequestParams,
-	type Victim,
-	type brainModelRequestParams
-} from './llangchain_ask';
-import { AIMessage, BaseMessage, HumanMessage } from 'langchain/schema';
+import { accuseLetterModelRequest, accuseBrainRequest, type AccuseModelRequestParams } from './llangchain_ask';
 import { loadGameInfo } from '$lib/supabase/mystery_data.server';
-import {
-	addInfoModelMessage,
-	addMessageForUser,
-	archiveLastConversation,
-	getBrainConversation,
-	loadDisplayMessages,
-	setRating
-} from '$lib/supabase/conversations.server';
+import { addMessageForUser, archiveLastConversation, setRating } from '$lib/supabase/conversations.server';
 import { getMessageAmountForUser, decreaseMessageForUser } from '$lib/supabase/message_amounts.server';
 import { countTokens } from '$misc/openai';
 import { MAX_TOKENS } from '../../../constants';
 import { shuffleArray } from '$lib/generic-helpers';
-
-async function standardInvestigationAnswer(brainParams: brainModelRequestParams, mysteryName: string, userId: string, letter_info: string) {
-	const brainConversation = await getBrainConversation(userId, mysteryName);
-	if (!brainConversation) {
-		throw error(500, 'Could not get info model messages');
-	}
-	const brainResponse = await brainModelRequest(brainParams, brainConversation);
-
-	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
-	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
-
-	const assistantLetterAnswers = (await loadDisplayMessages(userId, mysteryName))?.filter((m) => m.role === 'assistant');
-	if (!assistantLetterAnswers) {
-		throw error(500, 'Could not load backend messages');
-	}
-
-	const messages: BaseMessage[] = [];
-	for (let i = 0; i < brainConversation.length; i += 2) {
-		messages.push(
-			new HumanMessage({
-				content: 'Order:\n' + brainConversation[i].content + '\nInformation:\n' + brainConversation[i + 1].content
-			})
-		);
-		messages.push(new AIMessage({ content: assistantLetterAnswers[i / 2].content }));
-	}
-
-	async function addResult(message: string) {
-		const addedMessage = await addMessageForUser(userId, message, mysteryName);
-		throwIfFalse(addedMessage, 'Could not add message to chat');
-	}
-
-	return letterModelRequest({
-		gameInfo: letter_info,
-		previousConversation: messages,
-		question: brainParams.question,
-		brainAnswer: brainResponse,
-		suspects: brainParams.suspects,
-		victim: brainParams.victim,
-		onResponseGenerated: addResult
-	});
-}
+import { standardInvestigationAnswer } from './conversation';
 
 interface AccuseModelAnswerParams {
 	mysteryName: string;

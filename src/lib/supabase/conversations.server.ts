@@ -1,53 +1,37 @@
 import { AIMessage, BaseMessage, HumanMessage } from 'langchain/schema';
 import { supabase_full_access } from './supabase_full_access.server';
 import type { ChatMessage } from '$misc/shared';
+import type { BrainOutput } from '../../routes/api/ask/llangchain_ask';
+import type { PostgrestError } from '@supabase/supabase-js';
+import { isPostgresError } from './helpers';
 
-export async function getBrainConversation(userId: string, mystery: string): Promise<BaseMessage[] | null> {
+export async function getBrainMessages(userId: string, mystery: string): Promise<BrainOutput[] | PostgrestError> {
 	const conversationId = await getOrCreateConversationId(userId, mystery);
-
-	const { data: infoMessageData, error } = await supabase_full_access
-		.from('user_mystery_info_messages')
-		.select('content')
+	if (isPostgresError(conversationId)) {
+		console.error(conversationId);
+		return conversationId;
+	}
+	const { data, error } = await supabase_full_access
+		.from('user_mystery_brain_messages')
+		.select('mood, info, chainOfThought:chain_of_thought')
 		.eq('conversation_id', conversationId);
 	if (error) {
 		console.error(error);
-		return null;
+		return error;
 	}
-
-	const { data: messageData, error: messageError } = await supabase_full_access
-		.from('user_mystery_messages')
-		.select('content')
-		.eq('conversation_id', conversationId);
-
-	if (messageError) {
-		console.error(messageError);
-		return null;
-	}
-
-	const conversation: BaseMessage[] = [];
-
-	infoMessageData.forEach((item, index) => {
-		conversation.push(
-			new HumanMessage({
-				content: messageData[index].content
-			})
-		);
-		conversation.push(
-			new AIMessage({
-				content: item.content
-			})
-		);
-	});
-
-	return conversation;
+	return data ? data : [];
 }
 
-export async function addInfoModelMessage(userId: string, mystery: string, message: string): Promise<boolean> {
+export async function addInfoModelMessage(userId: string, mystery: string, message: BrainOutput): Promise<boolean> {
 	const conversationId = await getOrCreateConversationId(userId, mystery);
+	if (isPostgresError(conversationId)) {
+		console.error(conversationId);
+		return false;
+	}
 
 	const { error } = await supabase_full_access
-		.from('user_mystery_info_messages')
-		.insert({ content: message, conversation_id: conversationId });
+		.from('user_mystery_brain_messages')
+		.insert({ chain_of_thought: message.chainOfThought, info: message.info, mood: message.mood, conversation_id: conversationId });
 
 	if (error) {
 		console.error(error);
@@ -65,7 +49,7 @@ export async function setRating(mystery: string, user_id: string, rating: number
 	return true;
 }
 
-async function getOrCreateConversationId(userid: string, mystery: string): Promise<number | null> {
+async function getOrCreateConversationId(userid: string, mystery: string): Promise<number | PostgrestError> {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('user_mystery_conversations')
 		.select('id, archived')
@@ -77,7 +61,7 @@ async function getOrCreateConversationId(userid: string, mystery: string): Promi
 	if (conversationError) {
 		console.error('error querying conversation: ');
 		console.error(conversationError);
-		return null;
+		return conversationError;
 	}
 
 	if (conversationData && conversationData.length > 0 && !conversationData[0].archived) {
@@ -92,13 +76,13 @@ async function getOrCreateConversationId(userid: string, mystery: string): Promi
 
 	if (conversationInsertError) {
 		console.error('error inserting conversation: ', conversationInsertError);
-		return null;
+		return conversationInsertError;
 	}
 
 	return conversationInsertData.id;
 }
 
-async function loadDisplayMessagesFromConvId(conversationId: number): Promise<ChatMessage[] | null> {
+async function loadLetterMessagesFromConvId(conversationId: number): Promise<ChatMessage[] | null> {
 	const { data: messageData, error: messageError } = await supabase_full_access
 		.from('user_mystery_messages')
 		.select('content, created_at')
@@ -119,9 +103,13 @@ async function loadDisplayMessagesFromConvId(conversationId: number): Promise<Ch
 	return messages;
 }
 
-export async function loadDisplayMessages(userId: string, mystery: string): Promise<ChatMessage[] | null> {
+export async function loadLetterMessages(userId: string, mystery: string): Promise<ChatMessage[] | null> {
 	const conversationId = await getOrCreateConversationId(userId, mystery);
-	return conversationId ? await loadDisplayMessagesFromConvId(conversationId) : null;
+	if (isPostgresError(conversationId)) {
+		console.error(conversationId);
+		return null;
+	}
+	return await loadLetterMessagesFromConvId(conversationId);
 }
 
 export async function archiveLastConversation(userid: string, mystery: string): Promise<boolean> {
@@ -144,6 +132,10 @@ export async function archiveLastConversation(userid: string, mystery: string): 
 
 export async function addMessageForUser(userid: string, message: string, mystery: string): Promise<boolean> {
 	const conversationId = await getOrCreateConversationId(userid, mystery);
+	if (isPostgresError(conversationId)) {
+		console.error(conversationId);
+		return false;
+	}
 
 	const { error: messageError } = await supabase_full_access
 		.from('user_mystery_messages')
