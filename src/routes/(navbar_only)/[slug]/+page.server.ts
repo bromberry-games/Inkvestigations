@@ -2,7 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Session } from '@supabase/supabase-js';
 import { loadMysteryLetterInfo, loadSuspects } from '$lib/supabase/mystery_data.server';
-import { loadDisplayMessages } from '$lib/supabase/conversations.server';
+import { loadLetterMessages } from '$lib/supabase/conversations.server';
 import { shuffleArray } from '$lib/generic-helpers';
 
 function createLetter(letterInfo: string) {
@@ -46,7 +46,7 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 
 	const [letterInfo, messages, suspects] = await Promise.all([
 		loadMysteryLetterInfo(session.user.id, mysteryName),
-		loadDisplayMessages(session.user.id, mysteryName),
+		loadLetterMessages(session.user.id, mysteryName),
 		loadSuspects(mysteryName)
 	]);
 	//const letterInfo = await loadMysteryLetterInfo(session.user.id, mysteryName);

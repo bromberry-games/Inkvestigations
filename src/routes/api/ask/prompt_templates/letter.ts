@@ -41,7 +41,8 @@ const fewShotPromptLetter: BaseMessage[] = [
 const userTemplate = `Order: 
 		{question}
 		Information: 
-		{brainAnswer}
+		{brainInfo}
+		mood: {mood}
 	`;
 
 export function createLetterPrompt(previousConversation: BaseMessage[]) {
