@@ -45,6 +45,8 @@
 					aria-invalid={$errors.email ? true : undefined}
 					bind:value={$form.email}
 					{...$constraints.email}
+					id="email"
+					autocomplete="email"
 				/>
 			</div>
 			{#if $message}

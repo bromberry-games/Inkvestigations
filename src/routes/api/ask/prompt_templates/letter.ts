@@ -8,6 +8,10 @@ const systemTemplate = `
 
 		"""
 		{information}
+
+		### Characters
+        {victimName}: Victim. {victimDescription}
+		{suspects}
 		"""
 
 		Your letters will be conversational, your tone for writing them is set by the mood attached at the end of the information. However, they will have **no preamble or suggestions of your own**.

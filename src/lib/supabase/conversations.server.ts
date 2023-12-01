@@ -2,7 +2,7 @@ import { AIMessage, BaseMessage, HumanMessage } from 'langchain/schema';
 import { supabase_full_access } from './supabase_full_access.server';
 import type { ChatMessage } from '$misc/shared';
 
-export async function getInfoModelMessages(userId: string, mystery: string): Promise<BaseMessage[] | null> {
+export async function getBrainConversation(userId: string, mystery: string): Promise<BaseMessage[] | null> {
 	const conversationId = await getOrCreateConversationId(userId, mystery);
 
 	const { data: infoMessageData, error } = await supabase_full_access

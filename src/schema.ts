@@ -34,64 +34,57 @@ export interface Database {
   }
   public: {
     Tables: {
-      murderers: {
-        Row: {
-          id: number
-          murder_reasons: string
-          suspect_id: number
-        }
-        Insert: {
-          id?: number
-          murder_reasons: string
-          suspect_id: number
-        }
-        Update: {
-          id?: number
-          murder_reasons?: string
-          suspect_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "murderers_suspect_id_fkey"
-            columns: ["suspect_id"]
-            referencedRelation: "suspects"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
       mysteries: {
         Row: {
           accuse_letter_prompt: string
-          accuse_prompt: string
-          brain_prompt: string
+          action_clues: Database["public"]["CompositeTypes"]["action_clue_type"][]
           description: string
           filepath: string
           id: number
           letter_info: string
           letter_prompt: string
+          murderer: Database["public"]["CompositeTypes"]["murderer_type"]
           name: string
+          setting: string
+          suspects: Database["public"]["CompositeTypes"]["suspect_type"][]
+          theme: string
+          timeframe: Database["public"]["CompositeTypes"]["timeframe_type"][]
+          victim_description: string
+          victim_name: string
         }
         Insert: {
           accuse_letter_prompt: string
-          accuse_prompt: string
-          brain_prompt: string
+          action_clues: Database["public"]["CompositeTypes"]["action_clue_type"][]
           description: string
           filepath: string
           id?: number
           letter_info: string
           letter_prompt: string
+          murderer: Database["public"]["CompositeTypes"]["murderer_type"]
           name: string
+          setting: string
+          suspects: Database["public"]["CompositeTypes"]["suspect_type"][]
+          theme: string
+          timeframe: Database["public"]["CompositeTypes"]["timeframe_type"][]
+          victim_description: string
+          victim_name: string
         }
         Update: {
           accuse_letter_prompt?: string
-          accuse_prompt?: string
-          brain_prompt?: string
+          action_clues?: Database["public"]["CompositeTypes"]["action_clue_type"][]
           description?: string
           filepath?: string
           id?: number
           letter_info?: string
           letter_prompt?: string
+          murderer?: Database["public"]["CompositeTypes"]["murderer_type"]
           name?: string
+          setting?: string
+          suspects?: Database["public"]["CompositeTypes"]["suspect_type"][]
+          theme?: string
+          timeframe?: Database["public"]["CompositeTypes"]["timeframe_type"][]
+          victim_description?: string
+          victim_name?: string
         }
         Relationships: []
       }
@@ -129,6 +122,43 @@ export interface Database {
           }
         ]
       }
+      stripe_customers: {
+        Row: {
+          customer_id: string
+          user_id: string
+        }
+        Insert: {
+          customer_id: string
+          user_id: string
+        }
+        Update: {
+          customer_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stripe_customers_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      stripe_events: {
+        Row: {
+          event_id: string
+          id: number
+        }
+        Insert: {
+          event_id: string
+          id?: number
+        }
+        Update: {
+          event_id?: string
+          id?: number
+        }
+        Relationships: []
+      }
       subscription_tiers: {
         Row: {
           active: boolean
@@ -156,34 +186,28 @@ export interface Database {
         }
         Relationships: []
       }
-      suspects: {
+      terms_and_conditions_privacy_policy_consent: {
         Row: {
-          description: string
-          id: number
-          imagepath: string
-          mystery_name: string
-          name: string
+          accepted: boolean
+          accepted_on: string
+          user_id: string
         }
         Insert: {
-          description: string
-          id?: number
-          imagepath: string
-          mystery_name: string
-          name: string
+          accepted?: boolean
+          accepted_on?: string
+          user_id: string
         }
         Update: {
-          description?: string
-          id?: number
-          imagepath?: string
-          mystery_name?: string
-          name?: string
+          accepted?: boolean
+          accepted_on?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "suspects_mystery_name_fkey"
-            columns: ["mystery_name"]
-            referencedRelation: "mysteries"
-            referencedColumns: ["name"]
+            foreignKeyName: "terms_and_conditions_privacy_policy_consent_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           }
         ]
       }
@@ -371,12 +395,39 @@ export interface Database {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      update_subscription: {
+        Args: {
+          stripe_customer: string
+          price_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
     }
     CompositeTypes: {
-      [_ in never]: never
+      action_clue_type: {
+        action: string
+        clue: string
+      }
+      murderer_type: {
+        name: string
+        description: string
+        imagepath: string
+        motive: string
+        opportunity: string
+        evidence: string
+      }
+      suspect_type: {
+        name: string
+        imagepath: string
+        description: string
+      }
+      timeframe_type: {
+        timeframe: string
+        event_happened: string
+      }
     }
   }
   storage: {
@@ -390,6 +441,7 @@ export interface Database {
           id: string
           name: string
           owner: string | null
+          owner_id: string | null
           public: boolean | null
           updated_at: string | null
         }
@@ -401,6 +453,7 @@ export interface Database {
           id: string
           name: string
           owner?: string | null
+          owner_id?: string | null
           public?: boolean | null
           updated_at?: string | null
         }
@@ -412,17 +465,11 @@ export interface Database {
           id?: string
           name?: string
           owner?: string | null
+          owner_id?: string | null
           public?: boolean | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "buckets_owner_fkey"
-            columns: ["owner"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
       migrations: {
         Row: {
@@ -454,6 +501,7 @@ export interface Database {
           metadata: Json | null
           name: string | null
           owner: string | null
+          owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
           version: string | null
@@ -466,6 +514,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
@@ -478,6 +527,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null

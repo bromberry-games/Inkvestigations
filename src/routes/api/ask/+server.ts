@@ -2,33 +2,36 @@ import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import { getErrorMessage, throwIfFalse, throwIfUnset } from '$misc/error';
 import type { Session } from '@supabase/supabase-js';
-import { accuseLetterModelRequest, accuseModelRequest, brainModelRequest as brainModelRequest, letterModelRequest } from './llangchain_ask';
+import {
+	accuseLetterModelRequest,
+	accuseBrainRequest,
+	brainModelRequest as brainModelRequest,
+	letterModelRequest,
+	type AccuseModelRequestParams,
+	type Victim,
+	type brainModelRequestParams
+} from './llangchain_ask';
 import { AIMessage, BaseMessage, HumanMessage } from 'langchain/schema';
 import { loadGameInfo } from '$lib/supabase/mystery_data.server';
 import {
 	addInfoModelMessage,
 	addMessageForUser,
 	archiveLastConversation,
-	getInfoModelMessages,
+	getBrainConversation,
 	loadDisplayMessages,
 	setRating
 } from '$lib/supabase/conversations.server';
 import { getMessageAmountForUser, decreaseMessageForUser } from '$lib/supabase/message_amounts.server';
 import { countTokens } from '$misc/openai';
 import { MAX_TOKENS } from '../../../constants';
+import { shuffleArray } from '$lib/generic-helpers';
 
-async function standardInvestigationAnswer(
-	mysteryName: string,
-	promptMessage: string,
-	userId: string,
-	brainInfo: string,
-	letter_info: string
-) {
-	const infoModelMessages = await getInfoModelMessages(userId, mysteryName);
-	if (!infoModelMessages) {
+async function standardInvestigationAnswer(brainParams: brainModelRequestParams, mysteryName: string, userId: string, letter_info: string) {
+	const brainConversation = await getBrainConversation(userId, mysteryName);
+	if (!brainConversation) {
 		throw error(500, 'Could not get info model messages');
 	}
-	const brainResponse = await brainModelRequest(brainInfo, infoModelMessages, promptMessage);
+	const brainResponse = await brainModelRequest(brainParams, brainConversation);
 
 	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
 	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
@@ -39,10 +42,10 @@ async function standardInvestigationAnswer(
 	}
 
 	const messages: BaseMessage[] = [];
-	for (let i = 0; i < infoModelMessages.length; i += 2) {
+	for (let i = 0; i < brainConversation.length; i += 2) {
 		messages.push(
 			new HumanMessage({
-				content: 'Order:\n' + infoModelMessages[i].content + '\nInformation:\n' + infoModelMessages[i + 1].content
+				content: 'Order:\n' + brainConversation[i].content + '\nInformation:\n' + brainConversation[i + 1].content
 			})
 		);
 		messages.push(new AIMessage({ content: assistantLetterAnswers[i / 2].content }));
@@ -53,18 +56,26 @@ async function standardInvestigationAnswer(
 		throwIfFalse(addedMessage, 'Could not add message to chat');
 	}
 
-	return letterModelRequest(letter_info, messages, promptMessage, brainResponse, addResult);
+	return letterModelRequest({
+		gameInfo: letter_info,
+		previousConversation: messages,
+		question: brainParams.question,
+		brainAnswer: brainResponse,
+		suspects: brainParams.suspects,
+		victim: brainParams.victim,
+		onResponseGenerated: addResult
+	});
 }
 
-async function accuseModelAnswer(
-	mysteryName: string,
-	promptMessage: string,
-	userId: string,
-	suspectToAccuse: string,
-	accuseInfo: string,
-	accuseLetterInfo: string
-) {
-	const response = await accuseModelRequest(suspectToAccuse, promptMessage, accuseInfo);
+interface AccuseModelAnswerParams {
+	mysteryName: string;
+	userId: string;
+	accuseLetterInfo: string;
+	accuseBrainRequestParams: AccuseModelRequestParams;
+}
+
+async function accuseModelAnswer({ mysteryName, userId, accuseBrainRequestParams, accuseLetterInfo }: AccuseModelAnswerParams) {
+	const response = await accuseBrainRequest(accuseBrainRequestParams);
 	const ratingSet = await setRating(mysteryName, userId, response.rating);
 	throwIfFalse(ratingSet, 'Could not set rating');
 	const addResult = async (message: string) => {
@@ -72,8 +83,14 @@ async function accuseModelAnswer(
 		throwIfFalse(addedMessage, 'Could not add message to chat');
 		await archiveLastConversation(userId, mysteryName);
 	};
-
-	return accuseLetterModelRequest(accuseLetterInfo, promptMessage, response.epilogue, addResult);
+	return accuseLetterModelRequest({
+		accusation: accuseBrainRequestParams.promptMessage,
+		epilogue: response.epilogue,
+		accuseLetterInfo: accuseLetterInfo,
+		suspects: accuseBrainRequestParams.suspects,
+		victim: accuseBrainRequestParams.victim,
+		onResponseGenerated: addResult
+	});
 }
 
 export const POST: RequestHandler = async ({ request, locals: { getSession } }) => {
@@ -105,16 +122,51 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 			throw error(500, 'Could not get game info');
 		}
 
+		const suspectsArray = shuffleArray([
+			...gameInfo.suspects,
+			{ name: gameInfo.murderer.name, description: gameInfo.murderer.description, imagepath: gameInfo.murderer.imagepath }
+		]);
+		const suspectList = suspectsArray.reduce((acc: string, suspect) => {
+			return acc + suspect.name + ': ' + suspect.description + '\n';
+		}, '');
+
+		const victim = {
+			name: gameInfo.victim_name,
+			description: gameInfo.victim_description
+		};
+
 		return suspectToAccuse
-			? await accuseModelAnswer(
+			? await accuseModelAnswer({
+					mysteryName: game_config.mysteryName,
+					accuseBrainRequestParams: {
+						promptMessage: message,
+						suspects: suspectList,
+						accusedSuspect: suspectToAccuse,
+						victim,
+						murderer: {
+							murdererName: gameInfo.murderer.name,
+							motive: gameInfo.murderer.motive,
+							opportunity: gameInfo.murderer.opportunity,
+							evidence: gameInfo.murderer.evidence
+						}
+					},
+					userId: session.user.id,
+					accuseLetterInfo: gameInfo.accuse_letter_prompt
+			  })
+			: await standardInvestigationAnswer(
+					{
+						suspects: suspectList,
+						victim: victim,
+						question: message,
+						theme: gameInfo.theme,
+						setting: gameInfo.setting,
+						timeframe: gameInfo.timeframe,
+						actionClues: gameInfo.action_clues
+					},
 					game_config.mysteryName,
-					message,
 					session.user.id,
-					suspectToAccuse,
-					gameInfo.accuse_prompt,
-					gameInfo.accuse_letter_prompt
-			  )
-			: await standardInvestigationAnswer(game_config.mysteryName, message, session.user.id, gameInfo.brain_prompt, gameInfo.letter_prompt);
+					gameInfo.letter_prompt
+			  );
 	} catch (err) {
 		throw error(500, getErrorMessage(err));
 	}

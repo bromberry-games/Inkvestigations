@@ -3,22 +3,35 @@ import { supabase_full_access } from './supabase_full_access.server';
 export interface suspects {
 	name: string;
 	imagepath: string;
+	description: string;
 }
 export async function loadSuspects(mysterName: string): Promise<suspects[] | null> {
-	const { data, error } = await supabase_full_access.from('suspects').select('name, imagepath').eq('mystery_name', mysterName);
+	const { data, error } = await supabase_full_access
+		.from('mysteries')
+		.select('suspects, murderer')
+		.eq('name', mysterName)
+		.limit(1)
+		.single();
 	if (error) {
 		console.error(error);
 		return null;
 	}
-	return data;
+	return [
+		...data.suspects,
+		{
+			name: data.murderer.name,
+			imagepath: data.murderer.imagepath,
+			description: data.murderer.description
+		}
+	];
 }
 
-export async function loadGameInfo(
-	mystery: string
-): Promise<{ brain_prompt: string; letter_prompt: string; accuse_prompt: string; accuse_letter_prompt: string } | null> {
+export async function loadGameInfo(mystery: string) {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('mysteries')
-		.select('brain_prompt, letter_prompt, accuse_prompt, accuse_letter_prompt')
+		.select(
+			'theme, setting, timeframe, action_clues, letter_prompt, accuse_letter_prompt, suspects, murderer, victim_name, victim_description'
+		)
 		.eq('name', mystery)
 		.limit(1)
 		.single();

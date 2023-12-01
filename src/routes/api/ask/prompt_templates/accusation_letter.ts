@@ -7,6 +7,10 @@ const systemTemplate = `We're playing a game. You will act as a police chief wri
 
         """
         {information}        
+
+        ### Characters
+        {victimName}: Victim. {victimDescription}
+        {suspects}
         """
 
         Remember, the chief is acting on orders of Sherlock. It is very important that the end of the letter marks the complete end of their correspondence. Keep your letters to 200 words.

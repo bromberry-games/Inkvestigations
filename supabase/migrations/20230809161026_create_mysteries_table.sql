@@ -1,32 +1,47 @@
 -- extensions
 create extension pg_cron with schema extensions;
 
+CREATE TYPE suspect_type AS (
+    name TEXT,
+    imagepath TEXT,
+    description TEXT
+);
+Create Type murderer_type AS (
+    name TEXT,
+    description TEXT,
+    imagepath TEXT,
+    motive TEXT,
+    opportunity TEXT,
+    evidence TEXT
+);
+Create Type action_clue_type AS (
+    action TEXT,
+    clue TEXT
+);
+Create Type timeframe_type AS (
+  timeframe TEXT,
+  event_happened TEXT
+);
+
 -- Create tables
 CREATE TABLE mysteries (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     description TEXT Not NULL,
-    brain_prompt TEXT NOT NULL,
+    theme TEXT NOT NULL,
+    setting TEXT NOT NULL,
     letter_info TEXT NOT NULL,
     letter_prompt TEXT NOT NULL,
-    accuse_prompt TEXT NOT NULL,
     accuse_letter_prompt TEXT NOT NULL,
+    suspects suspect_type[] NOT NULL,
+    action_clues action_clue_type[] NOT NULL,
+    timeframe timeframe_type[] NOT NULL,
+    murderer murderer_type NOT NULL,
+    victim_name TEXT NOT NULL,
+    victim_description TEXT NOT NULL,
     filepath TEXT NOT NULL
 );
 
-CREATE TABLE suspects (
-    id SERIAL PRIMARY KEY,
-    mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE ON DELETE CASCADE,
-    name TEXT NOT NULL,
-    imagepath TEXT NOT NULL,
-    description TEXT NOT NULL
-);
-
-CREATE TABLE murderers (
-  id SERIAL PRIMARY KEY, 
-  suspect_id INT NOT NULL UNIQUE REFERENCES suspects(id) ON UPDATE CASCADE ON DELETE CASCADE,
-  murder_reasons TEXT NOT NULL
-);
 
 CREATE TABLE solved (
     id SERIAL PRIMARY KEY,
@@ -104,12 +119,6 @@ ALTER TABLE terms_and_conditions_privacy_policy_consent
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
 
 ALTER TABLE mysteries 
-  ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE suspects
-  ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE murderers
   ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE user_messages 
