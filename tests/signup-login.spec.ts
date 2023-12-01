@@ -79,8 +79,9 @@ test('test try for free', async ({ page, isMobile }) => {
 test('delete user cant log back in', async ({ page, isMobile }) => {
 	const { mail, password } = await createNewUserAndLogin(page, isMobile);
 	await expect(page.locator('#avatar-menu')).toBeVisible();
-	await page.goto('/user/edit');
+	await page.goto('/user/edit', { waitUntil: 'networkidle' });
 
+	// await page.waitForTimeout(200);
 	await page.getByRole('button', { name: 'Delete my account' }).click();
 	await page.getByRole('button', { name: 'Delete my account and all account data' }).click();
 

@@ -1,112 +1,62 @@
-INSERT INTO mysteries (Name, Description, filepath, brain_prompt, letter_info, letter_prompt, accuse_prompt, accuse_letter_prompt)
-VALUES(
+INSERT INTO mysteries 
+(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, suspects, action_clues, timeframe, murderer, victim_name, victim_description, filepath) 
+VALUES (
 'Mirror Mirror',
 'A journalist is found dead. But nobody knows what happened.',
-'images/mysteries/mirror_mirror.webp',
-$$
-##Game information
-The theme of this game is: pride and shame. Players will perform actions ant tell you what to do. Your task is to return information based on those actions. Some information you will have other information you will have to make up. All information that you make up should reflect these one way or another.
-
-### Time Frame
-Friday evening: party with his friends
-Saturday morning: guests who stayed over leave his house early in the morning. Terry recovers from his hangover.
-Sunday: Terry is alone writing
-Monday: Around noon, the maid finds Terry dead, fallen through the mirror in his study. Dexter Tin arrives.
-
-___
-
-## Characters
-#### Michael Terry
-Victim. Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.
-#### Bianca White
-Best friend who always gets the first draft, also wanted to be a journalist. Works in marketing now.
-#### Dexter Tin
-Politician disgraced by Terry.
-#### Oliver Smith
-Biggest fan before becoming his apprentice. Extremely strong drive for journalistic ethics and professionalism.
-#### Maria Payton
-Long-time maid.
-#### Angela Videl
-Rival columnist.
-#### Peter O'Ranner
-Retired detective who helped with articles sometimes.
-
----
-
-## Actions: clues
-
-- ## Actions -- clues
-
-None of these facts are known to the player. They need to perform an action to get an information, i.e. it is structured like this "action -- information". For example, "interrogate the suspects" yields "generic responses, none refer to anything" Upon a request for which no information is provided, make it up in accord to the rest of the game. Never suggest anything to the player.
-
-- Interrogating the suspects -- generic responses, none refer to anything below this point.
-- Searching the study yields these clues -- a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry's desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;
-- inspecting the half-written piece -- it is an expose, but none of the names are known in the country;
-- inspecting the Tin letters -- they just show his innocence from an objective observer, but have his fingerprints all over them;
-- inspecting fan letters -- different fans praising him for different things. A lot are from Oliver from when he was still a fan. The recent ones have the distinct smudge Terry's pen leaves when writing, as if he wrote some himself
-- asking about the similarity of Oliver's letters and Terry's drafts -- they are using the same pen;
-- autopsy -- he was poisoned with cyanide; in his stomach a pill was found; he had a blue tongue, probably from his famous habit of licking his pen, he probably fell through the mirror after dying;
-- analyzing pills -- all ordinary;
-- analyzing pen -- gelatin and traces of cyanide in the inkwell;
-- asking about the gelatin -- it is common for pills to be encased in gelatin, but this is much more than a normal pill, it would have taken a lot longer to dissolve;
-- asking how often Terry refilled the inkwell -- with his writing speed every two days probably;
-- ask for alibis -- Bianca was on a trip, but talked to Terry over the phone; Tin was busy with his political obligations; Oliver was at home writing a piece;
-- searching Oliver's apartment -- a normal apartment, but for the fact that he has the same pen as Terry twice
-$$,
+'pride and shame',
+'England in the 1930s',
 $$
 Michael Terry, a prominent resident, met a bizarre and gruesome end – thrown through the mirror in his own study. The timing of this macabre incident is uncanny, as it occurred just before a meeting with the disgraced politician, Dexter Tin, who had a score to settle with Terry. No signs of forced entry, no struggle, and a method that defies logic – this is no ordinary crime. We have a web of connections, including Terry's best friend Bianca White, his devoted fan turned apprentice Oliver Smith, and his long-time maid Maria Payton. On top of that, there's the rivalry with columnist Angela Videl and the retired detective, Peter O'Ranner, who occasionally assisted Terry.
 $$,
 $$
 Your name is William Wellington, the police chief of Zlockingbury. You live in a moderately sized city set in the beginning of the 20th century in England. You talk like a noir cop and use metaphors often. Michael Terry was found dead, thrown through the mirror in his study. His maid called the police, but before we had arrived, the politician Dexter Tin was there. He was supposed to have a meeting with Terry. Three days prior, Terry held a party at his house, but between then and his death he should have been alone until his appointment with Mr. Tin. There is no sign of struggle or forced entry, but a suicide is unlikely because the method is so gruesome and strange.
-
-Bianca White: Best friend who always gets the first draft, also wanted to be a journalist. Works in marketing now.
-Dexter Tin:Politician disgraced by Terry.
-Oliver Smith: Biggest fan before becoming his apprentice. Extremely strong drive for journalistic ethics and professionalism.
-Maria Payton: Long-time maid.
-Angela Videl: Rival columnist.
-Peter O'Ranner: Retired detective who helped with articles sometimes.
-$$,
-$$
-### Characters
-Michael Terry: Victim. Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.
-Bianca White: Best friend who always gets the first draft, also wanted to be a journalist. Works in marketing now.
-Dexter Tin: Politician disgraced by Terry.
-Oliver Smith: Biggest fan before becoming his apprentice. Extremely strong drive for journalistic ethics and professionalism.
-Maria Payton: Long-time maid.
-Angela Videl: Rival columnist.
-Peter O'Ranner: Retired detective who helped with articles sometimes.
-
-### Solution
-**Murderer**: Oliver Smith
-**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.
-**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.
-**Evidence**: The second pen in his home with traces of cyanide.
 $$,
 $$
 Your name is William Wellington, the police chief of Zlockingbury. You live in a moderately sized city set in the beginning of the 20th century in England. You talk like a noir cop and use metaphors often. Michael Terry was found dead, thrown through the mirror in his study. His maid called the police, but before we had arrived, the politician Dexter Tin was there. He was supposed to have a meeting with Terry. Three days prior, Terry held a party at his house, but between then and his death he should have been alone until his appointment with Mr. Tin. There is no sign of struggle or forced entry, but a suicide is unlikely because the method is so gruesome and strange. 
-
-Bianca White: Best friend who always gets the first draft, also wanted to be a journalist. Works in marketing now.
-Dexter Tin: Politician disgraced by Terry.
-Oliver Smith: Biggest fan before becoming his apprentice. Extremely strong drive for journalistic ethics and professionalism.
-Maria Payton: Long-time maid.
-Angela Videl: Rival columnist.
-Peter O'Ranner: Retired detective who helped with articles sometimes.
-$$
+$$,
+ARRAY[
+        ROW('Bianca White', 'bianca_white.webp', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.')::suspect_type,
+        ROW('Dexter Tin', 'dexter_tin.webp', 'Politician who was disgraced by Michael Terry.')::suspect_type,
+        ROW('Maria Payton', 'maria_payton.webp', 'Long-time maid of Michael Terry.')::suspect_type,
+        ROW('Angela Videl', 'angela_videl.webp', 'Rival columnist to Michael Terry.')::suspect_type,
+        ROW('Peter O''Ranner', 'peter_oranner.webp', 'Retired detective who occasionally assisted Michael Terry with his articles.')::suspect_type
+    ],
+ARRAY[
+        ('Interrogating the suspects', 'generic responses, none refer to anything below this point'),
+        ('Searching the study', 'a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry''s desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him'),
+        ('Inspecting the half-written piece', 'it is an expose, but none of the names are known in the country'),
+        ('Inspecting the Tin letters', 'they just show his innocence from an objective observer, but have his fingerprints all over them'),
+        ('Inspecting fan letters', 'different fans praising him for different things. A lot are from Oliver from when he was still a fan. The recent ones have the distinct smudge Terry''s pen leaves when writing, as if he wrote some himself'),
+        ('Asking about the similarity of Oliver''s letters and Terry''s drafts', 'they are using the same pen'),
+        ('Autopsy', 'he was poisoned with cyanide; in his stomach a pill was found; he had a blue tongue, probably from his famous habit of licking his pen, he probably fell through the mirror after dying'),
+        ('Analyzing pills', 'all ordinary'),
+        ('Analyzing pen', 'gelatin and traces of cyanide in the inkwell'),
+        ('Asking about the gelatin', 'it is common for pills to be encased in gelatin, but this is much more than a normal pill, it would have taken a lot longer to dissolve'),
+        ('Asking how often Terry refilled the inkwell', 'with his writing speed every two days probably'),
+        ('Ask for alibis', 'Bianca was on a trip, but talked to Terry over the phone; Tin was busy with his political obligations; Oliver was at home writing a piece'),
+        ('Searching Oliver''s apartment', 'a normal apartment, but for the fact that he has the same pen as Terry twice')
+    ]::action_clue_type[],
+  ARRAY[
+        ('Friday evening', 'party with his friends'),
+        ('Saturday morning', 'guests who stayed over leave his house early in the morning. Terry recovers from his hangover.'),
+        ('Sunday', 'Terry is alone writing'),
+        ('Monday', 'Around noon, the maid finds Terry dead, fallen through the mirror in his study. Dexter Tin arrives.')
+    ]::timeframe_type[],
+(
+    'Oliver Smith',
+    'Biggest fan before becoming his apprentice',
+    'oliver_smith.webp',
+    'Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.',
+    'After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.',
+    'The second pen in his home with traces of cyanide.'
+)::murderer_type,
+'Michael Terry',
+'Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.',
+'images/mysteries/mirror_mirror.webp'
 );
 
 
 
--- Inserting suspects for the mystery "The death of journalism"
-INSERT INTO suspects (mystery_name, name, description, imagepath) VALUES
-('Mirror Mirror', 'Bianca White', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.', 'bianca_white.webp'),
-('Mirror Mirror', 'Dexter Tin', 'Politician who was disgraced by Michael Terry.', 'dexter_tin.webp'),
-('Mirror Mirror', 'Oliver Smith', 'Michael Terry''s biggest fan turned apprentice. Strongly believes in journalistic ethics and professionalism.', 'oliver_smith.webp'),
-('Mirror Mirror', 'Maria Payton', 'Long-time maid of Michael Terry.', 'maria_payton.webp'),
-('Mirror Mirror', 'Angela Videl', 'Rival columnist to Michael Terry.', 'angela_videl.webp'),
-('Mirror Mirror', 'Peter O''Ranner', 'Retired detective who occasionally assisted Michael Terry with his articles.', 'peter_oranner.webp');
-
-INSERT INTO murderers (suspect_id, murder_reasons) VALUES
-((SELECT id FROM suspects WHERE name = 'Oliver Smith' AND mystery_name = 'Mirror Mirror'), 'Jealousy over Terry''s success and disappointment with Terry''s lack of journalistic integrity, leading to an attempt to frame Terry as a fraud.');
 
 
 

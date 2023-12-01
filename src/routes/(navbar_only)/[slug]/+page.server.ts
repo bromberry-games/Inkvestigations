@@ -3,6 +3,7 @@ import type { PageServerLoad } from './$types';
 import type { Session } from '@supabase/supabase-js';
 import { loadMysteryLetterInfo, loadSuspects } from '$lib/supabase/mystery_data.server';
 import { loadDisplayMessages } from '$lib/supabase/conversations.server';
+import { shuffleArray } from '$lib/generic-helpers';
 
 function createLetter(letterInfo: string) {
 	return {
@@ -60,5 +61,5 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 	if (!suspects) {
 		throw error(500, 'could not load suspects chat from data');
 	}
-	return { messages: [createLetter(letterInfo), ...messages], suspects: suspects };
+	return { messages: [createLetter(letterInfo), ...messages], suspects: shuffleArray(suspects) };
 };
