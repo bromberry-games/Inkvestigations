@@ -1,7 +1,6 @@
 import type { Page } from '@playwright/test';
 import { supabase_full_access } from './supabase_test_access';
 import 'dotenv/config';
-import { goto } from '$app/navigation';
 
 export async function loginOnPage(page: Page, isMobile: boolean, email: string, password: string) {
 	await page.evaluate(() => document.fonts.ready);
@@ -27,11 +26,11 @@ export async function navToLogin(page: Page, isMobile: boolean) {
 		await page.waitForTimeout(200);
 		await page.getByLabel('bars 3').click();
 	}
-	await page.getByRole('link', { name: 'Login' }).click();
+	await page.getByRole('link', { name: 'Login' }).nth(0).click();
 }
 
 export async function fillOutLoginOrSignupForm(page: Page, email: string, password: string) {
-	await page.waitForLoadState('domcontentloaded');
+	await page.waitForLoadState('networkidle');
 	await page.waitForTimeout(200);
 	await page.getByPlaceholder('Your email address').fill(email);
 	await page.getByPlaceholder('Your email address').press('Tab');

@@ -52,4 +52,6 @@ jobs:
         env:
           CF_ACCESS_CLIENT_ID:  ${{ secrets.CF_ACCESS_CLIENT_ID }}
           CF_ACCESS_CLIENT_SECRET:  ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+          SUPABASE_DEV_SERVICE_KEY:  ${{secrets.SUPABASE_DEV_SERVICE_KEY}}
+          SUPBASE_DEV_URL:  ${{secrets.SUPBASE_DEV_URL}}
         run: CI=true ENV_TO_TEST=DEV HOME=/root npx playwright test
