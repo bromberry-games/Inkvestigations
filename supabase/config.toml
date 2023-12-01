@@ -60,6 +60,10 @@ refresh_token_reuse_interval = 10
 # Allow/disallow new user signups to your project.
 enable_signup = true
 
+
+#SECURITY_CAPTCHA_TURNSTILE_SITEKEY = "env(SUPABASE_SECURITY_CAPTCHA_TURNSTILE_SITEKEY)"
+#SECURITY_CAPTCHA_TURNSTILE_SECRET = "env(SUPABASE_SECURITY_CAPTCHA_TURNSTILE_SECRET)"
+
 [auth.email]
 # Allow/disallow new user signups via email to your project.
 enable_signup = true
@@ -68,6 +72,9 @@ enable_signup = true
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
 enable_confirmations = true
+[auth.email.template.invite]
+subject = "You are invited to inkvestigations.com"
+content_path = "./supabase/templates/invite.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.

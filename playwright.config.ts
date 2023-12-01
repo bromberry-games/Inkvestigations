@@ -35,15 +35,6 @@ function createBaseProjects(additionalName: string) {
 	];
 }
 
-function addTestMatches(projects) {
-	return projects.map((project) => {
-		return {
-			...project,
-			testMatch: /.*login.spec.ts/
-		};
-	});
-}
-
 function addStorageStates(projects) {
 	return projects.map((project) => {
 		return {
@@ -52,15 +43,6 @@ function addStorageStates(projects) {
 				...project.use,
 				storageState: 'playwright/.auth/user.json'
 			}
-		};
-	});
-}
-
-function addTestIgnores(projects) {
-	return projects.map((project) => {
-		return {
-			...project,
-			testIgnore: /.*login.spec.ts/
 		};
 	});
 }
@@ -74,23 +56,23 @@ function addDependencies(projects, dependencies: string[]) {
 	});
 }
 
-const localLogin = addTestMatches(createBaseProjects(' login'));
-const localElse = addDependencies(addTestIgnores(addStorageStates(createBaseProjects(''))), ['setup login']);
+const localLogin = createBaseProjects(' login');
 const local_config: PlaywrightTestConfig = {
 	...commonConfig,
 	use: {
 		baseURL: 'http://localhost:5173',
 		trace: 'on-first-retry'
 	},
+	timeout: 45000,
 	// Configure projects for major browsers.
-	projects: [...localLogin, { name: 'setup login', testMatch: /.*login\.setup\.ts/ }, ...localElse]
+	projects: [...localLogin]
 	//webServer: {
 	//	command: 'npm run build && npm run preview',
 	//	port: 4173
 	//},
 };
 
-const loginDev = addDependencies(addTestMatches(addStorageStates(createBaseProjects('login'))), ['setup_cloudflare_access']);
+const loginDev = addDependencies(addStorageStates(createBaseProjects('login')), ['setup_cloudflare_access']);
 const dev_config: PlaywrightTestConfig = {
 	...commonConfig,
 
@@ -103,6 +85,4 @@ const dev_config: PlaywrightTestConfig = {
 };
 
 const config = process.env.ENV_TO_TEST == 'DEV' ? dev_config : local_config;
-console.log(config);
-console.log(config.projects);
 export default config;

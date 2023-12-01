@@ -43,7 +43,7 @@
 				<!-- Live Message -->
 				{#if $isLoadingAnswerStore}
 					<div class="place-self-start">
-						<div class="variant-ghost-tertiary rounded-2xl rounded-tl-none p-5">
+						<div class="rounded-2xl rounded-tl-none p-5 font-secondary text-lg">
 							{@html snarkdown($enhancedLiveAnswerStore.content?.replace(/\n/g, '<br>'))}
 						</div>
 					</div>
