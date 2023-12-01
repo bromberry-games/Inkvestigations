@@ -35,7 +35,7 @@ export async function getStripeCustomer(userId: string) {
 export async function loadActiveAndUncancelledSubscription(user_id: string) {
 	const { data, error } = await supabase_full_access
 		.from('user_subscriptions')
-		.select('subscription_tiers(stripe_price_id)')
+		.select('subscription_tiers(stripe_price_id, name)')
 		.eq('user_id', user_id)
 		.eq('active', true)
 		.is('end_date', null);
@@ -43,6 +43,12 @@ export async function loadActiveAndUncancelledSubscription(user_id: string) {
 	if (error) {
 		console.error('Error fetching subscription', error);
 		return null;
+	}
+	if (data[0] == null || data.length == 0) {
+		return { id: null };
+	}
+	if (data[0].subscription_tiers?.name.toLowerCase() == 'test') {
+		return { id: null };
 	}
 	return data[0] && data[0].subscription_tiers ? { id: data[0].subscription_tiers.stripe_price_id } : { id: null };
 }
