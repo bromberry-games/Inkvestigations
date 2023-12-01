@@ -11,7 +11,6 @@ import { createBrainPrompt } from './prompt_templates/brain';
 import { createLetterPrompt } from './prompt_templates/letter';
 import { createAccusePrompt } from './prompt_templates/accusation_brain';
 import { createAccuseLetterPrompt } from './prompt_templates/accusation_letter';
-import { info } from 'console';
 
 interface LetterModelRequestParams {
 	gameInfo: string;
@@ -111,8 +110,6 @@ class BrainParser extends BaseOutputParser<BrainOutput> {
 		if (!infoMatch) {
 			throw error(500, 'Could not parse rating');
 		}
-		console.log('match: ');
-		console.log(infoMatch);
 		return {
 			chainOfThought: infoMatch[1],
 			info: infoMatch[2],

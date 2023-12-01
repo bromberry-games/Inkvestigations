@@ -44,8 +44,6 @@ export async function loadActiveAndUncancelledSubscription(user_id: string) {
 		console.error('Error fetching subscription', error);
 		return null;
 	}
-	console.log('subs data: ');
-	console.log(data);
 	return data[0] && data[0].subscription_tiers ? { id: data[0].subscription_tiers.stripe_price_id } : { id: null };
 }
 

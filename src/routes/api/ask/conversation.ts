@@ -37,11 +37,6 @@ ${item.info}
 		);
 	});
 
-	console.log('brain messages:');
-	console.log(brainMessages);
-	console.log('letter messages:');
-	console.log(letterMessages);
-
 	const brainResponse = await brainModelRequest(brainParams, brainConversation);
 
 	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
