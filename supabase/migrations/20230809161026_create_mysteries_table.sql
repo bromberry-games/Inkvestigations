@@ -253,6 +253,29 @@ AFTER INSERT ON auth.users
 FOR EACH ROW
 EXECUTE FUNCTION migrate_anonymous_user_to_new_user();
 
+CREATE OR REPLACE FUNCTION set_test_subscription()
+RETURNS TRIGGER
+language plpgsql
+security definer set search_path = public
+AS $$
+BEGIN
+    INSERT INTO user_subscriptions(user_id, tier_id, start_date, end_date, active)
+    VALUES (
+        NEW.id, 
+        (SELECT tier_id FROM subscription_tiers WHERE stripe_price_id = 'test_1'LIMIT 1), 
+        CURRENT_DATE, 
+        NULL,  
+        TRUE
+    );
+    RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE TRIGGER tr_set_test_subscription
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION set_test_subscription();
+
 
 -- functions
 

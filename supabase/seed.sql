@@ -55,12 +55,6 @@ ARRAY[
 'images/mysteries/mirror_mirror.webp'
 );
 
-
-
-
-
-
-
 INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
 VALUES
 (
@@ -84,6 +78,14 @@ VALUES
     'For the most experienced players',
     30,
     'price_1NgSRVKIDbJkcynJkhJJb1E3'
+);
+INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
+VALUES
+(
+    'TEST',
+    'Just for testing',
+    5,
+    'test_1'
 );
 
 DELETE FROM auth.users;

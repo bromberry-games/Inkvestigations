@@ -4,7 +4,7 @@ import { createTemporaryUser } from '$lib/supabase/temporary_users.server';
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
 
 export const load: PageServerLoad = async ({ url, locals: { getSession } }) => {
-	throw redirect(303, '/');
+	throw redirect(303, '/login');
 	const session = await getSession();
 	const authStatus = getAuthStatus(session);
 	if (authStatus == AuthStatus.LoggedIn) {
