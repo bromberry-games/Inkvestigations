@@ -4,12 +4,19 @@ import { getErrorMessage, throwIfFalse, throwIfUnset } from '$misc/error';
 import type { Session } from '@supabase/supabase-js';
 import { accuseLetterModelRequest, accuseBrainRequest, type AccuseModelRequestParams } from './llangchain_ask';
 import { loadGameInfo } from '$lib/supabase/mystery_data.server';
-import { addMessageForUser, archiveLastConversation, setRating } from '$lib/supabase/conversations.server';
+import {
+	addMessageForUser,
+	archiveLastConversation,
+	loadBrainMessages,
+	loadLetterMessages,
+	setRating
+} from '$lib/supabase/conversations.server';
 import { getMessageAmountForUser, decreaseMessageForUser } from '$lib/supabase/message_amounts.server';
 import { countTokens } from '$misc/openai';
 import { MAX_TOKENS } from '../../../constants';
 import { shuffleArray } from '$lib/generic-helpers';
 import { standardInvestigationAnswer } from './conversation';
+import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
 
 interface AccuseModelAnswerParams {
 	mysteryName: string;
@@ -42,25 +49,39 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	if (!session) {
 		throw error(500, 'You are not logged in.');
 	}
-	if ((await getMessageAmountForUser(session.user.id)) <= 0) {
-		throw error(500, 'You have no messages.');
+	const requestData = await request.json();
+	throwIfUnset('request data', requestData);
+	const game_config = requestData.game_config;
+	throwIfUnset('game_config', game_config);
+	const suspectToAccuse = game_config.suspectToAccuse ? game_config.suspectToAccuse : '';
+	throwIfUnset('Mystery name', game_config.mysteryName);
+	let message: string = requestData.message;
+	throwIfUnset('messages', message);
+	if (countTokens(message) > MAX_TOKENS) {
+		throw error(400, 'Message is too long.');
 	}
-	try {
-		const requestData = await request.json();
-		throwIfUnset('request data', requestData);
-		const message: string = requestData.message;
-		throwIfUnset('messages', message);
-		if (countTokens(message) > MAX_TOKENS) {
-			throw error(400, 'Message is too long.');
-		}
-		const game_config = requestData.game_config;
-		throwIfUnset('game_config', game_config);
-		const suspectToAccuse = game_config.suspectToAccuse ? game_config.suspectToAccuse : '';
-		throwIfUnset('Mystery name', game_config.mysteryName);
+
+	const [letterMessages, brainMessages, messagesAmount] = await Promise.all([
+		loadLetterMessages(session.user.id, game_config.mysteryName),
+		loadBrainMessages(session.user.id, game_config.mysteryName),
+		getMessageAmountForUser(session.user.id)
+	]);
+	isTAndThrowPostgresErrorIfNot(letterMessages);
+	isTAndThrowPostgresErrorIfNot(brainMessages);
+	const genNum = letterMessages.length - brainMessages.length * 2;
+
+	if (messagesAmount <= 0 && genNum >= 0) {
+		throw error(500, 'You have no messages.');
+	} else if (messagesAmount > 0 && genNum == 0) {
 		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);
 		throwIfFalse(messageAdded, 'Could not add message to chat');
 		const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
 		throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
+	} else if (genNum == 1) {
+		message = letterMessages[letterMessages.length - 1].content;
+	}
+
+	try {
 		const gameInfo = await loadGameInfo(game_config.mysteryName);
 		if (!gameInfo) {
 			throw error(500, 'Could not get game info');
@@ -109,7 +130,10 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 					},
 					game_config.mysteryName,
 					session.user.id,
-					gameInfo.letter_prompt
+					gameInfo.letter_prompt,
+					letterMessages,
+					brainMessages,
+					genNum
 			  );
 	} catch (err) {
 		throw error(500, getErrorMessage(err));
