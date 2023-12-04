@@ -54,6 +54,8 @@ ___
 None of these facts are known to the player. They need to perform an action to get an information, i.e. it is structured like this "action -- information". For example, "interrogate the suspects" yields "generic responses, none refer to anything" Upon a request for which no information is provided, make it up in accord to the rest of the game. Never suggest anything to the player.
 {actionClues}
 
+## Additional Information
+{oldInfo}
 """
 Special rules but same answer format: 
 - accusations don't work. Wellington always says he needs motive, opportunity, and evidence. 

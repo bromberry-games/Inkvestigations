@@ -2,8 +2,8 @@
 	import { afterUpdate, beforeUpdate, onMount } from 'svelte';
 	import snarkdown from 'snarkdown';
 	import { afterNavigate } from '$app/navigation';
-	import type { Chat, ChatMessage } from '$misc/shared';
-	import { chatStore, enhancedLiveAnswerStore, isLoadingAnswerStore } from '$misc/stores';
+	import type { ChatMessage } from '$misc/shared';
+	import { enhancedLiveAnswerStore, isLoadingAnswerStore } from '$misc/stores';
 	import ChatMessageUI from './ChatMessageUI.svelte';
 	import { Spinner } from 'flowbite-svelte';
 

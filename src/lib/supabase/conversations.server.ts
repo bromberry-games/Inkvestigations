@@ -5,7 +5,7 @@ import type { BrainOutput } from '../../routes/api/ask/llangchain_ask';
 import type { PostgrestError } from '@supabase/supabase-js';
 import { isPostgresError } from './helpers';
 
-export async function getBrainMessages(userId: string, mystery: string): Promise<BrainOutput[] | PostgrestError> {
+export async function loadBrainMessages(userId: string, mystery: string): Promise<BrainOutput[] | PostgrestError> {
 	const conversationId = await getOrCreateConversationId(userId, mystery);
 	if (isPostgresError(conversationId)) {
 		console.error(conversationId);
@@ -82,7 +82,7 @@ async function getOrCreateConversationId(userid: string, mystery: string): Promi
 	return conversationInsertData.id;
 }
 
-async function loadLetterMessagesFromConvId(conversationId: number): Promise<ChatMessage[] | null> {
+async function loadLetterMessagesFromConvId(conversationId: number): Promise<ChatMessage[] | PostgrestError> {
 	const { data: messageData, error: messageError } = await supabase_full_access
 		.from('user_mystery_messages')
 		.select('content, created_at')
@@ -90,7 +90,7 @@ async function loadLetterMessagesFromConvId(conversationId: number): Promise<Cha
 
 	if (messageError) {
 		console.error('error querying messages: ', messageError);
-		return null;
+		return messageError;
 	}
 
 	const messages: ChatMessage[] = messageData.map(
@@ -103,11 +103,10 @@ async function loadLetterMessagesFromConvId(conversationId: number): Promise<Cha
 	return messages;
 }
 
-export async function loadLetterMessages(userId: string, mystery: string): Promise<ChatMessage[] | null> {
+export async function loadLetterMessages(userId: string, mystery: string): Promise<ChatMessage[] | PostgrestError> {
 	const conversationId = await getOrCreateConversationId(userId, mystery);
 	if (isPostgresError(conversationId)) {
-		console.error(conversationId);
-		return null;
+		return conversationId;
 	}
 	return await loadLetterMessagesFromConvId(conversationId);
 }

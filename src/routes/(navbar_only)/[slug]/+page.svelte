@@ -44,4 +44,5 @@
 	messagesAmount={userMessages}
 	{suspectToAccuse}
 	suspects={data.suspects}
+	chatUnbalanced={data.messages.length % 2 !== 1}
 />

@@ -1,11 +1,11 @@
 import { supabase_full_access } from './supabase_full_access.server';
 
-export interface suspects {
+export interface suspect {
 	name: string;
 	imagepath: string;
 	description: string;
 }
-export async function loadSuspects(mysterName: string): Promise<suspects[] | null> {
+export async function loadSuspects(mysterName: string): Promise<suspect[] | null> {
 	const { data, error } = await supabase_full_access
 		.from('mysteries')
 		.select('suspects, murderer')

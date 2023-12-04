@@ -1,46 +1,50 @@
-import { addInfoModelMessage, addMessageForUser, getBrainMessages, loadLetterMessages } from '$lib/supabase/conversations.server';
+import { addInfoModelMessage, addMessageForUser, loadBrainMessages, loadLetterMessages } from '$lib/supabase/conversations.server';
 import { error } from '@sveltejs/kit';
-import { brainModelRequest, letterModelRequest, type brainModelRequestParams } from './llangchain_ask';
+import { brainModelRequest, letterModelRequest, type brainModelRequestParams, type BrainOutput } from './llangchain_ask';
 import { throwIfFalse } from '$misc/error';
-import { HumanMessage, type BaseMessage, AIMessage } from 'langchain/schema';
-import { isPostgresError } from '$lib/supabase/helpers';
+import { HumanMessage, type BaseMessage, AIMessage, ChatMessage } from 'langchain/schema';
+import type { ChatMessage as ChatMessageType } from '$misc/shared';
 
 export async function standardInvestigationAnswer(
 	brainParams: brainModelRequestParams,
 	mysteryName: string,
 	userId: string,
-	letter_info: string
+	letter_info: string,
+	letterMessages: ChatMessageType[],
+	brainMessages: BrainOutput[],
+	genNum: number
 ) {
-	const brainMessages = await getBrainMessages(userId, mysteryName);
-	if (isPostgresError(brainMessages)) {
-		throw error(500, brainMessages.message);
-	}
-	const letterMessages = await loadLetterMessages(userId, mysteryName);
-	if (!letterMessages) {
-		throw error(500, 'Could not load letter messages');
-	}
-
-	const brainConversation: BaseMessage[] = [];
-	brainMessages.forEach((item, index) => {
-		brainConversation.push(
-			new HumanMessage({
-				content: letterMessages[index * 2].content
-			})
-		);
-		brainConversation.push(
-			new AIMessage({
-				content: `${item.chainOfThought}
+	let brainResponse: BrainOutput | undefined = undefined;
+	if (genNum >= 0) {
+		const brainConversation: BaseMessage[] = [];
+		brainMessages.forEach((item, index) => {
+			brainConversation.push(
+				new HumanMessage({
+					content: letterMessages[index * 2].content
+				})
+			);
+			brainConversation.push(
+				new AIMessage({
+					content: `${item.chainOfThought}
 Information:
 ${item.info}
 - mood: ${item.mood}`
-			})
-		);
-	});
+				})
+			);
+		});
 
-	const brainResponse = await brainModelRequest(brainParams, brainConversation);
+		brainResponse = await brainModelRequest(brainParams, brainConversation, brainMessages);
 
-	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
-	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
+		const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
+		throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
+	}
+
+	if (!brainResponse) {
+		brainResponse = brainMessages.pop();
+	}
+	if (!brainResponse) {
+		throw error(500, 'brainResponse is empty');
+	}
 
 	const assistantLetterAnswers = letterMessages.filter((m) => m.role === 'assistant');
 
