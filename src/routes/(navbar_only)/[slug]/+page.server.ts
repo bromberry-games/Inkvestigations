@@ -4,6 +4,7 @@ import type { Session } from '@supabase/supabase-js';
 import { loadMysteryLetterInfo, loadSuspects } from '$lib/supabase/mystery_data.server';
 import { loadLetterMessages } from '$lib/supabase/conversations.server';
 import { shuffleArray } from '$lib/generic-helpers';
+import { isPostgresError } from '$lib/supabase/helpers';
 
 function createLetter(letterInfo: string) {
 	return {
@@ -31,7 +32,6 @@ function createLetter(letterInfo: string) {
 			William Wellington,
 
 			Police chief of Zlockinbury
-		
 		`
 	};
 }
@@ -49,17 +49,14 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		loadLetterMessages(session.user.id, mysteryName),
 		loadSuspects(mysteryName)
 	]);
-	//const letterInfo = await loadMysteryLetterInfo(session.user.id, mysteryName);
 	if (!letterInfo) {
 		throw error(500, 'could not load letter info from data');
 	}
-	//const messages = await loadDisplayMessages(session.user.id, mysteryName);
-	if (!messages) {
-		throw error(500, 'could not load chat from data');
+	if (isPostgresError(messages)) {
+		throw error(500, messages);
 	}
-	//const suspects = await loadSuspects(mysteryName);
 	if (!suspects) {
 		throw error(500, 'could not load suspects chat from data');
 	}
-	return { messages: [createLetter(letterInfo), ...messages], suspects: shuffleArray(suspects) };
+	return { slug, messages: [createLetter(letterInfo), ...messages], suspects: shuffleArray(suspects) };
 };

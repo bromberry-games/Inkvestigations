@@ -102,7 +102,7 @@ export interface BrainOutput {
 	mood: string;
 }
 
-const INFO_REGEX = /([\s\S]*)Information:\s?([\s\S]*)mood:\s?(\w+)/;
+const INFO_REGEX = /([\s\S]*)Information:\s?([\s\S]*)(?:\s-)*\smood:\s?(\w+)/;
 
 class BrainParser extends BaseOutputParser<BrainOutput> {
 	async parse(text: string): Promise<BrainOutput> {
@@ -128,21 +128,37 @@ export interface brainModelRequestParams {
 	actionClues: { action: string; clue: string }[];
 }
 
-export async function brainModelRequest(brainParams: brainModelRequestParams, previousConversation: BaseMessage[]): Promise<BrainOutput> {
+export async function brainModelRequest(
+	brainParams: brainModelRequestParams,
+	previousConversation: BaseMessage[],
+	brainMessages: BrainOutput[]
+): Promise<BrainOutput> {
 	const timeframe = brainParams.timeframe.reduce((acc, curr) => {
 		return acc + curr.timeframe + ': ' + curr.event_happened + '\n';
 	}, '');
 	const actionClues = brainParams.actionClues.reduce((acc, curr) => {
 		return acc + curr.action + '--' + curr.clue + '\n';
 	}, '');
-	const prompt = createBrainPrompt(previousConversation);
+
+	let conversation = previousConversation;
+	let oldInfo = '';
+	if (conversation.length > 7) {
+		conversation = conversation.slice(-6);
+		oldInfo = brainMessages.slice(0, -3).reduce((acc, curr) => {
+			return acc + curr.info.trim() + '\n';
+		}, '');
+	}
+	console.log(conversation);
+	console.log(oldInfo);
+
+	const prompt = createBrainPrompt(conversation);
 	const parser = new BrainParser();
 
 	const llm = new ChatOpenAI({
 		temperature: 0.8,
 		openAIApiKey: OPEN_AI_KEY,
 		modelName: OpenAiModel.Gpt35Turbo1106,
-		maxTokens: 200
+		maxTokens: 350
 	});
 
 	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
@@ -154,7 +170,8 @@ export async function brainModelRequest(brainParams: brainModelRequestParams, pr
 		actionClues,
 		victimName: brainParams.victim.name,
 		victimDescription: brainParams.victim.description,
-		suspects: brainParams.suspects
+		suspects: brainParams.suspects,
+		oldInfo
 	});
 	return res.text;
 }
