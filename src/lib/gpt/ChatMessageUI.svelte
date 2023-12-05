@@ -1,17 +1,13 @@
 <script lang="ts">
 	import type { ChatMessage } from '$misc/shared';
 	import snarkdown from 'snarkdown';
-	import { chatStore } from '$misc/stores';
 
 	export let slug: string;
 	export let message: ChatMessage;
 </script>
 
-	
 <div
-	class="grid px-5 w-full py-2 {message.role === 'assistant'
-		? 'md:place-self-start'
-		: 'md:place-self-end bg-secondary border-secondary'}"
+	class="grid w-full px-5 py-2 {message.role === 'assistant' ? 'md:place-self-start' : 'border-secondary bg-secondary md:place-self-end'}"
 	class:variant-ghost-surface={message.role === 'user'}
 	class:variant-ghost-secondary={message.role === 'assistant'}
 	class:variant-ghost-warning={message.isAborted}
@@ -19,20 +15,13 @@
 	class:rounded-tr-none={message.role === 'user'}
 >
 	<!-- Header -->
-	<div class="flex justify-between space-x-12 mb-1 items-center">
+	<div class="mb-1 flex items-center justify-between space-x-12">
 		<!-- Author -->
 		<span class="font-bold">{message.role === 'user' ? 'You' : 'Police chief'}:</span>
-
-		<div class="flex space-x-4">
-			{#if $chatStore[slug] && message.id}
-				<div class="flex space-x-0">
-				</div>
-			{/if}
-		</div>
 	</div>
 
 	<!-- Message Content -->
 	<div class="font-secondary text-lg">
-		{@html snarkdown(message.content.replace(/\n/g, "<br>"))}
+		{@html snarkdown(message.content.replace(/\n/g, '<br>'))}
 	</div>
 </div>

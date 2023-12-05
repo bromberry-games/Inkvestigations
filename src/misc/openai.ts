@@ -1,7 +1,4 @@
-import type { ChatCompletionRequestMessage } from 'openai';
-import type { Chat, ChatCost } from './shared';
 import GPT3Tokenizer from 'gpt3-tokenizer';
-import { ChatStorekeeper } from './chatStorekeeper';
 
 // Initialization is slow, so only do it once.
 // TypeScript misinterprets the export default class GPT3Tokenizer from gpt3-tokenizer
@@ -66,48 +63,4 @@ export function countTokens(message: string): number {
 		tokenizer = new GPT3Tokenizer({ type: 'gpt3' });
 	}
 	return tokenizer.encode(message).text.length;
-
-	//let num_tokens = 4; // every message follows <im_start>{role/name}\n{content}<im_end>\n
-	//for (const [key, value] of Object.entries(message)) {
-	//	if (key !== 'name' && key !== 'role' && key !== 'content') {
-	//		continue;
-	//	}
-	//	const encoded: { bpe: number[]; text: string[] } = tokenizer.encode(value);
-	//	num_tokens += encoded.text.length;
-	//	if (key === 'name') {
-	//		num_tokens--; // if there's a name, the role is omitted
-	//	}
-	//}
-}
-
-export function estimateChatCost(chat: Chat): ChatCost {
-	let tokensPrompt = 0;
-	let tokensCompletion = 0;
-
-	const messages = ChatStorekeeper.getCurrentMessageBranch(chat);
-
-	for (const message of messages) {
-		if (message.role === 'assistant') {
-			tokensCompletion += countTokens(message);
-		} else {
-			// context counts as prompt (I think...)
-			tokensPrompt += countTokens(message);
-		}
-	}
-
-	// see https://platform.openai.com/docs/guides/chat/introduction > Deep Dive Expander
-	const tokensTotal = tokensPrompt + tokensCompletion + 2; // every reply is primed with <im_start>assistant
-	const { maxTokens, costPrompt: costPromptPer1k, costCompletion: costCompletionPer1k } = models['gpt-3.5-turbo'];
-	const costPrompt = (costPromptPer1k / 1000.0) * tokensPrompt;
-	const costCompletion = (costCompletionPer1k / 1000.0) * tokensCompletion;
-
-	return {
-		tokensPrompt,
-		tokensCompletion,
-		tokensTotal: tokensTotal,
-		costPrompt,
-		costCompletion,
-		costTotal: costPrompt + costCompletion,
-		maxTokensForModel: maxTokens
-	};
 }
