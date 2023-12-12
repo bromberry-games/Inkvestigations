@@ -112,7 +112,6 @@
 		$isLoadingAnswerStore = false;
 		$eventSourceStore.reset();
 		resetLiveAnswer();
-		lastUserMessage = null;
 		dispatch('messageReceived', messageToAdd);
 	}
 
