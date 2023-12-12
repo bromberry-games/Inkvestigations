@@ -2,10 +2,9 @@ import type { CallbackManager } from 'langchain/callbacks';
 import { FakeListLLM } from 'langchain/llms/fake';
 import { FakeListChatModel } from 'langchain/chat_models/fake';
 
-export function createFakeLetterLLM(callbacks): FakeListLLM {
+export function createFakeLetterLLM(): FakeListChatModel {
 	return new FakeListChatModel({
-		responses: ['Fake 1.', 'Fake 2.', 'Fake 3.', 'Fake 4.', 'Fake 5.'],
-		callbacks
+		responses: ['Fake 1.', 'Fake 2.', 'Fake 3.', 'Fake 4.', 'Fake 5.']
 	});
 }
 
