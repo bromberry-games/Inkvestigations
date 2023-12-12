@@ -89,6 +89,7 @@ VALUES
 );
 
 DELETE FROM auth.users;
+alter table auth.identities alter column provider_id drop not null;
 
 DO $$
 DECLARE
