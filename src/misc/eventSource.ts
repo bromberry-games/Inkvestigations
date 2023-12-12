@@ -32,6 +32,8 @@ export class EventSource {
 			this.eventSource.addEventListener('abort', this.handleAbort);
 		}
 
+		console.log('event source:');
+		console.log(this.eventSource);
 		this.eventSource.stream();
 	}
 

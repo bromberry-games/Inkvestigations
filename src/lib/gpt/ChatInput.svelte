@@ -63,12 +63,11 @@
 	}
 
 	function handleAnswer(event: MessageEvent<any>) {
-		console.log('event', event);
 		try {
 			// streaming...
-			console.log(event);
 			if (event.data !== '[DONE]') {
 				const delta = JSON.parse(event.data);
+				console.log('event data: ');
 				console.log(delta);
 				liveAnswerStore.update((store) => {
 					const answer = { ...store };
@@ -96,6 +95,7 @@
 
 		// always true, check just for TypeScript
 
+		console.error('could not parse stream');
 		console.error(event);
 		console.error(event.data);
 

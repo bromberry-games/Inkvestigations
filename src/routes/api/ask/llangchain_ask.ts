@@ -39,6 +39,7 @@ export async function letterModelRequest({
 	onResponseGenerated
 }: LetterModelRequestParams) {
 	const encoder = new TextEncoder();
+	console.warn('started letter request');
 	// const stream = new TransformStream();
 	// const writer = stream.writable.getWriter();
 	//Shorten length for context length
@@ -54,7 +55,7 @@ export async function letterModelRequest({
 		contentType: 'text/event-stream'
 	});
 	const chain = prompt.pipe(llm).pipe(parser);
-	// const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
+	// const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: false });
 	// chain
 	// .call({
 	// information: gameInfo,
@@ -66,6 +67,7 @@ export async function letterModelRequest({
 	// victimDescription: victim.description
 	// })
 	// .catch((e) => console.error(e));
+	const transFormStream = new TransformStream();
 
 	const stream = await chain.stream({
 		information: gameInfo,
@@ -76,18 +78,17 @@ export async function letterModelRequest({
 		victimName: victim.name,
 		victimDescription: victim.description
 	});
+
 	// .catch((e) => {
 	// console.error(e);
 	// });
 	// for await (const chunk of stream) {
 	// console.log(chunk);
 	// }
-
-	console.log('returned stream');
 	console.log(stream);
 
 	return new Response(stream, {
-		headers: { 'Content-Type': 'text/event-stream' }
+		headers: { 'Content-Type': 'text/event-stream', Connection: 'keep-alive' }
 	});
 }
 
@@ -202,7 +203,7 @@ export async function brainModelRequest(
 					maxTokens: 350
 			  });
 
-	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
+	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: false });
 	const res = await chain.call({
 		theme: brainParams.theme,
 		setting: brainParams.setting,

@@ -101,7 +101,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 			description: gameInfo.victim_description
 		};
 
-		return suspectToAccuse
+		const response = suspectToAccuse
 			? await accuseModelAnswer({
 					mysteryName: game_config.mysteryName,
 					accuseBrainRequestParams: {
@@ -136,6 +136,8 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 					brainMessages,
 					genNum
 			  );
+		console.log(response.body);
+		return response;
 	} catch (err) {
 		throw error(500, getErrorMessage(err));
 	}
