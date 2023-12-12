@@ -4,7 +4,6 @@
 	import ChatInput from '$lib/gpt/ChatInput.svelte';
 	import Chat from '$lib/gpt/Chat.svelte';
 	import type { ChatMessage } from '$misc/shared';
-	import Timer from './timer.svelte';
 
 	export let data: PageData;
 	let suspectToAccuse = '';
@@ -45,5 +44,5 @@
 	messagesAmount={userMessages}
 	{suspectToAccuse}
 	suspects={data.suspects}
-	chatUnbalanced={data.messages.length % 2 !== 1}
+	chatUnbalanced={messages.length % 2 !== 1}
 />
