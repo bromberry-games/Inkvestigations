@@ -11,7 +11,7 @@ export async function loginOnPage(page: Page, isMobile: boolean, email: string, 
 }
 
 export async function signUpAndConfirmUser(email: string, password: string) {
-	const { error } = await supabase_full_access.auth.admin.createUser({
+	const { data, error } = await supabase_full_access.auth.admin.createUser({
 		email: email,
 		password: password,
 		email_confirm: true
@@ -19,6 +19,7 @@ export async function signUpAndConfirmUser(email: string, password: string) {
 	if (error) {
 		throw error;
 	}
+	return data.user.id;
 }
 
 export async function navToLogin(page: Page, isMobile: boolean) {
@@ -41,18 +42,21 @@ export function generateRandomUserMail() {
 	return `${Math.floor(Math.random() * 1000000) + 1}@bromberry.xyz`;
 }
 
-export async function createNewUserAndLogin(page: Page, isMobile: boolean) {
+export async function createRandomUser() {
 	const email = generateRandomUserMail();
 	const password = 'password-new-user';
-	await signUpAndConfirmUser(email, password);
+	const userId = await signUpAndConfirmUser(email, password);
+	return { email, password, userId };
+}
+
+export async function createNewUserAndLogin(page: Page, isMobile: boolean) {
+	const { email, password } = await createRandomUser();
 	await loginOnPage(page, isMobile, email, password);
 	return { mail: email, password };
 }
 
 export async function createNeUserAndLoginViaUrl(page: Page, url: string) {
-	const email = generateRandomUserMail();
-	const password = 'password-new-user';
-	await signUpAndConfirmUser(email, password);
+	const { email, password } = await createRandomUser();
 	await page.goto(url + '/login');
 	await fillOutLoginOrSignupForm(page, email, password);
 	await page.getByRole('button', { name: 'Sign in', exact: true }).click();

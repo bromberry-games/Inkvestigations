@@ -68,7 +68,7 @@
     "flowbite-svelte": "^0.37.4",
     "gpt3-tokenizer": "^1.1.5",
     "highlight.js": "^11.8.0",
-    "langchain": "^0.0.176",
+    "langchain": "^0.0.203",
     "lucide-svelte": "^0.241.0",
     "openai": "^3.3.0",
     "random-word-slugs": "^0.1.7",
