@@ -1,10 +1,20 @@
-import type { CallbackManager } from 'langchain/callbacks';
 import { FakeListLLM } from 'langchain/llms/fake';
 import { FakeListChatModel } from 'langchain/chat_models/fake';
+import type { LLMResult } from 'langchain/schema';
 
-export function createFakeLetterLLM(): FakeListChatModel {
+export function createFakeLetterLLM(onResponseGenerated: (input: string) => Promise<any>): FakeListChatModel {
+	const callbacks = [
+		{
+			handleLLMEnd: async (output: LLMResult) => {
+				console.log('from fake: ');
+				console.log(output);
+				await onResponseGenerated(output.generations[0][0].text);
+			}
+		}
+	];
 	return new FakeListChatModel({
-		responses: ['Fake 1.', 'Fake 2.', 'Fake 3.', 'Fake 4.', 'Fake 5.']
+		responses: ['Fake 1.', 'Fake 2.', 'Fake 3.', 'Fake 4.', 'Fake 5.'],
+		callbacks
 	});
 }
 

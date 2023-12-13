@@ -59,26 +59,25 @@
 			message: messageToSubmit
 		};
 
-		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort);
+		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort, handleEnd);
+	}
+
+	function handleEnd(event: MessageEvent<any>) {
+		addCompletionToChat();
 	}
 
 	function handleAnswer(event: MessageEvent<any>) {
+		console.log('event: ');
+		console.log(event);
 		try {
-			// streaming...
-			if (event.data !== '[DONE]') {
-				const delta = JSON.parse(event.data);
-				console.log('event data: ');
-				console.log(delta);
-				liveAnswerStore.update((store) => {
-					const answer = { ...store };
-					answer.content += delta;
-					return answer;
-				});
-			}
-			// streaming completed
-			else {
-				addCompletionToChat();
-			}
+			const delta = JSON.parse(event.data);
+			console.log('event data: ');
+			console.log(delta);
+			liveAnswerStore.update((store) => {
+				const answer = { ...store };
+				answer.content += delta;
+				return answer;
+			});
 		} catch (err) {
 			handleError(err);
 		}

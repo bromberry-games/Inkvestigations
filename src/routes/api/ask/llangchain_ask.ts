@@ -5,14 +5,13 @@ import { OPEN_AI_KEY } from '$env/static/private';
 import { BaseOutputParser } from 'langchain/schema/output_parser';
 import { error } from '@sveltejs/kit';
 import { OpenAiModel } from '$misc/openai';
-import { createFakeBrainLLM, createFakeLLM, createFakeLetterLLM } from './fakes/fake_llm';
+import { createFakeBrainLLM, createFakeLetterLLM } from './fakes/fake_llm';
 import { createBrainPrompt } from './prompt_templates/brain';
 import { createLetterPrompt } from './prompt_templates/letter';
 import { createAccusePrompt } from './prompt_templates/accusation_brain';
 import { createAccuseLetterPrompt } from './prompt_templates/accusation_letter';
 import { USE_FAKE_LLM } from '$env/static/private';
 import { HttpResponseOutputParser } from 'langchain/output_parsers';
-import { handle } from '../../../hooks.server';
 
 interface LetterModelRequestParams {
 	gameInfo: string;
@@ -38,89 +37,38 @@ export async function letterModelRequest({
 	victim,
 	onResponseGenerated
 }: LetterModelRequestParams) {
-	const encoder = new TextEncoder();
-	console.warn('started letter request');
-	// const stream = new TransformStream();
-	// const writer = stream.writable.getWriter();
 	//Shorten length for context length
 	if (previousConversation.length > 5) {
 		previousConversation = previousConversation.slice(-4);
 	}
-
 	const prompt = createLetterPrompt(previousConversation);
-	// const llm = createLetterModel(writer, encoder, onResponseGenerated);
-	// const llm = createLetterModel(undefined, encoder, onResponseGenerated);
-	const llm = createFakeLetterLLM();
+	// const llm = createFakeLetterLLM(onResponseGenerated);
+	const llm = createLetterModel(onResponseGenerated);
 	const parser = new HttpResponseOutputParser({
 		contentType: 'text/event-stream'
 	});
 	const chain = prompt.pipe(llm).pipe(parser);
-	// const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: false });
-	// chain
-	// .call({
-	// information: gameInfo,
-	// suspects,
-	// question,
-	// mood: brainAnswer.mood,
-	// brainInfo: brainAnswer.info,
-	// victimName: victim.name,
-	// victimDescription: victim.description
-	// })
-	// .catch((e) => console.error(e));
-	const transFormStream = new TransformStream();
 
-	const stream = await chain.stream({
-		information: gameInfo,
-		suspects,
-		question,
-		mood: brainAnswer.mood,
-		brainInfo: brainAnswer.info,
-		victimName: victim.name,
-		victimDescription: victim.description
-	});
-
-	// .catch((e) => {
-	// console.error(e);
-	// });
-	// for await (const chunk of stream) {
-	// console.log(chunk);
-	// }
-	console.log(stream);
+	const stream = await chain
+		.stream({
+			information: gameInfo,
+			suspects,
+			question,
+			mood: brainAnswer.mood,
+			brainInfo: brainAnswer.info,
+			victimName: victim.name,
+			victimDescription: victim.description
+		})
+		.catch((e) => {
+			console.error(e);
+		});
 
 	return new Response(stream, {
-		headers: { 'Content-Type': 'text/event-stream', Connection: 'keep-alive' }
+		headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' }
 	});
 }
 
-function createLetterModel(
-	writer: WritableStreamDefaultWriter<any>,
-	encoder: TextEncoder,
-	onResponseGenerated: (input: string) => Promise<any>
-) {
-	// const callbacks = [
-	// {
-	// handleLLMNewToken: async (token: string) => {
-	// await writer.ready;
-	// Don't know why but I have to stringify token to preserve spacing. Might be related to sse.js but won't investigate
-	// await writer.write(encoder.encode(`data: ${JSON.stringify(token)}\n\n`));
-	// },
-	// handleLLMEnd: async (output: LLMResult) => {
-	// await writer.ready;
-	// await writer.write(encoder.encode(`data: [DONE]\n\n`));
-	// await onResponseGenerated(output.generations[0][0].text);
-	// await writer.ready;
-	// await writer.close();
-	// console.log('gen info');
-	// console.log(output.generations[0][0].generationInfo);
-	// },
-	// handleLLMError: async (e) => {
-	// await writer.ready;
-	// await writer.abort(e);
-	// }
-	// }
-	// ];
-	// return USE_FAKE_LLM == 'true'
-	// ? createFakeLetterLLM(callbacks)
+function createLetterModel(onResponseGenerated: (input: string) => Promise<any>) {
 	const callbacks = [
 		{
 			handleLLMEnd: async (output: LLMResult) => {
@@ -129,11 +77,10 @@ function createLetterModel(
 		}
 	];
 	return new ChatOpenAI({
-		streaming: true,
 		modelName: OpenAiModel.Gpt35Turbo1106,
 		openAIApiKey: OPEN_AI_KEY,
-		maxTokens: 500
-		// callbacks
+		maxTokens: 500,
+		callbacks
 	});
 }
 
@@ -304,15 +251,15 @@ export async function accuseLetterModelRequest({
 	accusedSuspect,
 	onResponseGenerated
 }: AccuseLetterModelRequestParams) {
-	const encoder = new TextEncoder();
-	const stream = new TransformStream();
-	const writer = stream.writable.getWriter();
-
 	const prompt = createAccuseLetterPrompt();
-	const llm = createLetterModel(writer, encoder, onResponseGenerated);
-	const chain = new LLMChain({ prompt, llm, verbose: true });
-	chain
-		.call({
+	const llm = createLetterModel(onResponseGenerated);
+	const parser = new HttpResponseOutputParser({
+		contentType: 'text/event-stream'
+	});
+	const stream = await prompt
+		.pipe(llm)
+		.pipe(parser)
+		.stream({
 			information: accuseLetterInfo,
 			suspects,
 			accusation,
@@ -322,8 +269,11 @@ export async function accuseLetterModelRequest({
 			suspect: accusedSuspect
 		})
 		.catch((e) => console.error(e));
+	if (!stream) {
+		throw error(500, 'Could not stream response');
+	}
 
-	return new Response(stream.readable, {
+	return new Response(stream, {
 		headers: { 'Content-Type': 'text/event-stream' }
 	});
 }
