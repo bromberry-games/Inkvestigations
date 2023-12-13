@@ -5,12 +5,14 @@ export class EventSource {
 	private handleAnswer?: (event: MessageEvent<any>) => void;
 	private handleError?: (event: MessageEvent<any>) => void;
 	private handleAbort?: (event: MessageEvent<any>) => void;
+	private handleEnd?: (event: MessageEvent<any>) => void;
 
 	start(
 		payload: any,
 		handleAnswer: (event: MessageEvent<any>) => void,
 		handleError: (event: MessageEvent<any>) => void,
-		handleAbort: (event: MessageEvent<any>) => void
+		handleAbort: (event: MessageEvent<any>) => void,
+		handleEnd: (event: MessageEvent<any>) => void
 	) {
 		this.eventSource = new SSE('/api/ask', {
 			headers: {
@@ -21,9 +23,10 @@ export class EventSource {
 		this.handleAnswer = handleAnswer;
 		this.handleError = handleError;
 		this.handleAbort = handleAbort;
+		this.handleEnd = handleEnd;
 
 		if (this.handleAnswer) {
-			this.eventSource.addEventListener('message', this.handleAnswer);
+			this.eventSource.addEventListener('data', this.handleAnswer);
 		}
 		if (this.handleError) {
 			this.eventSource.addEventListener('error', this.handleError);
@@ -31,7 +34,12 @@ export class EventSource {
 		if (this.handleAbort) {
 			this.eventSource.addEventListener('abort', this.handleAbort);
 		}
+		if (this.handleEnd) {
+			this.eventSource.addEventListener('end', this.handleEnd);
+		}
 
+		console.log('event source:');
+		console.log(this.eventSource);
 		this.eventSource.stream();
 	}
 

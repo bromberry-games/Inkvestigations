@@ -40,6 +40,7 @@ async function accuseModelAnswer({ mysteryName, userId, accuseBrainRequestParams
 		accuseLetterInfo: accuseLetterInfo,
 		suspects: accuseBrainRequestParams.suspects,
 		victim: accuseBrainRequestParams.victim,
+		accusedSuspect: accuseBrainRequestParams.accusedSuspect,
 		onResponseGenerated: addResult
 	});
 }

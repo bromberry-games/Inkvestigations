@@ -80,6 +80,7 @@ const dev_config: PlaywrightTestConfig = {
 		baseURL: 'https://dev.mystery-svelte.pages.dev',
 		trace: 'on-first-retry'
 	},
+	timeout: 45000,
 
 	projects: [{ name: 'setup_cloudflare_access', testMatch: /.*auth\.setup\.ts/ }, ...loginDev]
 };
