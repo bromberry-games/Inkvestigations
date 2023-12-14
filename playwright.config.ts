@@ -77,7 +77,7 @@ const dev_config: PlaywrightTestConfig = {
 	...commonConfig,
 
 	use: {
-		baseURL: 'https://dev.mystery-svelte.pages.dev',
+		baseURL: 'https://dev.inkvestigations.pages.dev',
 		trace: 'on-first-retry'
 	},
 	timeout: 45000,
