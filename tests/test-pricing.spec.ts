@@ -22,7 +22,6 @@ test('test buying, chaning plan and cacelling', async ({ page, isMobile }) => {
 		await page.getByRole('button', { name: 'bars 3' }).click();
 	}
 	await page.getByRole('link', { name: 'PRICING' }).click();
-
 	await expect(page.getByRole('button', { name: 'CANCEL PLAN' })).toBeVisible();
 
 	await page.getByRole('button', { name: 'CHANGE PLAN' }).nth(0).click();

@@ -81,7 +81,7 @@ const accusePromptMessages: BaseMessage[] = [
 	})
 ];
 
-const userTemplate = `Accusation: {accusation}. 
+const userTemplate = `Accusation: It was {suspect}. {accusation}. 
 
     Epliogue: {epilogue}`;
 
