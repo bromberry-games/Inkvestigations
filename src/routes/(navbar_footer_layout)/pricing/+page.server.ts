@@ -24,7 +24,7 @@ export const load = async ({ locals: { getSession } }) => {
 			if (getAuthStatus(session) == AuthStatus.LoggedIn) {
 				const subData = await loadActiveAndUncancelledSubscription(session.user.id);
 				if (!subData) {
-					throw error(500, 'could not load sub');
+					error(500, 'could not load sub');
 				}
 				return subData.id;
 			} else {
@@ -33,7 +33,7 @@ export const load = async ({ locals: { getSession } }) => {
 		})()
 	]);
 	if (!subs) {
-		throw error(500, 'could not load subs');
+		error(500, 'could not load subs');
 	}
 
 	const prices = newprices.data
@@ -83,23 +83,23 @@ export const actions = {
 		});
 
 		if (session.url) {
-			throw redirect(303, session.url);
+			redirect(303, session.url);
 		}
-		throw error(420, 'Enhance your calm');
+		error(420, 'Enhance your calm');
 	},
 	cancel: async ({ url, locals: { getSession } }) => {
 		const session = await getSession();
 		if (getAuthStatus(session) != AuthStatus.LoggedIn) {
-			throw error(401, 'Not logged in');
+			error(401, 'Not logged in');
 		}
 		const customerId = await getStripeCustomer(session.user.id);
 		if (!customerId) {
-			throw error(500, 'Could not get customer id');
+			error(500, 'Could not get customer id');
 		}
 		const stripeSessions = await stripe.billingPortal.sessions.create({
 			customer: customerId,
 			return_url: `${url.origin}/pricing`
 		});
-		throw redirect(303, stripeSessions.url);
+		redirect(303, stripeSessions.url);
 	}
 };

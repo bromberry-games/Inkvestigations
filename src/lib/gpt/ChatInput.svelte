@@ -4,7 +4,7 @@
 	import { PaperAirplane } from '@inqling/svelte-icons/heroicon-24-solid';
 	import type { ChatMessage } from '$misc/shared';
 	import { eventSourceStore, isLoadingAnswerStore, liveAnswerStore, enhancedLiveAnswerStore } from '$misc/stores';
-	import { countTokens } from '$misc/openai';
+	import { approximateTokenCount } from '$misc/openai';
 	import { Toast, Button } from 'flowbite-svelte';
 	import SuspectModal from './SuspectModal.svelte';
 	import { MAX_TOKENS } from '../../constants';
@@ -40,7 +40,7 @@
 	}
 
 	function submitMessage(messageToSubmit: string) {
-		messageTokens = countTokens(messageToSubmit);
+		messageTokens = approximateTokenCount(messageToSubmit);
 		if (messageTokens > MAX_TOKENS || messageToSubmit.length === 0) return;
 
 		if (suspectToAccuse) {
@@ -67,12 +67,8 @@
 	}
 
 	function handleAnswer(event: MessageEvent<any>) {
-		console.log('event: ');
-		console.log(event);
 		try {
 			const delta = JSON.parse(event.data);
-			console.log('event data: ');
-			console.log(delta);
 			liveAnswerStore.update((store) => {
 				const answer = { ...store };
 				answer.content += delta;
@@ -139,7 +135,7 @@
 	}
 
 	function calculateMessageTokens() {
-		messageTokens = countTokens(message);
+		messageTokens = approximateTokenCount(message);
 		clearTimeout(debounceTimer);
 		debounceTimer = undefined;
 	}

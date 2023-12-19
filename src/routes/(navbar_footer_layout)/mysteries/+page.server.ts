@@ -23,15 +23,15 @@ export const actions = {
 	deleteChat: async ({ request, locals: { getSession } }) => {
 		const session: Session = await getSession();
 		if (!session) {
-			throw redirect(303, '/');
+			redirect(303, '/');
 		}
 		const formData = await request.formData();
 		const slug = formData.get('slug')?.toString();
 		if (!slug) {
-			throw error(500, 'Could not find mystery name');
+			error(500, 'Could not find mystery name');
 		}
 		const convoArchived = await archiveLastConversation(session.user.id, slug);
 		throwIfFalse(convoArchived, 'Could not archive conversation');
-		throw redirect(302, '/' + slug.replace(/ /g, '_'));
+		redirect(302, '/' + slug.replace(/ /g, '_'));
 	}
 };

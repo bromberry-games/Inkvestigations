@@ -7,9 +7,9 @@ export const GET = async ({ url, locals: { supabase } }) => {
 	if (code) {
 		await (supabase as SupabaseClient).auth.exchangeCodeForSession(code);
 		if (next) {
-			throw redirect(303, next);
+			redirect(303, next);
 		}
 	}
 
-	throw redirect(303, '/');
+	redirect(303, '/');
 };

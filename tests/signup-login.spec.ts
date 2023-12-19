@@ -70,6 +70,7 @@ test('test try for free', async ({ page, isMobile }) => {
 	await page.locator('button[type="submit"]').click();
 	const message = page.getByText('Police chief:').nth(1);
 	await message.waitFor({ timeout: 45000 });
+	await page.waitForLoadState('networkidle');
 	await navToLogin(page, isMobile);
 	await page.waitForTimeout(200);
 	await fillOutSingupFormConfirmMailLogin(page, isMobile);
@@ -84,8 +85,8 @@ test('test try for free when limit is full should redirect', async ({ page, isMo
 	await page.goto('http://localhost:5173/');
 	await page.getByRole('link', { name: 'TRY FOR FREE' }).click();
 
-	await page.waitForURL('/confirmations/for-free-users-exhausted/');
-	await expect(new URL(page.url()).pathname).toBe('/confirmations/for-free-users-exhausted/');
+	await page.waitForURL('/confirmations/for-free-users-exhausted');
+	await expect(new URL(page.url()).pathname).toBe('/confirmations/for-free-users-exhausted');
 });
 
 test('delete user cant log back in', async ({ page, isMobile }) => {

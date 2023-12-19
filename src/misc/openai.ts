@@ -1,10 +1,10 @@
-import GPT3Tokenizer from 'gpt3-tokenizer';
+// import GPT3Tokenizer from 'gpt3-tokenizer';
 
+// const encoder = encoding_for_model('gpt-3.5-turbo');
 // Initialization is slow, so only do it once.
 // TypeScript misinterprets the export default class GPT3Tokenizer from gpt3-tokenizer
 // and throws "TypeError: GPT3Tokenizer is not a constructor" if we try to call the ctor here.
 // Therefore, we initialize the tokenizer in the first call to countTokens().
-let tokenizer: GPT3Tokenizer;
 
 export enum OpenAiModel {
 	Gpt35Turbo = 'gpt-3.5-turbo',
@@ -36,31 +36,13 @@ export interface OpenAiModelStats {
 	costCompletion: number;
 }
 
-export const models: { [key in OpenAiModel]: OpenAiModelStats } = {
-	'gpt-3.5-turbo': {
-		maxTokens: 4096,
-		costPrompt: 0.002,
-		costCompletion: 0.002
-	},
-	'gpt-4': {
-		maxTokens: 8192,
-		costPrompt: 0.03,
-		costCompletion: 0.06
-	},
-	'gpt-4-32k': {
-		maxTokens: 32768,
-		costPrompt: 0.06,
-		costCompletion: 0.12
-	}
-};
 /**
  * see https://platform.openai.com/docs/guides/chat/introduction > Deep Dive Expander
  * see https://github.com/syonfox/GPT-3-Encoder/issues/2
  */
-export function countTokens(message: string): number {
-	// see comment above
-	if (!tokenizer) {
-		tokenizer = new GPT3Tokenizer({ type: 'gpt3' });
-	}
-	return tokenizer.encode(message).text.length;
+
+const oneOverE = 0.36787;
+// This is probably good enough since a precise count is not needed https://stackoverflow.com/questions/76216113/how-can-i-count-tokens-before-making-api-call
+export function approximateTokenCount(message: string): number {
+	return message.length * oneOverE + 4;
 }

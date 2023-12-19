@@ -10,7 +10,9 @@
 		"sourceMap": true,
 		"strict": true,
 		"target": "ES2022", // or higher
-    	"module": "nodenext"
+    	//"module": "nodenext"
+		"module": "ES2022" // Changed to ES2022
+
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//

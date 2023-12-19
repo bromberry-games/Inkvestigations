@@ -31,7 +31,7 @@ export async function navToLogin(page: Page, isMobile: boolean) {
 }
 
 export async function fillOutLoginOrSignupForm(page: Page, email: string, password: string) {
-	await page.waitForLoadState('networkidle');
+	await page.waitForLoadState('load');
 	await page.waitForTimeout(200);
 	await page.getByPlaceholder('Your email address').fill(email);
 	await page.getByPlaceholder('Your email address').press('Tab');
