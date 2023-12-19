@@ -7,7 +7,6 @@
 	import ChatMessageUI from './ChatMessageUI.svelte';
 	import { Spinner } from 'flowbite-svelte';
 
-	export let slug: string;
 	export let messages: ChatMessage[];
 
 	// Autoscroll: https://svelte.dev/tutorial/update
@@ -37,7 +36,7 @@
 				<!-- Message history -->
 				<!-- Do not display the 1. message-->
 				{#each messages as message}
-					<ChatMessageUI {slug} {message} />
+					<ChatMessageUI {message} />
 				{/each}
 
 				<!-- Live Message -->

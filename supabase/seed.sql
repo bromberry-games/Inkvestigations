@@ -145,3 +145,5 @@ where
     where
       email = 'test-only-user@mail.com'
   );
+
+Insert INTO for_free_users (amount, daily_limit) VALUES (5, 5);
