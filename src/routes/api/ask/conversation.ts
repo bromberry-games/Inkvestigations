@@ -1,8 +1,8 @@
-import { addInfoModelMessage, addMessageForUser, loadBrainMessages, loadLetterMessages } from '$lib/supabase/conversations.server';
+import { addInfoModelMessage, addMessageForUser } from '$lib/supabase/conversations.server';
 import { error } from '@sveltejs/kit';
 import { brainModelRequest, letterModelRequest, type brainModelRequestParams, type BrainOutput } from './llangchain_ask';
 import { throwIfFalse } from '$misc/error';
-import { HumanMessage, type BaseMessage, AIMessage, ChatMessage } from 'langchain/schema';
+import { HumanMessage, type BaseMessage, AIMessage } from 'langchain/schema';
 import type { ChatMessage as ChatMessageType } from '$misc/shared';
 
 export async function standardInvestigationAnswer(
@@ -43,7 +43,7 @@ ${item.info}
 		brainResponse = brainMessages.pop();
 	}
 	if (!brainResponse) {
-		throw error(500, 'brainResponse is empty');
+		error(500, 'brainResponse is empty');
 	}
 
 	const assistantLetterAnswers = letterMessages.filter((m) => m.role === 'assistant');

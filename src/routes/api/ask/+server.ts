@@ -12,7 +12,7 @@ import {
 	setRating
 } from '$lib/supabase/conversations.server';
 import { getMessageAmountForUser, decreaseMessageForUser } from '$lib/supabase/message_amounts.server';
-import { countTokens } from '$misc/openai';
+import { approximateTokenCount } from '$misc/openai';
 import { MAX_TOKENS } from '../../../constants';
 import { shuffleArray } from '$lib/generic-helpers';
 import { standardInvestigationAnswer } from './conversation';
@@ -48,7 +48,7 @@ async function accuseModelAnswer({ mysteryName, userId, accuseBrainRequestParams
 export const POST: RequestHandler = async ({ request, locals: { getSession } }) => {
 	const session: Session = await getSession();
 	if (!session) {
-		throw error(500, 'You are not logged in.');
+		error(500, 'You are not logged in.');
 	}
 	const requestData = await request.json();
 	throwIfUnset('request data', requestData);
@@ -58,8 +58,8 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	throwIfUnset('Mystery name', game_config.mysteryName);
 	let message: string = requestData.message;
 	throwIfUnset('messages', message);
-	if (countTokens(message) > MAX_TOKENS) {
-		throw error(400, 'Message is too long.');
+	if (approximateTokenCount(message) > MAX_TOKENS) {
+		error(400, 'Message is too long.');
 	}
 
 	const [letterMessages, brainMessages, messagesAmount] = await Promise.all([
@@ -72,7 +72,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	const genNum = letterMessages.length - brainMessages.length * 2;
 
 	if (messagesAmount <= 0 && genNum >= 0) {
-		throw error(500, 'You have no messages.');
+		error(500, 'You have no messages.');
 	} else if (messagesAmount > 0 && genNum == 0) {
 		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);
 		throwIfFalse(messageAdded, 'Could not add message to chat');
@@ -85,7 +85,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	try {
 		const gameInfo = await loadGameInfo(game_config.mysteryName);
 		if (!gameInfo) {
-			throw error(500, 'Could not get game info');
+			error(500, 'Could not get game info');
 		}
 
 		const suspectsArray = shuffleArray([
@@ -118,7 +118,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 					},
 					userId: session.user.id,
 					accuseLetterInfo: gameInfo.accuse_letter_prompt
-			  })
+				})
 			: await standardInvestigationAnswer(
 					{
 						suspects: suspectList,
@@ -135,8 +135,8 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 					letterMessages,
 					brainMessages,
 					genNum
-			  );
+				);
 	} catch (err) {
-		throw error(500, getErrorMessage(err));
+		error(500, getErrorMessage(err));
 	}
 };

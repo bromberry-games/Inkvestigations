@@ -7,6 +7,6 @@ export function isPostgresError<T>(error: PostgrestError | T): error is Postgres
 
 export function isTAndThrowPostgresErrorIfNot<T>(value: PostgrestError | T): asserts value is T {
 	if (isPostgresError(value)) {
-		throw error(500, value.message);
+		error(500, value.message);
 	}
 }

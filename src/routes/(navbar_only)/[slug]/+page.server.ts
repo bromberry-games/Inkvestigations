@@ -39,7 +39,7 @@ function createLetter(letterInfo: string) {
 export const load: PageServerLoad = async ({ params, locals: { getSession } }) => {
 	const session: Session = await getSession();
 	if (!session) {
-		throw redirect(303, '/');
+		redirect(303, '/');
 	}
 	const { slug } = params;
 	const mysteryName = slug.replace(/_/g, ' ');
@@ -50,13 +50,13 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		loadSuspects(mysteryName)
 	]);
 	if (!letterInfo) {
-		throw error(500, 'could not load letter info from data');
+		error(500, 'could not load letter info from data');
 	}
 	if (isPostgresError(messages)) {
-		throw error(500, messages);
+		error(500, messages);
 	}
 	if (!suspects) {
-		throw error(500, 'could not load suspects chat from data');
+		error(500, 'could not load suspects chat from data');
 	}
 	return { slug, messages: [createLetter(letterInfo), ...messages], suspects: shuffleArray(suspects) };
 };

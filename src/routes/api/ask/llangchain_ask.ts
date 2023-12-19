@@ -96,7 +96,7 @@ class BrainParser extends BaseOutputParser<BrainOutput> {
 	async parse(text: string): Promise<BrainOutput> {
 		const infoMatch = text.match(INFO_REGEX);
 		if (!infoMatch) {
-			throw error(500, 'Could not parse rating');
+			error(500, 'Could not parse rating');
 		}
 		return {
 			chainOfThought: infoMatch[1],
@@ -176,11 +176,11 @@ class RatingParser extends BaseOutputParser<RatingWithEpilogue> {
 	async parse(text: string): Promise<RatingWithEpilogue> {
 		const ratingMatch = text.match(RATING_REGEX);
 		if (!ratingMatch) {
-			throw error(500, 'Could not parse rating');
+			error(500, 'Could not parse rating');
 		}
 		const epilogueMatch = text.match(EPILOGUE_REGEX);
 		if (!epilogueMatch) {
-			throw error(500, 'Could not parse epilogue');
+			error(500, 'Could not parse epilogue');
 		}
 		return {
 			rating: parseInt(ratingMatch[1]),
@@ -270,7 +270,7 @@ export async function accuseLetterModelRequest({
 		})
 		.catch((e) => console.error(e));
 	if (!stream) {
-		throw error(500, 'Could not stream response');
+		error(500, 'Could not stream response');
 	}
 
 	return new Response(stream, {

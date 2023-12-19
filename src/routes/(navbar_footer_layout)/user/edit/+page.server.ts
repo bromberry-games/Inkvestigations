@@ -13,14 +13,14 @@ const mainSchema = z.object({
 export const load = async ({ locals: { getSession, supabase } }) => {
 	const session: Session = await getSession();
 	if (getAuthStatus(session) != AuthStatus.LoggedIn) {
-		throw redirect(303, '/');
+		redirect(303, '/');
 	}
 	const [form, activeSub] = await Promise.all([
 		superValidate({ email: session.user.email }, mainSchema),
 		loadActiveAndUncancelledSubscription(session.user.id)
 	]);
 	if (!activeSub) {
-		throw error(404, 'Subscription not found');
+		error(404, 'Subscription not found');
 	}
 	return { form, activeSub: activeSub.id != null };
 };
@@ -29,7 +29,7 @@ export const actions = {
 	save: async ({ request, locals: { getSession, supabase } }) => {
 		const [session, form] = await Promise.all([getSession(), superValidate(request, mainSchema)]);
 		if (getAuthStatus(session) != AuthStatus.LoggedIn) {
-			throw redirect(303, '/');
+			redirect(303, '/');
 		}
 		if (!form.valid) {
 			return fail(400, { form });
@@ -46,7 +46,7 @@ export const actions = {
 	delete: async ({ locals: { getSession, supabase } }) => {
 		const session: Session = await getSession();
 		if (getAuthStatus(session) != AuthStatus.LoggedIn) {
-			throw redirect(303, '/');
+			redirect(303, '/');
 		}
 		const { error: signOutError } = await (supabase as SupabaseClient).auth.signOut();
 		if (signOutError) {
@@ -56,6 +56,6 @@ export const actions = {
 		if (error) {
 			throw error;
 		}
-		throw redirect(303, '/confirmations/account-deleted');
+		redirect(303, '/confirmations/account-deleted');
 	}
 };

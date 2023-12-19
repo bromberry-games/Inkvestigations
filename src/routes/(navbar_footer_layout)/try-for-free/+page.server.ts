@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ url, locals: { getSession } }) => {
 	const session = await getSession();
 	const authStatus = getAuthStatus(session);
 	if (authStatus == AuthStatus.LoggedIn) {
-		throw redirect(303, '/mysteries');
+		redirect(303, '/mysteries');
 	} else if (authStatus == AuthStatus.LoggedOut) {
 		const canCreateUser = await checkIfCanCreateTempUser();
 		isTAndThrowPostgresErrorIfNot(canCreateUser);
@@ -17,7 +17,7 @@ export const load: PageServerLoad = async ({ url, locals: { getSession } }) => {
 			isTAndThrowPostgresErrorIfNot(user);
 			return { user };
 		}
-		throw redirect(303, '/confirmations/for-free-users-exhausted');
+		redirect(303, '/confirmations/for-free-users-exhausted');
 	}
 	return { user: null };
 };

@@ -15,6 +15,7 @@
 		});
 	}
 	$: if (getAuthStatus(data.session) == AuthStatus.AnonymousLogin) {
+		console.log('authStatus', getAuthStatus(data.session));
 		goto('/Mirror_Mirror');
 	}
 </script>

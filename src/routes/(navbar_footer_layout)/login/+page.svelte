@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import logo from '/src/images/logo_2.svg?src';
 	import { AuthStatus, getAuthStatus } from '$lib/auth-helper.js';
+	import { onMount } from 'svelte';
 
 	export let data;
 
@@ -28,7 +29,8 @@
 	let borderRadius = radii[0];
 	let view = views[0];
 
-	$: {
+
+	$: if (data.session) {
 		const authStatus = getAuthStatus(data.session);
 		if (authStatus == AuthStatus.LoggedIn) {
 			goto('/');
@@ -36,6 +38,7 @@
 			view = views[1];
 		}
 	}
+
 </script>
 
 <svelte:head>
