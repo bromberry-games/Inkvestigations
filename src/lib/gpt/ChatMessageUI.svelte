@@ -2,7 +2,6 @@
 	import type { ChatMessage } from '$misc/shared';
 	import snarkdown from 'snarkdown';
 
-	export let slug: string;
 	export let message: ChatMessage;
 </script>
 

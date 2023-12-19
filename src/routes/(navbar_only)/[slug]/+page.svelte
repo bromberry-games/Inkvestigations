@@ -36,7 +36,7 @@
 	});
 </script>
 
-<Chat {slug} {messages}></Chat>
+<Chat {messages}></Chat>
 <ChatInput
 	{slug}
 	on:chatInput={addMessage}

@@ -1,3 +1,4 @@
+import type { PostgrestError } from '@supabase/supabase-js';
 import { supabase_full_access } from './supabase_full_access.server';
 
 export async function decreaseMessageForUser(userid: string): Promise<boolean> {
