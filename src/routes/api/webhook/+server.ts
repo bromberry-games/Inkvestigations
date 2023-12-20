@@ -1,9 +1,7 @@
 import Stripe from 'stripe';
 import { STRIPE_TEST_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private';
-import { error } from '@sveltejs/kit';
 import { cancelSubscription, createSubscription, updateSubscription } from '$lib/supabase/subscription.server';
 import { checkIfEventExists, insertEvent, linkCustomerToUser } from '$lib/supabase/prcing.server';
-import { throwIfFalse } from '$misc/error.js';
 
 const stripe = new Stripe(STRIPE_TEST_KEY, {
 	apiVersion: '2022-11-15'

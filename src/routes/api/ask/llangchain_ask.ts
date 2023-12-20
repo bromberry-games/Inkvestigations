@@ -148,7 +148,7 @@ export async function brainModelRequest(
 					openAIApiKey: OPEN_AI_KEY,
 					modelName: OpenAiModel.Gpt35Turbo1106,
 					maxTokens: 350
-			  });
+				});
 
 	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: false });
 	const res = await chain.call({

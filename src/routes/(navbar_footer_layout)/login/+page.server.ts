@@ -6,11 +6,10 @@ export const load: PageServerLoad = async ({ url, locals: { getSession } }) => {
 	const session = await getSession();
 	const loginStatus = getAuthStatus(session);
 
-	console.log('loginStatus', loginStatus);
 	if (loginStatus == AuthStatus.LoggedIn) {
 		redirect(303, '/mysteries');
 	}
 
-	//TODO why do I have to do that? Has sveltekit 2.0 changed the way this works?
+	//TODO why do I have to return session also? Has sveltekit 2.0 changed the way this works? Is there a bug in this code?
 	return { url: url.origin, session };
 };
