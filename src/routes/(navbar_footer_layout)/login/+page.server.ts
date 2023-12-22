@@ -11,5 +11,6 @@ export const load: PageServerLoad = async ({ url, locals: { getSession } }) => {
 	}
 
 	//TODO why do I have to return session also? Has sveltekit 2.0 changed the way this works? Is there a bug in this code?
-	return { url: url.origin, session };
+	// return { url: url.origin, session };
+	return { url: url.origin };
 };

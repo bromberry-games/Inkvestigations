@@ -1,12 +1,15 @@
 <script lang="ts">
-	import { Button, Input, Modal } from 'flowbite-svelte';
-	import { superForm } from 'sveltekit-superforms/client';
+	import { Button, Checkbox, Input, Modal } from 'flowbite-svelte';
+	import { formFieldProxy, superForm } from 'sveltekit-superforms/client';
 	import type { PageData } from './$types';
+	import type { Writable } from 'svelte/store';
 
 	export let data: PageData;
 	const { form, errors, constraints, enhance, message } = superForm(data.form);
 
+
 	let clickOutsideModal = false;
+
 </script>
 
 {#if data.activeSub}
@@ -48,6 +51,10 @@
 					id="email"
 					autocomplete="email"
 				/>
+			</div>
+			<div class="my-4 flex items-center">
+				<label for="useMyOwnToken" class="mr-2">Use my own openai token</label>
+				<input type="checkbox" name="useMyOwnToken" id="useMyOwnToken" bind:checked={$form.useMyOwnToken} />
 			</div>
 			{#if $message}
 				<p class="text-green-500">{$message}</p>

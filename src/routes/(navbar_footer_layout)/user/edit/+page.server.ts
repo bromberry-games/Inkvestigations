@@ -7,7 +7,8 @@ import { supabase_full_access } from '$lib/supabase/supabase_full_access.server.
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server.js';
 
 const mainSchema = z.object({
-	email: z.string().email()
+	email: z.string().email(),
+	useMyOwnToken: z.boolean()
 });
 
 export const load = async ({ locals: { getSession, supabase } }) => {
@@ -16,7 +17,7 @@ export const load = async ({ locals: { getSession, supabase } }) => {
 		redirect(303, '/');
 	}
 	const [form, activeSub] = await Promise.all([
-		superValidate({ email: session.user.email }, mainSchema),
+		superValidate({ email: session.user.email, useMyOwnToken: session.user.user_metadata.useMyOwnToken ?? false }, mainSchema),
 		loadActiveAndUncancelledSubscription(session.user.id)
 	]);
 	if (!activeSub) {
@@ -41,7 +42,12 @@ export const actions = {
 			}
 		}
 
-		return message(form, 'Your email has been updated');
+		const { data: user, error } = await (supabase as SupabaseClient).auth.updateUser({
+			data: { useMyOwnToken: form.data.useMyOwnToken }
+		});
+		if (error) throw error;
+
+		return message(form, 'Your settings have been updated');
 	},
 	delete: async ({ locals: { getSession, supabase } }) => {
 		const session: Session = await getSession();

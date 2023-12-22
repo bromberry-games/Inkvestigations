@@ -17,6 +17,7 @@ import { MAX_TOKENS } from '../../../constants';
 import { shuffleArray } from '$lib/generic-helpers';
 import { standardInvestigationAnswer } from './conversation';
 import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
+import { OPEN_AI_KEY } from '$env/static/private';
 
 interface AccuseModelAnswerParams {
 	mysteryName: string;
@@ -25,8 +26,11 @@ interface AccuseModelAnswerParams {
 	accuseBrainRequestParams: AccuseModelRequestParams;
 }
 
-async function accuseModelAnswer({ mysteryName, userId, accuseBrainRequestParams, accuseLetterInfo }: AccuseModelAnswerParams) {
-	const response = await accuseBrainRequest(accuseBrainRequestParams);
+async function accuseModelAnswer(
+	{ mysteryName, userId, accuseBrainRequestParams, accuseLetterInfo }: AccuseModelAnswerParams,
+	openAiToken: string
+) {
+	const response = await accuseBrainRequest(accuseBrainRequestParams, openAiToken);
 	const ratingSet = await setRating(mysteryName, userId, response.rating);
 	throwIfFalse(ratingSet, 'Could not set rating');
 	const addResult = async (message: string) => {
@@ -34,15 +38,18 @@ async function accuseModelAnswer({ mysteryName, userId, accuseBrainRequestParams
 		throwIfFalse(addedMessage, 'Could not add message to chat');
 		await archiveLastConversation(userId, mysteryName);
 	};
-	return accuseLetterModelRequest({
-		accusation: accuseBrainRequestParams.promptMessage,
-		epilogue: response.epilogue,
-		accuseLetterInfo: accuseLetterInfo,
-		suspects: accuseBrainRequestParams.suspects,
-		victim: accuseBrainRequestParams.victim,
-		accusedSuspect: accuseBrainRequestParams.accusedSuspect,
-		onResponseGenerated: addResult
-	});
+	return accuseLetterModelRequest(
+		{
+			accusation: accuseBrainRequestParams.promptMessage,
+			epilogue: response.epilogue,
+			accuseLetterInfo: accuseLetterInfo,
+			suspects: accuseBrainRequestParams.suspects,
+			victim: accuseBrainRequestParams.victim,
+			accusedSuspect: accuseBrainRequestParams.accusedSuspect,
+			onResponseGenerated: addResult
+		},
+		openAiToken
+	);
 }
 
 export const POST: RequestHandler = async ({ request, locals: { getSession } }) => {
@@ -70,14 +77,18 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	isTAndThrowPostgresErrorIfNot(letterMessages);
 	isTAndThrowPostgresErrorIfNot(brainMessages);
 	const genNum = letterMessages.length - brainMessages.length * 2;
+	const requestToken = requestData.openAiToken;
+	const openAiToken = requestToken == undefined || requestToken == '' ? OPEN_AI_KEY : requestToken;
 
 	if (messagesAmount <= 0 && genNum >= 0) {
 		error(500, 'You have no messages.');
 	} else if (messagesAmount > 0 && genNum == 0) {
 		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);
 		throwIfFalse(messageAdded, 'Could not add message to chat');
-		const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
-		throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
+		if (requestToken == undefined || requestToken == '') {
+			const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
+			throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
+		}
 	} else if (genNum == 1) {
 		message = letterMessages[letterMessages.length - 1].content;
 	}
@@ -102,23 +113,26 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		};
 
 		return suspectToAccuse
-			? await accuseModelAnswer({
-					mysteryName: game_config.mysteryName,
-					accuseBrainRequestParams: {
-						promptMessage: message,
-						suspects: suspectList,
-						accusedSuspect: suspectToAccuse,
-						victim,
-						murderer: {
-							murdererName: gameInfo.murderer.name,
-							motive: gameInfo.murderer.motive,
-							opportunity: gameInfo.murderer.opportunity,
-							evidence: gameInfo.murderer.evidence
-						}
+			? await accuseModelAnswer(
+					{
+						mysteryName: game_config.mysteryName,
+						accuseBrainRequestParams: {
+							promptMessage: message,
+							suspects: suspectList,
+							accusedSuspect: suspectToAccuse,
+							victim,
+							murderer: {
+								murdererName: gameInfo.murderer.name,
+								motive: gameInfo.murderer.motive,
+								opportunity: gameInfo.murderer.opportunity,
+								evidence: gameInfo.murderer.evidence
+							}
+						},
+						userId: session.user.id,
+						accuseLetterInfo: gameInfo.accuse_letter_prompt
 					},
-					userId: session.user.id,
-					accuseLetterInfo: gameInfo.accuse_letter_prompt
-				})
+					openAiToken
+				)
 			: await standardInvestigationAnswer(
 					{
 						suspects: suspectList,
@@ -134,7 +148,8 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 					gameInfo.letter_prompt,
 					letterMessages,
 					brainMessages,
-					genNum
+					genNum,
+					openAiToken
 				);
 	} catch (err) {
 		error(500, getErrorMessage(err));

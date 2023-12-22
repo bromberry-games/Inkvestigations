@@ -2,7 +2,7 @@ import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { LLMChain } from 'langchain/chains';
 import type { BaseMessage, LLMResult } from 'langchain/schema';
 import { OPEN_AI_KEY } from '$env/static/private';
-import { BaseOutputParser } from 'langchain/schema/output_parser';
+import { BaseOutputParser, type FormatInstructionsOptions } from 'langchain/schema/output_parser';
 import { error } from '@sveltejs/kit';
 import { OpenAiModel } from '$misc/openai';
 import { createFakeBrainLLM, createFakeLetterLLM } from './fakes/fake_llm';
@@ -28,22 +28,17 @@ export interface Victim {
 	description: string;
 }
 
-export async function letterModelRequest({
-	gameInfo,
-	previousConversation,
-	question,
-	brainAnswer,
-	suspects,
-	victim,
-	onResponseGenerated
-}: LetterModelRequestParams) {
+export async function letterModelRequest(
+	{ gameInfo, previousConversation, question, brainAnswer, suspects, victim, onResponseGenerated }: LetterModelRequestParams,
+	openAiToken: string
+) {
 	//Shorten length for context length
 	if (previousConversation.length > 5) {
 		previousConversation = previousConversation.slice(-4);
 	}
 	const prompt = createLetterPrompt(previousConversation);
 	// const llm = createFakeLetterLLM(onResponseGenerated);
-	const llm = createLetterModel(onResponseGenerated);
+	const llm = createLetterModel(onResponseGenerated, openAiToken);
 	const parser = new HttpResponseOutputParser({
 		contentType: 'text/event-stream'
 	});
@@ -63,22 +58,26 @@ export async function letterModelRequest({
 			console.error(e);
 		});
 
+	console.log('api token before stream: ' + openAiToken);
 	return new Response(stream, {
 		headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' }
 	});
 }
 
-function createLetterModel(onResponseGenerated: (input: string) => Promise<any>) {
+function createLetterModel(onResponseGenerated: (input: string) => Promise<any>, openAiToken: string) {
 	const callbacks = [
 		{
 			handleLLMEnd: async (output: LLMResult) => {
 				await onResponseGenerated(output.generations[0][0].text);
+			},
+			handleLLMError: async (error: Error) => {
+				console.log('llm error: ', error);
 			}
 		}
 	];
 	return new ChatOpenAI({
 		modelName: OpenAiModel.Gpt35Turbo1106,
-		openAIApiKey: OPEN_AI_KEY,
+		openAIApiKey: openAiToken,
 		maxTokens: 500,
 		callbacks
 	});
@@ -119,7 +118,8 @@ export interface brainModelRequestParams {
 export async function brainModelRequest(
 	brainParams: brainModelRequestParams,
 	previousConversation: BaseMessage[],
-	brainMessages: BrainOutput[]
+	brainMessages: BrainOutput[],
+	openAiToken: string
 ): Promise<BrainOutput> {
 	const timeframe = brainParams.timeframe.reduce((acc, curr) => {
 		return acc + curr.timeframe + ': ' + curr.event_happened + '\n';
@@ -145,7 +145,7 @@ export async function brainModelRequest(
 			? createFakeBrainLLM()
 			: new ChatOpenAI({
 					temperature: 0.8,
-					openAIApiKey: OPEN_AI_KEY,
+					openAIApiKey: openAiToken,
 					modelName: OpenAiModel.Gpt35Turbo1106,
 					maxTokens: 350
 				});
@@ -204,17 +204,14 @@ export interface AccuseModelRequestParams {
 	murderer: Murderer;
 }
 
-export async function accuseBrainRequest({
-	suspects,
-	victim,
-	murderer,
-	accusedSuspect,
-	promptMessage
-}: AccuseModelRequestParams): Promise<RatingWithEpilogue> {
+export async function accuseBrainRequest(
+	{ suspects, victim, murderer, accusedSuspect, promptMessage }: AccuseModelRequestParams,
+	openAiToken: string
+): Promise<RatingWithEpilogue> {
 	const prompt = createAccusePrompt();
 	const llm = new ChatOpenAI({
 		temperature: 0.9,
-		openAIApiKey: OPEN_AI_KEY,
+		openAIApiKey: openAiToken,
 		modelName: OpenAiModel.Gpt35Turbo1106,
 		maxTokens: 500
 	});
@@ -242,17 +239,12 @@ interface AccuseLetterModelRequestParams {
 	onResponseGenerated: (input: string) => Promise<any>;
 }
 
-export async function accuseLetterModelRequest({
-	accusation,
-	epilogue,
-	accuseLetterInfo,
-	suspects,
-	victim,
-	accusedSuspect,
-	onResponseGenerated
-}: AccuseLetterModelRequestParams) {
+export async function accuseLetterModelRequest(
+	{ accusation, epilogue, accuseLetterInfo, suspects, victim, accusedSuspect, onResponseGenerated }: AccuseLetterModelRequestParams,
+	openAiToken: string
+) {
 	const prompt = createAccuseLetterPrompt();
-	const llm = createLetterModel(onResponseGenerated);
+	const llm = createLetterModel(onResponseGenerated, openAiToken);
 	const parser = new HttpResponseOutputParser({
 		contentType: 'text/event-stream'
 	});

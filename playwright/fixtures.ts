@@ -1,7 +1,7 @@
 import { test as baseTest, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import { createNeUserAndLoginViaUrl, createRandomUser, loginOnPage } from '../tests/helpers';
+import { createNeUserAndLoginViaUrl, createRandomUser, loginOnPage } from '../tests/login-helpers';
 
 export * from '@playwright/test';
 // export const test = baseTest.extend<{}, { workerStorageState: string }>({

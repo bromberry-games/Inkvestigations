@@ -12,7 +12,8 @@ export async function standardInvestigationAnswer(
 	letter_info: string,
 	letterMessages: ChatMessageType[],
 	brainMessages: BrainOutput[],
-	genNum: number
+	genNum: number,
+	openAiToken: string
 ) {
 	let brainResponse: BrainOutput | undefined = undefined;
 	if (genNum >= 0) {
@@ -33,7 +34,7 @@ ${item.info}
 			);
 		});
 
-		brainResponse = await brainModelRequest(brainParams, brainConversation, brainMessages);
+		brainResponse = await brainModelRequest(brainParams, brainConversation, brainMessages, openAiToken);
 
 		const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
 		throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
@@ -63,13 +64,16 @@ ${item.info}
 		throwIfFalse(addedMessage, 'Could not add message to chat');
 	}
 
-	return letterModelRequest({
-		gameInfo: letter_info,
-		previousConversation: messages,
-		question: brainParams.question,
-		brainAnswer: brainResponse,
-		suspects: brainParams.suspects,
-		victim: brainParams.victim,
-		onResponseGenerated: addResult
-	});
+	return letterModelRequest(
+		{
+			gameInfo: letter_info,
+			previousConversation: messages,
+			question: brainParams.question,
+			brainAnswer: brainResponse,
+			suspects: brainParams.suspects,
+			victim: brainParams.victim,
+			onResponseGenerated: addResult
+		},
+		openAiToken
+	);
 }
