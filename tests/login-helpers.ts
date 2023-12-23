@@ -6,6 +6,7 @@ export async function loginOnPage(page: Page, isMobile: boolean, email: string, 
 	await page.evaluate(() => document.fonts.ready);
 	await page.goto('/', { waitUntil: 'load' });
 	await navToLogin(page, isMobile);
+	await page.waitForTimeout(100);
 	await fillOutLoginOrSignupForm(page, email, password);
 	await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 }

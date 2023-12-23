@@ -41,8 +41,7 @@ test('login logout and login should redirect', async ({ page, isMobile }) => {
 });
 
 test('signup user and confirm email', async ({ page, isMobile }) => {
-	await page.goto('/login');
-	await page.waitForTimeout(200);
+	await page.goto('/login', { waitUntil: 'networkidle' });
 	await page.getByRole('button', { name: 'Create new Account' }).click();
 	await page.waitForTimeout(200);
 	await fillOutSingupFormConfirmMailLogin(page, isMobile);
@@ -50,8 +49,7 @@ test('signup user and confirm email', async ({ page, isMobile }) => {
 });
 
 test('signup without aggreeing to terms should display error', async ({ page, isMobile }) => {
-	await page.goto('/login');
-	await page.waitForTimeout(200);
+	await page.goto('/login', { waitUntil: 'networkidle' });
 	await page.getByRole('button', { name: 'Create new Account' }).click();
 	const email = generateRandomUserMail();
 	await fillOutLoginOrSignupForm(page, email, 'password-new-user');
@@ -75,7 +73,7 @@ test('test try for free', async ({ page, isMobile }) => {
 	await page.waitForTimeout(200);
 	await fillOutSingupFormConfirmMailLogin(page, isMobile);
 	await expect(page.locator('#avatar-menu')).toBeVisible();
-	await page.getByRole('link', { name: 'PLAY' }).click();
+	await page.getByRole('button', { name: 'PLAY' }).click();
 	await expect(page.getByText('Police chief:').nth(1)).toBeVisible();
 });
 
