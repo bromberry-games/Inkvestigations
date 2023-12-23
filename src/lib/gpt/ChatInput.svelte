@@ -3,7 +3,7 @@
 	import { textareaAutosizeAction } from 'svelte-legos';
 	import { PaperAirplane } from '@inqling/svelte-icons/heroicon-24-solid';
 	import type { ChatMessage } from '$misc/shared';
-	import { eventSourceStore, isLoadingAnswerStore, liveAnswerStore, enhancedLiveAnswerStore } from '$misc/stores';
+	import { eventSourceStore, isLoadingAnswerStore, liveAnswerStore, enhancedLiveAnswerStore, tokenStore } from '$misc/stores';
 	import { approximateTokenCount } from '$misc/openai';
 	import { Toast, Button } from 'flowbite-svelte';
 	import SuspectModal from './SuspectModal.svelte';
@@ -50,13 +50,15 @@
 		inputCopy = input;
 
 		lastUserMessage = messageToSubmit;
+		console.log('chat input form token store: ' + $tokenStore);
 
 		const payload = {
 			game_config: {
 				suspectToAccuse: suspectToAccuse,
 				mysteryName: slug.replace(/_/g, ' ')
 			},
-			message: messageToSubmit
+			message: messageToSubmit,
+			openAiToken: $tokenStore,
 		};
 
 		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort, handleEnd);
@@ -99,6 +101,7 @@
 		//TODO Show error toast
 
 		if (data.message.includes('API key')) {
+			console.error('API key not found');
 		}
 
 		// restore last user prompt
@@ -151,9 +154,7 @@
 	$: {
 		if (gameOver) {
 			placeholderText = 'Game Over';
-		} else if (messagesAmount <= 0) {
-			placeholderText = 'No messages';
-		} else if (messagesAmount > 0) {
+		} else {
 			placeholderText = 'Enter to send, Shift+Enter for newline';
 		}
 	}
@@ -161,7 +162,7 @@
 
 <SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects} {slug}></SuspectModal>
 <footer class="fixed bottom-0 z-10 w-full md:rounded-xl md:px-8 md:py-4">
-	{#if messagesAmount > 0}
+	{#if messagesAmount > 0 || $tokenStore != ''}
 		{#if $isLoadingAnswerStore}
 			<div></div>
 		{:else if !chatUnbalanced}
@@ -186,7 +187,7 @@
 							on:keydown={handleKeyDown}
 							bind:value={input}
 							bind:this={textarea}
-							disabled={gameOver || messagesAmount <= 0}
+							disabled={gameOver}
 						/>
 						<div
 							data-testid="message-counter"

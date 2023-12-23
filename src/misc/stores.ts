@@ -25,3 +25,27 @@ export const enhancedLiveAnswerStore = derived(liveAnswerStore, ($liveAnswer) =>
 export const isLoadingAnswerStore: Writable<boolean> = writable(false);
 
 export const eventSourceStore: Readable<EventSource> = readable(new EventSource());
+
+function createWritableStore<T>(key: string, startValue: T) {
+	const { subscribe, set } = writable(startValue);
+
+	return {
+		subscribe,
+		set,
+		useLocalStorage: () => {
+			const json = localStorage.getItem(key);
+			if (json) {
+				set(JSON.parse(json));
+			}
+
+			subscribe((current) => {
+				localStorage.setItem(key, JSON.stringify(current));
+			});
+		}
+	};
+}
+
+export const tokenStore = createWritableStore('tokenStore', '');
+
+// export const tokenStore: Writable<string> = writable(localStorage.getItem('tokenStore') || '');
+// tokenStore.subscribe((val) => localStorage.setItem('tokenStore', val));

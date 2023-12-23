@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '../playwright/fixtures';
+import { sendMessage } from './chat-helpers';
 import { deleteLastBrainMessage, deleteLastMessageForUser, supabase_full_access } from './supabase_test_access';
 
 async function navigateRestartAndReturnMessageCounter(page: Page): Promise<number> {
@@ -6,11 +7,6 @@ async function navigateRestartAndReturnMessageCounter(page: Page): Promise<numbe
 	await page.waitForTimeout(100);
 	await page.getByRole('button', { name: 'RESTART' }).first().click();
 	return parseInt(await page.getByTestId('message-counter').innerText());
-}
-
-async function sendMessage(page: Page, message: string) {
-	await page.getByPlaceholder('Enter to send, Shift+Enter for newline').fill(message);
-	await page.locator('button[type="submit"]').click();
 }
 
 async function waitForCheckMessageAndReturnMessageCount(page: Page, text: string, nth = 1): Promise<number> {

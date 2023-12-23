@@ -6,7 +6,7 @@ import {
 	generateRandomUserMail,
 	loginOnPage,
 	navToLogin
-} from './helpers';
+} from './login-helpers';
 import { supabase_full_access } from './supabase_test_access';
 
 async function logoutOfPage(page: Page, isMobile: boolean) {
@@ -41,18 +41,16 @@ test('login logout and login should redirect', async ({ page, isMobile }) => {
 });
 
 test('signup user and confirm email', async ({ page, isMobile }) => {
-	await page.goto('/login');
-	await page.waitForTimeout(200);
-	await page.getByRole('link', { name: 'Create new Account' }).click();
+	await page.goto('/login', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'Create new Account' }).click();
 	await page.waitForTimeout(200);
 	await fillOutSingupFormConfirmMailLogin(page, isMobile);
 	await expect(page.locator('#avatar-menu')).toBeVisible();
 });
 
 test('signup without aggreeing to terms should display error', async ({ page, isMobile }) => {
-	await page.goto('/login');
-	await page.waitForTimeout(200);
-	await page.getByRole('link', { name: 'Create new Account' }).click();
+	await page.goto('/login', { waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'Create new Account' }).click();
 	const email = generateRandomUserMail();
 	await fillOutLoginOrSignupForm(page, email, 'password-new-user');
 	await page.getByRole('button', { name: 'Sign up' }).click();
@@ -63,8 +61,8 @@ test('signup without aggreeing to terms should display error', async ({ page, is
 test('test try for free', async ({ page, isMobile }) => {
 	await supabase_full_access.from('for_free_users').update({ amount: 1 }).eq('id', 1);
 
-	await page.goto('http://localhost:5173/');
-	await page.getByRole('link', { name: 'TRY FOR FREE' }).click();
+	await page.goto('/');
+	await page.getByRole('button', { name: 'TRY FOR FREE' }).click();
 	await page.waitForTimeout(3000);
 	await page.getByPlaceholder('Enter to send, Shift+Enter for newline').fill('test');
 	await page.locator('button[type="submit"]').click();
@@ -75,7 +73,7 @@ test('test try for free', async ({ page, isMobile }) => {
 	await page.waitForTimeout(200);
 	await fillOutSingupFormConfirmMailLogin(page, isMobile);
 	await expect(page.locator('#avatar-menu')).toBeVisible();
-	await page.getByRole('link', { name: 'PLAY' }).click();
+	await page.getByRole('button', { name: 'PLAY' }).click();
 	await expect(page.getByText('Police chief:').nth(1)).toBeVisible();
 });
 
@@ -83,7 +81,7 @@ test('test try for free when limit is full should redirect', async ({ page, isMo
 	await supabase_full_access.from('for_free_users').update({ amount: 0 }).eq('id', 1);
 
 	await page.goto('http://localhost:5173/');
-	await page.getByRole('link', { name: 'TRY FOR FREE' }).click();
+	await page.getByRole('button', { name: 'TRY FOR FREE' }).click();
 
 	await page.waitForURL('/confirmations/for-free-users-exhausted');
 	await expect(new URL(page.url()).pathname).toBe('/confirmations/for-free-users-exhausted');
