@@ -236,14 +236,17 @@ export interface Database {
       user_messages: {
         Row: {
           amount: number
+          non_refillable_amount: number
           user_id: string
         }
         Insert: {
           amount: number
+          non_refillable_amount?: number
           user_id: string
         }
         Update: {
           amount?: number
+          non_refillable_amount?: number
           user_id?: string
         }
         Relationships: [

@@ -113,7 +113,7 @@
 			</div>
 		{/if}
 		<div class="flex justify-center">
-			<Button type="submit" btnClass="bg-tertiary text-2xl w-2/5 py-4 rounded text-center font-primary">
+			<Button type="submit" class="w-2/5 rounded bg-tertiary py-4 text-center font-primary text-2xl text-quaternary">
 				{i18n?.[lngKey]?.button_label}
 			</Button>
 		</div>
@@ -142,7 +142,7 @@
 					{i18n?.forgotten_password?.link_text}</a
 				>
 				<Button
-					btnClass="bg-tertiary text-2xl py-4 rounded text-center font-primary"
+					class="rounded bg-tertiary py-4 text-center font-primary text-2xl text-quaternary"
 					on:click={(e) => {
 						e.preventDefault();
 						authView = VIEWS.SIGN_UP;

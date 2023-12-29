@@ -78,14 +78,15 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	isTAndThrowPostgresErrorIfNot(brainMessages);
 	const genNum = letterMessages.length - brainMessages.length * 2;
 	const requestToken = requestData.openAiToken;
-	const openAiToken = requestToken == undefined || requestToken == '' ? OPEN_AI_KEY : requestToken;
+	const useOwnToken = requestToken == undefined || requestToken == '';
+	const openAiToken = useOwnToken ? OPEN_AI_KEY : requestToken;
 
-	if (messagesAmount <= 0 && genNum >= 0) {
+	if (messagesAmount.amount <= 0 && messagesAmount.non_refillable_amount <= 0 && genNum >= 0 && !useOwnToken) {
 		error(500, 'You have no messages.');
-	} else if (messagesAmount > 0 && genNum == 0) {
+	} else if ((messagesAmount.amount > 0 || messagesAmount.non_refillable_amount > 0 || useOwnToken) && genNum == 0) {
 		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);
 		throwIfFalse(messageAdded, 'Could not add message to chat');
-		if (requestToken == undefined || requestToken == '') {
+		if (useOwnToken) {
 			const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
 			throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
 		}

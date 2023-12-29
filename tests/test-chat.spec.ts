@@ -2,10 +2,14 @@ import { test, expect, type Page } from '../playwright/fixtures';
 import { sendMessage } from './chat-helpers';
 import { deleteLastBrainMessage, deleteLastMessageForUser, supabase_full_access } from './supabase_test_access';
 
-async function navigateRestartAndReturnMessageCounter(page: Page): Promise<number> {
-	await page.goto('/mysteries');
+async function navigateRestart(page: Page): Promise<void> {
+	await page.goto('/mysteries', { waitUntil: 'networkidle' });
 	await page.waitForTimeout(100);
 	await page.getByRole('button', { name: 'RESTART' }).first().click();
+}
+
+async function navigateRestartAndReturnMessageCounter(page: Page): Promise<number> {
+	await navigateRestart(page);
 	return parseInt(await page.getByTestId('message-counter').innerText());
 }
 
@@ -31,6 +35,16 @@ test('test gpt connection and expect message counter to go down', async ({ page 
 	expect(newMessageCount + 1).toBe(messageCount);
 });
 
+test('No messages should not be able to write', async ({ page, account }) => {
+	const { error } = await supabase_full_access
+		.from('user_messages')
+		.update({ amount: 1, non_refillable_amount: 1 })
+		.eq('user_id', account.userId);
+	await navigateRestart(page);
+	await page.waitForTimeout(100);
+	await expect(page.getByText('No more messages left New')).toBeVisible();
+});
+
 test('delete message and then regenerate', async ({ page, account }) => {
 	const messageCount = await navigateRestartAndReturnMessageCounter(page);
 
@@ -44,7 +58,7 @@ test('delete message and then regenerate', async ({ page, account }) => {
 
 	await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
 	await expect(page.getByPlaceholder('Enter to send, Shift+Enter for newline')).toBeVisible();
-	await expect(newMessageCount + 1).toBe(messageCount);
+	expect(newMessageCount + 1).toBe(messageCount);
 });
 
 test('delete message and brain message and then regenerate', async ({ page, account }) => {
@@ -61,7 +75,7 @@ test('delete message and brain message and then regenerate', async ({ page, acco
 
 	await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
 	await expect(page.getByPlaceholder('Enter to send, Shift+Enter for newline')).toBeVisible();
-	await expect(newMessageCount + 1).toBe(messageCount);
+	expect(newMessageCount + 1).toBe(messageCount);
 });
 
 test('delete message, message and brain message and then regenerate. Message count should go down 2 times', async ({ page, account }) => {

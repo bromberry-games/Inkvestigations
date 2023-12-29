@@ -1,3 +1,4 @@
+import type { PostgrestError } from '@supabase/supabase-js';
 import { supabase_full_access } from './supabase_full_access.server';
 
 export async function loadActiveSubscriptions() {
@@ -14,22 +15,20 @@ export async function loadActiveSubscriptions() {
 	return data;
 }
 
-export async function linkCustomerToUser(customer_id: string, user_id: string): Promise<boolean> {
+export async function linkCustomerToUser(customer_id: string, user_id: string): Promise<string | PostgrestError> {
 	const { error } = await supabase_full_access.from('stripe_customers').insert({ customer_id, user_id });
 	if (error) {
-		console.error(error);
-		return false;
+		return error;
 	}
-	return true;
+	return user_id;
 }
 
 export async function getStripeCustomer(userId: string) {
 	const { data, error } = await supabase_full_access.from('stripe_customers').select('customer_id').eq('user_id', userId);
 	if (error) {
-		console.error(error);
-		return null;
+		return error;
 	}
-	return data[0].customer_id;
+	return data != null && data.length > 0 ? data[0].customer_id : '';
 }
 
 export async function loadActiveAndUncancelledSubscription(user_id: string) {

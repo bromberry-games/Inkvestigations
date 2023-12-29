@@ -25,7 +25,7 @@
 		{daily_messages} Messages per day
 	</h1>
 	{#if login && !hasSub}
-		<form action="?/buy" method="POST">
+		<form action="?/subscribe" method="POST">
 			<input type="hidden" name="price_id" value={price_id} />
 			<Button class="w-full bg-tertiary font-primary text-xl text-quaternary" type="submit">CHOOSE PLAN</Button>
 		</form>

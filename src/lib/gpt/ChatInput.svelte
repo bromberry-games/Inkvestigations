@@ -5,7 +5,7 @@
 	import type { ChatMessage } from '$misc/shared';
 	import { eventSourceStore, isLoadingAnswerStore, liveAnswerStore, enhancedLiveAnswerStore, tokenStore } from '$misc/stores';
 	import { approximateTokenCount } from '$misc/openai';
-	import { Toast, Button } from 'flowbite-svelte';
+	import { Toast, Button, Tooltip } from 'flowbite-svelte';
 	import SuspectModal from './SuspectModal.svelte';
 	import { MAX_TOKENS } from '../../constants';
 	import type { suspect } from '$lib/supabase/mystery_data.server';
@@ -14,7 +14,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let slug: string;
-	export let messagesAmount: number;
+	export let messagesAmount: { amount: number; non_refillable_amount: number };
 	export let suspectToAccuse = '';
 	export let suspects: suspect[];
 	export let chatUnbalanced: boolean;
@@ -58,7 +58,7 @@
 				mysteryName: slug.replace(/_/g, ' ')
 			},
 			message: messageToSubmit,
-			openAiToken: $tokenStore,
+			openAiToken: $tokenStore
 		};
 
 		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort, handleEnd);
@@ -162,7 +162,7 @@
 
 <SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects} {slug}></SuspectModal>
 <footer class="fixed bottom-0 z-10 w-full md:rounded-xl md:px-8 md:py-4">
-	{#if messagesAmount > 0 || $tokenStore != ''}
+	{#if messagesAmount.amount > 0 || messagesAmount.non_refillable_amount > 0 || $tokenStore != ''}
 		{#if $isLoadingAnswerStore}
 			<div></div>
 		{:else if !chatUnbalanced}
@@ -194,8 +194,14 @@
 							aria-label="messages left counter"
 							class="ml-1 h-full bg-[url('/images/message_counter.svg')] bg-cover bg-center bg-no-repeat px-4 py-6 font-tertiary text-xl md:ml-2"
 						>
-							{messagesAmount}
+							{messagesAmount.amount > 0 ? messagesAmount.amount : messagesAmount.non_refillable_amount}
 						</div>
+						<Tooltip class="w-1/5 font-secondary"
+							>Automatically prioritized for you: Your daily refillable messages are used first, and only after they're depleted, your
+							bought messages are utilized.
+							<p>Daily messages: {messagesAmount.amount}</p>
+							<p>Bought messages: {messagesAmount.non_refillable_amount}</p></Tooltip
+						>
 						<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
 							<button type="submit" class="btn btn-sm ml-2">
 								<PaperAirplane class="h-6 w-6" />
