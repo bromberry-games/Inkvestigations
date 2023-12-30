@@ -4,8 +4,9 @@ import { deleteLastBrainMessage, deleteLastMessageForUser, supabase_full_access 
 
 async function navigateRestart(page: Page): Promise<void> {
 	await page.goto('/mysteries', { waitUntil: 'networkidle' });
-	await page.waitForTimeout(100);
+	const navigationPromise = page.waitForURL('/Mirror_Mirror', { waitUntil: 'networkidle' });
 	await page.getByRole('button', { name: 'RESTART' }).first().click();
+	await navigationPromise;
 }
 
 async function navigateRestartAndReturnMessageCounter(page: Page): Promise<number> {
@@ -38,10 +39,27 @@ test('test gpt connection and expect message counter to go down', async ({ page 
 test('No messages should not be able to write', async ({ page, account }) => {
 	const { error } = await supabase_full_access
 		.from('user_messages')
+		.update({ amount: 0, non_refillable_amount: 0 })
+		.eq('user_id', account.userId);
+	if (error) throw error;
+	await navigateRestart(page);
+	await expect(page.getByText('No more messages left New')).toBeVisible();
+});
+
+test('should use up both messages', async ({ page, account }) => {
+	const { error } = await supabase_full_access
+		.from('user_messages')
 		.update({ amount: 1, non_refillable_amount: 1 })
 		.eq('user_id', account.userId);
-	await navigateRestart(page);
-	await page.waitForTimeout(100);
+	if (error) throw error;
+
+	const messageCount = await navigateRestartAndReturnMessageCounter(page);
+	expect(messageCount).toBe(1);
+	await sendMessage(page, 'interrogate dexter tin');
+	const newMessageCount = await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
+	//This is now also 1 since now the bought messages are being used up. This might change in the future
+	expect(messageCount).toBe(1);
+	await sendMessage(page, 'do some cool stuff');
 	await expect(page.getByText('No more messages left New')).toBeVisible();
 });
 
