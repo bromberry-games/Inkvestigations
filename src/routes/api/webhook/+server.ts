@@ -2,6 +2,8 @@ import Stripe from 'stripe';
 import { STRIPE_TEST_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private';
 import { cancelSubscription, createSubscription, updateSubscription } from '$lib/supabase/subscription.server';
 import { checkIfEventExists, insertEvent, linkCustomerToUser } from '$lib/supabase/prcing.server';
+import { isPostgresError } from '$lib/supabase/helpers.js';
+import { increaseMessageForUser } from '$lib/supabase/message_amounts.server';
 
 const stripe = new Stripe(STRIPE_TEST_KEY, {
 	apiVersion: '2022-11-15'
@@ -37,26 +39,37 @@ export async function POST({ request }) {
 				const checkoutSession: Stripe.Checkout.Session = event.data.object;
 				if (checkoutSession.payment_status === 'paid') {
 					console.log('Checkout session completed');
+					console.log(checkoutSession);
 					if (!checkoutSession.customer) {
 						return new Response('no customer found', { status: 500 });
 					}
 					if (checkoutSession.metadata == null) {
 						return new Response('no user id found', { status: 500 });
 					}
-					const [addedCustomer, session] = await Promise.all([
+					const [customerUserId, session] = await Promise.all([
 						linkCustomerToUser(checkoutSession.customer, checkoutSession.metadata.user_id),
-						stripe.checkout.sessions.retrieve(checkoutSession.id, { expand: ['line_items'] })
+						stripe.checkout.sessions.retrieve(checkoutSession.id, { expand: ['line_items', 'line_items.data.price.product'] })
 					]);
-					if (!addedCustomer) {
-						return new Response('Could not add customer to user', { status: 500 });
+					if (isPostgresError(customerUserId)) {
+						return new Response(customerUserId.message, { status: 500 });
 					}
 					if (session.line_items == null || session.line_items.data[0].price == null) {
-						return new Response(undefined, { status: 500 });
+						return new Response('No line item', { status: 500 });
 					}
-					const price_id = session.line_items.data[0].price.id;
-					const createdSubscription = await createSubscription(price_id, checkoutSession.metadata.user_id);
-					if (!createdSubscription) {
-						return new Response('Could not create subscription', { status: 500 });
+					if (session.subscription) {
+						const price_id = session.line_items.data[0].price.id;
+						const createdSubscription = await createSubscription(price_id, customerUserId);
+						if (!createdSubscription) {
+							return new Response('Could not create subscription', { status: 500 });
+						}
+					} else {
+						const product = session.line_items.data[0].price.product;
+						console.log('singular product: ');
+						console.log(product);
+						if (product?.metadata?.messages_amount == null) {
+							return new Response('No messages amount', { status: 500 });
+						}
+						await increaseMessageForUser(customerUserId, product.metadata.messages_amount);
 					}
 				}
 			}

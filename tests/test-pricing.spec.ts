@@ -1,11 +1,9 @@
-import path from 'path';
-import fs from 'fs';
-import { test, expect } from '../playwright/fixtures';
+// import { test, expect, type Page } from '../playwright/fixtures';
 
-test('test buying, chaning plan and cacelling', async ({ page, isMobile }) => {
-	await page.waitForTimeout(1000);
-	await page.goto('/pricing');
-	await page.getByRole('button', { name: 'CHOOSE PLAN' }).nth(1).click();
+import { test, expect, type Page } from '@playwright/test';
+import { createRandomUser, loginOnPage } from './login-helpers';
+
+async function fillOutCreditCardForm(page: Page) {
 	await page.getByLabel('Email').click();
 	await page.getByLabel('Email').fill('coolmail@mail.com');
 	await page.getByLabel('Email').press('Tab');
@@ -18,6 +16,21 @@ test('test buying, chaning plan and cacelling', async ({ page, isMobile }) => {
 	await page.getByPlaceholder('CVC').press('Tab');
 	await page.getByPlaceholder('Full name on card').fill('coolio');
 	await page.getByTestId('hosted-payment-submit-button').click();
+}
+
+test.beforeEach(async ({ page, isMobile }) => {
+	//dont want to deal with state for theses tests
+	const account = await createRandomUser();
+	await loginOnPage(page, isMobile, account.email, account.password);
+	await expect(page.locator('#avatar-menu')).toBeVisible();
+});
+
+test('test buying, chaning plan and cacelling', async ({ page, isMobile }) => {
+	await page.goto('/pricing');
+	await page.getByRole('button', { name: 'CHOOSE PLAN' }).nth(1).click();
+
+	await fillOutCreditCardForm(page);
+
 	if (isMobile) {
 		await page.getByRole('button', { name: 'bars 3' }).click();
 	}
@@ -39,12 +52,9 @@ test('test buying, chaning plan and cacelling', async ({ page, isMobile }) => {
 	).toBeVisible();
 });
 
-test.afterAll(async () => {
-	const id = test.info().parallelIndex;
-	const fileName = path.resolve(test.info().project.outputDir, `.auth/${id}.json`);
-	fs.unlink(fileName, (err) => {
-		if (err) {
-			console.error(err);
-		}
-	});
+test('buy messages', async ({ page, isMobile }) => {
+	await page.goto('/pricing');
+	await page.getByRole('button', { name: 'Buy now' }).click();
+
+	await fillOutCreditCardForm(page);
 });
