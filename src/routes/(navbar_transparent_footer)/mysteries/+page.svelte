@@ -4,6 +4,14 @@
 	export let data;
 </script>
 
+<enhanced:img
+	src="/static/images/mystery-page.webp?brightness=0.4&saturation=0.4"
+	class="absolute inset-0 -z-10 h-full object-cover"
+	sizes="min(1280px, 100vw)"
+	alt=""
+/>
+<!-- <div class="absolute inset-0 h-full w-full bg-[url('/images/mystery-page.webp')] object-cover"></div> -->
+
 <div class="mb-56 flex w-full flex-wrap justify-center p-4">
 	{#each data.mysteries as mystery, i}
 		<div class="p-4">
