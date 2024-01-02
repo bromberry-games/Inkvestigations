@@ -4,47 +4,36 @@
 	export let data;
 </script>
 
-<enhanced:img
-	src="/static/images/mystery-page.webp?brightness=0.4&saturation=0.4"
-	class="absolute inset-0 -z-10 h-full object-cover"
-	sizes="min(1280px, 100vw)"
-	alt=""
-/>
-<!-- <div class="absolute inset-0 h-full w-full bg-[url('/images/mystery-page.webp')] object-cover"></div> -->
-
-<div class="mb-56 flex w-full flex-wrap justify-center p-4">
+<div class="absolute inset-0 -z-10 h-full w-full">
+	<enhanced:img src="/static/images/mystery-page.webp" class="h-full w-full object-cover" sizes="min(1280px, 100vw)" alt="" />
+	<div class="absolute inset-0 bg-[#404040] bg-opacity-80"></div>
+</div>
+<div
+	class="h-dvh mx-8 mb-8 grid grid-cols-2 gap-x-8 gap-y-8 md:mx-16 md:gap-x-16 lg:grid-cols-3 lg:gap-x-36 xl:mx-40 xl:grid-cols-4 xl:gap-x-40"
+>
 	{#each data.mysteries as mystery, i}
-		<div class="p-4">
-			<Card img={mystery.filepath} class="rounded border-8 border-quaternary !bg-quaternary">
-				<div class="mb-2 flex justify-between font-primary text-2xl text-tertiary">
-					<h5>{mystery.name}</h5>
-					<div>
+		<Card
+			img={mystery.filepath}
+			class="rounded border-8 border-quaternary !bg-quaternary"
+			padding="none"
+			href={mystery.name.replace(/\s+/g, '_')}
+		>
+			<div class="m-4 flex justify-center">
+				<div class="flex flex-col justify-between font-primary text-2xl text-tertiary">
+					<h5 class="text-center text-xl md:text-2xl xl:text-4xl">{mystery.name}</h5>
+					<div class="flex justify-center">
 						{#each Array(3) as _, index}
-							{#if data.session && data.mysteries[i].solved.length > 0 && index < data.mysteries[i].solved[0].rating}
-								★
-							{:else}
-								☆
-							{/if}
+							<p class="mx-2 inline text-4xl">
+								{#if data.session && data.mysteries[i].solved.length > 0 && index < data.mysteries[i].solved[0].rating}
+									★
+								{:else}
+									☆
+								{/if}
+							</p>
 						{/each}
 					</div>
 				</div>
-				<p class="mb-3 text-left font-secondary font-normal leading-tight text-tertiary">
-					{mystery.description}
-				</p>
-				{#if data.session}
-					<div class="mt-4 flex justify-between font-primary text-xl">
-						<Button class="!rounded-2xl bg-tertiary !px-8 text-xl !text-quaternary" href={mystery.name.replace(/\s+/g, '_')}>PLAY</Button>
-						<form action="?/deleteChat" method="post">
-							<input type="hidden" name="slug" value={mystery.name} />
-							<Button class="h-full !rounded-2xl border-4 border-tertiary bg-quaternary !py-0 text-xl !text-tertiary" type="submit">
-								RESTART
-							</Button>
-						</form>
-					</div>
-				{:else}
-					<Button color="dark" href="/login">Login</Button>
-				{/if}
-			</Card>
-		</div>
+			</div>
+		</Card>
 	{/each}
 </div>
