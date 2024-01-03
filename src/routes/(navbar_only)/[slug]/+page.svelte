@@ -6,7 +6,8 @@
 	import type { ChatMessage } from '$misc/shared';
 	import { Button, Input, Modal } from 'flowbite-svelte';
 	import { tokenStore } from '$misc/stores';
-	  import { RotateOutline } from 'flowbite-svelte-icons';
+	import { RotateOutline } from 'flowbite-svelte-icons';
+	import { getAuthStatus } from '$lib/auth-helper';
 
 	export let data: PageData;
 	let suspectToAccuse = '';
@@ -92,4 +93,5 @@
 	{suspectToAccuse}
 	suspects={data.suspects}
 	chatUnbalanced={messages.length % 2 !== 1}
+	authStatus={getAuthStatus(data.session)}
 />

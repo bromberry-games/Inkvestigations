@@ -10,6 +10,7 @@
 	import { MAX_TOKENS } from '../../constants';
 	import type { suspect } from '$lib/supabase/mystery_data.server';
 	import Timer from '../../routes/(navbar_only)/[slug]/timer.svelte';
+	import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
 
 	const dispatch = createEventDispatcher();
 
@@ -18,6 +19,7 @@
 	export let suspectToAccuse = '';
 	export let suspects: suspect[];
 	export let chatUnbalanced: boolean;
+	export let authStatus: AuthStatus;
 
 	let debounceTimer: number | undefined;
 	let input = '';
@@ -218,9 +220,16 @@
 				<Button class="bg-secondary !p-2 font-primary text-xl text-quaternary" on:click={handleRegenerate}>Regenerate</Button>
 			</div>
 		{/if}
-	{:else}
+	{:else if authStatus == AuthStatus.LoggedIn}
 		<div class="flex justify-center">
 			<Timer></Timer>
+		</div>
+	{:else}
+		<div class="flex justify-center">
+			<div>
+				<p>No more free messages left.</p>
+				<Button href="/login" class="bg-quaternary font-secondary text-2xl">Signup to continue</Button>
+			</div>
 		</div>
 	{/if}
 </footer>

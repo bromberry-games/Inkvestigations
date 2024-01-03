@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
+	import { Button } from 'flowbite-svelte';
 
 	let timeLeft = 0;
 
@@ -25,8 +26,13 @@
 	});
 </script>
 
-<p class="text-center font-primary text-xl font-medium">
-	No more messages left
-	<br />
-	New messages in: {Math.floor(timeLeft / 3600)}h {Math.floor((timeLeft % 3600) / 60)}m {Math.floor(timeLeft % 60)}s
-</p>
+<div>
+	<p class="text-center font-primary text-xl font-medium">
+		No more messages left
+		<br />
+		New messages in: {Math.floor(timeLeft / 3600)}h {Math.floor((timeLeft % 3600) / 60)}m {Math.floor(timeLeft % 60)}s
+	</p>
+	<div class="mt-2 text-center">
+		<Button class="bg-quaternary !p-2 font-secondary text-xl text-tertiary" href="/pricing">BUY MORE</Button>
+	</div>
+</div>
