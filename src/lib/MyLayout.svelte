@@ -13,9 +13,10 @@
 		NavUl,
 		Navbar
 	} from 'flowbite-svelte';
-	import logo from '/src/images/logo_2.svg?src';
+	import Logo from '/src/images/logo_2.svg?component';
 	import type { Session, SupabaseClient } from '@supabase/supabase-js';
 	import { AuthStatus, getAuthStatus } from './auth-helper';
+	import NavContainer from 'flowbite-svelte/NavContainer.svelte';
 
 	export let supabase: SupabaseClient;
 	export let session: Session | null;
@@ -29,14 +30,18 @@
 <Navbar
 	let:hidden
 	let:toggle
-	class="sticky top-0 w-full !bg-transparent"
+	let:NavContainer
+	class="sticky top-0 w-full !bg-transparent "
 	id="nav"
-	navDivClass="mx-auto flex flex-wrap justify-between items-center"
 >
-	<NavBrand href="/" class="md:1/4 xl:w-1/2">
-		<div class="inline font-tertiary" id="logo-container">
-			{@html logo}
-		</div>
+<NavContainer class="mx-auto flex flex-wrap justify-between items-center">
+
+	<!-- navDivClass="mx-auto flex flex-wrap justify-between items-center" -->
+	<NavBrand href="/" class="sm:1/6 md:1/4 xl:w-1/2">
+		<Logo class="font-tertiary w-60 h-16"></Logo>
+		<!-- <div class="inline font-tertiary" id="logo-container"> -->
+			<!-- {@html logo} -->
+		<!-- </div> -->
 	</NavBrand>
 	<div class="flex items-center md:order-2">
 		{#if authStatus == AuthStatus.LoggedIn}
@@ -67,4 +72,5 @@
 			<NavLi href="/login" class="ml-8 text-4xl !text-quaternary" active={activeUrl === '/login'}>LOGIN</NavLi>
 		{/if}
 	</NavUl>
+</NavContainer>
 </Navbar>

@@ -73,7 +73,8 @@ test('test try for free', async ({ page, isMobile }) => {
 	await page.waitForTimeout(200);
 	await fillOutSingupFormConfirmMailLogin(page, isMobile);
 	await expect(page.locator('#avatar-menu')).toBeVisible();
-	await page.getByRole('button', { name: 'PLAY' }).click();
+
+	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
 	await expect(page.getByText('Police chief:').nth(1)).toBeVisible();
 });
 

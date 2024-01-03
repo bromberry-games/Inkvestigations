@@ -2,9 +2,10 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Session } from '@supabase/supabase-js';
 import { loadMysteryLetterInfo, loadSuspects } from '$lib/supabase/mystery_data.server';
-import { loadLetterMessages } from '$lib/supabase/conversations.server';
+import { archiveLastConversation, loadLetterMessages } from '$lib/supabase/conversations.server';
 import { shuffleArray } from '$lib/generic-helpers';
 import { isPostgresError } from '$lib/supabase/helpers';
+import { throwIfFalse } from '$misc/error';
 
 function createLetter(letterInfo: string) {
 	return {
@@ -59,4 +60,17 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		error(500, 'could not load suspects chat from data');
 	}
 	return { slug, messages: [createLetter(letterInfo), ...messages], suspects: shuffleArray(suspects) };
+};
+
+export const actions = {
+	archiveChat: async ({ params, locals: { getSession } }) => {
+		const session: Session = await getSession();
+		if (!session) {
+			redirect(303, '/');
+		}
+		const { slug } = params;
+		const convoArchived = await archiveLastConversation(session.user.id, slug.replace(/_/g, ' '));
+		throwIfFalse(convoArchived, 'Could not archive conversation');
+		redirect(302, '/' + slug);
+	}
 };
