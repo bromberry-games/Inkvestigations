@@ -18,20 +18,3 @@ export const load = async ({ locals: { getSession, supabase } }) => {
 		mysteries: mysteries ?? []
 	};
 };
-
-export const actions = {
-	deleteChat: async ({ request, locals: { getSession } }) => {
-		const session: Session = await getSession();
-		if (!session) {
-			redirect(303, '/');
-		}
-		const formData = await request.formData();
-		const slug = formData.get('slug')?.toString();
-		if (!slug) {
-			error(500, 'Could not find mystery name');
-		}
-		const convoArchived = await archiveLastConversation(session.user.id, slug);
-		throwIfFalse(convoArchived, 'Could not archive conversation');
-		redirect(302, '/' + slug.replace(/ /g, '_'));
-	}
-};

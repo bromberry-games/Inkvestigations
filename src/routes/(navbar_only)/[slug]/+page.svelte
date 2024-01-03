@@ -6,6 +6,7 @@
 	import type { ChatMessage } from '$misc/shared';
 	import { Button, Input, Modal } from 'flowbite-svelte';
 	import { tokenStore } from '$misc/stores';
+	  import { RotateOutline } from 'flowbite-svelte-icons';
 
 	export let data: PageData;
 	let suspectToAccuse = '';
@@ -76,7 +77,13 @@
 		<Button on:click={() => (tokenModal = true)} class="!font-2xl my-2 bg-tertiary font-primary !text-quaternary">Change Token</Button>
 	</div>
 {/if}
-<Chat {messages}></Chat>
+<!-- <Button class="sticky top-24 bg-red-500">RESET CHAT</Button> -->
+<Chat {messages}>
+	<form slot="additional-content-top" action="?/archiveChat" method="POST" class="sticky top-24">
+		<Button type="submit" class="w-1/3 lg:w-1/6 xl:w-1/12 bg-gray-500 text-gray-300 md:mx-8 mx-2 font-secondary text-xs">
+		<RotateOutline class="mr-1"/>RESET CHAT</Button>
+	</form>
+</Chat>
 <ChatInput
 	{slug}
 	on:chatInput={addMessage}

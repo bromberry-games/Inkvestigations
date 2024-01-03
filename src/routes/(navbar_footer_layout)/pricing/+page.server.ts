@@ -144,6 +144,9 @@ export const actions = {
 		}
 		const customerId = await getStripeCustomer(session.user.id);
 		isTAndThrowPostgresErrorIfNot(customerId);
+		if (customerId == '') {
+			redirect(303, '/pricing');
+		}
 		const stripeSessions = await stripe.billingPortal.sessions.create({
 			customer: customerId,
 			return_url: `${url.origin}/pricing`

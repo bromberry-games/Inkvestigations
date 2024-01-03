@@ -5,7 +5,8 @@ import { deleteLastBrainMessage, deleteLastMessageForUser, supabase_full_access 
 async function navigateRestart(page: Page): Promise<void> {
 	await page.goto('/mysteries', { waitUntil: 'networkidle' });
 	const navigationPromise = page.waitForURL('/Mirror_Mirror', { waitUntil: 'networkidle' });
-	await page.getByRole('button', { name: 'RESTART' }).first().click();
+	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
+	await page.getByRole('button', { name: 'rotate outline RESET CHAT' }).click();
 	await navigationPromise;
 }
 
@@ -120,10 +121,7 @@ test('test accuse works ', async ({ page }) => {
 	await page.getByRole('img', { name: 'Oliver Smith' }).click();
 
 	const amount = await page.getByText('Police chief:').count();
-	await page
-		.getByPlaceholder('Enter to send, Shift+Enter for newline')
-		.fill('He did it with the poison pen. Put cyanide in the ink the day of the party. Was mad about the victims journalistic integrity.');
-	await page.locator('button[type="submit"]').click();
+	await sendMessage(page, 'He did it with the poison pen. Put cyanide in the ink the day of the party. Was mad about the victims');
 
 	const message = page.getByText('Police chief:').nth(amount);
 	await message.waitFor({ timeout: 45000 });
