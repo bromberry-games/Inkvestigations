@@ -1,8 +1,10 @@
 <script lang="ts">
+	import typewriter from '$lib/transitions';
 	import type { ChatMessage } from '$misc/shared';
 	import snarkdown from 'snarkdown';
 
 	export let message: ChatMessage;
+	export let animate: boolean = false;
 </script>
 
 <div
@@ -20,7 +22,13 @@
 	</div>
 
 	<!-- Message Content -->
-	<div class="font-secondary text-lg">
-		{@html snarkdown(message.content.replace(/\n/g, '<br>'))}
-	</div>
+	{#if animate}
+		<div class="font-secondary text-lg" in:typewriter|global={{ delay: 0, speed: 10 }}>
+			{@html snarkdown(message.content.replace(/\n/g, '<br>'))}
+		</div>
+	{:else}
+		<div class="font-secondary text-lg">
+			{@html snarkdown(message.content.replace(/\n/g, '<br>'))}
+		</div>
+	{/if}
 </div>

@@ -46,6 +46,3 @@ function createWritableStore<T>(key: string, startValue: T) {
 }
 
 export const tokenStore = createWritableStore('tokenStore', '');
-
-// export const tokenStore: Writable<string> = writable(localStorage.getItem('tokenStore') || '');
-// tokenStore.subscribe((val) => localStorage.setItem('tokenStore', val));
