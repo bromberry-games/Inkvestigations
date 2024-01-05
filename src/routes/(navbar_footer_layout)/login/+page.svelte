@@ -29,7 +29,6 @@
 	let borderRadius = radii[0];
 	let view = views[0];
 
-
 	$: if (data.session) {
 		const authStatus = getAuthStatus(data.session);
 		if (authStatus == AuthStatus.LoggedIn) {
@@ -38,7 +37,6 @@
 			view = views[1];
 		}
 	}
-
 </script>
 
 <svelte:head>
@@ -80,7 +78,7 @@
 									}
 								}
 							}}
-							providers={['apple', 'google', 'facebook']}
+							providers={['github', 'google', 'facebook']}
 							{socialLayout}
 							redirectTo={`${data.url}/auth/callback?next=/mysteries`}
 							forgottenPasswordRedirect={`${data.url}/auth/callback?next=/update-password`}
