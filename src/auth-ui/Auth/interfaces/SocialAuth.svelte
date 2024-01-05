@@ -1,15 +1,10 @@
 <script lang="ts">
 	import type { SupabaseClient, Provider } from '@supabase/supabase-js';
-	import {
-		template,
-		type I18nVariables,
-		type SocialLayout,
-		type ProviderScopes
-	} from '@supabase/auth-ui-shared';
+	import { template, type I18nVariables, type SocialLayout, type ProviderScopes } from '@supabase/auth-ui-shared';
 	import type { Appearance } from '$lib/types';
-	import Button from '$lib/../auth-ui/UI/Button.svelte';
-	import Container from '$lib/../auth-ui/UI/Container.svelte';
+	//import Button from '$lib/../auth-ui/UI/Button.svelte';
 	import Icons from '$lib/../auth-ui/Auth/Icons.svelte';
+	import { Button } from 'flowbite-svelte';
 
 	export let supabaseClient: SupabaseClient;
 	export let socialLayout: SocialLayout;
@@ -52,30 +47,30 @@
 </script>
 
 {#if providers.length}
-	<Container direction="vertical" gap="large" {appearance}>
-		<Container
-			direction={verticalSocialLayout ? 'vertical' : 'horizontal'}
-			gap={verticalSocialLayout ? 'small' : 'medium'}
-			{appearance}
-		>
-			{#each providers as provider}
-				<Button
-					aria-label={iconTitle(provider)}
-					on:click={() => handleProviderSignIn(provider)}
-					type="submit"
-					color="default"
-					{loading}
-					{appearance}
-				>
-					<Icons {provider} />
-					{#if verticalSocialLayout}
-						{iconTitle(provider)}
-					{/if}
-				</Button>
-			{/each}
-		</Container>
-	</Container>
+	<!-- <Container direction="vertical" gap="large" {appearance}> -->
+	<div class="mb-2 flex flex-col gap-2">
+		<!-- <Container direction={verticalSocialLayout ? 'vertical' : 'horizontal'} gap={verticalSocialLayout ? 'small' : 'medium'} {appearance}> -->
+		{#each providers as provider}
+			<Button class="bg-quaternary" on:click={() => handleProviderSignIn(provider)} type="submit">
+				<!-- <Button -->
+				<!-- aria-label={iconTitle(provider)} -->
+				<!-- on:click={() => handleProviderSignIn(provider)} -->
+				<!-- type="submit" -->
+				<!-- color="default" -->
+				<!-- {loading} -->
+				<!-- {appearance} -->
+				<!-- > -->
+				<Icons {provider} />
+				{#if verticalSocialLayout}
+					{iconTitle(provider)}
+				{/if}
+			</Button>
+			<!-- </Button> -->
+		{/each}
+		<!-- </Container> -->
+	</div>
+	<!-- </Container> -->
 	{#if !onlyThirdPartyProviders}
-		<hr class="border-slate-900">
+		<hr class="border-slate-900" />
 	{/if}
 {/if}

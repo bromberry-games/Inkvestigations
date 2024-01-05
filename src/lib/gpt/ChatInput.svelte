@@ -1,109 +1,83 @@
 <script lang="ts">
-	import type { ChatCompletionRequestMessage } from 'openai';
-	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { textareaAutosizeAction } from 'svelte-legos';
 	import { PaperAirplane } from '@inqling/svelte-icons/heroicon-24-solid';
 	import type { ChatMessage } from '$misc/shared';
-	import { chatStore, eventSourceStore, isLoadingAnswerStore, liveAnswerStore, enhancedLiveAnswerStore } from '$misc/stores';
-	import { countTokens } from '$misc/openai';
-	import { Toast, Button } from 'flowbite-svelte';
+	import { eventSourceStore, isLoadingAnswerStore, liveAnswerStore, enhancedLiveAnswerStore, tokenStore } from '$misc/stores';
+	import { approximateTokenCount } from '$misc/openai';
+	import { Toast, Button, Tooltip } from 'flowbite-svelte';
 	import SuspectModal from './SuspectModal.svelte';
+	import { MAX_TOKENS } from '../../constants';
+	import type { suspect } from '$lib/supabase/mystery_data.server';
+	import Timer from '../../routes/(navbar_only)/[slug]/timer.svelte';
+	import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
 
 	const dispatch = createEventDispatcher();
 
 	export let slug: string;
-	export let messagesAmount: number;
+	export let messagesAmount: { amount: number; non_refillable_amount: number };
 	export let suspectToAccuse = '';
-	export let suspects;
+	export let suspects: suspect[];
+	export let chatUnbalanced: boolean;
+	export let authStatus: AuthStatus;
 
 	let debounceTimer: number | undefined;
 	let input = '';
 	let inputCopy = '';
 	let textarea: HTMLTextAreaElement;
 	let messageTokens = 0;
-	let lastUserMessage: ChatMessage | null = null;
-	let currentMessages: ChatMessage[] | null = null;
+	let lastUserMessage: string | null = null;
 	let gameOver = false;
-	let rating: number;
 
-	$: chat = $chatStore[slug];
-	$: message = setMessage(input.trim());
-	$: {
-		if (chat.messages[0] == undefined) {
-			message = setMessage(input.trim());
-		}
-	}
-
-	function setMessage(content: string): ChatCompletionRequestMessage {
-		return {
-			role: 'user',
-			content: content
-		} as ChatCompletionRequestMessage;
-	}
-
-	const unsubscribe = chatStore.subscribe((chats) => {
-		const chat = chats[slug];
-		if (chat) {
-			currentMessages = chat.messages;
-		}
-	});
-
-	onDestroy(unsubscribe);
+	$: message = input.trim();
 
 	function handleSubmit() {
+		submitMessage(message);
+		dispatch('chatInput', { role: 'user', content: message });
+		input = '';
+	}
+
+	function handleRegenerate() {
+		submitMessage(lastUserMessage || 'tmp');
+	}
+
+	function submitMessage(messageToSubmit: string) {
+		messageTokens = approximateTokenCount(messageToSubmit);
+		if (messageTokens > MAX_TOKENS || messageToSubmit.length === 0) return;
+
 		if (suspectToAccuse) {
 			gameOver = true;
 		}
 		isLoadingAnswerStore.set(true);
 		inputCopy = input;
 
-		let parent: ChatMessage | null = null;
-		if (currentMessages && currentMessages.length > 0) {
-			parent = chatStore.getMessageById(currentMessages[currentMessages.length - 1].id!, chat);
-		}
-
-		chatStore.addMessageToChat(slug, message, parent || undefined);
-		// message now has an id
-		lastUserMessage = message;
+		lastUserMessage = messageToSubmit;
+		console.log('chat input form token store: ' + $tokenStore);
 
 		const payload = {
-			// OpenAI API complains if we send additionale props
 			game_config: {
 				suspectToAccuse: suspectToAccuse,
 				mysteryName: slug.replace(/_/g, ' ')
 			},
-			messages: currentMessages?.map(
-				(m) =>
-					({
-						role: m.role,
-						content: m.content,
-						name: m.name
-					}) as ChatCompletionRequestMessage
-			)
+			message: messageToSubmit,
+			openAiToken: $tokenStore
 		};
 
-		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort);
-		dispatch('chatInput');
-		input = '';
+		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort, handleEnd);
+	}
+
+	function handleEnd(event: MessageEvent<any>) {
+		addCompletionToChat();
 	}
 
 	function handleAnswer(event: MessageEvent<any>) {
 		try {
-			// streaming...
-			if (event.data !== '[DONE]') {
-				const completionResponse: any = JSON.parse(event.data);
-				const delta = completionResponse.content;
-				console.log(delta);
-				liveAnswerStore.update((store) => {
-					const answer = { ...store };
-					answer.content += delta;
-					return answer;
-				});
-			}
-			// streaming completed
-			else {
-				addCompletionToChat();
-			}
+			const delta = JSON.parse(event.data);
+			liveAnswerStore.update((store) => {
+				const answer = { ...store };
+				answer.content += delta;
+				return answer;
+			});
 		} catch (err) {
 			handleError(err);
 		}
@@ -119,12 +93,9 @@
 		$isLoadingAnswerStore = false;
 
 		// always true, check just for TypeScript
-		if (lastUserMessage?.id) {
-			chatStore.deleteMessage(slug, lastUserMessage.id);
-		}
 
+		console.error('could not parse stream');
 		console.error(event);
-		console.log('data: ');
 		console.error(event.data);
 
 		const data = JSON.parse(event.data);
@@ -132,6 +103,7 @@
 		//TODO Show error toast
 
 		if (data.message.includes('API key')) {
+			console.error('API key not found');
 		}
 
 		// restore last user prompt
@@ -140,13 +112,10 @@
 
 	function addCompletionToChat(isAborted = false) {
 		const messageToAdd: ChatMessage = !isAborted ? { ...$liveAnswerStore } : { ...$enhancedLiveAnswerStore, isAborted: true };
-
-		chatStore.addMessageToChat(slug, messageToAdd, lastUserMessage || undefined);
 		$isLoadingAnswerStore = false;
-
 		$eventSourceStore.reset();
 		resetLiveAnswer();
-		lastUserMessage = null;
+		dispatch('messageReceived', messageToAdd);
 	}
 
 	function resetLiveAnswer() {
@@ -171,7 +140,7 @@
 	}
 
 	function calculateMessageTokens() {
-		messageTokens = countTokens(message);
+		messageTokens = approximateTokenCount(message);
 		clearTimeout(debounceTimer);
 		debounceTimer = undefined;
 	}
@@ -182,64 +151,85 @@
 		suspectToAccuse = '';
 		toastOpen = true;
 	}
+
+	let placeholderText = 'Enter to send, Shift+Enter for newline';
+	$: {
+		if (gameOver) {
+			placeholderText = 'Game Over';
+		} else {
+			placeholderText = 'Enter to send, Shift+Enter for newline';
+		}
+	}
 </script>
 
 <SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects} {slug}></SuspectModal>
-<footer class="fixed bottom-0 z-10 md:w-11/12 md:rounded-xl md:px-8 md:py-4">
-	{#if $isLoadingAnswerStore}
-		<div></div>
-	{:else}
-		<div class="flex flex-col space-y-2 px-2 md:mx-auto md:w-3/4 md:px-8 xl:w-1/2">
-			{#if !gameOver}
-				{#if messagesAmount > 0}
-					<form on:submit|preventDefault={handleSubmit}>
-						<div class="flex flex-wrap items-center">
-							<!-- Input -->
-							{#if suspectToAccuse}
-								<Toast class="!md:p-3 w-full !max-w-md grow-0 md:mx-2 md:w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
-							{:else}
-								<Button
-									class="mr-1 bg-secondary !p-2 font-primary text-xl text-quaternary md:mx-2 md:px-5"
-									on:click={() => (clickOutsideModal = true)}>ACCUSE</Button
-								>
-							{/if}
-							<textarea
-								class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary"
-								rows="1"
-								placeholder="Enter to send, Shift+Enter for newline"
-								use:textareaAutosizeAction
-								on:keydown={handleKeyDown}
-								bind:value={input}
-								bind:this={textarea}
-							/>
-							<div
-								data-testid="message-counter"
-								aria-label="messages left counter"
-								class="ml-1 h-full bg-[url('/images/message_counter.svg')] bg-cover bg-center bg-no-repeat px-4 py-6 text-xl md:ml-2"
-							>
-								{messagesAmount}
-							</div>
-							<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
-								<button type="submit" class="btn btn-sm ml-2">
-									<PaperAirplane class="h-6 w-6" />
-								</button>
-							</div>
-						</div>
-					</form>
-				{:else}
-					<div class="text-center">No more messages</div>
-					<div class="grid grid-cols-[1fr_auto]">
+<footer class="fixed bottom-0 z-10 w-full md:rounded-xl md:px-8 md:py-4">
+	{#if messagesAmount.amount > 0 || messagesAmount.non_refillable_amount > 0 || $tokenStore != ''}
+		{#if $isLoadingAnswerStore}
+			<div></div>
+		{:else if !chatUnbalanced}
+			<div class="flex flex-col space-y-2 px-2 md:mx-auto md:w-3/4 md:px-8 xl:w-1/2">
+				<form on:submit|preventDefault={handleSubmit}>
+					<div class="flex flex-wrap items-center">
 						<!-- Input -->
-						<textarea class="textarea min-h-[42px] overflow-hidden" rows="1" placeholder="No more messages left" disabled />
+						{#if suspectToAccuse}
+							<Toast class="!md:p-3 w-full !max-w-md grow-0 md:mx-2 md:w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
+						{:else}
+							<Button
+								disabled={gameOver}
+								class="mr-1 bg-secondary !p-2 font-primary text-xl text-quaternary md:mx-2 md:px-5"
+								on:click={() => (clickOutsideModal = true)}>ACCUSE</Button
+							>
+						{/if}
+						<textarea
+							class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary"
+							rows="1"
+							placeholder={placeholderText}
+							use:textareaAutosizeAction
+							on:keydown={handleKeyDown}
+							bind:value={input}
+							bind:this={textarea}
+							disabled={gameOver}
+						/>
+						<div
+							data-testid="message-counter"
+							aria-label="messages left counter"
+							class="ml-1 h-full bg-[url('/images/message_counter.svg')] bg-cover bg-center bg-no-repeat px-4 py-6 font-tertiary text-xl md:ml-2"
+						>
+							{messagesAmount.amount > 0 ? messagesAmount.amount : messagesAmount.non_refillable_amount}
+						</div>
+						<Tooltip class="w-1/5 font-secondary"
+							>Automatically prioritized for you: Your daily refillable messages are used first, and only after they're depleted, your
+							bought messages are utilized.
+							<p>Daily messages: {messagesAmount.amount}</p>
+							<p>Bought messages: {messagesAmount.non_refillable_amount}</p></Tooltip
+						>
 						<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
-							<!-- Send button -->
 							<button type="submit" class="btn btn-sm ml-2">
 								<PaperAirplane class="h-6 w-6" />
 							</button>
 						</div>
 					</div>
+				</form>
+				{#if messageTokens > 50}
+					<div class="text-center text-red-700">Input text too long</div>
 				{/if}
-			{/if}
+			</div>
+		{:else}
+			<div class="flex justify-center">
+				<Button class="bg-secondary !p-2 font-primary text-xl text-quaternary" on:click={handleRegenerate}>Regenerate</Button>
+			</div>
+		{/if}
+	{:else if authStatus == AuthStatus.LoggedIn}
+		<div class="flex justify-center">
+			<Timer></Timer>
+		</div>
+	{:else}
+		<div class="flex justify-center">
+			<div>
+				<p>No more free messages left.</p>
+				<Button href="/login" class="bg-quaternary font-secondary text-2xl">Signup to continue</Button>
+			</div>
 		</div>
 	{/if}
 </footer>
