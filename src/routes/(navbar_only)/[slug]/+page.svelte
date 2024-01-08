@@ -14,10 +14,36 @@
 
 	let userMessages = { amount: 0, non_refillable_amount: 0 };
 	$: supabase = data.supabase;
-	$: messages = data.messages;
+	$: messages = buildMessagesList(data.messages);
+	$: console.log(data.eventMessages);
 
 	function addMessage(event: CustomEvent<ChatMessage>) {
-		messages = [...messages, event.detail];
+		messages = buildMessagesList([...messages.filter((m) => m.extra == undefined || m.extra == false), event.detail]);
+	}
+
+	function buildMessagesList(chat: { role: string; content: string; extra?: boolean }[]) {
+		console.log(data.eventMessages);
+		const eventMessages = data.eventMessages.filter((event) => event.show_at_message <= (chat.length - 1) / 2);
+		console.log(eventMessages);
+		if (!eventMessages || eventMessages.length == 0) return chat;
+		let tmpMessages = Array(chat.length + eventMessages.length);
+		let i = 0;
+		for (let j = 0; j < chat.length; j += 2) {
+			tmpMessages[j + i] = chat[j];
+			console.log(i, j, j / 2, eventMessages[i].show_at_message);
+			if (i < eventMessages.length && j / 2 == eventMessages[i].show_at_message) {
+				tmpMessages[j + i + 1] = {
+					role: 'assistant',
+					content: eventMessages[i].letter,
+					extra: true
+				};
+				i += 1;
+			}
+			if (j + 1 >= chat.length) break;
+			tmpMessages[j + i + 1] = chat[j + 1];
+		}
+		console.log(tmpMessages);
+		return tmpMessages;
 	}
 
 	async function updateUserMessageAmountAndAddMessage(event: CustomEvent<ChatMessage>) {
@@ -43,7 +69,6 @@
 	});
 
 	let tokenModal = data.session?.user.user_metadata.useMyOwnToken && $tokenStore == '';
-	$: console.log('modal', $tokenStore);
 	$: openAiToken = $tokenStore;
 	function storeTokenLocally() {
 		if (openAiToken) {
@@ -81,8 +106,9 @@
 <!-- <Button class="sticky top-24 bg-red-500">RESET CHAT</Button> -->
 <Chat {messages}>
 	<form slot="additional-content-top" action="?/archiveChat" method="POST" class="sticky top-24">
-		<Button type="submit" class="w-1/3 lg:w-1/6 xl:w-1/12 bg-gray-500 text-gray-300 md:mx-8 mx-2 font-secondary text-xs">
-		<RotateOutline class="mr-1"/>RESET CHAT</Button>
+		<Button type="submit" class="mx-2 w-1/3 bg-gray-500 font-secondary text-xs text-gray-300 md:mx-8 lg:w-1/6 xl:w-1/12">
+			<RotateOutline class="mr-1" />RESET CHAT</Button
+		>
 	</form>
 </Chat>
 <ChatInput
@@ -92,6 +118,6 @@
 	messagesAmount={userMessages}
 	{suspectToAccuse}
 	suspects={data.suspects}
-	chatUnbalanced={messages.length % 2 !== 1}
+	chatUnbalanced={messages.filter((m) => m.extra == undefined || m.extra == false).length % 2 !== 1}
 	authStatus={getAuthStatus(data.session)}
 />

@@ -2,9 +2,9 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Session } from '@supabase/supabase-js';
 import { loadMysteryLetterInfo, loadSuspects } from '$lib/supabase/mystery_data.server';
-import { archiveLastConversation, loadLetterMessages } from '$lib/supabase/conversations.server';
+import { archiveLastConversation, loadEventMessages, loadLetterMessages } from '$lib/supabase/conversations.server';
 import { shuffleArray } from '$lib/generic-helpers';
-import { isPostgresError } from '$lib/supabase/helpers';
+import { isPostgresError, isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
 import { throwIfFalse } from '$misc/error';
 
 function createLetter(letterInfo: string) {
@@ -45,21 +45,27 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 	const { slug } = params;
 	const mysteryName = slug.replace(/_/g, ' ');
 
-	const [letterInfo, messages, suspects] = await Promise.all([
+	const [letterInfo, messages, suspects, eventMessages] = await Promise.all([
 		loadMysteryLetterInfo(session.user.id, mysteryName),
 		loadLetterMessages(session.user.id, mysteryName),
-		loadSuspects(mysteryName)
+		loadSuspects(mysteryName),
+		loadEventMessages(mysteryName)
 	]);
 	if (!letterInfo) {
 		error(500, 'could not load letter info from data');
 	}
-	if (isPostgresError(messages)) {
-		error(500, messages);
-	}
+	isTAndThrowPostgresErrorIfNot(messages);
+	isTAndThrowPostgresErrorIfNot(eventMessages);
 	if (!suspects) {
 		error(500, 'could not load suspects chat from data');
 	}
-	return { slug, messages: [createLetter(letterInfo), ...messages], suspects: shuffleArray(suspects) };
+
+	return {
+		slug,
+		messages: [createLetter(letterInfo), ...messages],
+		suspects: shuffleArray(suspects),
+		eventMessages
+	};
 };
 
 export const actions = {

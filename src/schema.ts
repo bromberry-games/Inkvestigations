@@ -34,6 +34,38 @@ export interface Database {
   }
   public: {
     Tables: {
+      events: {
+        Row: {
+          id: number
+          info: string
+          letter: string
+          mystery_id: number | null
+          show_at_message: number
+        }
+        Insert: {
+          id?: number
+          info: string
+          letter: string
+          mystery_id?: number | null
+          show_at_message: number
+        }
+        Update: {
+          id?: number
+          info?: string
+          letter?: string
+          mystery_id?: number | null
+          show_at_message?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: false
+            referencedRelation: "mysteries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       for_free_users: {
         Row: {
           amount: number

@@ -26,18 +26,19 @@ export async function loadSuspects(mysterName: string): Promise<suspect[] | null
 	];
 }
 
-export async function loadGameInfo(mystery: string) {
+export async function loadGameInfo(mystery: string, messageLength: number) {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('mysteries')
 		.select(
-			'theme, setting, timeframe, action_clues, letter_prompt, accuse_letter_prompt, suspects, murderer, victim_name, victim_description'
+			'theme, setting, timeframe, action_clues, letter_prompt, accuse_letter_prompt, suspects, murderer, victim_name, victim_description, events(letter, info, show_at_message)'
 		)
 		.eq('name', mystery)
+		.lte('events.show_at_message', messageLength)
 		.limit(1)
 		.single();
 
 	if (conversationError) {
-		console.error('conversation error: ');
+		console.error('conversation error: ', conversationError);
 		console.error(conversationError);
 		return null;
 	}
