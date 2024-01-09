@@ -34,6 +34,7 @@ test('test gpt connection and expect message counter to go down', async ({ page 
 
 	const newMessageCount = await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
 
+	await expect(page.getByText('Police chief:').nth(2)).not.toBeVisible();
 	expect(newMessageCount + 1).toBe(messageCount);
 });
 
@@ -61,6 +62,8 @@ test('should use up both messages', async ({ page, account }) => {
 	//This is now also 1 since now the bought messages are being used up. This might change in the future
 	expect(messageCount).toBe(1);
 	await sendMessage(page, 'do some cool stuff');
+	const message = page.getByText('Police chief:').nth(2);
+	await message.waitFor({ timeout: 45000 });
 	await expect(page.getByText('No more messages left New')).toBeVisible();
 });
 

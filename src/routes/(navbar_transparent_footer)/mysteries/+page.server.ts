@@ -1,14 +1,14 @@
-import { archiveLastConversation } from '$lib/supabase/conversations.server';
-import { throwIfFalse } from '$misc/error.js';
-import type { Session } from '@supabase/supabase-js';
-import { error, redirect } from '@sveltejs/kit';
+import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers.js';
+import { loadMysteriesWithSolved } from '$lib/supabase/mystery_data.server';
 
 export const load = async ({ locals: { getSession, supabase } }) => {
 	const session = await getSession();
 	let mysteries;
 	if (session) {
-		const { data } = await supabase.from('mysteries').select('*, solved(rating)');
+		const data = await loadMysteriesWithSolved(session.user.id);
+		isTAndThrowPostgresErrorIfNot(data);
 		mysteries = data;
+		console.log(mysteries);
 	} else {
 		const { data } = await supabase.from('mysteries').select();
 		mysteries = data;

@@ -32,6 +32,12 @@
 					<FooterLink liClass="mb-4" href="/legal/dmca-policy">DMCA Policy</FooterLink>
 				</FooterLinkGroup>
 			</div>
+			<div>
+				<h2 class="mb-6 text-sm font-semibold uppercase text-gray-900 dark:text-white">Contact</h2>
+				<FooterLinkGroup>
+					<FooterLink liClass="mb-4" href="mailto:bromberrygames@pm.me">bromberrygames@pm.me</FooterLink>
+				</FooterLinkGroup>
+			</div>
 		</div>
 	</div>
 	<div class="sm:flex sm:items-center sm:justify-between">

@@ -60,3 +60,12 @@ export async function loadMysteryLetterInfo(userid: string, mystery: string): Pr
 
 	return mysteryData.letter_info;
 }
+
+export async function loadMysteriesWithSolved(userId: string) {
+	const { error, data } = await supabase_full_access.from('mysteries').select('*, solved(rating)').eq('solved.user_id', userId);
+	if (error) {
+		console.error(error);
+		return error;
+	}
+	return data;
+}
