@@ -50,8 +50,8 @@
 					class="border-gray-600 bg-gray-800 font-secondary text-white"
 				/>
 			</div>
-			<!-- <Turnstile on:turnstile-callback={(e) => (captchaToken = e.detail.token)} siteKey={PUBLIC_TURNSTILE_SITE_KEY} /> -->
-			<Button type="submit" btnClass="bg-tertiary rounded py-4 font-primary text-xl" {appearance}>
+			<Turnstile on:turnstile-callback={(e) => (captchaToken = e.detail.token)} siteKey={PUBLIC_TURNSTILE_SITE_KEY} />
+			<Button type="submit" class="rounded bg-tertiary py-4 font-primary text-xl text-quaternary">
 				{i18n?.forgotten_password?.button_label}
 			</Button>
 		</Container>
