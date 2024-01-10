@@ -12,14 +12,10 @@ const stripe = new Stripe(STRIPE_TEST_KEY, {
 });
 
 export const load = async ({ locals: { getSession } }) => {
-	const [subscription, stripePrices, currentSubscription] = await Promise.all([
-		loadActiveSubscriptions(),
+	const [stripePrices, currentSubscription] = await Promise.all([
 		stripe.prices.list({
 			active: true,
 			expand: ['data.product']
-			// recurring: {
-			// interval: 'month'
-			// }
 		}),
 		(async () => {
 			const session = await getSession();
@@ -34,48 +30,42 @@ export const load = async ({ locals: { getSession } }) => {
 			}
 		})()
 	]);
-	if (!subscription) {
-		error(500, 'could not load subs');
-	}
 	const singlePrices = stripePrices.data.filter((price) => {
 		return price.recurring == null;
 	});
 
-	const stripeSubscriptions = stripePrices.data
-		.filter((price) => {
-			return price.recurring?.interval === 'month';
-		})
-		.sort((a, b) => {
-			return a.unit_amount - b.unit_amount;
-		})
-		.map((price) => {
-			const subInfo = subscription.find((sub) => sub.stripe_price_id === price.id);
-			return {
-				id: price.id,
-				currency: price.currency,
-				unit_amount: price.unit_amount,
-				product_name: subInfo?.name,
-				daily_message_limit: subInfo?.daily_message_limit,
-				currentPlan: currentSubscription === price.id
-			};
-		});
-
-	return { stripeSubscriptions: stripeSubscriptions, hasSub: !!currentSubscription, oneTimeItems: singlePrices };
+	return { hasSub: !!currentSubscription, oneTimeItems: singlePrices };
 };
 
 export const actions = {
 	subscribe: async ({ url, request, locals: { getSession } }) => {
 		const user_session: Session = await getSession();
-		const form_data = request.formData();
-		const price = (await form_data).get('price_id') as string;
+		if (getAuthStatus(user_session) != AuthStatus.LoggedIn) {
+			redirect(303, '/login');
+		}
+		const form_data = await request.formData();
+		let line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+		if (form_data.get('paymode') == 'free-tier') {
+			line_items = [
+				{
+					price: 'price_1OX3PyKIDbJkcynJ84FAWIsv'
+				}
+			];
+		} else if (form_data.get('paymode') == 'subscription-tier') {
+			console.log('form data: ', form_data);
+			line_items = [
+				{
+					price: 'price_1Ng9UfKIDbJkcynJYsE9jPMZ',
+					quantity: 1
+				},
+				{
+					price: 'price_1OX1RjKIDbJkcynJBNwlgnJ2'
+				}
+			];
+		}
 
 		const session = await stripe.checkout.sessions.create({
-			line_items: [
-				{
-					price: price,
-					quantity: 1
-				}
-			],
+			line_items,
 			mode: 'subscription',
 			success_url: `${url.origin}/success`,
 			cancel_url: `${url.origin}/pricing`,
