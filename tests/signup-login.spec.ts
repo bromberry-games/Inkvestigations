@@ -8,6 +8,7 @@ import {
 	navToLogin
 } from './login-helpers';
 import { supabase_full_access } from './supabase_test_access';
+import { aw } from 'vitest/dist/reporters-OH1c16Kq.js';
 
 async function logoutOfPage(page: Page, isMobile: boolean) {
 	await page.locator('#avatar-menu').click();
@@ -29,6 +30,41 @@ test('logout', async ({ page, isMobile }) => {
 	await logoutOfPage(page, isMobile);
 
 	await expect(page.getByRole('link', { name: 'LOGIN', exact: true })).toBeVisible();
+});
+
+test('login, logout, reset password and login', async ({ page, isMobile }) => {
+	const { mail } = await createNewUserAndLogin(page, isMobile);
+	await logoutOfPage(page, isMobile);
+	await expect(page.getByRole('link', { name: 'LOGIN', exact: true })).toBeVisible();
+	await navToLogin(page, isMobile);
+	await page.getByRole('link', { name: 'Forgot your password?' }).click();
+	await page.getByPlaceholder('Your email address').fill(mail);
+	await page.getByRole('button', { name: 'Send reset password' }).click();
+	await page.goto('http://127.0.0.1:54329/monitor');
+	await page.getByRole('cell', { name: '<admin@email.com>' }).first().click();
+	await page.getByRole('link', { name: 'Reset password' }).click();
+
+	await page.waitForLoadState('networkidle');
+	const newPassword = 'the-cool-password';
+	await page.getByPlaceholder('New password').fill(newPassword);
+	await page.getByRole('button', { name: 'Update password' }).click();
+	await logoutOfPage(page, isMobile);
+	await loginOnPage(page, isMobile, mail, newPassword);
+
+	await expect(page.locator('#avatar-menu')).toBeVisible();
+});
+
+test('login, update password, logout and login again', async ({ page, isMobile }) => {
+	const { mail } = await createNewUserAndLogin(page, isMobile);
+	await expect(page.locator('#avatar-menu')).toBeVisible();
+	await page.goto('/update-password', { waitUntil: 'networkidle' });
+	const newPassword = 'the-cool-password';
+	await page.getByPlaceholder('New password').fill(newPassword);
+	await page.getByRole('button', { name: 'Update password' }).click();
+	await logoutOfPage(page, isMobile);
+	await loginOnPage(page, isMobile, mail, newPassword);
+
+	await expect(page.locator('#avatar-menu')).toBeVisible();
 });
 
 test('login logout and login should redirect', async ({ page, isMobile }) => {

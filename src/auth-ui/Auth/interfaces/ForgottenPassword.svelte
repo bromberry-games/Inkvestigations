@@ -4,7 +4,9 @@
 	import Message from '$lib/../auth-ui/UI/Message.svelte';
 	import { VIEWS, type I18nVariables, type ViewType } from '@supabase/auth-ui-shared';
 	import type { Appearance } from '$lib/types';
-	import { Button, Input, } from 'flowbite-svelte';
+	import { Button, Input } from 'flowbite-svelte';
+	import { Turnstile } from 'svelte-turnstile';
+	import { PUBLIC_TURNSTILE_SITE_KEY } from '$env/static/public';
 
 	export let i18n: I18nVariables;
 	export let supabaseClient: SupabaseClient;
@@ -17,13 +19,15 @@
 	let message = '';
 	let error = '';
 	let loading = false;
+	let captchaToken = '';
 
 	async function handleSubmit() {
 		loading = true;
 		error = '';
 		message = '';
 		const { error: resetPasswordError } = await supabaseClient.auth.resetPasswordForEmail(email, {
-			redirectTo
+			redirectTo,
+			captchaToken
 		});
 		if (resetPasswordError) error = resetPasswordError.message;
 		else message = i18n.forgotten_password?.confirmation_text as string;
@@ -43,10 +47,11 @@
 					placeholder={i18n?.forgotten_password?.email_input_placeholder}
 					bind:value={email}
 					autocomplete="email"
-					class="text-white bg-gray-800 border-gray-600 font-secondary"
+					class="border-gray-600 bg-gray-800 font-secondary text-white"
 				/>
 			</div>
-			<Button type="submit"  btnClass="bg-tertiary rounded py-4 font-primary text-xl" {appearance}>
+			<!-- <Turnstile on:turnstile-callback={(e) => (captchaToken = e.detail.token)} siteKey={PUBLIC_TURNSTILE_SITE_KEY} /> -->
+			<Button type="submit" btnClass="bg-tertiary rounded py-4 font-primary text-xl" {appearance}>
 				{i18n?.forgotten_password?.button_label}
 			</Button>
 		</Container>
