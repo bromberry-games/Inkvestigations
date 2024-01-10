@@ -1,5 +1,5 @@
 INSERT INTO mysteries 
-(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, suspects, action_clues, timeframe, murderer, victim_name, victim_description, filepath) 
+(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, murderer, victim_name, victim_description, filepath) 
 VALUES (
 'Mirror Mirror',
 'A journalist is found dead. But nobody knows what happened.',
@@ -14,34 +14,6 @@ $$,
 $$
 Your name is William Wellington, the police chief of Zlockingbury. You live in a moderately sized city set in the beginning of the 20th century in England. You talk like a noir cop and use metaphors often. Michael Terry was found dead, thrown through the mirror in his study. His maid called the police, but before we had arrived, the politician Dexter Tin was there. He was supposed to have a meeting with Terry. Three days prior, Terry held a party at his house, but between then and his death he should have been alone until his appointment with Mr. Tin. There is no sign of struggle or forced entry, but a suicide is unlikely because the method is so gruesome and strange. 
 $$,
-ARRAY[
-        ROW('Bianca White', 'bianca_white.webp', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.')::suspect_type,
-        ROW('Dexter Tin', 'dexter_tin.webp', 'Politician who was disgraced by Michael Terry.')::suspect_type,
-        ROW('Maria Payton', 'maria_payton.webp', 'Long-time maid of Michael Terry.')::suspect_type,
-        ROW('Angela Videl', 'angela_videl.webp', 'Rival columnist to Michael Terry.')::suspect_type,
-        ROW('Peter O''Ranner', 'peter_oranner.webp', 'Retired detective who occasionally assisted Michael Terry with his articles.')::suspect_type
-    ],
-ARRAY[
-        ('Interrogating the suspects', 'generic responses, none refer to anything below this point'),
-        ('Searching the study', 'a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry''s desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him'),
-        ('Inspecting the half-written piece', 'it is an expose, but none of the names are known in the country'),
-        ('Inspecting the Tin letters', 'they just show his innocence from an objective observer, but have his fingerprints all over them'),
-        ('Inspecting fan letters', 'different fans praising him for different things. A lot are from Oliver from when he was still a fan. The recent ones have the distinct smudge Terry''s pen leaves when writing, as if he wrote some himself'),
-        ('Asking about the similarity of Oliver''s letters and Terry''s drafts', 'they are using the same pen'),
-        ('Autopsy', 'he was poisoned with cyanide; in his stomach a pill was found; he had a blue tongue, probably from his famous habit of licking his pen, he probably fell through the mirror after dying'),
-        ('Analyzing pills', 'all ordinary'),
-        ('Analyzing pen', 'gelatin and traces of cyanide in the inkwell'),
-        ('Asking about the gelatin', 'it is common for pills to be encased in gelatin, but this is much more than a normal pill, it would have taken a lot longer to dissolve'),
-        ('Asking how often Terry refilled the inkwell', 'with his writing speed every two days probably'),
-        ('Ask for alibis', 'Bianca was on a trip, but talked to Terry over the phone; Tin was busy with his political obligations; Oliver was at home writing a piece'),
-        ('Searching Oliver''s apartment', 'a normal apartment, but for the fact that he has the same pen as Terry twice')
-    ]::action_clue_type[],
-  ARRAY[
-        ('Friday evening', 'party with his friends'),
-        ('Saturday morning', 'guests who stayed over leave his house early in the morning. Terry recovers from his hangover.'),
-        ('Sunday', 'Terry is alone writing'),
-        ('Monday', 'Around noon, the maid finds Terry dead, fallen through the mirror in his study. Dexter Tin arrives.')
-    ]::timeframe_type[],
 (
     'Oliver Smith',
     'Biggest fan before becoming his apprentice',
@@ -54,6 +26,40 @@ ARRAY[
 'Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.',
 'images/mysteries/mirror_mirror.webp'
 );
+
+INSERT INTO suspects (mystery_id, name, imagepath, description)
+VALUES
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Bianca White', 'bianca_white.webp', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Dexter Tin', 'dexter_tin.webp', 'Politician who was disgraced by Michael Terry.'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Maria Payton', 'maria_payton.webp', 'Long-time maid of Michael Terry.'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Angela Videl', 'angela_videl.webp', 'Rival columnist to Michael Terry.'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Peter O''Ranner', 'peter_oranner.webp', 'Retired detective who occasionally assisted Michael Terry with his articles.');
+
+INSERT INTO action_clues (mystery_id, action, clue)
+VALUES
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Interrogating the suspects', 'generic responses, none refer to anything below this point'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Searching the study', 'a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry''s desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Inspecting the half-written piece', 'it is an expose, but none of the names are known in the country'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Inspecting the Tin letters', 'they just show his innocence from an objective observer, but have his fingerprints all over them'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Inspecting fan letters', 'different fans praising him for different things. A lot are from Oliver from when he was still a fan. The recent ones have the distinct smudge Terry''s pen leaves when writing, as if he wrote some himself'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Asking about the similarity of Oliver''s letters and Terry''s drafts', 'they are using the same pen'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Autopsy', 'he was poisoned with cyanide; in his stomach a pill was found; he had a blue tongue, probably from his famous habit of licking his pen, he probably fell through the mirror after dying'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Analyzing pills', 'all ordinary'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Analyzing pen', 'gelatin and traces of cyanide in the inkwell'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Asking about the gelatin', 'it is common for pills to be encased in gelatin, but this is much more than a normal pill, it would have taken a lot longer to dissolve'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Asking how often Terry refilled the inkwell', 'with his writing speed every two days probably'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Ask for alibis', 'Bianca was on a trip, but talked to Terry over the phone; Tin was busy with his political obligations; Oliver was at home writing a piece'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Searching Oliver''s apartment', 'a normal apartment, but for the fact that he has the same pen as Terry twice');
+
+INSERT INTO timeframes (mystery_id, timeframe, event_happened)
+VALUES
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Friday evening', 'party with his friends'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Saturday morning', 'guests who stayed over leave his house early in the morning. Terry recovers from his hangover.'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Sunday', 'Terry is alone writing'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Monday', 'Around noon, the maid finds Terry dead, fallen through the mirror in his study. Dexter Tin arrives.');
+
+
+
 
 INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
 VALUES
@@ -148,7 +154,7 @@ where
 
 Insert INTO for_free_users (amount, daily_limit) VALUES (5, 5);
 
-INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, suspects, action_clues, timeframe, murderer, victim_name, victim_description, filepath) VALUES (
+INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, murderer, victim_name, victim_description, filepath) VALUES (
     'Forced Farewell',
     'A boy is found missing.',
     'pride and shame',
@@ -200,37 +206,6 @@ William "The Lad" Johnson: Local moneylender.
 
 Joseph Strickmeyer: Burgler and overall no-good kind of guy and very stupid. Police always thinks of this man first whenever something is suspicious.
 $$,
-ARRAY[
-    ROW('Lord Baron Charles Toillard', 'lord_baron_charles_toillard.webp', 'A newly titled baron, known for his achievements in diplomacy. Recently turned into a drunkard and gambler.')::suspect_type,
-    ROW('Lady Adelia Toillard', 'lady_adelia_toillard.webp', 'From lower nobility, sullen and withdrawn, spends a lot of time with her children.')::suspect_type,
-    ROW('Alice Toillard', 'alice_toillard.webp', 'Younger sister, 5 years old.')::suspect_type,
-    ROW('Arthur Toillard', 'arthur_toillard.webp', 'Younger brother, 9 years old.')::suspect_type,
-    ROW('Butler Jessob', 'butler_jessob.webp', 'A long-time butler and good friend of the family, loves the children.')::suspect_type,
-    ROW('Doctor Jameson', 'doctor_jameson.webp', 'Local doctor.')::suspect_type,
-    ROW('William "The Lad" Johnson', 'william_the_lad_johnson.webp', 'Local moneylender.')::suspect_type,
-    ROW('Joseph Strickmeyer', 'joseph_strickmeyer.webp', 'Burglar and overall no-good kind of guy, often suspected by police.')::suspect_type
-],
-ARRAY[
-    ('Interrogate Toillard household', 'create a line for each suspect about how worried they are'),
-    ('Search house', 'there is shattered glass at a garden door; John''s room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; the ransom note'),
-    ('Investigate ransom note', 'it''s old newspaper cutouts demanding that on Monday July 18 £13.2 be posted to the following address in London: 4 Patterson Street'),
-    ('Searching 4 Patterson Street in London', 'in that apartment lives a Mary Ann Woodcock and her daughters Hannah and Anna. Her husband Methusalem Woodcock is a sailor and has been at sea for months'),
-    ('Interrogate Butler Jessob', 'he says he was tending to the sickly John who seemed to be getting worse, so he rode out to fetch the local doctor, they couldn''t have been gone more than an hour; and when they returned they searched everywhere, but couldn''t find John; so Jessob sent the doctor to ride for Romsey to inform the Toillards'),
-    ('Search John''s room', 'all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science'),
-    ('Questioning Baron Toillard whom he suspects', 'he suspects "The Lad" Johnson because he borrowed money from The Lad, but it''s peculiar that the ransom is much less than he borrowed from The Lad'),
-    ('Search the estate and the surroundings', 'no clues as there wasn''t any rain for footprints and they seem very careful not to leave any tracks'),
-    ('Questioning the family if they know of Sherlock Holmes', 'they say that obviously everyone''s heard of him since he solved the murder of the Cleveland man, John was particularly amazed by the The Book of Life and he chewed their ears off about it'),
-    ('Interrogating William Johnson', 'he lent money to the Baron, but he says he has other was of getting money back fair and square, and that he doesn''t have to rely on stealing children; besides it''s much much less than he''s owed')
-]::action_clue_type[],
-ARRAY[
-    ('09:00AM', 'The Toillards leave the butler Jessob and John at home'),
-    ('11:30AM', 'The garden party begins'),
-    ('13:00PM', 'The butler leaves to fetch a doctor'),
-    ('13:30PM', 'The butler and the doctor return to find a mess in the apartment.'),
-    ('14:15PM', 'After a thorough search, the doctor leaves to inform Lord Toillard.'),
-    ('15:00PM', 'The doctor reaches Lord Toilard and he contacts the chief constable Smith'),
-    ('15:45PM', 'Lord Toillard, Smith and a few officers arrive at the estate')
-]::timeframe_type[],
 (
     'John Toilard',
     'kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives.',
@@ -243,6 +218,41 @@ ARRAY[
 'kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives.',
 '/images/mysteries/forced_farewell.webp'
 );
+
+INSERT INTO suspects (mystery_id, name, imagepath, description)
+VALUES
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Lord Baron Charles Toillard', 'lord_baron_charles_toillard.webp', 'A newly titled baron, known for his achievements in diplomacy. Recently turned into a drunkard and gambler.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Lady Adelia Toillard', 'lady_adelia_toillard.webp', 'From lower nobility, sullen and withdrawn, spends a lot of time with her children.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Alice Toillard', 'alice_toillard.webp', 'Younger sister, 5 years old.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Arthur Toillard', 'arthur_toillard.webp', 'Younger brother, 9 years old.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Butler Jessob', 'butler_jessob.webp', 'A long-time butler and good friend of the family, loves the children.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Doctor Jameson', 'doctor_jameson.webp', 'Local doctor.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'William "The Lad" Johnson', 'william_the_lad_johnson.webp', 'Local moneylender.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Joseph Strickmeyer', 'joseph_strickmeyer.webp', 'Burglar and overall no-good kind of guy, often suspected by police.');
+
+INSERT INTO action_clues (mystery_id, action, clue)
+VALUES
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogate Toillard household', 'create a line for each suspect about how worried they are'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search house', 'there is shattered glass at a garden door; John''s room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; the ransom note'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Investigate ransom note', 'it''s old newspaper cutouts demanding that on Monday July 18 £13.2 be posted to the following address in London: 4 Patterson Street'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Searching 4 Patterson Street in London', 'in that apartment lives a Mary Ann Woodcock and her daughters Hannah and Anna. Her husband Methusalem Woodcock is a sailor and has been at sea for months'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogate Butler Jessob', 'he says he was tending to the sickly John who seemed to be getting worse, so he rode out to fetch the local doctor, they couldn''t have been gone more than an hour; and when they returned they searched everywhere, but couldn''t find John; so Jessob sent the doctor to ride for Romsey to inform the Toillards'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search John''s room', 'all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Questioning Baron Toillard whom he suspects', 'he suspects "The Lad" Johnson because he borrowed money from The Lad, but it''s peculiar that the ransom is much less than he borrowed from The Lad'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search the estate and the surroundings', 'no clues as there wasn''t any rain for footprints and they seem very careful not to leave any tracks'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Questioning the family if they know of Sherlock Holmes', 'they say that obviously everyone''s heard of him since he solved the murder of the Cleveland man, John was particularly amazed by the The Book of Life and he chewed their ears off about it'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogating William Johnson', 'he lent money to the Baron, but he says he has other was of getting money back fair and square, and that he doesn''t have to rely on stealing children; besides it''s much much less than he''s owed');
+
+INSERT INTO timeframes (mystery_id, timeframe, event_happened)
+VALUES
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '09:00AM', 'The Toillards leave the butler Jessob and John at home'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '11:30AM', 'The garden party begins'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '13:00PM', 'The butler leaves to fetch a doctor'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '13:30PM', 'The butler and the doctor return to find a mess in the apartment.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '14:15PM', 'After a thorough search, the doctor leaves to inform Lord Toillard.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '15:00PM', 'The doctor reaches Lord Toilard and he contacts the chief constable Smith'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '15:45PM', 'Lord Toillard, Smith and a few officers arrive at the estate');
+
 
 
 INSERT INTO events (mystery_id, letter, info, show_at_message)

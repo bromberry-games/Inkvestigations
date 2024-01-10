@@ -8,7 +8,6 @@ export const load = async ({ locals: { getSession, supabase } }) => {
 		const data = await loadMysteriesWithSolved(session.user.id);
 		isTAndThrowPostgresErrorIfNot(data);
 		mysteries = data;
-		console.log(mysteries);
 	} else {
 		const { data } = await supabase.from('mysteries').select();
 		mysteries = data;

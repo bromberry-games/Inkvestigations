@@ -1,7 +1,6 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { LLMChain } from 'langchain/chains';
 import type { BaseMessage, LLMResult } from 'langchain/schema';
-import { OPEN_AI_KEY } from '$env/static/private';
 import { BaseOutputParser, type FormatInstructionsOptions } from 'langchain/schema/output_parser';
 import { error } from '@sveltejs/kit';
 import { OpenAiModel } from '$misc/openai';

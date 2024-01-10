@@ -96,9 +96,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 
 	try {
 		const gameInfo = await loadGameInfo(game_config.mysteryName, brainMessages.length);
-		if (!gameInfo) {
-			error(500, 'Could not get game info');
-		}
+		isTAndThrowPostgresErrorIfNot(gameInfo);
 		const eventInfo = gameInfo.events.reduce((acc: string, event) => {
 			return acc + event.info + '\n';
 		}, '');
@@ -144,7 +142,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 						question: message,
 						theme: gameInfo.theme,
 						setting: gameInfo.setting,
-						timeframe: gameInfo.timeframe,
+						timeframe: gameInfo.timeframes,
 						actionClues: gameInfo.action_clues,
 						eventInfo
 					},

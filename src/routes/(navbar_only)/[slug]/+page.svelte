@@ -15,22 +15,18 @@
 	let userMessages = { amount: 0, non_refillable_amount: 0 };
 	$: supabase = data.supabase;
 	$: messages = buildMessagesList(data.messages);
-	$: console.log(data.eventMessages);
 
 	function addMessage(event: CustomEvent<ChatMessage>) {
 		messages = buildMessagesList([...messages.filter((m) => m.extra == undefined || m.extra == false), event.detail]);
 	}
 
 	function buildMessagesList(chat: { role: string; content: string; extra?: boolean }[]) {
-		console.log(data.eventMessages);
 		const eventMessages = data.eventMessages.filter((event) => event.show_at_message <= (chat.length - 1) / 2);
-		console.log(eventMessages);
 		if (!eventMessages || eventMessages.length == 0) return chat;
 		let tmpMessages = Array(chat.length + eventMessages.length);
 		let i = 0;
 		for (let j = 0; j < chat.length; j += 2) {
 			tmpMessages[j + i] = chat[j];
-			console.log(i, j, j / 2, eventMessages[i].show_at_message);
 			if (i < eventMessages.length && j / 2 == eventMessages[i].show_at_message) {
 				tmpMessages[j + i + 1] = {
 					role: 'assistant',
@@ -42,7 +38,6 @@
 			if (j + 1 >= chat.length) break;
 			tmpMessages[j + i + 1] = chat[j + 1];
 		}
-		console.log(tmpMessages);
 		return tmpMessages;
 	}
 
@@ -73,7 +68,6 @@
 	function storeTokenLocally() {
 		if (openAiToken) {
 			$tokenStore = openAiToken;
-			console.log($tokenStore);
 			tokenModal = false;
 		}
 	}

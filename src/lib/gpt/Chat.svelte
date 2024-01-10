@@ -31,7 +31,6 @@
 	onMount(() => {
 		animMessages = messages;
 	});
-	$: console.log(animMessages[animMessages.length - 1]);
 </script>
 
 {#if animMessages && animMessages.length > 0}
