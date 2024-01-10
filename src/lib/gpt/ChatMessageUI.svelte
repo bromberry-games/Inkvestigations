@@ -23,7 +23,7 @@
 
 	<!-- Message Content -->
 	{#if animate}
-		<div class="font-secondary text-lg" in:typewriter|global={{ delay: 0, speed: 10 }}>
+		<div class="font-secondary text-lg" in:typewriter|global={{ delay: 0, speed: 7 }}>
 			{@html snarkdown(message.content.replace(/\n/g, '<br>'))}
 		</div>
 	{:else}

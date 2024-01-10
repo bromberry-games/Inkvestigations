@@ -9,6 +9,7 @@
 
 	export let messages: ChatMessage[];
 	let animMessages: ChatMessage[] = [];
+	$: animMessages = messages;
 
 	// Autoscroll: https://svelte.dev/tutorial/update
 	let div: HTMLElement | null | undefined;
@@ -39,8 +40,8 @@
 			<div class="flex max-w-4xl flex-col space-y-6 bg-tertiary pt-6 md:mx-auto">
 				<!-- Message history -->
 				<!-- Do not display the 1. message-->
-				{#each animMessages as message}
-					<ChatMessageUI {message} animate={animMessages.length == 1} />
+				{#each animMessages as message, i}
+					<ChatMessageUI {message} animate={animMessages.length == 1 || (animMessages.length - 1 == i && message.extra == true)} />
 				{/each}
 
 				<!-- Live Message -->

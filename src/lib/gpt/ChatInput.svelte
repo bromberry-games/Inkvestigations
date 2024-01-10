@@ -52,7 +52,6 @@
 		inputCopy = input;
 
 		lastUserMessage = messageToSubmit;
-		console.log('chat input form token store: ' + $tokenStore);
 
 		const payload = {
 			game_config: {

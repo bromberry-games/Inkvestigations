@@ -95,16 +95,17 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	}
 
 	try {
-		const gameInfo = await loadGameInfo(game_config.mysteryName);
-		if (!gameInfo) {
-			error(500, 'Could not get game info');
-		}
+		const gameInfo = await loadGameInfo(game_config.mysteryName, brainMessages.length);
+		isTAndThrowPostgresErrorIfNot(gameInfo);
+		const eventInfo = gameInfo.events.reduce((acc: string, event) => {
+			return acc + event.info + '\n';
+		}, '');
 
 		const suspectsArray = shuffleArray([
 			...gameInfo.suspects,
 			{ name: gameInfo.murderer.name, description: gameInfo.murderer.description, imagepath: gameInfo.murderer.imagepath }
 		]);
-		const suspectList = suspectsArray.reduce((acc: string, suspect) => {
+		const suspectsString = suspectsArray.reduce((acc: string, suspect) => {
 			return acc + suspect.name + ': ' + suspect.description + '\n';
 		}, '');
 
@@ -119,7 +120,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 						mysteryName: game_config.mysteryName,
 						accuseBrainRequestParams: {
 							promptMessage: message,
-							suspects: suspectList,
+							suspects: suspectsString,
 							accusedSuspect: suspectToAccuse,
 							victim,
 							murderer: {
@@ -136,13 +137,14 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 				)
 			: await standardInvestigationAnswer(
 					{
-						suspects: suspectList,
+						suspects: suspectsString,
 						victim: victim,
 						question: message,
 						theme: gameInfo.theme,
 						setting: gameInfo.setting,
-						timeframe: gameInfo.timeframe,
-						actionClues: gameInfo.action_clues
+						timeframe: gameInfo.timeframes,
+						actionClues: gameInfo.action_clues,
+						eventInfo
 					},
 					game_config.mysteryName,
 					session.user.id,

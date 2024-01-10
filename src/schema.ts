@@ -34,6 +34,67 @@ export interface Database {
   }
   public: {
     Tables: {
+      action_clues: {
+        Row: {
+          action: string
+          clue: string
+          id: number
+          mystery_id: number
+        }
+        Insert: {
+          action: string
+          clue: string
+          id?: number
+          mystery_id: number
+        }
+        Update: {
+          action?: string
+          clue?: string
+          id?: number
+          mystery_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "action_clues_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: false
+            referencedRelation: "mysteries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      events: {
+        Row: {
+          id: number
+          info: string
+          letter: string
+          mystery_id: number | null
+          show_at_message: number
+        }
+        Insert: {
+          id?: number
+          info: string
+          letter: string
+          mystery_id?: number | null
+          show_at_message: number
+        }
+        Update: {
+          id?: number
+          info?: string
+          letter?: string
+          mystery_id?: number | null
+          show_at_message?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: false
+            referencedRelation: "mysteries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       for_free_users: {
         Row: {
           amount: number
@@ -55,7 +116,6 @@ export interface Database {
       mysteries: {
         Row: {
           accuse_letter_prompt: string
-          action_clues: Database["public"]["CompositeTypes"]["action_clue_type"][]
           description: string
           filepath: string
           id: number
@@ -64,15 +124,12 @@ export interface Database {
           murderer: Database["public"]["CompositeTypes"]["murderer_type"]
           name: string
           setting: string
-          suspects: Database["public"]["CompositeTypes"]["suspect_type"][]
           theme: string
-          timeframe: Database["public"]["CompositeTypes"]["timeframe_type"][]
           victim_description: string
           victim_name: string
         }
         Insert: {
           accuse_letter_prompt: string
-          action_clues: Database["public"]["CompositeTypes"]["action_clue_type"][]
           description: string
           filepath: string
           id?: number
@@ -81,15 +138,12 @@ export interface Database {
           murderer: Database["public"]["CompositeTypes"]["murderer_type"]
           name: string
           setting: string
-          suspects: Database["public"]["CompositeTypes"]["suspect_type"][]
           theme: string
-          timeframe: Database["public"]["CompositeTypes"]["timeframe_type"][]
           victim_description: string
           victim_name: string
         }
         Update: {
           accuse_letter_prompt?: string
-          action_clues?: Database["public"]["CompositeTypes"]["action_clue_type"][]
           description?: string
           filepath?: string
           id?: number
@@ -98,9 +152,7 @@ export interface Database {
           murderer?: Database["public"]["CompositeTypes"]["murderer_type"]
           name?: string
           setting?: string
-          suspects?: Database["public"]["CompositeTypes"]["suspect_type"][]
           theme?: string
-          timeframe?: Database["public"]["CompositeTypes"]["timeframe_type"][]
           victim_description?: string
           victim_name?: string
         }
@@ -207,6 +259,38 @@ export interface Database {
         }
         Relationships: []
       }
+      suspects: {
+        Row: {
+          description: string
+          id: number
+          imagepath: string
+          mystery_id: number
+          name: string
+        }
+        Insert: {
+          description: string
+          id?: number
+          imagepath: string
+          mystery_id: number
+          name: string
+        }
+        Update: {
+          description?: string
+          id?: number
+          imagepath?: string
+          mystery_id?: number
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suspects_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: false
+            referencedRelation: "mysteries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       terms_and_conditions_privacy_policy_consent: {
         Row: {
           accepted: boolean
@@ -229,6 +313,35 @@ export interface Database {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      timeframes: {
+        Row: {
+          event_happened: string
+          id: number
+          mystery_id: number
+          timeframe: string
+        }
+        Insert: {
+          event_happened: string
+          id?: number
+          mystery_id: number
+          timeframe: string
+        }
+        Update: {
+          event_happened?: string
+          id?: number
+          mystery_id?: number
+          timeframe?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timeframes_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: false
+            referencedRelation: "mysteries"
             referencedColumns: ["id"]
           }
         ]
@@ -449,10 +562,6 @@ export interface Database {
       [_ in never]: never
     }
     CompositeTypes: {
-      action_clue_type: {
-        action: string
-        clue: string
-      }
       murderer_type: {
         name: string
         description: string
@@ -460,15 +569,6 @@ export interface Database {
         motive: string
         opportunity: string
         evidence: string
-      }
-      suspect_type: {
-        name: string
-        imagepath: string
-        description: string
-      }
-      timeframe_type: {
-        timeframe: string
-        event_happened: string
       }
     }
   }

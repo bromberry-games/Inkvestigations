@@ -64,8 +64,10 @@ test('test try for free', async ({ page, isMobile }) => {
 	await page.goto('/');
 	await page.getByRole('button', { name: 'TRY FOR FREE' }).click();
 	await page.waitForTimeout(3000);
+	//Cancels the animation
+	await page.getByRole('button', { name: 'rotate outline RESET CHAT' }).click();
 	await page.getByPlaceholder('Enter to send, Shift+Enter for newline').fill('test');
-	await page.locator('button[type="submit"]').click();
+	await page.locator('button[type="submit"]').nth(1).click();
 	const message = page.getByText('Police chief:').nth(1);
 	await message.waitFor({ timeout: 45000 });
 	await page.waitForLoadState('networkidle');

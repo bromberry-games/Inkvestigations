@@ -1,7 +1,6 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { LLMChain } from 'langchain/chains';
 import type { BaseMessage, LLMResult } from 'langchain/schema';
-import { OPEN_AI_KEY } from '$env/static/private';
 import { BaseOutputParser, type FormatInstructionsOptions } from 'langchain/schema/output_parser';
 import { error } from '@sveltejs/kit';
 import { OpenAiModel } from '$misc/openai';
@@ -111,6 +110,7 @@ export interface brainModelRequestParams {
 	question: string;
 	victim: Victim;
 	suspects: string;
+	eventInfo: string;
 	timeframe: { timeframe: string; event_happened: string }[];
 	actionClues: { action: string; clue: string }[];
 }
@@ -150,7 +150,7 @@ export async function brainModelRequest(
 					maxTokens: 350
 				});
 
-	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: false });
+	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
 	const res = await chain.call({
 		theme: brainParams.theme,
 		setting: brainParams.setting,
@@ -160,7 +160,7 @@ export async function brainModelRequest(
 		victimName: brainParams.victim.name,
 		victimDescription: brainParams.victim.description,
 		suspects: brainParams.suspects,
-		oldInfo
+		oldInfo: brainParams.eventInfo + '\n' + oldInfo
 	});
 	return res.text;
 }

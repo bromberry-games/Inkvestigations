@@ -146,3 +146,15 @@ export async function addMessageForUser(userid: string, message: string, mystery
 	}
 	return true;
 }
+
+export async function loadEventMessages(mystery: string) {
+	const { data, error } = await supabase_full_access
+		.from('events')
+		.select(`letter, show_at_message, mysteries!inner(name)`)
+		.eq('mysteries.name', mystery);
+	if (error) {
+		return error;
+	}
+	console.log(data);
+	return data;
+}
