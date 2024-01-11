@@ -1,7 +1,7 @@
 import { supabase_full_access } from './supabase_full_access.server';
 
-export async function createSubscription(priceId: string, userId: string): Promise<boolean> {
-	const { error } = await supabase_full_access.rpc('create_subscription', { price_id: priceId, the_user_id: userId });
+export async function createSubscription(priceId: string[], userId: string): Promise<boolean> {
+	const { error } = await supabase_full_access.rpc('create_subscription', { price_ids: priceId, the_user_id: userId });
 	if (error) {
 		console.error(error);
 		return false;

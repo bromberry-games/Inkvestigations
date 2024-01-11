@@ -155,6 +155,5 @@ export async function loadEventMessages(mystery: string) {
 	if (error) {
 		return error;
 	}
-	console.log(data);
 	return data;
 }

@@ -63,6 +63,29 @@ export interface Database {
           }
         ]
       }
+      daily_messages_subscriptions: {
+        Row: {
+          daily_refill_amount: number
+          sub_id: number
+        }
+        Insert: {
+          daily_refill_amount: number
+          sub_id: number
+        }
+        Update: {
+          daily_refill_amount?: number
+          sub_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "daily_messages_subscriptions_sub_id_fkey"
+            columns: ["sub_id"]
+            isOneToOne: true
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       events: {
         Row: {
           id: number
@@ -232,30 +255,21 @@ export interface Database {
         }
         Relationships: []
       }
-      subscription_tiers: {
+      subscriptions: {
         Row: {
           active: boolean
-          daily_message_limit: number
-          description: string
-          name: string
+          id: number
           stripe_price_id: string
-          tier_id: number
         }
         Insert: {
           active?: boolean
-          daily_message_limit: number
-          description: string
-          name: string
+          id?: number
           stripe_price_id: string
-          tier_id?: number
         }
         Update: {
           active?: boolean
-          daily_message_limit?: number
-          description?: string
-          name?: string
+          id?: number
           stripe_price_id?: string
-          tier_id?: number
         }
         Relationships: []
       }
@@ -342,6 +356,29 @@ export interface Database {
             columns: ["mystery_id"]
             isOneToOne: false
             referencedRelation: "mysteries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      usage_based_subscriptions: {
+        Row: {
+          bundle_refill_amount: number
+          sub_id: number
+        }
+        Insert: {
+          bundle_refill_amount: number
+          sub_id: number
+        }
+        Update: {
+          bundle_refill_amount?: number
+          sub_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_based_subscriptions_sub_id_fkey"
+            columns: ["sub_id"]
+            isOneToOne: true
+            referencedRelation: "subscriptions"
             referencedColumns: ["id"]
           }
         ]
@@ -481,7 +518,7 @@ export interface Database {
           end_date: string | null
           start_date: string
           subscription_id: number
-          tier_id: number | null
+          tier_id: number
           user_id: string | null
         }
         Insert: {
@@ -489,7 +526,7 @@ export interface Database {
           end_date?: string | null
           start_date: string
           subscription_id?: number
-          tier_id?: number | null
+          tier_id: number
           user_id?: string | null
         }
         Update: {
@@ -497,7 +534,7 @@ export interface Database {
           end_date?: string | null
           start_date?: string
           subscription_id?: number
-          tier_id?: number | null
+          tier_id?: number
           user_id?: string | null
         }
         Relationships: [
@@ -505,8 +542,8 @@ export interface Database {
             foreignKeyName: "user_subscriptions_tier_id_fkey"
             columns: ["tier_id"]
             isOneToOne: false
-            referencedRelation: "subscription_tiers"
-            referencedColumns: ["tier_id"]
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "user_subscriptions_user_id_fkey"
@@ -522,13 +559,21 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      create_subscription: {
-        Args: {
-          the_user_id: string
-          price_id: string
-        }
-        Returns: undefined
-      }
+      create_subscription:
+        | {
+            Args: {
+              the_user_id: string
+              price_id: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              the_user_id: string
+              price_ids: string[]
+            }
+            Returns: undefined
+          }
       decrement_for_free_users: {
         Args: Record<PropertyKey, never>
         Returns: undefined

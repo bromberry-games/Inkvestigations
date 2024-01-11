@@ -21,10 +21,8 @@ export const load = async ({ locals: { getSession } }) => {
 			const session = await getSession();
 			if (getAuthStatus(session) == AuthStatus.LoggedIn) {
 				const subData = await loadActiveAndUncancelledSubscription(session.user.id);
-				if (!subData) {
-					error(500, 'could not load sub');
-				}
-				return subData.id;
+				isTAndThrowPostgresErrorIfNot(subData);
+				return subData;
 			} else {
 				return null;
 			}
@@ -34,7 +32,7 @@ export const load = async ({ locals: { getSession } }) => {
 		return price.recurring == null;
 	});
 
-	return { hasSub: !!currentSubscription, oneTimeItems: singlePrices };
+	return { hasSub: currentSubscription?.length > 0, oneTimeItems: singlePrices };
 };
 
 export const actions = {
@@ -52,7 +50,6 @@ export const actions = {
 				}
 			];
 		} else if (form_data.get('paymode') == 'subscription-tier') {
-			console.log('form data: ', form_data);
 			line_items = [
 				{
 					price: 'price_1Ng9UfKIDbJkcynJYsE9jPMZ',

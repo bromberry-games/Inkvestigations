@@ -34,22 +34,23 @@ export async function getStripeCustomer(userId: string) {
 export async function loadActiveAndUncancelledSubscription(user_id: string) {
 	const { data, error } = await supabase_full_access
 		.from('user_subscriptions')
-		.select('subscription_tiers(stripe_price_id, name)')
+		.select('subscriptions(stripe_price_id)')
 		.eq('user_id', user_id)
 		.eq('active', true)
 		.is('end_date', null);
 
 	if (error) {
 		console.error('Error fetching subscription', error);
-		return null;
+		return error;
 	}
-	if (data[0] == null || data.length == 0) {
-		return { id: null };
+	//No item should ever be null here
+	for (const subscription of data) {
+		if (subscription == null) {
+			throw new Error('Subscription not found');
+		}
 	}
-	if (data[0].subscription_tiers?.name.toLowerCase() == 'test') {
-		return { id: null };
-	}
-	return data[0] && data[0].subscription_tiers ? { id: data[0].subscription_tiers.stripe_price_id } : { id: null };
+
+	return data.filter((sub) => !sub.subscriptions?.stripe_price_id.includes('test'));
 }
 
 export async function checkIfEventExists(eventId: string): Promise<boolean | null> {

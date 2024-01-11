@@ -57,8 +57,11 @@ export async function POST({ request }) {
 						return new Response('No line item', { status: 500 });
 					}
 					if (session.subscription) {
-						const price_id = session.line_items.data[0].price.id;
-						const createdSubscription = await createSubscription(price_id, customerUserId);
+						// const price_id = session.line_items.data[0].price.id;
+						const createdSubscription = await createSubscription(
+							session.line_items.data.map((item) => item.price.id),
+							customerUserId
+						);
 						if (!createdSubscription) {
 							return new Response('Could not create subscription', { status: 500 });
 						}
