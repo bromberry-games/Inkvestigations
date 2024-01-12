@@ -9,11 +9,15 @@ const stripe = new Stripe(STRIPE_TEST_KEY, {
 	apiVersion: '2022-11-15'
 });
 
+function response500AndLogError(message: string) {
+	console.error(message);
+	return new Response(message, { status: 500 });
+}
+
 export async function POST({ request }) {
 	const body = await request.text();
 	const signature = request.headers.get('stripe-signature');
 
-	console.log('webhook hit');
 	let event;
 	try {
 		event = await stripe.webhooks.constructEventAsync(body, signature as string, STRIPE_WEBHOOK_SECRET);
@@ -38,39 +42,50 @@ export async function POST({ request }) {
 			{
 				const checkoutSession: Stripe.Checkout.Session = event.data.object;
 				if (checkoutSession.payment_status === 'paid') {
-					console.log('Checkout session completed');
-					console.log(checkoutSession);
-					if (!checkoutSession.customer) {
-						return new Response('no customer found', { status: 500 });
+					if (!checkoutSession.customer || typeof checkoutSession.customer != 'string') {
+						return response500AndLogError('no customer found or customer is not of type string');
 					}
 					if (checkoutSession.metadata == null) {
-						return new Response('no user id found', { status: 500 });
+						return response500AndLogError('no user id found in metadata');
 					}
-					const [customerUserId, session] = await Promise.all([
+					const [customerUserId, session, oldSubscription] = await Promise.all([
 						linkCustomerToUser(checkoutSession.customer, checkoutSession.metadata.user_id),
-						stripe.checkout.sessions.retrieve(checkoutSession.id, { expand: ['line_items', 'line_items.data.price.product'] })
+						stripe.checkout.sessions.retrieve(checkoutSession.id, { expand: ['line_items', 'line_items.data.price.product'] }),
+						stripe.subscriptions.list({ customer: checkoutSession.customer, status: 'active' })
 					]);
 					if (isPostgresError(customerUserId)) {
-						return new Response(customerUserId.message, { status: 500 });
+						return response500AndLogError(customerUserId.message);
 					}
 					if (session.line_items == null || session.line_items.data[0].price == null) {
-						return new Response('No line item', { status: 500 });
+						return response500AndLogError('No line item');
 					}
 					if (session.subscription) {
-						// const price_id = session.line_items.data[0].price.id;
+						if (oldSubscription.data.length > 1) {
+							if (session.subscription == null || typeof session.subscription != 'string') {
+								return response500AndLogError('Subscription is not of type string');
+							}
+							const oldSubs = oldSubscription.data.filter((sub) => !sub.id.includes(session.subscription));
+							if (oldSubs.length > 1) {
+								return response500AndLogError('More than one subscription found');
+							}
+							const subscription = await stripe.subscriptions.cancel(oldSubs[0].id);
+						}
+						const getSub = await stripe.subscriptions.retrieve(session.subscription, { expand: ['items.data.price.product'] });
+						console.log('got sub from id ' + session.subscription);
+						console.log(getSub);
+						console.log('product');
+						console.log(getSub.items.data.map((item) => item.price.product));
 						const createdSubscription = await createSubscription(
 							session.line_items.data.map((item) => item.price.id),
 							customerUserId
 						);
 						if (!createdSubscription) {
-							return new Response('Could not create subscription', { status: 500 });
+							return response500AndLogError('Could not create subscription');
 						}
 					} else {
 						const product = session.line_items.data[0].price.product;
-						console.log('singular product: ');
-						console.log(product);
 						if (product?.metadata?.messages_amount == null) {
-							return new Response('No messages amount', { status: 500 });
+							return response500AndLogError('No messages amount');
 						}
 						await increaseMessageForUser(customerUserId, product.metadata.messages_amount);
 					}
@@ -91,21 +106,19 @@ export async function POST({ request }) {
 			{
 				const subscription: Stripe.Subscription = event.data.object;
 				if (subscription.cancel_at_period_end) {
-					const canceledSubscription = await cancelSubscription(
-						subscription.metadata.user_id,
-						new Date(subscription.current_period_end).toISOString()
-					);
+					const formattedDate = new Date(subscription.current_period_end * 1000).toISOString().split('T')[0];
+					const canceledSubscription = await cancelSubscription(subscription.metadata.user_id, formattedDate);
 					if (!canceledSubscription) {
-						return new Response('Could not cancel subscription', { status: 500 });
+						return response500AndLogError('Could not cancel subscription');
 					}
 				} else {
-					if (!subscription.customer || typeof subscription.customer !== 'string') {
-						return new Response('no customer found', { status: 500 });
-					}
-					const updatedSubscription = await updateSubscription(subscription.items.data[0].price.id, subscription.customer);
-					if (!updatedSubscription) {
-						return new Response('Could not update subscription', { status: 500 });
-					}
+					// if (!subscription.customer || typeof subscription.customer !== 'string') {
+					// return return500ResponseAndLogError('no customer found');
+					// }
+					// const updatedSubscription = await updateSubscription(subscription.items.data[0].price.id, subscription.customer);
+					// if (!updatedSubscription) {
+					// return return500ResponseAndLogError('Could not update subscription');
+					// }
 				}
 			}
 			break;

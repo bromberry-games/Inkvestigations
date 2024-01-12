@@ -4,6 +4,7 @@
 	import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
 	import { convertIsoStringToIcon } from './utils';
 	import { CheckCircleSolid } from 'flowbite-svelte-icons';
+	import { SubscriptionBundles } from './bundles';
 
 	export let data;
 </script>
@@ -45,10 +46,20 @@
 				<span class="font-secondary text-xl font-normal leading-tight text-gray-500">Only $0.04 per message</span>
 			</li>
 		</ul>
+		{#if data.subType == SubscriptionBundles.Free}
 		<form action="?/subscribe" method="POST">
-			<input type="hidden" name="paymode" value="free-tier" />
-			<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">Choose plan</Button>
+			<input type="hidden" name="paymode" value={SubscriptionBundles.ZeroDollar} />
+			<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">CHOOSE PLAN</Button>
 		</form>
+		{:else if data.subType == SubscriptionBundles.ZeroDollar}
+		<form action="?/cancel" method="POST">
+			<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">CANCEL PLAN</Button>
+		</form>
+		{:else if data.subType == SubscriptionBundles.NineDollar}
+		<form action="?/cancel" method="POST">
+			<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">DOWNGRADE PLAN</Button>
+		</form>
+		{/if}
 	</Card>
 	<Card>
 		<h5 class="mb-4 text-xl font-medium text-gray-500 dark:text-gray-400">Premium Mysteries</h5>
@@ -72,9 +83,20 @@
 				<span class="font-secondary text-xl font-normal leading-tight text-gray-500">All subscriber only mysteries</span>
 			</li>
 		</ul>
+		{#if data.subType == SubscriptionBundles.Free}
 		<form action="?/subscribe" method="POST">
-			<input type="hidden" name="paymode" value="subscription-tier" />
-			<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">Choose plan</Button>
+			<input type="hidden" name="paymode" value={SubscriptionBundles.NineDollar} />
+			<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">CHOOSE PLAN</Button>
 		</form>
+		{:else if data.subType == SubscriptionBundles.NineDollar}	
+		<form action="?/cancel" method="POST">
+			<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">CANCEL PLAN</Button>
+		</form>
+		{:else if data.subType == SubscriptionBundles.ZeroDollar}
+		<form action="?/subscribe" method="POST">
+			<input type="hidden" name="paymode" value={SubscriptionBundles.NineDollar} />
+			<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">UPGRADE PLAN</Button>
+		</form>
+		{/if}
 	</Card>
 </div>

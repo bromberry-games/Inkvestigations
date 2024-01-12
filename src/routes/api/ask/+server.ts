@@ -82,6 +82,8 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	const openAiToken = useOwnToken ? OPEN_AI_KEY : requestToken;
 
 	if (messagesAmount.amount <= 0 && messagesAmount.non_refillable_amount <= 0 && genNum >= 0 && !useOwnToken) {
+		// if(sub)
+		// add to usage and add singular messages
 		error(500, 'You have no messages.');
 	} else if ((messagesAmount.amount > 0 || messagesAmount.non_refillable_amount > 0 || useOwnToken) && genNum == 0) {
 		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);

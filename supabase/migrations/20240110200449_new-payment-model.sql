@@ -85,3 +85,15 @@ BEGIN
     RETURN NEW;
 END;
 $$;
+
+
+
+--- function to update daily messages from stripe product data
+SELECT content
+  FROM http((
+          'GET',
+           'https://api.stripe.com/v1/products',
+           ARRAY[http_header('Authorization','Bearer TODO')],
+           NULL,
+           NULL
+        )::http_request);

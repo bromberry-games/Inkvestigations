@@ -16,10 +16,25 @@ export async function loadActiveSubscriptions() {
 }
 
 export async function linkCustomerToUser(customer_id: string, user_id: string): Promise<string | PostgrestError> {
-	const { error } = await supabase_full_access.from('stripe_customers').insert({ customer_id, user_id });
-	if (error) {
-		return error;
+	const { data: existing, error: selectError } = await supabase_full_access
+		.from('stripe_customers')
+		.select('*')
+		.eq('customer_id', customer_id)
+		.eq('user_id', user_id);
+
+	if (selectError) {
+		return selectError;
 	}
+	if (existing && existing.length > 0) {
+		return user_id;
+	}
+
+	const { error: insertError } = await supabase_full_access.from('stripe_customers').insert({ customer_id, user_id });
+
+	if (insertError) {
+		return insertError;
+	}
+
 	return user_id;
 }
 

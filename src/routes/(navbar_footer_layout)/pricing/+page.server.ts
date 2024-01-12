@@ -6,6 +6,7 @@ import type { Session } from '@supabase/supabase-js';
 import { loadActiveSubscriptions, loadActiveAndUncancelledSubscription, getStripeCustomer } from '$lib/supabase/prcing.server';
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper.js';
 import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers.js';
+import { SubscriptionBundles } from './bundles';
 
 const stripe = new Stripe(STRIPE_TEST_KEY, {
 	apiVersion: '2022-11-15'
@@ -24,7 +25,7 @@ export const load = async ({ locals: { getSession } }) => {
 				isTAndThrowPostgresErrorIfNot(subData);
 				return subData;
 			} else {
-				return null;
+				return [];
 			}
 		})()
 	]);
@@ -32,7 +33,16 @@ export const load = async ({ locals: { getSession } }) => {
 		return price.recurring == null;
 	});
 
-	return { hasSub: currentSubscription?.length > 0, oneTimeItems: singlePrices };
+	let subType;
+	if (currentSubscription.length == 0) {
+		subType = SubscriptionBundles.Free;
+	} else if (currentSubscription.length == 1) {
+		subType = SubscriptionBundles.ZeroDollar;
+	} else if (currentSubscription.length == 2) {
+		subType = SubscriptionBundles.NineDollar;
+	}
+
+	return { oneTimeItems: singlePrices, subType };
 };
 
 export const actions = {
@@ -41,15 +51,16 @@ export const actions = {
 		if (getAuthStatus(user_session) != AuthStatus.LoggedIn) {
 			redirect(303, '/login');
 		}
-		const form_data = await request.formData();
+		const [form_data, customerId] = await Promise.all([request.formData(), getStripeCustomer(user_session.user.id)]);
+		isTAndThrowPostgresErrorIfNot(customerId);
 		let line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-		if (form_data.get('paymode') == 'free-tier') {
+		if (form_data.get('paymode') == SubscriptionBundles.ZeroDollar) {
 			line_items = [
 				{
 					price: 'price_1OX3PyKIDbJkcynJ84FAWIsv'
 				}
 			];
-		} else if (form_data.get('paymode') == 'subscription-tier') {
+		} else if (form_data.get('paymode') == SubscriptionBundles.NineDollar) {
 			line_items = [
 				{
 					price: 'price_1Ng9UfKIDbJkcynJYsE9jPMZ',
@@ -60,10 +71,9 @@ export const actions = {
 				}
 			];
 		}
-
-		const session = await stripe.checkout.sessions.create({
+		let session;
+		const stripeProperties = {
 			line_items,
-			mode: 'subscription',
 			success_url: `${url.origin}/success`,
 			cancel_url: `${url.origin}/pricing`,
 			automatic_tax: { enabled: true },
@@ -75,7 +85,19 @@ export const actions = {
 					user_id: user_session ? user_session.user.id : ''
 				}
 			}
-		});
+		};
+		if (customerId) {
+			session = await stripe.checkout.sessions.create({
+				mode: 'subscription',
+				...stripeProperties,
+				customer: customerId
+			});
+		} else {
+			session = await stripe.checkout.sessions.create({
+				mode: 'subscription',
+				...stripeProperties
+			});
+		}
 
 		if (session.url) {
 			redirect(303, session.url);
