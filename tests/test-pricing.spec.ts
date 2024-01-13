@@ -2,6 +2,13 @@
 
 import { test, expect, type Page } from '@playwright/test';
 import { createRandomUser, loginOnPage } from './login-helpers';
+import { supabase_full_access } from './supabase_test_access';
+import {
+	navigateRestart,
+	navigateRestartAndReturnMessageCounter,
+	sendMessage,
+	waitForCheckMessageAndReturnMessageCount
+} from './chat-helpers';
 
 async function fillOutCreditCardForm(page: Page) {
 	await page.waitForTimeout(100);
@@ -19,10 +26,11 @@ async function fillOutCreditCardForm(page: Page) {
 	await page.getByTestId('hosted-payment-submit-button').click();
 }
 
-test.beforeEach(async ({ page, isMobile }) => {
+test.beforeEach(async ({ page, isMobile, context }, testInfo) => {
 	//dont want to deal with state for theses tests
 	const account = await createRandomUser();
 	await loginOnPage(page, isMobile, account.email, account.password);
+	context.userId = account.userId;
 	await expect(page.locator('#avatar-menu')).toBeVisible();
 });
 
@@ -53,6 +61,7 @@ test('test buying, chaning plan and cacelling', async ({ page, isMobile }) => {
 });
 
 test('Buy first plan, then upgrade', async ({ page, isMobile }) => {
+	test.setTimeout(60000);
 	await navigateToPricingAndBuyNthPlan(page, 0);
 	await navigateToPricing(page, isMobile);
 
@@ -63,6 +72,30 @@ test('Buy first plan, then upgrade', async ({ page, isMobile }) => {
 	await page.getByRole('button', { name: 'CANCEL PLAN' }).nth(0).click();
 	await expect(page.locator('[data-test="cancel-subscription"]').nth(0)).toBeVisible();
 	await expect(page.locator('[data-test="cancel-subscription"]').nth(1)).not.toBeVisible();
+});
+
+async function buyNthPlanAndTestMeteredMessages(page: Page, isMobile: boolean, nth: number, userId: string) {
+	await navigateToPricingAndBuyNthPlan(page, nth);
+	await supabase_full_access.from('user_messages').update({ amount: 0, non_refillable_amount: 0 }).eq('user_id', userId);
+	if (isMobile) {
+		await page.getByRole('button', { name: 'bars 3' }).click();
+	}
+	await page.getByRole('link', { name: 'MYSTERIES' }).click();
+	const messageCounter = await navigateRestartAndReturnMessageCounter(page);
+	expect(messageCounter).toBe(0);
+	await page.waitForTimeout(1000);
+	await sendMessage(page, 'test usage');
+	const newMessageCount = await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
+	//TODO This will fail once message bundles are adjusted. Should be fixed
+	expect(newMessageCount).toBe(19);
+}
+
+test('Buy first plan, then send message to test usage', async ({ page, isMobile, context }) => {
+	await buyNthPlanAndTestMeteredMessages(page, isMobile, 0, context.userId);
+});
+
+test('Buy second plan, then send message to test usage', async ({ page, isMobile, context }) => {
+	await buyNthPlanAndTestMeteredMessages(page, isMobile, 1, context.userId);
 });
 
 test('buy messages', async ({ page, isMobile }) => {

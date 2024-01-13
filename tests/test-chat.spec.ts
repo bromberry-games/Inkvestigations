@@ -1,26 +1,11 @@
 import { test, expect, type Page } from '../playwright/fixtures';
-import { sendMessage } from './chat-helpers';
+import {
+	navigateRestart,
+	navigateRestartAndReturnMessageCounter,
+	sendMessage,
+	waitForCheckMessageAndReturnMessageCount
+} from './chat-helpers';
 import { deleteLastBrainMessage, deleteLastMessageForUser, supabase_full_access } from './supabase_test_access';
-
-async function navigateRestart(page: Page): Promise<void> {
-	await page.goto('/mysteries', { waitUntil: 'networkidle' });
-	const navigationPromise = page.waitForURL('/Mirror_Mirror', { waitUntil: 'networkidle' });
-	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
-	await page.getByRole('button', { name: 'rotate outline RESET CHAT' }).click();
-	await navigationPromise;
-}
-
-async function navigateRestartAndReturnMessageCounter(page: Page): Promise<number> {
-	await navigateRestart(page);
-	return parseInt(await page.getByTestId('message-counter').innerText());
-}
-
-async function waitForCheckMessageAndReturnMessageCount(page: Page, text: string, nth = 1): Promise<number> {
-	const message = page.getByText(text).nth(nth);
-	await message.waitFor({ timeout: 45000 });
-	await expect(page.getByText(text).nth(nth)).toBeVisible();
-	return parseInt(await page.getByTestId('message-counter').innerText());
-}
 
 test.beforeEach(async ({ page, account }) => {
 	const { error } = await supabase_full_access.from('user_messages').update({ amount: 5 }).eq('user_id', account.userId);

@@ -3,14 +3,13 @@ import { STRIPE_TEST_KEY } from '$env/static/private';
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import Stripe from 'stripe';
 import type { Session } from '@supabase/supabase-js';
-import { loadActiveSubscriptions, loadActiveAndUncancelledSubscription, getStripeCustomer } from '$lib/supabase/prcing.server';
+import { loadActiveAndUncancelledSubscription, getStripeCustomer } from '$lib/supabase/prcing.server';
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper.js';
 import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers.js';
 import { SubscriptionBundles } from './bundles';
+import { stripeClient } from '$lib/stripe';
 
-const stripe = new Stripe(STRIPE_TEST_KEY, {
-	apiVersion: '2022-11-15'
-});
+const stripe = stripeClient;
 
 export const load = async ({ locals: { getSession } }) => {
 	const [stripePrices, currentSubscription] = await Promise.all([
@@ -36,9 +35,9 @@ export const load = async ({ locals: { getSession } }) => {
 	let subType;
 	if (currentSubscription.length == 0) {
 		subType = SubscriptionBundles.Free;
-	} else if (currentSubscription.length == 1) {
+	} else if (currentSubscription[0].products.length == 1) {
 		subType = SubscriptionBundles.ZeroDollar;
-	} else if (currentSubscription.length == 2) {
+	} else if (currentSubscription[0].products.length == 2) {
 		subType = SubscriptionBundles.NineDollar;
 	}
 

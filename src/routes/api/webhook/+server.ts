@@ -4,10 +4,9 @@ import { cancelSubscription, createSubscription, updateSubscription } from '$lib
 import { checkIfEventExists, insertEvent, linkCustomerToUser } from '$lib/supabase/prcing.server';
 import { isPostgresError } from '$lib/supabase/helpers.js';
 import { increaseMessageForUser } from '$lib/supabase/message_amounts.server';
+import { stripeClient } from '$lib/stripe.js';
 
-const stripe = new Stripe(STRIPE_TEST_KEY, {
-	apiVersion: '2022-11-15'
-});
+const stripe = stripeClient;
 
 function response500AndLogError(message: string) {
 	console.error(message);
@@ -69,18 +68,30 @@ export async function POST({ request }) {
 								return response500AndLogError('More than one subscription found');
 							}
 							const subscription = await stripe.subscriptions.cancel(oldSubs[0].id);
+							const cancelDate = new Date().toISOString().split('T')[0];
+							const canceledSubscription = await cancelSubscription(customerUserId, subscription.id, cancelDate);
+							if (isPostgresError(canceledSubscription)) {
+								return response500AndLogError(canceledSubscription.message);
+							}
 						}
 						const getSub = await stripe.subscriptions.retrieve(session.subscription, { expand: ['items.data.price.product'] });
+						getSub.items;
 						console.log('got sub from id ' + session.subscription);
 						console.log(getSub);
 						console.log('product');
 						console.log(getSub.items.data.map((item) => item.price.product));
 						const createdSubscription = await createSubscription(
-							session.line_items.data.map((item) => item.price.id),
-							customerUserId
+							getSub.items.data.map((item) => {
+								return {
+									product_id: (item.price?.product as Stripe.Product).id,
+									metered_si: item.price?.recurring?.usage_type == 'metered' ? item.id : null
+								};
+							}),
+							customerUserId,
+							getSub.id
 						);
-						if (!createdSubscription) {
-							return response500AndLogError('Could not create subscription');
+						if (isPostgresError(createdSubscription)) {
+							return response500AndLogError(createdSubscription.message);
 						}
 					} else {
 						const product = session.line_items.data[0].price.product;
@@ -107,9 +118,9 @@ export async function POST({ request }) {
 				const subscription: Stripe.Subscription = event.data.object;
 				if (subscription.cancel_at_period_end) {
 					const formattedDate = new Date(subscription.current_period_end * 1000).toISOString().split('T')[0];
-					const canceledSubscription = await cancelSubscription(subscription.metadata.user_id, formattedDate);
-					if (!canceledSubscription) {
-						return response500AndLogError('Could not cancel subscription');
+					const canceledSubscription = await cancelSubscription(subscription.metadata.user_id, subscription.id, formattedDate);
+					if (isPostgresError(canceledSubscription)) {
+						return response500AndLogError(canceledSubscription.message);
 					}
 				} else {
 					// if (!subscription.customer || typeof subscription.customer !== 'string') {

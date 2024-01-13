@@ -20,6 +20,7 @@
 	export let suspects: suspect[];
 	export let chatUnbalanced: boolean;
 	export let authStatus: AuthStatus;
+	export let metered: boolean;
 
 	let debounceTimer: number | undefined;
 	let input = '';
@@ -163,7 +164,7 @@
 
 <SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects} {slug}></SuspectModal>
 <footer class="fixed bottom-0 z-10 w-full md:rounded-xl md:px-8 md:py-4">
-	{#if messagesAmount.amount > 0 || messagesAmount.non_refillable_amount > 0 || $tokenStore != ''}
+	{#if messagesAmount.amount > 0 || messagesAmount.non_refillable_amount > 0 || $tokenStore != '' || metered}
 		{#if $isLoadingAnswerStore}
 			<div></div>
 		{:else if !chatUnbalanced}

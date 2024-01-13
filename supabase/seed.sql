@@ -61,41 +61,41 @@ VALUES
 
 
 
-INSERT INTO subscriptions(stripe_price_id)
-VALUES
-(
-    'price_1Ng9UfKIDbJkcynJYsE9jPMZ'
-);
-INSERT INTO daily_messages_subscriptions(sub_id, daily_refill_amount)
-VALUES
-(
-    (SELECT id FROM subscriptions WHERE stripe_price_id = 'price_1Ng9UfKIDbJkcynJYsE9jPMZ'),
-    10
-);
-
-INSERT INTO subscriptions(stripe_price_id)
-VALUES
-(
-    'test_1'
-);
-INSERT INTO daily_messages_subscriptions(sub_id, daily_refill_amount)
-VALUES
-(
-    (SELECT id FROM subscriptions WHERE stripe_price_id = 'test_1'),
-    5
-);
-
-INSERT INTO subscriptions(stripe_price_id)
-VALUES
-(
-    'price_1OX1RjKIDbJkcynJBNwlgnJ2' -- for combo
-);
-
-INSERT INTO subscriptions(stripe_price_id)
-VALUES
-(
-    'price_1OX3PyKIDbJkcynJ84FAWIsv' --free tier
-);
+-- INSERT INTO subscriptions(stripe_price_id)
+-- VALUES
+-- (
+--     'price_1Ng9UfKIDbJkcynJYsE9jPMZ'
+-- );
+-- INSERT INTO daily_messages_subscriptions(sub_id, daily_refill_amount)
+-- VALUES
+-- (
+--     (SELECT id FROM subscriptions WHERE stripe_price_id = 'price_1Ng9UfKIDbJkcynJYsE9jPMZ'),
+--     10
+-- );
+-- 
+-- INSERT INTO subscriptions(stripe_price_id)
+-- VALUES
+-- (
+--     'test_1'
+-- );
+-- INSERT INTO daily_messages_subscriptions(sub_id, daily_refill_amount)
+-- VALUES
+-- (
+--     (SELECT id FROM subscriptions WHERE stripe_price_id = 'test_1'),
+--     5
+-- );
+-- 
+-- INSERT INTO subscriptions(stripe_price_id)
+-- VALUES
+-- (
+--     'price_1OX1RjKIDbJkcynJBNwlgnJ2' -- for combo
+-- );
+-- 
+-- INSERT INTO subscriptions(stripe_price_id)
+-- VALUES
+-- (
+--     'price_1OX3PyKIDbJkcynJ84FAWIsv' --free tier
+-- );
 
 
 DELETE FROM auth.users;

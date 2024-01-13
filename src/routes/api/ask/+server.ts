@@ -11,13 +11,15 @@ import {
 	loadLetterMessages,
 	setRating
 } from '$lib/supabase/conversations.server';
-import { getMessageAmountForUser, decreaseMessageForUser } from '$lib/supabase/message_amounts.server';
+import { getMessageAmountForUser, decreaseMessageForUser, increaseMessageForUser } from '$lib/supabase/message_amounts.server';
 import { approximateTokenCount } from '$misc/openai';
 import { MAX_TOKENS } from '../../../constants';
 import { shuffleArray } from '$lib/generic-helpers';
 import { standardInvestigationAnswer } from './conversation';
-import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
+import { isPostgresError, isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
 import { OPEN_AI_KEY } from '$env/static/private';
+import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
+import { stripeClient } from '$lib/stripe';
 
 interface AccuseModelAnswerParams {
 	mysteryName: string;
@@ -69,26 +71,39 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		error(400, 'Message is too long.');
 	}
 
-	const [letterMessages, brainMessages, messagesAmount] = await Promise.all([
+	const [letterMessages, brainMessages, messagesAmount, currentSub] = await Promise.all([
 		loadLetterMessages(session.user.id, game_config.mysteryName),
 		loadBrainMessages(session.user.id, game_config.mysteryName),
-		getMessageAmountForUser(session.user.id)
+		getMessageAmountForUser(session.user.id),
+		loadActiveAndUncancelledSubscription(session.user.id)
 	]);
 	isTAndThrowPostgresErrorIfNot(letterMessages);
 	isTAndThrowPostgresErrorIfNot(brainMessages);
+	isTAndThrowPostgresErrorIfNot(currentSub);
 	const genNum = letterMessages.length - brainMessages.length * 2;
 	const requestToken = requestData.openAiToken;
-	const useOwnToken = requestToken == undefined || requestToken == '';
-	const openAiToken = useOwnToken ? OPEN_AI_KEY : requestToken;
+	const useBackendToken = requestToken == undefined || requestToken == '';
+	const openAiToken = useBackendToken ? OPEN_AI_KEY : requestToken;
 
-	if (messagesAmount.amount <= 0 && messagesAmount.non_refillable_amount <= 0 && genNum >= 0 && !useOwnToken) {
-		// if(sub)
-		// add to usage and add singular messages
-		error(500, 'You have no messages.');
-	} else if ((messagesAmount.amount > 0 || messagesAmount.non_refillable_amount > 0 || useOwnToken) && genNum == 0) {
+	if (messagesAmount.amount <= 0 && messagesAmount.non_refillable_amount <= 0 && genNum >= 0 && useBackendToken) {
+		const meteredProd = currentSub.length == 1 ? currentSub[0].products.find((x) => x.metered_si != null) : undefined;
+		if (meteredProd) {
+			const prod = await stripeClient.products.retrieve(meteredProd.product_id);
+			const usageRecord = await stripeClient.subscriptionItems.createUsageRecord(meteredProd.metered_si, {
+				quantity: 1
+			});
+			const incMessages = await increaseMessageForUser(session.user.id, Number.parseInt(prod.metadata.metered_message_refill) - 1);
+			if (isPostgresError(incMessages)) {
+				//TODO reset usage record
+				error(500, 'Could not increase messages for user');
+			}
+		} else {
+			error(500, 'You have no messages.');
+		}
+	} else if ((messagesAmount.amount > 0 || messagesAmount.non_refillable_amount > 0 || !useBackendToken) && genNum == 0) {
 		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);
 		throwIfFalse(messageAdded, 'Could not add message to chat');
-		if (useOwnToken) {
+		if (useBackendToken) {
 			const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
 			throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
 		}
