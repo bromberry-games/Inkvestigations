@@ -1,5 +1,14 @@
+create extension http
+with
+  schema extensions;
+
+DROP TABLE user_subscriptions;
+DROP TABLE subscription_tiers;
 DROP FUNCTION create_subscription(the_user_id uuid, price_id text);
+DROP FUNCTION update_daily_messages();
+DROP FUNCTION update_subscription(stripe_customer text, price_id text);
 DROP TRIGGER tr_set_test_subscription ON auth.users;
+SELECT cron.unschedule('update_daily_messages');
 
 CREATE TYPE product_type AS (
   product_id TEXT,
@@ -10,8 +19,6 @@ CREATE TYPE product_type AS (
 -- as long as end_date is null it means it's active
 -- if end_date is not null but less than today the paid subscription is still provisioned
 -- however the pay as you go model is no longer supported
-DROP TABLE user_subscriptions;
-DROP TABLE subscription_tiers;
 CREATE TABLE user_subs(
     sub_id TEXT PRIMARY KEY, 
     user_id uuid NOT NULL REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
@@ -21,88 +28,65 @@ CREATE TABLE user_subs(
 
 ALTER TABLE user_subs ENABLE ROW LEVEL SECURITY;
 
--- ALTER TABLE subscription_tiers
-    -- DROP COLUMN daily_message_limit;
--- 
--- ALTER TABLE subscription_tiers
-    -- DROP COLUMN name;
--- 
--- ALTER TABLE subscription_tiers
-    -- DROP COLUMN description;
--- 
--- ALTER TABLE subscription_tiers RENAME COLUMN tier_id TO id;
--- 
--- ALTER TABLE subscription_tiers RENAME TO subscriptions;
--- ALTER TABLE user_subscriptions ALTER COLUMN tier_id SET NOT NULL;
--- 
--- 
--- CREATE TABLE daily_messages_subscriptions (
-    -- sub_id INTEGER REFERENCES subscriptions(id) ON UPDATE CASCADE ON DELETE CASCADE PRIMARY KEY,
-    -- daily_refill_amount INTEGER CHECK (daily_refill_amount >= 0) NOT NULL
--- );
--- 
--- CREATE TABLE usage_based_subscriptions (
-    -- sub_id INTEGER REFERENCES subscriptions(id) ON UPDATE CASCADE ON DELETE CASCADE PRIMARY KEY,
-    -- bundle_refill_amount INTEGER CHECK (bundle_refill_amount >= 0) NOT NULL
--- );
--- 
--- CREATE OR REPLACE FUNCTION create_subscription(the_user_id uuid, price_ids text[])
--- RETURNS void AS
--- $$
--- DECLARE
-    -- price_id text;
--- BEGIN
-    -- UPDATE user_subscriptions
-    -- SET active = FALSE, 
-        -- end_date = CURRENT_DATE  
-    -- WHERE user_id = the_user_id AND active = TRUE;
--- 
-    -- FOREACH price_id IN ARRAY price_ids LOOP
-        -- INSERT INTO user_subscriptions(user_id, tier_id, start_date, end_date, active)
-        -- VALUES (
-            -- the_user_id, 
-            -- (SELECT id FROM subscriptions WHERE stripe_price_id = price_id), 
-            -- CURRENT_DATE, 
-            -- NULL,  
-            -- TRUE
-        -- );
-    -- END LOOP;
--- 
-    -- UPDATE user_messages um
-    -- SET amount = dms.daily_refill_amount + um.amount
-    -- FROM daily_messages_subscriptions dms
-    -- WHERE dms.sub_id IN (
-        -- SELECT tier_id 
-        -- FROM user_subscriptions 
-        -- WHERE active = TRUE AND user_id = the_user_id
-    -- ) AND um.user_id = the_user_id;
--- 
--- EXCEPTION
-    -- WHEN OTHERS THEN
-        -- ROLLBACK;
-        -- RAISE;
--- END;
--- $$ 
--- LANGUAGE plpgsql VOLATILE;
--- 
--- CREATE OR REPLACE FUNCTION set_test_subscription()
--- RETURNS TRIGGER
--- LANGUAGE plpgsql
--- SECURITY DEFINER
--- SET search_path = public
--- AS $$
--- BEGIN
-    -- INSERT INTO user_subscriptions(user_id, tier_id, start_date, end_date, active)
-    -- VALUES (
-        -- NEW.id, 
-        -- (SELECT id FROM subscriptions WHERE stripe_price_id = 'test_1' LIMIT 1), 
-        -- CURRENT_DATE, 
-        -- NULL,  
-        -- TRUE
-    -- );
-    -- RETURN NEW;
--- END;
--- $$;
--- 
--- 
--- 
+
+CREATE OR REPLACE FUNCTION update_user_messages()
+RETURNS void AS $$
+BEGIN
+	-- free messages amount. Should be made variable
+	UPDATE user_messages
+    SET amount = 5;
+    -- Create temporary table
+    CREATE TEMPORARY TABLE temp_stripe_products AS
+    SELECT id, daily_messages::integer
+    FROM (
+        SELECT 
+            json_array_elements(content::json->'data')->>'id' as id,
+            json_array_elements(content::json->'data')->'metadata'->>'daily_messages' as daily_messages
+        FROM http((
+            'GET',
+            'https://api.stripe.com/v1/products?active=true',
+            ARRAY[http_header('Authorization', 'Bearer ' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'stripe_key'))],
+            NULL,
+            NULL
+        )::http_request)
+    ) as subquery
+    WHERE daily_messages is not null;
+
+    -- Update user messages
+    WITH aggregated_messages AS (
+    SELECT 
+        us.user_id, 
+        COALESCE(SUM(tp.daily_messages), 0) AS total_daily_messages
+    FROM 
+        user_subs us
+    CROSS JOIN LATERAL 
+        unnest(us.products) AS product_id
+    LEFT JOIN 
+        temp_stripe_products tp ON tp.id = product_id.product_id
+    GROUP BY 
+        us.user_id
+    )
+    UPDATE user_messages
+    SET amount = am.total_daily_messages
+    FROM aggregated_messages am
+    WHERE user_messages.user_id = am.user_id;
+
+    -- Drop temporary table
+    DROP TABLE temp_stripe_products;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE;
+END;
+$$ LANGUAGE plpgsql;
+
+SELECT cron.schedule('update_user_messages', '0 0 * * *', $$SELECT update_user_messages();$$);
+
+create or replace function set_daily_messages_for_user(the_user_id uuid, daily_amount integer) 
+returns void as
+$$
+  update user_messages
+  set amount = daily_amount
+  where user_id = the_user_id and amount < daily_amount
+$$ 
+language sql volatile;

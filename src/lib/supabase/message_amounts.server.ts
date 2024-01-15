@@ -29,3 +29,12 @@ export async function increaseMessageForUser(userid: string, amount: number): Pr
 	}
 	return true;
 }
+
+export async function setDailyMessages(userid: string, amount: number) {
+	console.log('setDailyMessages', userid, amount);
+	const { error } = await supabase_full_access.rpc('set_daily_messages_for_user', { the_user_id: userid, daily_amount: amount });
+	if (error) {
+		return error;
+	}
+	return true;
+}

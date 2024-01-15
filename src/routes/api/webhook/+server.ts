@@ -3,7 +3,7 @@ import { STRIPE_TEST_KEY, STRIPE_WEBHOOK_SECRET } from '$env/static/private';
 import { cancelSubscription, createSubscription, updateSubscription } from '$lib/supabase/subscription.server';
 import { checkIfEventExists, insertEvent, linkCustomerToUser } from '$lib/supabase/prcing.server';
 import { isPostgresError } from '$lib/supabase/helpers.js';
-import { increaseMessageForUser } from '$lib/supabase/message_amounts.server';
+import { increaseMessageForUser, setDailyMessages } from '$lib/supabase/message_amounts.server';
 import { stripeClient } from '$lib/stripe.js';
 
 const stripe = stripeClient;
@@ -47,13 +47,13 @@ export async function POST({ request }) {
 					if (checkoutSession.metadata == null) {
 						return response500AndLogError('no user id found in metadata');
 					}
-					const [customerUserId, session, oldSubscription] = await Promise.all([
+					const [customerSupaUserId, session, oldSubscription] = await Promise.all([
 						linkCustomerToUser(checkoutSession.customer, checkoutSession.metadata.user_id),
 						stripe.checkout.sessions.retrieve(checkoutSession.id, { expand: ['line_items', 'line_items.data.price.product'] }),
 						stripe.subscriptions.list({ customer: checkoutSession.customer, status: 'active' })
 					]);
-					if (isPostgresError(customerUserId)) {
-						return response500AndLogError(customerUserId.message);
+					if (isPostgresError(customerSupaUserId)) {
+						return response500AndLogError(customerSupaUserId.message);
 					}
 					if (session.line_items == null || session.line_items.data[0].price == null) {
 						return response500AndLogError('No line item');
@@ -69,17 +69,20 @@ export async function POST({ request }) {
 							}
 							const subscription = await stripe.subscriptions.cancel(oldSubs[0].id);
 							const cancelDate = new Date().toISOString().split('T')[0];
-							const canceledSubscription = await cancelSubscription(customerUserId, subscription.id, cancelDate);
+							const canceledSubscription = await cancelSubscription(customerSupaUserId, subscription.id, cancelDate);
 							if (isPostgresError(canceledSubscription)) {
 								return response500AndLogError(canceledSubscription.message);
 							}
 						}
 						const getSub = await stripe.subscriptions.retrieve(session.subscription, { expand: ['items.data.price.product'] });
-						getSub.items;
-						console.log('got sub from id ' + session.subscription);
-						console.log(getSub);
-						console.log('product');
-						console.log(getSub.items.data.map((item) => item.price.product));
+						const dailyMessagesAmount = getSub.items.data.reduce((acc, item) => {
+							console.log(item.price?.product);
+							return acc + Number.parseInt(item.price?.product?.metadata?.daily_messages ?? 0);
+						}, 0);
+
+						const updatedSubscription = await setDailyMessages(customerSupaUserId, dailyMessagesAmount);
+						console.log(updatedSubscription);
+
 						const createdSubscription = await createSubscription(
 							getSub.items.data.map((item) => {
 								return {
@@ -87,7 +90,7 @@ export async function POST({ request }) {
 									metered_si: item.price?.recurring?.usage_type == 'metered' ? item.id : null
 								};
 							}),
-							customerUserId,
+							customerSupaUserId,
 							getSub.id
 						);
 						if (isPostgresError(createdSubscription)) {
@@ -98,7 +101,7 @@ export async function POST({ request }) {
 						if (product?.metadata?.messages_amount == null) {
 							return response500AndLogError('No messages amount');
 						}
-						await increaseMessageForUser(customerUserId, product.metadata.messages_amount);
+						await increaseMessageForUser(customerSupaUserId, product.metadata.messages_amount);
 					}
 				}
 			}

@@ -15,6 +15,7 @@ export async function navigateRestart(page: Page): Promise<void> {
 
 export async function navigateRestartAndReturnMessageCounter(page: Page): Promise<number> {
 	await navigateRestart(page);
+	await page.waitForTimeout(100);
 	return parseInt(await page.getByTestId('message-counter').innerText());
 }
 

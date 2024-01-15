@@ -499,15 +499,15 @@ export interface Database {
         }
         Returns: undefined
       }
-      update_daily_messages: {
-        Args: Record<PropertyKey, never>
+      set_daily_messages_for_user: {
+        Args: {
+          the_user_id: string
+          daily_amount: number
+        }
         Returns: undefined
       }
-      update_subscription: {
-        Args: {
-          stripe_customer: string
-          price_id: string
-        }
+      update_user_messages: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
     }
