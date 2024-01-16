@@ -35,7 +35,7 @@ export async function getStripeCustomer(userId: string) {
 export async function loadActiveAndUncancelledSubscription(user_id: string) {
 	const { data, error } = await supabase_full_access
 		.from('user_subs')
-		.select('sub_id, products')
+		.select('sub_id, products, access_codes')
 		.eq('user_id', user_id)
 		.is('end_date', null);
 

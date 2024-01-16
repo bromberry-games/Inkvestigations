@@ -1,10 +1,16 @@
 import { supabase_full_access } from './supabase_full_access.server';
 
-export async function createSubscription(productIds: { product_id: string; metered_si: string | null }[], userId: string, subId: string) {
+export async function createSubscription(
+	productIds: { product_id: string; metered_si: string | null }[],
+	userId: string,
+	subId: string,
+	accessCodes: string
+) {
 	const { error } = await supabase_full_access.from('user_subs').insert({
 		sub_id: subId,
 		user_id: userId,
-		products: productIds
+		products: productIds,
+		access_codes: accessCodes
 	});
 	if (error) {
 		return error;

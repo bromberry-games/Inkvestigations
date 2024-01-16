@@ -115,6 +115,7 @@ export interface Database {
       }
       mysteries: {
         Row: {
+          access_code: string | null
           accuse_letter_prompt: string
           description: string
           filepath: string
@@ -129,6 +130,7 @@ export interface Database {
           victim_name: string
         }
         Insert: {
+          access_code?: string | null
           accuse_letter_prompt: string
           description: string
           filepath: string
@@ -143,6 +145,7 @@ export interface Database {
           victim_name: string
         }
         Update: {
+          access_code?: string | null
           accuse_letter_prompt?: string
           description?: string
           filepath?: string
@@ -450,18 +453,21 @@ export interface Database {
       }
       user_subs: {
         Row: {
+          access_codes: string | null
           end_date: string | null
           products: Database["public"]["CompositeTypes"]["product_type"][]
           sub_id: string
           user_id: string
         }
         Insert: {
+          access_codes?: string | null
           end_date?: string | null
           products: Database["public"]["CompositeTypes"]["product_type"][]
           sub_id: string
           user_id: string
         }
         Update: {
+          access_codes?: string | null
           end_date?: string | null
           products?: Database["public"]["CompositeTypes"]["product_type"][]
           sub_id?: string

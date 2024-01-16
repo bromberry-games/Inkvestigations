@@ -79,9 +79,11 @@ export async function POST({ request }) {
 							console.log(item.price?.product);
 							return acc + Number.parseInt(item.price?.product?.metadata?.daily_messages ?? 0);
 						}, 0);
+						const accessCodes = getSub.items.data.reduce((acc, item) => {
+							return acc + (item.price?.product?.metadata?.access_codes ? item.price?.product?.metadata?.access_codes + ', ' : '');
+						}, '');
 
 						const updatedSubscription = await setDailyMessages(customerSupaUserId, dailyMessagesAmount);
-						console.log(updatedSubscription);
 
 						const createdSubscription = await createSubscription(
 							getSub.items.data.map((item) => {
@@ -91,7 +93,8 @@ export async function POST({ request }) {
 								};
 							}),
 							customerSupaUserId,
-							getSub.id
+							getSub.id,
+							accessCodes
 						);
 						if (isPostgresError(createdSubscription)) {
 							return response500AndLogError(createdSubscription.message);

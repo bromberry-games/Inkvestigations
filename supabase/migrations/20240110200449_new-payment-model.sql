@@ -23,10 +23,16 @@ CREATE TABLE user_subs(
     sub_id TEXT PRIMARY KEY, 
     user_id uuid NOT NULL REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     products product_type[] NOT NULL,
-    end_date DATE DEFAULT NULL
+    end_date DATE DEFAULT NULL,
+    access_codes TEXT
 );
 
 ALTER TABLE user_subs ENABLE ROW LEVEL SECURITY;
+
+
+-- Storing access codes is not that nice. Better is to store all stripe products and then reference their data
+-- This should be done eventually and should be possible with webhooks
+ALTER TABLE mysteries ADD COLUMN access_code TEXT DEFAULT 'free' NOT NULL;
 
 
 CREATE OR REPLACE FUNCTION update_user_messages()

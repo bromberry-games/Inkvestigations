@@ -53,19 +53,24 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		loadEventMessages(mysteryName),
 		loadActiveAndUncancelledSubscription(session.user.id)
 	]);
-	if (!letterInfo) {
-		error(500, 'could not load letter info from data');
-	}
+	isTAndThrowPostgresErrorIfNot(letterInfo);
 	isTAndThrowPostgresErrorIfNot(messages);
 	isTAndThrowPostgresErrorIfNot(eventMessages);
 	isTAndThrowPostgresErrorIfNot(activeSub);
 	if (!suspects) {
 		error(500, 'could not load suspects chat from data');
 	}
+	if (letterInfo.access_code != 'free') {
+		if (activeSub[0]?.access_codes == null || activeSub.length == 0) {
+			redirect(303, '/mysteries');
+		} else if (!activeSub[0].access_codes.split(',').includes(letterInfo.access_code)) {
+			redirect(303, '/mysteries');
+		}
+	}
 
 	return {
 		slug,
-		messages: [createLetter(letterInfo), ...messages],
+		messages: [createLetter(letterInfo.letter_info), ...messages],
 		suspects: shuffleArray(suspects),
 		eventMessages,
 		metered: activeSub.length == 1 && activeSub[0].products.some((p) => p.metered_si != null)
