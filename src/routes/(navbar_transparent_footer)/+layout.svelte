@@ -22,6 +22,5 @@
 <style>
 	#nav {
 		background: linear-gradient(to bottom, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
-		margin-bottom: 24px;
 	}
 </style>
