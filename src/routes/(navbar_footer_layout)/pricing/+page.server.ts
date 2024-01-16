@@ -3,80 +3,76 @@ import { STRIPE_TEST_KEY } from '$env/static/private';
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import Stripe from 'stripe';
 import type { Session } from '@supabase/supabase-js';
-import { loadActiveSubscriptions, loadActiveAndUncancelledSubscription, getStripeCustomer } from '$lib/supabase/prcing.server';
+import { loadActiveAndUncancelledSubscription, getStripeCustomer } from '$lib/supabase/prcing.server';
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper.js';
 import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers.js';
+import { SubscriptionBundles } from './bundles';
+import { stripeClient } from '$lib/stripe';
 
-const stripe = new Stripe(STRIPE_TEST_KEY, {
-	apiVersion: '2022-11-15'
-});
+const stripe = stripeClient;
 
 export const load = async ({ locals: { getSession } }) => {
-	const [subscription, stripePrices, currentSubscription] = await Promise.all([
-		loadActiveSubscriptions(),
+	const [stripePrices, currentSubscription] = await Promise.all([
 		stripe.prices.list({
 			active: true,
 			expand: ['data.product']
-			// recurring: {
-			// interval: 'month'
-			// }
 		}),
 		(async () => {
 			const session = await getSession();
 			if (getAuthStatus(session) == AuthStatus.LoggedIn) {
 				const subData = await loadActiveAndUncancelledSubscription(session.user.id);
-				if (!subData) {
-					error(500, 'could not load sub');
-				}
-				return subData.id;
+				isTAndThrowPostgresErrorIfNot(subData);
+				return subData;
 			} else {
-				return null;
+				return [];
 			}
 		})()
 	]);
-	if (!subscription) {
-		error(500, 'could not load subs');
-	}
 	const singlePrices = stripePrices.data.filter((price) => {
 		return price.recurring == null;
 	});
 
-	const stripeSubscriptions = stripePrices.data
-		.filter((price) => {
-			return price.recurring?.interval === 'month';
-		})
-		.sort((a, b) => {
-			return a.unit_amount - b.unit_amount;
-		})
-		.map((price) => {
-			const subInfo = subscription.find((sub) => sub.stripe_price_id === price.id);
-			return {
-				id: price.id,
-				currency: price.currency,
-				unit_amount: price.unit_amount,
-				product_name: subInfo?.name,
-				daily_message_limit: subInfo?.daily_message_limit,
-				currentPlan: currentSubscription === price.id
-			};
-		});
+	let subType;
+	if (currentSubscription.length == 0) {
+		subType = SubscriptionBundles.Free;
+	} else if (currentSubscription[0].products.length == 1) {
+		subType = SubscriptionBundles.ZeroDollar;
+	} else if (currentSubscription[0].products.length == 2) {
+		subType = SubscriptionBundles.NineDollar;
+	}
 
-	return { stripeSubscriptions: stripeSubscriptions, hasSub: !!currentSubscription, oneTimeItems: singlePrices };
+	return { oneTimeItems: singlePrices, subType };
 };
 
 export const actions = {
 	subscribe: async ({ url, request, locals: { getSession } }) => {
 		const user_session: Session = await getSession();
-		const form_data = request.formData();
-		const price = (await form_data).get('price_id') as string;
-
-		const session = await stripe.checkout.sessions.create({
-			line_items: [
+		if (getAuthStatus(user_session) != AuthStatus.LoggedIn) {
+			redirect(303, '/login');
+		}
+		const [form_data, customerId] = await Promise.all([request.formData(), getStripeCustomer(user_session.user.id)]);
+		isTAndThrowPostgresErrorIfNot(customerId);
+		let line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
+		if (form_data.get('paymode') == SubscriptionBundles.ZeroDollar) {
+			line_items = [
 				{
-					price: price,
-					quantity: 1
+					price: 'price_1OX3PyKIDbJkcynJ84FAWIsv'
 				}
-			],
-			mode: 'subscription',
+			];
+		} else if (form_data.get('paymode') == SubscriptionBundles.NineDollar) {
+			line_items = [
+				{
+					price: 'price_1Ng9UfKIDbJkcynJYsE9jPMZ',
+					quantity: 1
+				},
+				{
+					price: 'price_1OX1RjKIDbJkcynJBNwlgnJ2'
+				}
+			];
+		}
+		let session;
+		const stripeProperties = {
+			line_items,
 			success_url: `${url.origin}/success`,
 			cancel_url: `${url.origin}/pricing`,
 			automatic_tax: { enabled: true },
@@ -88,7 +84,19 @@ export const actions = {
 					user_id: user_session ? user_session.user.id : ''
 				}
 			}
-		});
+		};
+		if (customerId) {
+			session = await stripe.checkout.sessions.create({
+				mode: 'subscription',
+				...stripeProperties,
+				customer: customerId
+			});
+		} else {
+			session = await stripe.checkout.sessions.create({
+				mode: 'subscription',
+				...stripeProperties
+			});
+		}
 
 		if (session.url) {
 			redirect(303, session.url);

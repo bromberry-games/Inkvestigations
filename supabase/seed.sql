@@ -61,38 +61,42 @@ VALUES
 
 
 
-INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
-VALUES
-(
-    'Rookie',
-    'For those who are new to the game',
-    10,
-    'price_1NgTQsKIDbJkcynJPpFoFZNz'
-);
-INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
-VALUES
-(
-    'Detective',
-    'For moderate players',
-    20,
-    'price_1Ng9UfKIDbJkcynJYsE9jPMZ'
-);
-INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
-VALUES
-(
-    'Chief',
-    'For the most experienced players',
-    30,
-    'price_1NgSRVKIDbJkcynJkhJJb1E3'
-);
-INSERT INTO subscription_tiers (name, description, daily_message_limit, stripe_price_id)
-VALUES
-(
-    'TEST',
-    'Just for testing',
-    5,
-    'test_1'
-);
+-- INSERT INTO subscriptions(stripe_price_id)
+-- VALUES
+-- (
+--     'price_1Ng9UfKIDbJkcynJYsE9jPMZ'
+-- );
+-- INSERT INTO daily_messages_subscriptions(sub_id, daily_refill_amount)
+-- VALUES
+-- (
+--     (SELECT id FROM subscriptions WHERE stripe_price_id = 'price_1Ng9UfKIDbJkcynJYsE9jPMZ'),
+--     10
+-- );
+-- 
+-- INSERT INTO subscriptions(stripe_price_id)
+-- VALUES
+-- (
+--     'test_1'
+-- );
+-- INSERT INTO daily_messages_subscriptions(sub_id, daily_refill_amount)
+-- VALUES
+-- (
+--     (SELECT id FROM subscriptions WHERE stripe_price_id = 'test_1'),
+--     5
+-- );
+-- 
+-- INSERT INTO subscriptions(stripe_price_id)
+-- VALUES
+-- (
+--     'price_1OX1RjKIDbJkcynJBNwlgnJ2' -- for combo
+-- );
+-- 
+-- INSERT INTO subscriptions(stripe_price_id)
+-- VALUES
+-- (
+--     'price_1OX3PyKIDbJkcynJ84FAWIsv' --free tier
+-- );
+
 
 DELETE FROM auth.users;
 alter table auth.identities alter column provider_id drop not null;

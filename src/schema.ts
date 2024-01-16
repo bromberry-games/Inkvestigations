@@ -115,6 +115,7 @@ export interface Database {
       }
       mysteries: {
         Row: {
+          access_code: string | null
           accuse_letter_prompt: string
           description: string
           filepath: string
@@ -129,6 +130,7 @@ export interface Database {
           victim_name: string
         }
         Insert: {
+          access_code?: string | null
           accuse_letter_prompt: string
           description: string
           filepath: string
@@ -143,6 +145,7 @@ export interface Database {
           victim_name: string
         }
         Update: {
+          access_code?: string | null
           accuse_letter_prompt?: string
           description?: string
           filepath?: string
@@ -229,33 +232,6 @@ export interface Database {
         Update: {
           event_id?: string
           id?: number
-        }
-        Relationships: []
-      }
-      subscription_tiers: {
-        Row: {
-          active: boolean
-          daily_message_limit: number
-          description: string
-          name: string
-          stripe_price_id: string
-          tier_id: number
-        }
-        Insert: {
-          active?: boolean
-          daily_message_limit: number
-          description: string
-          name: string
-          stripe_price_id: string
-          tier_id?: number
-        }
-        Update: {
-          active?: boolean
-          daily_message_limit?: number
-          description?: string
-          name?: string
-          stripe_price_id?: string
-          tier_id?: number
         }
         Relationships: []
       }
@@ -475,41 +451,31 @@ export interface Database {
           }
         ]
       }
-      user_subscriptions: {
+      user_subs: {
         Row: {
-          active: boolean
+          access_codes: string | null
           end_date: string | null
-          start_date: string
-          subscription_id: number
-          tier_id: number | null
-          user_id: string | null
+          products: Database["public"]["CompositeTypes"]["product_type"][]
+          sub_id: string
+          user_id: string
         }
         Insert: {
-          active?: boolean
+          access_codes?: string | null
           end_date?: string | null
-          start_date: string
-          subscription_id?: number
-          tier_id?: number | null
-          user_id?: string | null
+          products: Database["public"]["CompositeTypes"]["product_type"][]
+          sub_id: string
+          user_id: string
         }
         Update: {
-          active?: boolean
+          access_codes?: string | null
           end_date?: string | null
-          start_date?: string
-          subscription_id?: number
-          tier_id?: number | null
-          user_id?: string | null
+          products?: Database["public"]["CompositeTypes"]["product_type"][]
+          sub_id?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_subscriptions_tier_id_fkey"
-            columns: ["tier_id"]
-            isOneToOne: false
-            referencedRelation: "subscription_tiers"
-            referencedColumns: ["tier_id"]
-          },
-          {
-            foreignKeyName: "user_subscriptions_user_id_fkey"
+            foreignKeyName: "user_subs_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -522,13 +488,6 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      create_subscription: {
-        Args: {
-          the_user_id: string
-          price_id: string
-        }
-        Returns: undefined
-      }
       decrement_for_free_users: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -546,15 +505,15 @@ export interface Database {
         }
         Returns: undefined
       }
-      update_daily_messages: {
-        Args: Record<PropertyKey, never>
+      set_daily_messages_for_user: {
+        Args: {
+          the_user_id: string
+          daily_amount: number
+        }
         Returns: undefined
       }
-      update_subscription: {
-        Args: {
-          stripe_customer: string
-          price_id: string
-        }
+      update_user_messages: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
     }
@@ -569,6 +528,10 @@ export interface Database {
         motive: string
         opportunity: string
         evidence: string
+      }
+      product_type: {
+        product_id: string
+        metered_si: string
       }
     }
   }

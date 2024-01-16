@@ -5,6 +5,7 @@ import { message, superValidate } from 'sveltekit-superforms/server';
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { supabase_full_access } from '$lib/supabase/supabase_full_access.server.js';
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server.js';
+import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers.js';
 
 const mainSchema = z.object({
 	email: z.string().email(),
@@ -20,10 +21,8 @@ export const load = async ({ locals: { getSession, supabase } }) => {
 		superValidate({ email: session.user.email, useMyOwnToken: session.user.user_metadata.useMyOwnToken ?? false }, mainSchema),
 		loadActiveAndUncancelledSubscription(session.user.id)
 	]);
-	if (!activeSub) {
-		error(404, 'Subscription not found');
-	}
-	return { form, activeSub: activeSub.id != null };
+	isTAndThrowPostgresErrorIfNot(activeSub);
+	return { form, activeSub: activeSub.length > 0 };
 };
 
 export const actions = {

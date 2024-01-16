@@ -6,6 +6,7 @@ import { archiveLastConversation, loadEventMessages, loadLetterMessages } from '
 import { shuffleArray } from '$lib/generic-helpers';
 import { isPostgresError, isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
 import { throwIfFalse } from '$misc/error';
+import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
 
 function createLetter(letterInfo: string) {
 	return {
@@ -45,26 +46,34 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 	const { slug } = params;
 	const mysteryName = slug.replace(/_/g, ' ');
 
-	const [letterInfo, messages, suspects, eventMessages] = await Promise.all([
+	const [letterInfo, messages, suspects, eventMessages, activeSub] = await Promise.all([
 		loadMysteryLetterInfo(session.user.id, mysteryName),
 		loadLetterMessages(session.user.id, mysteryName),
 		loadSuspects(mysteryName),
-		loadEventMessages(mysteryName)
+		loadEventMessages(mysteryName),
+		loadActiveAndUncancelledSubscription(session.user.id)
 	]);
-	if (!letterInfo) {
-		error(500, 'could not load letter info from data');
-	}
+	isTAndThrowPostgresErrorIfNot(letterInfo);
 	isTAndThrowPostgresErrorIfNot(messages);
 	isTAndThrowPostgresErrorIfNot(eventMessages);
+	isTAndThrowPostgresErrorIfNot(activeSub);
 	if (!suspects) {
 		error(500, 'could not load suspects chat from data');
+	}
+	if (letterInfo.access_code != 'free') {
+		if (activeSub[0]?.access_codes == null || activeSub.length == 0) {
+			redirect(303, '/mysteries');
+		} else if (!activeSub[0].access_codes.split(',').includes(letterInfo.access_code)) {
+			redirect(303, '/mysteries');
+		}
 	}
 
 	return {
 		slug,
-		messages: [createLetter(letterInfo), ...messages],
+		messages: [createLetter(letterInfo.letter_info), ...messages],
 		suspects: shuffleArray(suspects),
-		eventMessages
+		eventMessages,
+		metered: activeSub.length == 1 && activeSub[0].products.some((p) => p.metered_si != null)
 	};
 };
 

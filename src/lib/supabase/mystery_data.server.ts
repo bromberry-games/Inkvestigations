@@ -50,19 +50,19 @@ export async function loadGameInfo(mystery: string, messageLength: number) {
 	return conversationData;
 }
 
-export async function loadMysteryLetterInfo(userid: string, mystery: string): Promise<string | null> {
+export async function loadMysteryLetterInfo(userid: string, mystery: string) {
 	const { data: mysteryData, error: mysteryError } = await supabase_full_access
 		.from('mysteries')
-		.select('letter_info')
+		.select('letter_info, access_code')
 		.eq('name', mystery)
 		.single();
 
 	if (mysteryError) {
 		console.error('error querying mystery: ', mysteryError);
-		return null;
+		return mysteryError;
 	}
 
-	return mysteryData.letter_info;
+	return mysteryData;
 }
 
 export async function loadMysteriesWithSolved(userId: string) {

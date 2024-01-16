@@ -1,25 +1,26 @@
 import type { PostgrestError } from '@supabase/supabase-js';
 import { supabase_full_access } from './supabase_full_access.server';
 
-export async function loadActiveSubscriptions() {
-	const { data, error } = await supabase_full_access
-		.from('subscription_tiers')
-		.select('name, description, daily_message_limit, stripe_price_id')
-		.eq('active', true);
-
-	if (error) {
-		console.error(error);
-		return null;
-	}
-
-	return data;
-}
-
 export async function linkCustomerToUser(customer_id: string, user_id: string): Promise<string | PostgrestError> {
-	const { error } = await supabase_full_access.from('stripe_customers').insert({ customer_id, user_id });
-	if (error) {
-		return error;
+	const { data: existing, error: selectError } = await supabase_full_access
+		.from('stripe_customers')
+		.select('*')
+		.eq('customer_id', customer_id)
+		.eq('user_id', user_id);
+
+	if (selectError) {
+		return selectError;
 	}
+	if (existing && existing.length > 0) {
+		return user_id;
+	}
+
+	const { error: insertError } = await supabase_full_access.from('stripe_customers').insert({ customer_id, user_id });
+
+	if (insertError) {
+		return insertError;
+	}
+
 	return user_id;
 }
 
@@ -33,23 +34,16 @@ export async function getStripeCustomer(userId: string) {
 
 export async function loadActiveAndUncancelledSubscription(user_id: string) {
 	const { data, error } = await supabase_full_access
-		.from('user_subscriptions')
-		.select('subscription_tiers(stripe_price_id, name)')
+		.from('user_subs')
+		.select('sub_id, products, access_codes')
 		.eq('user_id', user_id)
-		.eq('active', true)
 		.is('end_date', null);
 
 	if (error) {
-		console.error('Error fetching subscription', error);
-		return null;
+		return error;
 	}
-	if (data[0] == null || data.length == 0) {
-		return { id: null };
-	}
-	if (data[0].subscription_tiers?.name.toLowerCase() == 'test') {
-		return { id: null };
-	}
-	return data[0] && data[0].subscription_tiers ? { id: data[0].subscription_tiers.stripe_price_id } : { id: null };
+
+	return data;
 }
 
 export async function checkIfEventExists(eventId: string): Promise<boolean | null> {
