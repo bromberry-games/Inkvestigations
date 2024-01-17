@@ -47,7 +47,6 @@ async function accuseModelAnswer(
 			accuseLetterInfo: accuseLetterInfo,
 			suspects: accuseBrainRequestParams.suspects,
 			victim: accuseBrainRequestParams.victim,
-			accusedSuspect: accuseBrainRequestParams.accusedSuspect,
 			onResponseGenerated: addResult
 		},
 		openAiToken
@@ -63,7 +62,6 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	throwIfUnset('request data', requestData);
 	const game_config = requestData.game_config;
 	throwIfUnset('game_config', game_config);
-	throwIfUnset('accuse', game_config.accuse);
 	const accuse: boolean = game_config.accuse;
 	throwIfUnset('Mystery name', game_config.mysteryName);
 	let message: string = requestData.message;

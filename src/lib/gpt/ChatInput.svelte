@@ -148,14 +148,14 @@
 		debounceTimer = undefined;
 	}
 
-	let placeholderText = 'Enter to send, Shift+Enter for newline';
+	let placeholderText = '';
 	$: {
 		if (gameOver) {
 			placeholderText = 'Game Over';
 		} else if (!accuseMode) {
-			placeholderText = 'Enter to send, Shift+Enter for newline';
+			placeholderText = 'Give instructions to the chief';
 		} else {
-			placeholderText = 'Enter suspect, motive, opportunity and evidence to solve the mystery';
+			placeholderText = 'Input clues to solve the case';
 		}
 	}
 </script>

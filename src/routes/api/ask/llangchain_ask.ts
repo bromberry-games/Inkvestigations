@@ -233,12 +233,11 @@ interface AccuseLetterModelRequestParams {
 	accuseLetterInfo: string;
 	suspects: string;
 	victim: Victim;
-	accusedSuspect: string;
 	onResponseGenerated: (input: string) => Promise<any>;
 }
 
 export async function accuseLetterModelRequest(
-	{ accusation, epilogue, accuseLetterInfo, suspects, victim, accusedSuspect, onResponseGenerated }: AccuseLetterModelRequestParams,
+	{ accusation, epilogue, accuseLetterInfo, suspects, victim, onResponseGenerated }: AccuseLetterModelRequestParams,
 	openAiToken: string
 ) {
 	const prompt = createAccuseLetterPrompt();
@@ -255,8 +254,7 @@ export async function accuseLetterModelRequest(
 			accusation,
 			epilogue,
 			victimName: victim.name,
-			victimDescription: victim.description,
-			suspect: accusedSuspect
+			victimDescription: victim.description
 		})
 		.catch((e) => console.error(e));
 	if (!stream) {

@@ -130,7 +130,7 @@
 >
 	<Button
 		slot="notes-button"
-		class="mr-1 bg-secondary !p-2 font-primary text-xl text-quaternary md:mx-2 md:px-5"
+		class="mr-1 h-full rounded-none border border-secondary bg-secondary !p-2.5 font-primary text-xl text-quaternary md:mx-1 md:px-5"
 		on:click={() => (suspectModal = true)}><AddressCardSolid></AddressCardSolid></Button
 	>
 </ChatInput>
