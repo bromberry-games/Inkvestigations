@@ -47,7 +47,9 @@
 
 	function submitMessage(messageToSubmit: string) {
 		messageTokens = approximateTokenCount(messageToSubmit);
-		if (messageTokens > MAX_TOKENS || messageToSubmit.length === 0) return;
+		if (messageTokens > MAX_TOKENS || messageToSubmit.length === 0) {
+			console.log('input too long or empty ' + messageTokens);
+		}
 
 		if (accuseMode) {
 			gameOver = true;
@@ -182,6 +184,7 @@
 							{/if}
 						</button>
 						<textarea
+							data-testid="chat-input"
 							class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary"
 							rows="1"
 							placeholder={placeholderText}
