@@ -5,16 +5,29 @@
 	import Chat from '$lib/gpt/Chat.svelte';
 	import type { ChatMessage } from '$misc/shared';
 	import { Button, Input, Modal } from 'flowbite-svelte';
-	import { tokenStore } from '$misc/stores';
-	import { RotateOutline } from 'flowbite-svelte-icons';
+	import { messageAmountStore, tokenStore, updateMessageCounter } from '$misc/stores';
+	import { AddressCardSolid, RotateOutline } from 'flowbite-svelte-icons';
 	import { getAuthStatus } from '$lib/auth-helper';
+	import SuspectModal from '$lib/gpt/SuspectModal.svelte';
 
 	export let data: PageData;
-	let suspectToAccuse = '';
 
+	let suspectToAccuse = '';
 	let userMessages = { amount: 0, non_refillable_amount: 0 };
+	let tokenModal = data.session?.user.user_metadata.useMyOwnToken && $tokenStore == '';
+	let suspectModal = false;
+
 	$: supabase = data.supabase;
 	$: messages = buildMessagesList(data.messages);
+	$: openAiToken = $tokenStore;
+	$: ({ slug } = data);
+	$: if (suspectModal == false) {
+		saveNotes();
+	}
+	async function saveNotes() {
+		const { error } = await data.supabase.from('conversation_notes').upsert({ conversation_id: data.convId, notes: data.notes });
+		if (error) console.log(error);
+	}
 
 	function addMessage(event: CustomEvent<ChatMessage>) {
 		messages = buildMessagesList([...messages.filter((m) => m.extra == undefined || m.extra == false), event.detail]);
@@ -43,7 +56,8 @@
 
 	async function updateUserMessageAmountAndAddMessage(event: CustomEvent<ChatMessage>) {
 		addMessage(event);
-		updateUserMessagesAmount();
+		updateMessageCounter(data.supabase, data.session?.user.id);
+		// updateUserMessagesAmount();
 	}
 
 	async function updateUserMessagesAmount() {
@@ -54,7 +68,6 @@
 		}
 		userMessages = data;
 	}
-	$: ({ slug } = data);
 
 	onMount(async () => {
 		updateUserMessagesAmount();
@@ -63,14 +76,13 @@
 		tokenModal = data.session?.user.user_metadata.useMyOwnToken && $tokenStore == '';
 	});
 
-	let tokenModal = data.session?.user.user_metadata.useMyOwnToken && $tokenStore == '';
-	$: openAiToken = $tokenStore;
 	function storeTokenLocally() {
 		if (openAiToken) {
 			$tokenStore = openAiToken;
 			tokenModal = false;
 		}
 	}
+
 	function clearSetToken() {
 		$tokenStore = '';
 		openAiToken = '';
@@ -78,6 +90,8 @@
 	}
 </script>
 
+<SuspectModal bind:clickOutsideModal={suspectModal} bind:suspectToAccuse suspects={data.suspects} {slug} bind:notes={data.notes}
+></SuspectModal>
 {#if data.session?.user.user_metadata.useMyOwnToken}
 	<Modal title="Use own openai token" bind:open={tokenModal} autoclose>
 		<p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
@@ -109,10 +123,14 @@
 	{slug}
 	on:chatInput={addMessage}
 	on:messageReceived={updateUserMessageAmountAndAddMessage}
-	messagesAmount={userMessages}
-	{suspectToAccuse}
-	suspects={data.suspects}
+	accuseMode={suspectToAccuse}
 	chatUnbalanced={messages.filter((m) => m.extra == undefined || m.extra == false).length % 2 !== 1}
 	authStatus={getAuthStatus(data.session)}
 	metered={data.metered}
-/>
+>
+	<Button
+		slot="notes-button"
+		class="mr-1 h-full rounded-none border border-secondary bg-secondary !p-2.5 font-primary text-xl text-quaternary md:mx-1 md:px-5"
+		on:click={() => (suspectModal = true)}><AddressCardSolid></AddressCardSolid></Button
+	>
+</ChatInput>

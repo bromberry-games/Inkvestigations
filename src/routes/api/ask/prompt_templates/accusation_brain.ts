@@ -230,7 +230,7 @@ What would happen to me, the chief, if I confronted the suspects like that? A ra
 	})
 ];
 
-const userTemplate = 'It was {suspect}. {text}';
+const userTemplate = '{text}';
 
 export function createAccusePrompt() {
 	return ChatPromptTemplate.fromMessages([['system', systemTemplate], ...fewShotPromptBrain, ['user', userTemplate]]);

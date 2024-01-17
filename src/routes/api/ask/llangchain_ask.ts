@@ -199,13 +199,12 @@ export interface Murderer {
 export interface AccuseModelRequestParams {
 	suspects: string;
 	victim: Victim;
-	accusedSuspect: string;
 	promptMessage: string;
 	murderer: Murderer;
 }
 
 export async function accuseBrainRequest(
-	{ suspects, victim, murderer, accusedSuspect, promptMessage }: AccuseModelRequestParams,
+	{ suspects, victim, murderer, promptMessage }: AccuseModelRequestParams,
 	openAiToken: string
 ): Promise<RatingWithEpilogue> {
 	const prompt = createAccusePrompt();
@@ -219,7 +218,6 @@ export async function accuseBrainRequest(
 	const parser = new RatingParser();
 	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
 	const res = await chain.call({
-		suspect: accusedSuspect,
 		text: promptMessage,
 		suspects,
 		victimName: victim.name,
@@ -235,12 +233,11 @@ interface AccuseLetterModelRequestParams {
 	accuseLetterInfo: string;
 	suspects: string;
 	victim: Victim;
-	accusedSuspect: string;
 	onResponseGenerated: (input: string) => Promise<any>;
 }
 
 export async function accuseLetterModelRequest(
-	{ accusation, epilogue, accuseLetterInfo, suspects, victim, accusedSuspect, onResponseGenerated }: AccuseLetterModelRequestParams,
+	{ accusation, epilogue, accuseLetterInfo, suspects, victim, onResponseGenerated }: AccuseLetterModelRequestParams,
 	openAiToken: string
 ) {
 	const prompt = createAccuseLetterPrompt();
@@ -257,8 +254,7 @@ export async function accuseLetterModelRequest(
 			accusation,
 			epilogue,
 			victimName: victim.name,
-			victimDescription: victim.description,
-			suspect: accusedSuspect
+			victimDescription: victim.description
 		})
 		.catch((e) => console.error(e));
 	if (!stream) {

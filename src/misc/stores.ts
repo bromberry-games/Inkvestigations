@@ -2,6 +2,7 @@ import type { ChatCompletionRequestMessage } from 'openai';
 import { writable, type Readable, type Writable, readable, derived } from 'svelte/store';
 import { EventSource } from './eventSource';
 import { closeOpenedCodeTicks } from './markdownHelper';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export const liveAnswerStore: Writable<ChatCompletionRequestMessage> = writable({
 	role: 'assistant',
@@ -46,3 +47,19 @@ function createWritableStore<T>(key: string, startValue: T) {
 }
 
 export const tokenStore = createWritableStore('tokenStore', '');
+
+export const messageAmountStore: Writable<number> = writable(0);
+export async function updateMessageCounter(supabase: SupabaseClient, userId: string) {
+	const { data, error } = await supabase
+		.from('user_messages')
+		.select('amount, non_refillable_amount')
+		.eq('user_id', userId)
+		.limit(1)
+		.single();
+	if (error) {
+		console.error(error);
+	}
+	if (data) {
+		messageAmountStore.set(data.amount + data.non_refillable_amount);
+	}
+}

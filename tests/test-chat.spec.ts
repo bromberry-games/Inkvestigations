@@ -41,11 +41,11 @@ test('should use up both messages', async ({ page, account }) => {
 	if (error) throw error;
 
 	const messageCount = await navigateRestartAndReturnMessageCounter(page);
-	expect(messageCount).toBe(1);
+	expect(messageCount).toBe(2);
 	await sendMessage(page, 'interrogate dexter tin');
 	const newMessageCount = await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
 	//This is now also 1 since now the bought messages are being used up. This might change in the future
-	expect(messageCount).toBe(1);
+	expect(newMessageCount).toBe(1);
 	await sendMessage(page, 'do some cool stuff');
 	const message = page.getByText('Police chief:').nth(2);
 	await message.waitFor({ timeout: 45000 });
@@ -64,7 +64,7 @@ test('delete message and then regenerate', async ({ page, account }) => {
 	await page.getByRole('button', { name: 'REGENERATE' }).first().click();
 
 	await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
-	await expect(page.getByPlaceholder('Enter to send, Shift+Enter for newline')).toBeVisible();
+	await expect(page.getByTestId('chat-input')).toBeVisible();
 	expect(newMessageCount + 1).toBe(messageCount);
 });
 
@@ -81,7 +81,7 @@ test('delete message and brain message and then regenerate', async ({ page, acco
 	await page.getByRole('button', { name: 'REGENERATE' }).first().click();
 
 	await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
-	await expect(page.getByPlaceholder('Enter to send, Shift+Enter for newline')).toBeVisible();
+	await expect(page.getByTestId('chat-input')).toBeVisible();
 	expect(newMessageCount + 1).toBe(messageCount);
 });
 
@@ -105,15 +105,29 @@ test('delete message, message and brain message and then regenerate. Message cou
 
 test('test accuse works ', async ({ page }) => {
 	const messageCount = await navigateRestartAndReturnMessageCounter(page);
-	await page.getByRole('button', { name: 'ACCUSE' }).click();
-	await page.getByRole('img', { name: 'Oliver Smith' }).click();
+	await page.getByRole('button', { name: 'WRITE' }).click();
 
 	const amount = await page.getByText('Police chief:').count();
-	await sendMessage(page, 'He did it with the poison pen. Put cyanide in the ink the day of the party. Was mad about the victims');
+	await sendMessage(
+		page,
+		'Oliver Smith did it with the poison pen. Put cyanide in the ink the day of the party. Was mad about the victims lack of journalistic ethics'
+	);
 
 	const message = page.getByText('Police chief:').nth(amount);
 	await message.waitFor({ timeout: 45000 });
 
 	await expect(page.getByText('Police chief:').nth(amount)).toBeVisible();
 	await expect(page.getByPlaceholder('Game Over')).toBeDisabled();
+});
+
+test('notes should be saved', async ({ page, account }) => {
+	await navigateRestart(page);
+	await page.getByRole('button', { name: 'address card solid' }).click();
+	await page.locator('textarea').first().fill('test');
+	await page.locator('textarea').nth(3).fill('test number 2');
+	await page.getByLabel('Close modal').click();
+	await page.reload({ waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'address card solid' }).click();
+	await expect(page.locator('textarea').first()).toHaveValue('test');
+	await expect(page.locator('textarea').nth(3)).toHaveValue('test number 2');
 });
