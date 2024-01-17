@@ -63,7 +63,8 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	throwIfUnset('request data', requestData);
 	const game_config = requestData.game_config;
 	throwIfUnset('game_config', game_config);
-	const suspectToAccuse = game_config.suspectToAccuse ? game_config.suspectToAccuse : '';
+	throwIfUnset('accuse', game_config.accuse);
+	const accuse: boolean = game_config.accuse;
 	throwIfUnset('Mystery name', game_config.mysteryName);
 	let message: string = requestData.message;
 	throwIfUnset('messages', message);
@@ -131,14 +132,13 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 			description: gameInfo.victim_description
 		};
 
-		return suspectToAccuse
+		return accuse
 			? await accuseModelAnswer(
 					{
 						mysteryName: game_config.mysteryName,
 						accuseBrainRequestParams: {
 							promptMessage: message,
 							suspects: suspectsString,
-							accusedSuspect: suspectToAccuse,
 							victim,
 							murderer: {
 								murdererName: gameInfo.murderer.name,

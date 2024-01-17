@@ -199,13 +199,12 @@ export interface Murderer {
 export interface AccuseModelRequestParams {
 	suspects: string;
 	victim: Victim;
-	accusedSuspect: string;
 	promptMessage: string;
 	murderer: Murderer;
 }
 
 export async function accuseBrainRequest(
-	{ suspects, victim, murderer, accusedSuspect, promptMessage }: AccuseModelRequestParams,
+	{ suspects, victim, murderer, promptMessage }: AccuseModelRequestParams,
 	openAiToken: string
 ): Promise<RatingWithEpilogue> {
 	const prompt = createAccusePrompt();
@@ -219,7 +218,6 @@ export async function accuseBrainRequest(
 	const parser = new RatingParser();
 	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
 	const res = await chain.call({
-		suspect: accusedSuspect,
 		text: promptMessage,
 		suspects,
 		victimName: victim.name,

@@ -123,9 +123,7 @@
 	{slug}
 	on:chatInput={addMessage}
 	on:messageReceived={updateUserMessageAmountAndAddMessage}
-	messagesAmount={userMessages}
-	{suspectToAccuse}
-	suspects={data.suspects}
+	accuseMode={suspectToAccuse}
 	chatUnbalanced={messages.filter((m) => m.extra == undefined || m.extra == false).length % 2 !== 1}
 	authStatus={getAuthStatus(data.session)}
 	metered={data.metered}

@@ -20,7 +20,7 @@
 	const dispatch = createEventDispatcher();
 
 	export let slug: string;
-	export let suspectToAccuse = '';
+	export let accuseMode = false;
 	export let chatUnbalanced: boolean;
 	export let authStatus: AuthStatus;
 	export let metered: boolean;
@@ -49,7 +49,7 @@
 		messageTokens = approximateTokenCount(messageToSubmit);
 		if (messageTokens > MAX_TOKENS || messageToSubmit.length === 0) return;
 
-		if (suspectToAccuse) {
+		if (accuseMode) {
 			gameOver = true;
 		}
 		isLoadingAnswerStore.set(true);
@@ -59,7 +59,7 @@
 
 		const payload = {
 			game_config: {
-				suspectToAccuse: suspectToAccuse,
+				accuse: accuseMode,
 				mysteryName: slug.replace(/_/g, ' ')
 			},
 			message: messageToSubmit,
@@ -148,18 +148,14 @@
 		debounceTimer = undefined;
 	}
 
-	let toastOpen = true;
-	$: if (!toastOpen) {
-		suspectToAccuse = '';
-		toastOpen = true;
-	}
-
 	let placeholderText = 'Enter to send, Shift+Enter for newline';
 	$: {
 		if (gameOver) {
 			placeholderText = 'Game Over';
-		} else {
+		} else if (!accuseMode) {
 			placeholderText = 'Enter to send, Shift+Enter for newline';
+		} else {
+			placeholderText = 'Enter suspect, motive, opportunity and evidence to solve the mystery';
 		}
 	}
 </script>
@@ -173,11 +169,18 @@
 				<form on:submit|preventDefault={handleSubmit}>
 					<div class="flex flex-wrap items-center">
 						<!-- Input -->
-						{#if suspectToAccuse}
-							<Toast class="!md:p-3 w-full !max-w-md grow-0 md:mx-2 md:w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
-						{:else}
-							<slot name="notes-button" />
-						{/if}
+						<slot name="notes-button" />
+						<button
+							type="button"
+							class="btn btn-sm ml-2 border border-secondary bg-secondary p-2 font-primary"
+							on:click={() => (accuseMode = !accuseMode)}
+						>
+							{#if accuseMode}
+								SOLVE
+							{:else}
+								WRITE
+							{/if}
+						</button>
 						<textarea
 							class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary"
 							rows="1"
