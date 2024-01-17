@@ -261,45 +261,84 @@ VALUES
 
 INSERT INTO events (mystery_id, letter, info, show_at_message)
 VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
-    $$Dear Mr. Holmes,
-
-I'm sending you an urgent message. We have received an ominous message in our mailbox today, and we were instructed to pass it on to you or there would be consequences.
-
-It reads as follows:
-
-"If you know what is best for the boy, you will stop sniffing around."
-
-The worst part: there appears to be blood on the paper and it appears to be written by the shaky hand of the boy himself. We must assume it is the boys blood. This seems a genuine.
-
-Unfortunately there are neither sender's nor destination address on it. This is quite troubling to say the least. Of course, I believe that it would be foolish to stop our correspondence. If the thieves really want the ransom then they wouldn't seriously harm the boy, isn't that so? I understand this is new territory for us all, but I feel certain of this. Please let me know what you wish to do as soon as possible.
-
-Yours faithfully,
-
+    $$
+    Dear Mr. Holmes,
+I'm sending you an urgent telegram. We have received an puzzling message in our mailbox today. Unfortunately there are neither sender's nor destination address on it. No postmark to be found. The same style of cutout newspapers has been used to communicate the message.    
+It simply reads:
+"The new address for the money is 221B Baker Street."
+I may sound reckless in asking your continued support, even though this appears to be a clear message saying the thieves know of your involvement, and possibly a threat to your person. I will ask your local force for two constables to stand guard at your place. It might be a prank, but we must be careful.
+Yours,
 Constable Wellington
 $$,
-    'A letter with blood on paper which appears to be written by John Toilard threatening to stop the investigation.',
-    1
+    $$ 'Investigate letter with new address for delivery -- no information from where it came, the paper used beneath the cutouts is cheap; the individual letters are from today's newspaper, but it seems worn as if picked up from the ground;' $$,
+    5
 );
 
 INSERT INTO events (mystery_id, letter, info, show_at_message)
 VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
     $$
 Mr. Holmes,
-
-another urgent message with sinister overtones has come.
-
-It simply says: "The new address for the money is 221B Baker Street."
-
-It is much the same as last time. It appeared in our mailbox without address. However, this time it is paper cutouts again.
-
-On the risk of sounding foolish. I hope you can swear on it and assure me that you are in fact not one of the thieves. This is quite worrying and I must follow every lead.
-
-Otherwise this might be a threat to you. Publicly showing that they know where you live... Please thread lightly Mr. Holmes.
-
-Yours,
-
+another urgent message with truly sinister overtones has come. 
+It says: "Mr. Holmes, if you are such a good detective, you must realize that the future of the boy is only guaranteed if you stop sniffing around."
+Just like last time, it appeared in our mailbox without address. However, this time it appears to be written by the shaky hand of the boy himself. The worst part: there appears to be blood on the paper. This is a threat most serious. His life may be in danger. Yet, if the thieves really want the ransom then they wouldn't seriously harm the boy, isn't that so? I believe that it would be foolish to stop our correspondence as you seem to be making great progress. I place my trust in you, time is ticking fast.
+Yours faithfully,
 Constable Wellington
 $$,
-    'Your info content',
-    6
+   $$ 'Investigate threat -- no information from where it came, same paper used as for the previous message, but it appears to be written by the shaky hand of the boy himself, there are blood droplets on the paper,' $$,
+    8
 );
+
+INSERT INTO events (mystery_id, letter, info, show_at_message)
+VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
+    $$
+Dear Mr. Holmes,
+there has been a great event! A gentleman in Southampton contacted us. He had purchased a bound book for keeping notes from a secondhand shop in the city. He flipped through it and it appeared to be a diary. When he saw the dedication in the beginning: "To the little Lord John, may all your thoughts find a place here. Jessob," he knew it was from the Toillard heir as he is a local in Ramsey and knows of them fairly well. He arrived in a hurry knowing it was an critical situation.
+Perhaps the thieves are strapped for cash and that is why they sold it. Or perhaps they just wanted to get rid of ballast.
+I am attaching a transcript of the contents:
+
+24.3.1889
+Dear diary, 
+you were a present from dear Jessob. He told me that all great minds must have a place to capture their greatness. So I will do my best to fill you with my best ideas.
+John
+Ps.: I need to make sure I have enough ink.
+Pps.: I find it really remarkable how the days are getting longer again. I have learned that we travel around the sun, but how come we do not feel we are moving? We must be going really slowly.
+PPps: I won't sign my name any more, as you know who I am, and so that I don't have to attach post scripta.
+
+25.3.1889
+Dear diary,
+today was another dreadful day. Sometimes the air in the house is reminiscent of the time we went through the Marsh Lane Tunnel some years ago. We were no strangers to locomotives and I particularly enjoyed them. But people were always telling us to beware the tunnel. After a scenic journey it was time to enter the it and all my excitement vanished. We were swallowed by near total darkness and drowned in the thundering of the locomotive, and the heat of steam about us all. Many women screamed, and I felt the need to claw at my skin. I imagine that is what hell must be like. And though it was just steam and you could move normally, I felt as if I was in a thick cloud of languor. That is what this house is like often.
+
+26.3.1889
+Dear Diary,
+I have decided to take Jessob's words to heart. You are only a place for greatness, so I will avoid any and all dark writing such as yesterday's. Today I will write about the New World. America is now only £13 away with the steamboats. Though father and his friends sneer at it and call it Wild World, one only has to look at the paper. With a dollar in your pocket, you can become anyone you want and achieve anything you want. That's only 20 pence! I don't mind what they say that it has no culture and no history, neither does my father! They tease him, too, on the novelty of his title. And if one were to get a whiff of his culture, it would reek of brandy. 
+
+2.4.1889
+Dear Diary,
+I forgot to write in you for some days, but I will be more disciplined from now. You see, I was busier than usual with my studies since mother was in a terrible excitement with public school not far off. I will be starting at Eton after the summer. She tells me we're Lords only in title and that prudent stewardship is a necessary prerequisite to be a real Lord. We can only afford one tutor now, who instructs me in the usual subjects and then I must make a point of passing on my knowledge to my brother. That is quite exhausting as he really doesn't seem to grasp my explanations.
+
+12.4.1889
+Dear Diary,
+it seems to be impossible for me to stay consistent with writing you. Perhaps it's because nothing exciting happens here, and whatever little does happen, I have promised to avoid writing here. I could retell everything I've learned, but after trying to, mostly unsuccessfully, pass it on to my brother, I am rather tired of it. Though, I am recently fascinated by Liberty Enlightening the World. I heard they shipped it in crates from France to America in 200 odd crates and assembled it there. I've seen pictures, but just like a picture doesn't do a steel ship justice, so I believe I must one day see the real thing. With finances look like they do, I must study more. Forgive me if I neglect you a while.
+
+13.4.1889
+Dear Diary,
+instead of letting the interesting find me, I reached out to it myself! My father was speaking about some business opportunities in America and I suggested that it might be prudent if I were to attend university there to study engineering. He said that it was a brilliant idea and that it would help create future connections there. So as soon as I finish my Eton education I will make my way to America. I am rather proud of myself.
+
+24.5.1889
+Dear Diary, 
+I have read something extraordinary today. It's called the The Book of Life and it was written by a man called Sherlock Holmes. I stumbled upon after reading Mr. Holmes' success in solving the sinister murder of a man from Cleveland. In the article he says that it's possible to deduce all manner of things that are hidden from most except one carefully observing his surroundings. For example, I could infer the possibility of the Atlantic ocean from a single drop of water. He suggests one start with simpler problems such as recognizing a man's profession from the way he dresses or behaves. I am very excited indeed.
+
+15.6.1889
+Dear Diary,
+I can hardly write. The business venture my father pursued in America has turned out to be a swindle. My father has just told me that due to these financial circumstances he cannot send me to Eton this summer. I am to choose between private tutoring or attending some inferior public school. He guarantees me next year I will definitely be able to go, but I do not believe him. He seems to bad appraiser of situations if he got deceived so easily. He is incensed of course, but who is to blame? He started to say all kinds of things about America and her citizens. How they are no good company and that anyone going there will inevitably succumb to their evil ways. Rubbish of course, since he's the prime swindler become Baron among all these fine people. He did not say it but it seems he will not send me to America. And with subclass education I will not be able to attend university. I have to do something about it as soon as possible.
+
+$$,
+   $$ 'investigate diary -- a nice and luxurious diary, dedicated to John by the butler, John writes about his every day life' $$,
+    13
+);
+
+
+-- Saturday 16th of July: The address of delivery for the money has been changed to 221B Baker street
+-- Sunday 17th of July: A threat is found in the mail saying that the life of the boy is in danger in case Sherlock decides to continue his support
+-- Monday 18th of July: John's diary is discovered in a secondhand shop in Southampton.
+-- investigate diary -- a nice and luxurious diary, dedicated to John by the butler, John writes about his every day life
