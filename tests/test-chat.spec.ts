@@ -41,11 +41,11 @@ test('should use up both messages', async ({ page, account }) => {
 	if (error) throw error;
 
 	const messageCount = await navigateRestartAndReturnMessageCounter(page);
-	expect(messageCount).toBe(1);
+	expect(messageCount).toBe(2);
 	await sendMessage(page, 'interrogate dexter tin');
 	const newMessageCount = await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
 	//This is now also 1 since now the bought messages are being used up. This might change in the future
-	expect(messageCount).toBe(1);
+	expect(newMessageCount).toBe(1);
 	await sendMessage(page, 'do some cool stuff');
 	const message = page.getByText('Police chief:').nth(2);
 	await message.waitFor({ timeout: 45000 });
@@ -116,4 +116,16 @@ test('test accuse works ', async ({ page }) => {
 
 	await expect(page.getByText('Police chief:').nth(amount)).toBeVisible();
 	await expect(page.getByPlaceholder('Game Over')).toBeDisabled();
+});
+
+test('notes should be saved', async ({ page, account }) => {
+	await navigateRestart(page);
+	await page.getByRole('button', { name: 'address card solid' }).click();
+	await page.locator('textarea').first().fill('test');
+	await page.locator('textarea').nth(3).fill('test number 2');
+	await page.getByLabel('Close modal').click();
+	await page.reload({ waitUntil: 'networkidle' });
+	await page.getByRole('button', { name: 'address card solid' }).click();
+	await expect(page.locator('textarea').first()).toHaveValue('test');
+	await expect(page.locator('textarea').nth(3)).toHaveValue('test number 2');
 });
