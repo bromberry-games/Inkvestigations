@@ -63,6 +63,29 @@ export interface Database {
           }
         ]
       }
+      conversation_notes: {
+        Row: {
+          conversation_id: number
+          notes: Json | null
+        }
+        Insert: {
+          conversation_id: number
+          notes?: Json | null
+        }
+        Update: {
+          conversation_id?: number
+          notes?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_notes_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: true
+            referencedRelation: "user_mystery_conversations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       events: {
         Row: {
           id: number
@@ -115,7 +138,7 @@ export interface Database {
       }
       mysteries: {
         Row: {
-          access_code: string | null
+          access_code: string
           accuse_letter_prompt: string
           description: string
           filepath: string
@@ -130,7 +153,7 @@ export interface Database {
           victim_name: string
         }
         Insert: {
-          access_code?: string | null
+          access_code?: string
           accuse_letter_prompt: string
           description: string
           filepath: string
@@ -145,7 +168,7 @@ export interface Database {
           victim_name: string
         }
         Update: {
-          access_code?: string | null
+          access_code?: string
           accuse_letter_prompt?: string
           description?: string
           filepath?: string

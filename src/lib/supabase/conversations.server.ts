@@ -111,6 +111,26 @@ export async function loadLetterMessages(userId: string, mystery: string): Promi
 	return await loadLetterMessagesFromConvId(conversationId);
 }
 
+export async function loadLetterMessagesNotesAndConversationId(userId: string, mystery: string) {
+	const conversationId = await getOrCreateConversationId(userId, mystery);
+	if (isPostgresError(conversationId)) {
+		return conversationId;
+	}
+	const [messages, notes] = await Promise.all([loadLetterMessagesFromConvId(conversationId), loadNotesFromConvId(conversationId)]);
+	if (isPostgresError(messages)) return messages;
+	if (isPostgresError(notes)) return notes;
+	return { messages, notes, conversationId };
+}
+
+export async function loadNotesFromConvId(convId: number) {
+	const { data, error } = await supabase_full_access.from('conversation_notes').select('notes').eq('conversation_id', convId);
+	if (error) {
+		return error;
+	}
+
+	return data;
+}
+
 export async function archiveLastConversation(userid: string, mystery: string): Promise<boolean> {
 	const { error: archiveError } = await supabase_full_access
 		.from('user_mystery_conversations')
