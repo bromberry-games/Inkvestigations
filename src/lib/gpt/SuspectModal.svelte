@@ -1,33 +1,37 @@
 <script lang="ts">
-	import { Modal, Radio, Button } from 'flowbite-svelte';
+	import type { suspect } from '$lib/supabase/mystery_data.server';
+	import { Modal, Radio, Button, Textarea } from 'flowbite-svelte';
+	import { onMount } from 'svelte';
+	import { textareaAutosizeAction } from 'svelte-legos';
 
 	export let clickOutsideModal = false;
-	export let suspects;
+	export let suspects: suspect[];
 	export let slug = '';
 	export let suspectToAccuse = '';
+	export let notes;
 	$: if (suspectToAccuse != '') {
 		clickOutsideModal = false;
 	}
 </script>
 
 <Modal
-	title="Pick a suspect to accuse"
+	title="Notes"
 	bind:open={clickOutsideModal}
-	size="md"
+	size="xl"
 	outsideclose
 	defaultClass="!bg-secondary overflow-y-auto"
 	color="!bg-secondary"
 >
-	<div class="grid w-full grid-cols-2 gap-6 md:grid-cols-3">
+	<div class="flex w-full flex-col">
+		<textarea placeholder="Enter notes..." use:textareaAutosizeAction bind:value={notes.general} class="mb-4"></textarea>
 		{#each suspects as suspect}
-			<Radio name="suspects" value={suspect.name} custom bind:group={suspectToAccuse}>
-				<div
-					class="flex w-full cursor-pointer flex-col items-center justify-between p-5 peer-checked:border-2 peer-checked:border-solid peer-checked:border-slate-500"
-				>
+			<div class="my-1 flex">
+				<div class="mr-4 flex flex-col items-center justify-between">
 					<img src={'/images/mysteries/' + slug.toLowerCase() + '/suspects/' + suspect.imagepath} alt={suspect.name} />
-					<p class="sm:text-lg md:text-xl">{suspect.name}</p>
 				</div>
-			</Radio>
+				<Textarea autoResize class="w-full" placeholder="Enter notes..." bind:value={notes[suspect.name]}></Textarea>
+			</div>
+			<p class="sm:text-md md:text-lg">{suspect.name}</p>
 		{/each}
 	</div>
 </Modal>

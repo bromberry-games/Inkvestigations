@@ -2,9 +2,11 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Session } from '@supabase/supabase-js';
 import { loadMysteryLetterInfo, loadSuspects } from '$lib/supabase/mystery_data.server';
-import { loadLetterMessages } from '$lib/supabase/conversations.server';
+import { archiveLastConversation, loadEventMessages, loadLetterMessagesNotesAndConversationId } from '$lib/supabase/conversations.server';
 import { shuffleArray } from '$lib/generic-helpers';
-import { isPostgresError } from '$lib/supabase/helpers';
+import { isPostgresError, isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
+import { throwIfFalse } from '$misc/error';
+import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
 
 function createLetter(letterInfo: string) {
 	return {
@@ -39,24 +41,63 @@ function createLetter(letterInfo: string) {
 export const load: PageServerLoad = async ({ params, locals: { getSession } }) => {
 	const session: Session = await getSession();
 	if (!session) {
-		throw redirect(303, '/');
+		redirect(303, '/');
 	}
 	const { slug } = params;
 	const mysteryName = slug.replace(/_/g, ' ');
 
-	const [letterInfo, messages, suspects] = await Promise.all([
+	//TODO: Function or view?
+	const [letterInfo, messagesAndNotes, suspects, eventMessages, activeSub] = await Promise.all([
 		loadMysteryLetterInfo(session.user.id, mysteryName),
-		loadLetterMessages(session.user.id, mysteryName),
-		loadSuspects(mysteryName)
+		loadLetterMessagesNotesAndConversationId(session.user.id, mysteryName),
+		loadSuspects(mysteryName),
+		loadEventMessages(mysteryName),
+		loadActiveAndUncancelledSubscription(session.user.id)
 	]);
-	if (!letterInfo) {
-		throw error(500, 'could not load letter info from data');
-	}
-	if (isPostgresError(messages)) {
-		throw error(500, messages);
-	}
+	isTAndThrowPostgresErrorIfNot(letterInfo);
+	isTAndThrowPostgresErrorIfNot(messagesAndNotes);
+	isTAndThrowPostgresErrorIfNot(eventMessages);
+	isTAndThrowPostgresErrorIfNot(activeSub);
 	if (!suspects) {
-		throw error(500, 'could not load suspects chat from data');
+		error(500, 'could not load suspects chat from data');
 	}
-	return { slug, messages: [createLetter(letterInfo), ...messages], suspects: shuffleArray(suspects) };
+	if (letterInfo.access_code != 'free') {
+		if (activeSub[0]?.access_codes == null || activeSub.length == 0) {
+			redirect(303, '/mysteries');
+		} else if (!activeSub[0].access_codes.split(',').includes(letterInfo.access_code)) {
+			redirect(303, '/mysteries');
+		}
+	}
+
+	return {
+		slug,
+		messages: [createLetter(letterInfo.letter_info), ...messagesAndNotes.messages],
+		suspects: suspects.sort((a, b) => a.name.localeCompare(b.name)),
+		eventMessages,
+		metered: activeSub.length == 1 && activeSub[0].products.some((p) => p.metered_si != null),
+		notes: messagesAndNotes.notes?.[0]?.notes || {},
+		convId: messagesAndNotes.conversationId
+	};
+};
+
+export const actions = {
+	archiveChat: async ({ params, locals: { getSession } }) => {
+		const session: Session = await getSession();
+		if (!session) {
+			redirect(303, '/');
+		}
+		const { slug } = params;
+		const convoArchived = await archiveLastConversation(session.user.id, slug.replace(/_/g, ' '));
+		throwIfFalse(convoArchived, 'Could not archive conversation');
+		redirect(302, '/' + slug);
+	},
+	saveNotes: async ({ request, params, locals: { getSession } }) => {
+		const session: Session = await getSession();
+		if (!session) {
+			redirect(303, '/');
+		}
+		const { slug } = params;
+		const notes = form.data.notes;
+		const notesSaved = await saveNotes(session.user.id, slug.replace(/_/g, ' '), notes);
+	}
 };

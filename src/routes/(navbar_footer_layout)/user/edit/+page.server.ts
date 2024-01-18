@@ -5,31 +5,31 @@ import { message, superValidate } from 'sveltekit-superforms/server';
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { supabase_full_access } from '$lib/supabase/supabase_full_access.server.js';
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server.js';
+import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers.js';
 
 const mainSchema = z.object({
-	email: z.string().email()
+	email: z.string().email(),
+	useMyOwnToken: z.boolean()
 });
 
 export const load = async ({ locals: { getSession, supabase } }) => {
 	const session: Session = await getSession();
 	if (getAuthStatus(session) != AuthStatus.LoggedIn) {
-		throw redirect(303, '/');
+		redirect(303, '/');
 	}
 	const [form, activeSub] = await Promise.all([
-		superValidate({ email: session.user.email }, mainSchema),
+		superValidate({ email: session.user.email, useMyOwnToken: session.user.user_metadata.useMyOwnToken ?? false }, mainSchema),
 		loadActiveAndUncancelledSubscription(session.user.id)
 	]);
-	if (!activeSub) {
-		throw error(404, 'Subscription not found');
-	}
-	return { form, activeSub: activeSub.id != null };
+	isTAndThrowPostgresErrorIfNot(activeSub);
+	return { form, activeSub: activeSub.length > 0 };
 };
 
 export const actions = {
 	save: async ({ request, locals: { getSession, supabase } }) => {
 		const [session, form] = await Promise.all([getSession(), superValidate(request, mainSchema)]);
 		if (getAuthStatus(session) != AuthStatus.LoggedIn) {
-			throw redirect(303, '/');
+			redirect(303, '/');
 		}
 		if (!form.valid) {
 			return fail(400, { form });
@@ -41,12 +41,17 @@ export const actions = {
 			}
 		}
 
-		return message(form, 'Your email has been updated');
+		const { data: user, error } = await (supabase as SupabaseClient).auth.updateUser({
+			data: { useMyOwnToken: form.data.useMyOwnToken }
+		});
+		if (error) throw error;
+
+		return message(form, 'Your settings have been updated');
 	},
 	delete: async ({ locals: { getSession, supabase } }) => {
 		const session: Session = await getSession();
 		if (getAuthStatus(session) != AuthStatus.LoggedIn) {
-			throw redirect(303, '/');
+			redirect(303, '/');
 		}
 		const { error: signOutError } = await (supabase as SupabaseClient).auth.signOut();
 		if (signOutError) {
@@ -56,6 +61,6 @@ export const actions = {
 		if (error) {
 			throw error;
 		}
-		throw redirect(303, '/confirmations/account-deleted');
+		redirect(303, '/confirmations/account-deleted');
 	}
 };

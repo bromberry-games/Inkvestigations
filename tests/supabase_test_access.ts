@@ -49,7 +49,6 @@ export async function deleteLastBrainMessage(userId: string) {
 
 	if (fetchError) throw fetchError;
 	if (!lastMessage) throw new Error('No message found for this user.');
-	console.log(lastMessage);
 
 	const { error: deleteError } = await supabase_full_access.from('user_mystery_brain_messages').delete().match({ id: lastMessage.id });
 

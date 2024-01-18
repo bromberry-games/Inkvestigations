@@ -1,8 +1,8 @@
-import { addInfoModelMessage, addMessageForUser, loadBrainMessages, loadLetterMessages } from '$lib/supabase/conversations.server';
+import { addInfoModelMessage, addMessageForUser } from '$lib/supabase/conversations.server';
 import { error } from '@sveltejs/kit';
 import { brainModelRequest, letterModelRequest, type brainModelRequestParams, type BrainOutput } from './llangchain_ask';
 import { throwIfFalse } from '$misc/error';
-import { HumanMessage, type BaseMessage, AIMessage, ChatMessage } from 'langchain/schema';
+import { HumanMessage, type BaseMessage, AIMessage } from 'langchain/schema';
 import type { ChatMessage as ChatMessageType } from '$misc/shared';
 
 export async function standardInvestigationAnswer(
@@ -12,7 +12,8 @@ export async function standardInvestigationAnswer(
 	letter_info: string,
 	letterMessages: ChatMessageType[],
 	brainMessages: BrainOutput[],
-	genNum: number
+	genNum: number,
+	openAiToken: string
 ) {
 	let brainResponse: BrainOutput | undefined = undefined;
 	if (genNum >= 0) {
@@ -33,7 +34,7 @@ ${item.info}
 			);
 		});
 
-		brainResponse = await brainModelRequest(brainParams, brainConversation, brainMessages);
+		brainResponse = await brainModelRequest(brainParams, brainConversation, brainMessages, openAiToken);
 
 		const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
 		throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
@@ -43,7 +44,7 @@ ${item.info}
 		brainResponse = brainMessages.pop();
 	}
 	if (!brainResponse) {
-		throw error(500, 'brainResponse is empty');
+		error(500, 'brainResponse is empty');
 	}
 
 	const assistantLetterAnswers = letterMessages.filter((m) => m.role === 'assistant');
@@ -63,13 +64,16 @@ ${item.info}
 		throwIfFalse(addedMessage, 'Could not add message to chat');
 	}
 
-	return letterModelRequest({
-		gameInfo: letter_info,
-		previousConversation: messages,
-		question: brainParams.question,
-		brainAnswer: brainResponse,
-		suspects: brainParams.suspects,
-		victim: brainParams.victim,
-		onResponseGenerated: addResult
-	});
+	return letterModelRequest(
+		{
+			gameInfo: letter_info,
+			previousConversation: messages,
+			question: brainParams.question,
+			brainAnswer: brainResponse,
+			suspects: brainParams.suspects,
+			victim: brainParams.victim,
+			onResponseGenerated: addResult
+		},
+		openAiToken
+	);
 }

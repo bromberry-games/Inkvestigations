@@ -38,8 +38,6 @@ export class EventSource {
 			this.eventSource.addEventListener('end', this.handleEnd);
 		}
 
-		console.log('event source:');
-		console.log(this.eventSource);
 		this.eventSource.stream();
 	}
 

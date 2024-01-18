@@ -3,21 +3,27 @@
 	import { textareaAutosizeAction } from 'svelte-legos';
 	import { PaperAirplane } from '@inqling/svelte-icons/heroicon-24-solid';
 	import type { ChatMessage } from '$misc/shared';
-	import { eventSourceStore, isLoadingAnswerStore, liveAnswerStore, enhancedLiveAnswerStore } from '$misc/stores';
-	import { countTokens } from '$misc/openai';
-	import { Toast, Button } from 'flowbite-svelte';
-	import SuspectModal from './SuspectModal.svelte';
+	import {
+		eventSourceStore,
+		isLoadingAnswerStore,
+		liveAnswerStore,
+		enhancedLiveAnswerStore,
+		tokenStore,
+		messageAmountStore
+	} from '$misc/stores';
+	import { approximateTokenCount } from '$misc/openai';
+	import { Toast, Button, Tooltip } from 'flowbite-svelte';
 	import { MAX_TOKENS } from '../../constants';
-	import type { suspect } from '$lib/supabase/mystery_data.server';
 	import Timer from '../../routes/(navbar_only)/[slug]/timer.svelte';
+	import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
 
 	const dispatch = createEventDispatcher();
 
 	export let slug: string;
-	export let messagesAmount: number;
-	export let suspectToAccuse = '';
-	export let suspects: suspect[];
+	export let accuseMode = false;
 	export let chatUnbalanced: boolean;
+	export let authStatus: AuthStatus;
+	export let metered: boolean;
 
 	let debounceTimer: number | undefined;
 	let input = '';
@@ -40,10 +46,12 @@
 	}
 
 	function submitMessage(messageToSubmit: string) {
-		messageTokens = countTokens(messageToSubmit);
-		if (messageTokens > MAX_TOKENS || messageToSubmit.length === 0) return;
+		messageTokens = approximateTokenCount(messageToSubmit);
+		if (messageTokens > MAX_TOKENS || messageToSubmit.length === 0) {
+			console.log('input too long or empty ' + messageTokens);
+		}
 
-		if (suspectToAccuse) {
+		if (accuseMode) {
 			gameOver = true;
 		}
 		isLoadingAnswerStore.set(true);
@@ -53,10 +61,11 @@
 
 		const payload = {
 			game_config: {
-				suspectToAccuse: suspectToAccuse,
+				accuse: accuseMode,
 				mysteryName: slug.replace(/_/g, ' ')
 			},
-			message: messageToSubmit
+			message: messageToSubmit,
+			openAiToken: $tokenStore
 		};
 
 		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort, handleEnd);
@@ -67,12 +76,8 @@
 	}
 
 	function handleAnswer(event: MessageEvent<any>) {
-		console.log('event: ');
-		console.log(event);
 		try {
 			const delta = JSON.parse(event.data);
-			console.log('event data: ');
-			console.log(delta);
 			liveAnswerStore.update((store) => {
 				const answer = { ...store };
 				answer.content += delta;
@@ -103,6 +108,7 @@
 		//TODO Show error toast
 
 		if (data.message.includes('API key')) {
+			console.error('API key not found');
 		}
 
 		// restore last user prompt
@@ -139,33 +145,25 @@
 	}
 
 	function calculateMessageTokens() {
-		messageTokens = countTokens(message);
+		messageTokens = approximateTokenCount(message);
 		clearTimeout(debounceTimer);
 		debounceTimer = undefined;
 	}
 
-	let clickOutsideModal = false;
-	let toastOpen = true;
-	$: if (!toastOpen) {
-		suspectToAccuse = '';
-		toastOpen = true;
-	}
-
-	let placeholderText = 'Enter to send, Shift+Enter for newline';
+	let placeholderText = '';
 	$: {
 		if (gameOver) {
 			placeholderText = 'Game Over';
-		} else if (messagesAmount <= 0) {
-			placeholderText = 'No messages';
-		} else if (messagesAmount > 0) {
-			placeholderText = 'Enter to send, Shift+Enter for newline';
+		} else if (!accuseMode) {
+			placeholderText = 'Give instructions to the chief';
+		} else {
+			placeholderText = 'Input clues to solve the case';
 		}
 	}
 </script>
 
-<SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects} {slug}></SuspectModal>
 <footer class="fixed bottom-0 z-10 w-full md:rounded-xl md:px-8 md:py-4">
-	{#if messagesAmount > 0}
+	{#if $messageAmountStore > 0 || $tokenStore != '' || metered}
 		{#if $isLoadingAnswerStore}
 			<div></div>
 		{:else if !chatUnbalanced}
@@ -173,16 +171,20 @@
 				<form on:submit|preventDefault={handleSubmit}>
 					<div class="flex flex-wrap items-center">
 						<!-- Input -->
-						{#if suspectToAccuse}
-							<Toast class="!md:p-3 w-full !max-w-md grow-0 md:mx-2 md:w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
-						{:else}
-							<Button
-								disabled={gameOver}
-								class="mr-1 bg-secondary !p-2 font-primary text-xl text-quaternary md:mx-2 md:px-5"
-								on:click={() => (clickOutsideModal = true)}>ACCUSE</Button
-							>
-						{/if}
+						<slot name="notes-button" />
+						<button
+							type="button"
+							class="btn btn-sm ml-2 border border-secondary bg-secondary p-2 font-primary"
+							on:click={() => (accuseMode = !accuseMode)}
+						>
+							{#if accuseMode}
+								SOLVE
+							{:else}
+								WRITE
+							{/if}
+						</button>
 						<textarea
+							data-testid="chat-input"
 							class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary"
 							rows="1"
 							placeholder={placeholderText}
@@ -190,15 +192,14 @@
 							on:keydown={handleKeyDown}
 							bind:value={input}
 							bind:this={textarea}
-							disabled={gameOver || messagesAmount <= 0}
+							disabled={gameOver}
 						/>
-						<div
-							data-testid="message-counter"
-							aria-label="messages left counter"
-							class="ml-1 h-full bg-[url('/images/message_counter.svg')] bg-cover bg-center bg-no-repeat px-4 py-6 font-tertiary text-xl md:ml-2"
-						>
-							{messagesAmount}
-						</div>
+						<!-- <Tooltip class="w-1/5 font-secondary" -->
+						<!-- >Automatically prioritized for you: Your daily refillable messages are used first, and only after they're depleted, your -->
+						<!-- bought messages are utilized. -->
+						<!-- <p>Daily messages: {messagesAmount.amount}</p> -->
+						<!-- <p>Bought messages: {messagesAmount.non_refillable_amount}</p></Tooltip -->
+						<!-- > -->
 						<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
 							<button type="submit" class="btn btn-sm ml-2">
 								<PaperAirplane class="h-6 w-6" />
@@ -215,9 +216,16 @@
 				<Button class="bg-secondary !p-2 font-primary text-xl text-quaternary" on:click={handleRegenerate}>Regenerate</Button>
 			</div>
 		{/if}
-	{:else}
+	{:else if authStatus == AuthStatus.LoggedIn}
 		<div class="flex justify-center">
 			<Timer></Timer>
+		</div>
+	{:else}
+		<div class="flex justify-center">
+			<div>
+				<p>No more free messages left.</p>
+				<Button href="/login" class="bg-quaternary font-secondary text-2xl">Signup to continue</Button>
+			</div>
 		</div>
 	{/if}
 </footer>

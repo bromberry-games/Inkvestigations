@@ -8,7 +8,7 @@ export interface suspect {
 export async function loadSuspects(mysterName: string): Promise<suspect[] | null> {
 	const { data, error } = await supabase_full_access
 		.from('mysteries')
-		.select('suspects, murderer')
+		.select('murderer, suspects(name, imagepath, description)')
 		.eq('name', mysterName)
 		.limit(1)
 		.single();
@@ -26,36 +26,51 @@ export async function loadSuspects(mysterName: string): Promise<suspect[] | null
 	];
 }
 
-export async function loadGameInfo(mystery: string) {
+export async function loadGameInfo(mystery: string, messageLength: number) {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('mysteries')
 		.select(
-			'theme, setting, timeframe, action_clues, letter_prompt, accuse_letter_prompt, suspects, murderer, victim_name, victim_description'
+			`theme, setting, letter_prompt, accuse_letter_prompt, murderer, victim_name, victim_description, 
+			suspects(name, imagepath, description), 
+			action_clues(action, clue),
+			timeframes(timeframe, event_happened),
+			events(letter, info, show_at_message, timeframe),
+			few_shots(brain)
+			`
 		)
 		.eq('name', mystery)
+		.lte('events.show_at_message', messageLength)
 		.limit(1)
 		.single();
 
 	if (conversationError) {
-		console.error('conversation error: ');
-		console.error(conversationError);
-		return null;
+		console.error('conversation error: ', conversationError);
+		return conversationError;
 	}
 
 	return conversationData;
 }
 
-export async function loadMysteryLetterInfo(userid: string, mystery: string): Promise<string | null> {
+export async function loadMysteryLetterInfo(userid: string, mystery: string) {
 	const { data: mysteryData, error: mysteryError } = await supabase_full_access
 		.from('mysteries')
-		.select('letter_info')
+		.select('letter_info, access_code')
 		.eq('name', mystery)
 		.single();
 
 	if (mysteryError) {
 		console.error('error querying mystery: ', mysteryError);
-		return null;
+		return mysteryError;
 	}
 
-	return mysteryData.letter_info;
+	return mysteryData;
+}
+
+export async function loadMysteriesWithSolved(userId: string) {
+	const { error, data } = await supabase_full_access.from('mysteries').select('*, solved(rating)').eq('solved.user_id', userId);
+	if (error) {
+		console.error(error);
+		return error;
+	}
+	return data;
 }

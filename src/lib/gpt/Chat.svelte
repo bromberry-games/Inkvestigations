@@ -7,8 +7,9 @@
 	import ChatMessageUI from './ChatMessageUI.svelte';
 	import { Spinner } from 'flowbite-svelte';
 
-	export let slug: string;
 	export let messages: ChatMessage[];
+	let animMessages: ChatMessage[] = [];
+	$: animMessages = messages;
 
 	// Autoscroll: https://svelte.dev/tutorial/update
 	let div: HTMLElement | null | undefined;
@@ -26,18 +27,21 @@
 	afterNavigate(() => {
 		window.scrollTo(0, document.body.scrollHeight);
 	});
+
+	onMount(() => {
+		animMessages = messages;
+	});
 </script>
 
-{#if messages && messages.length > 0}
+{#if animMessages && animMessages.length > 0}
 	<div class="bg-quaternary">
+		<slot name="additional-content-top" />
 		<div class="container mx-auto flex h-full flex-col px-4 md:px-8" style="justify-content: end">
-			<slot name="additional-content-top" />
-
 			<div class="flex max-w-4xl flex-col space-y-6 bg-tertiary pt-6 md:mx-auto">
 				<!-- Message history -->
 				<!-- Do not display the 1. message-->
-				{#each messages as message}
-					<ChatMessageUI {slug} {message} />
+				{#each animMessages as message, i}
+					<ChatMessageUI {message} animate={animMessages.length == 1 || (animMessages.length - 1 == i && message.extra == true)} />
 				{/each}
 
 				<!-- Live Message -->

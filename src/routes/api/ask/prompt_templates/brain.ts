@@ -51,18 +51,21 @@ ___
 
 - ## Actions -- clues
 
-None of these facts are known to the player. They need to perform an action to get an information, i.e. it is structured like this "action -- information". For example, "interrogate the suspects" yields "generic responses, none refer to anything" Upon a request for which no information is provided, make it up in accord to the rest of the game. Never suggest anything to the player.
+None of these facts are known to the player. They need to perform an action to get the connected information, i.e. it is structured like this "action -- information". For example, "interrogate the suspects" yields " >create a line for each suspect about how sad they are<". When you encounter ><, it means that is something you need to make up.
 {actionClues}
 
 ## Additional Information
 {oldInfo}
 """
-Special rules but same answer format: 
+Special rules: 
 - accusations don't work. Wellington always says he needs motive, opportunity, and evidence. 
 - Wellington is bound by real life laws when making up information.
+- If you do not have information for a request make up new and interesting information which fits with the rest of the game.
+- NEVER say that you do not have information
+- Always think long and hard about the information that you create. It should fit in with the rest of the clues and information. Think like an expert writer when making up the information.
 
 Your TASK:
-Create an engaging mystery experience. This is achieved by always giving **the least information possible**. The player must think by themselves. However, if they fool around, play along, but never influence the overall game. It is crucial that you stick to the prescribed format in all cases!
+Create an engaging mystery experience. The player must think by themselves. However, if they fool around, play along, but never influence the overall game. It is crucial that you stick to the prescribed format in all cases!
 `;
 
 const fewShotPromptBrain = [
@@ -220,11 +223,7 @@ const fewShotPromptBrain = [
 
 const userTemplate = '{text}';
 
-export function createBrainPrompt(previousConversation: BaseMessage[]) {
-	return ChatPromptTemplate.fromMessages([
-		['system', brainPromptTemplate],
-		...fewShotPromptBrain,
-		...previousConversation,
-		['user', userTemplate]
-	]);
+export function createBrainPrompt(previousConversation: BaseMessage[], fewShots: ChatMessage[] | null) {
+	const toInsert = fewShots ? fewShots : fewShotPromptBrain;
+	return ChatPromptTemplate.fromMessages([['system', brainPromptTemplate], ...toInsert, ...previousConversation, ['user', userTemplate]]);
 }

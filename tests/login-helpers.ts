@@ -6,6 +6,7 @@ export async function loginOnPage(page: Page, isMobile: boolean, email: string, 
 	await page.evaluate(() => document.fonts.ready);
 	await page.goto('/', { waitUntil: 'load' });
 	await navToLogin(page, isMobile);
+	await page.waitForTimeout(100);
 	await fillOutLoginOrSignupForm(page, email, password);
 	await page.getByRole('button', { name: 'Sign in', exact: true }).click();
 }
@@ -31,7 +32,7 @@ export async function navToLogin(page: Page, isMobile: boolean) {
 }
 
 export async function fillOutLoginOrSignupForm(page: Page, email: string, password: string) {
-	await page.waitForLoadState('networkidle');
+	await page.waitForLoadState('load');
 	await page.waitForTimeout(200);
 	await page.getByPlaceholder('Your email address').fill(email);
 	await page.getByPlaceholder('Your email address').press('Tab');
