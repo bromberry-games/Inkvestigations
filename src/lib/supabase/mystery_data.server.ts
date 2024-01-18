@@ -34,7 +34,8 @@ export async function loadGameInfo(mystery: string, messageLength: number) {
 			suspects(name, imagepath, description), 
 			action_clues(action, clue),
 			timeframes(timeframe, event_happened),
-			events(letter, info, show_at_message)
+			events(letter, info, show_at_message, timeframe),
+			few_shots(brain)
 			`
 		)
 		.eq('name', mystery)

@@ -259,7 +259,7 @@ VALUES
 
 
 
-INSERT INTO events (mystery_id, letter, info, show_at_message)
+INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
 VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
     $$
     Dear Mr. Holmes,
@@ -271,10 +271,11 @@ Yours,
 Constable Wellington
 $$,
     $$ 'Investigate letter with new address for delivery -- no information from where it came, the paper used beneath the cutouts is cheap; the individual letters are from today's newspaper, but it seems worn as if picked up from the ground;' $$,
-    5
+    5,
+    $$Saturday 16th of July: The address of delivery for the money has been changed to 221B Baker street$$
 );
 
-INSERT INTO events (mystery_id, letter, info, show_at_message)
+INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
 VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
     $$
 Mr. Holmes,
@@ -285,10 +286,11 @@ Yours faithfully,
 Constable Wellington
 $$,
    $$ 'Investigate threat -- no information from where it came, same paper used as for the previous message, but it appears to be written by the shaky hand of the boy himself, there are blood droplets on the paper,' $$,
-    8
+    8,
+ $$Sunday 17th of July: A threat is found in the mail saying that the life of the boy is in danger in case Sherlock decides to continue his support$$
 );
 
-INSERT INTO events (mystery_id, letter, info, show_at_message)
+INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
 VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
     $$
 Dear Mr. Holmes,
@@ -334,11 +336,72 @@ I can hardly write. The business venture my father pursued in America has turned
 
 $$,
    $$ 'investigate diary -- a nice and luxurious diary, dedicated to John by the butler, John writes about his every day life' $$,
-    13
+    13,
+
+ $$Monday 18th of July: John's diary is discovered in a secondhand shop in Southampton.$$
 );
 
 
--- Saturday 16th of July: The address of delivery for the money has been changed to 221B Baker street
--- Sunday 17th of July: A threat is found in the mail saying that the life of the boy is in danger in case Sherlock decides to continue his support
--- Monday 18th of July: John's diary is discovered in a secondhand shop in Southampton.
--- investigate diary -- a nice and luxurious diary, dedicated to John by the butler, John writes about his every day life
+INSERT INTO few_shots (mystery_id, brain) VALUES (
+    (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
+    $$
+    {"messages": [
+	{
+		"role": "user",
+		"content": "search the house"
+	},
+	{
+		"role": "assistant",
+		"content": "We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to search the house.\nHave I been provided this information? \nYes\nInformation:\n- The house was in disarray with shattered glass at a garden door, John's room in disarray and various items knocked over throughout the house, but nothing appeared to be stolen.\n- mood: curious"
+	},
+	{
+		"role": "user",
+		"content": "interrogate the family"
+	},
+	{
+		"role": "assistant",
+		"content": "We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to interrogate the family.\nHave I been provided this information? \nYes\nInformation:\n- Barond Charles Toillard seems terrified and devastated, he bemoaned his terrible luck in all parts of life \n- Adelia Toillard could not stop weeping and fearing for her boy\n- Alice Toillard seems afraid because of her parents behavior\n- Arthur understands what happened but is trying to be brave, he puts a lot of trust into us\n- Butler Jessob feels very guilty and repeats that he left for the boy's sake, he seems unable to forgive himself\n- Doctor Jameson is really anxious and says he is triple locking his house and his family\n- mood: tense"
+	},
+	{
+		"role": "user",
+		"content": "hi"
+	},
+	{
+		"role": "assistant",
+		"content": "We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has greeted me. \nDo I have information for that? \nNo.\nI make up something  funny but realistic. Wellington would react like this: \nInformation:\n- By the way, someone has reported a missing cat here in Romsey, and they suspect it may have found its way into the local bakery. But do lend your Science of Deduction and Analysis if you have the time!\n- mood: eager"
+	},
+	{
+		"role": "user",
+		"content": "ask the pope for help"
+	},
+	{
+		"role": "assistant",
+		"content": "We're playing a game where I'm police a chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to ask the pope for help.\nDo I have information for that? \nNo.\nI make up something  funny but realistic. Wellington would react like this: \nInformation:\n- Here in Romsey we are Anglicans and do not like His Holiness to interfere in our business. On your request however, I have reached out and was told that he would pray for young John Toillard. He may not be so bad after all. \n- mood: warming to the pope"
+	},
+	{
+		"role": "user",
+		"content": "search the butler's room "
+	},
+	{
+		"role": "assistant",
+		"content": "We're playing a game where I'm police a chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to search the butler's room.\nDo I have information for that? \nNo.\nI make up something  funny but realistic. Wellington would react like this:\nInformation:\n- Jessob's room look impeccable as one would expect from a butler. We did find some uncouth images under his mattress. \n- mood: blushing  "
+	},
+	{
+		"role": "user",
+		"content": "accuse Lord Toillard for the kidnapping"
+	},
+	{
+		"role": "assistant",
+		"content": "We're playing a game where I'm police a chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to accuse Lord Toillard for the kidnapping.\nDo I have information for that? \nNo.\nI make up something  funny but realistic. Wellington would react like this:\nInformation:\n- It is not proper procedure to simply point fingers. We need motive, opportunity and evidence.  \n- mood: stern"
+	},
+	{
+		"role": "user",
+		"content": "Search 4 Patterson Street "
+	},
+	{
+		"role": "assistant",
+		"content": "We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to search 4 Patterson Street.\nHave I been provided this information? \nYes\nInformation:\n- We found that in that apartment lives a Mary Ann Woodcock and her daughters Hannah and Anna. Her husband Methusalem Woodcock is a sailor and has been at sea for months\nmood: disappointed"
+	}
+]}
+    $$
+)

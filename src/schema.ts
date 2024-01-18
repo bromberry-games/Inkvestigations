@@ -93,6 +93,7 @@ export interface Database {
           letter: string
           mystery_id: number | null
           show_at_message: number
+          timeframe: string
         }
         Insert: {
           id?: number
@@ -100,6 +101,7 @@ export interface Database {
           letter: string
           mystery_id?: number | null
           show_at_message: number
+          timeframe: string
         }
         Update: {
           id?: number
@@ -107,12 +109,36 @@ export interface Database {
           letter?: string
           mystery_id?: number | null
           show_at_message?: number
+          timeframe?: string
         }
         Relationships: [
           {
             foreignKeyName: "events_mystery_id_fkey"
             columns: ["mystery_id"]
             isOneToOne: false
+            referencedRelation: "mysteries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      few_shots: {
+        Row: {
+          brain: Json
+          mystery_id: number
+        }
+        Insert: {
+          brain: Json
+          mystery_id: number
+        }
+        Update: {
+          brain?: Json
+          mystery_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "few_shots_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: true
             referencedRelation: "mysteries"
             referencedColumns: ["id"]
           }
