@@ -1,6 +1,6 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { LLMChain } from 'langchain/chains';
-import type { BaseMessage, LLMResult } from 'langchain/schema';
+import { ChatMessage, type BaseMessage, type LLMResult } from 'langchain/schema';
 import { BaseOutputParser, type FormatInstructionsOptions } from 'langchain/schema/output_parser';
 import { error } from '@sveltejs/kit';
 import { OpenAiModel } from '$misc/openai';
@@ -11,6 +11,7 @@ import { createAccusePrompt } from './prompt_templates/accusation_brain';
 import { createAccuseLetterPrompt } from './prompt_templates/accusation_letter';
 import { USE_FAKE_LLM } from '$env/static/private';
 import { HttpResponseOutputParser } from 'langchain/output_parsers';
+import type { Json } from '../../../schema';
 
 interface LetterModelRequestParams {
 	gameInfo: string;
@@ -110,9 +111,20 @@ export interface brainModelRequestParams {
 	question: string;
 	victim: Victim;
 	suspects: string;
-	eventInfo: string;
+	eventClues: string;
 	timeframe: { timeframe: string; event_happened: string }[];
 	actionClues: { action: string; clue: string }[];
+	fewShots: Json | null;
+	eventTimeframe: string | null;
+}
+
+function parseFewShots(fewShots: Json | null): ChatMessage[] | null {
+	return fewShots?.messages.map((m) => {
+		return new ChatMessage({
+			role: m.role,
+			content: m.content
+		});
+	});
 }
 
 export async function brainModelRequest(
@@ -121,12 +133,14 @@ export async function brainModelRequest(
 	brainMessages: BrainOutput[],
 	openAiToken: string
 ): Promise<BrainOutput> {
-	const timeframe = brainParams.timeframe.reduce((acc, curr) => {
-		return acc + curr.timeframe + ': ' + curr.event_happened + '\n';
-	}, '');
-	const actionClues = brainParams.actionClues.reduce((acc, curr) => {
-		return acc + curr.action + '--' + curr.clue + '\n';
-	}, '');
+	const timeframe =
+		brainParams.timeframe.reduce((acc, curr) => {
+			return acc + curr.timeframe + ': ' + curr.event_happened + '\n';
+		}, '') + brainParams.eventTimeframe;
+	const actionClues =
+		brainParams.actionClues.reduce((acc, curr) => {
+			return acc + curr.action + '--' + curr.clue + '\n';
+		}, '') + brainParams.eventClues;
 
 	let conversation = previousConversation;
 	let oldInfo = '';
@@ -136,15 +150,15 @@ export async function brainModelRequest(
 			return acc + curr.info.trim() + '\n';
 		}, '');
 	}
-
-	const prompt = createBrainPrompt(conversation);
+	const parsedFewShots = parseFewShots(brainParams.fewShots);
+	const prompt = createBrainPrompt(conversation, parsedFewShots);
 	const parser = new BrainParser();
 
 	const llm =
 		USE_FAKE_LLM == 'true'
 			? createFakeBrainLLM()
 			: new ChatOpenAI({
-					temperature: 0.8,
+					temperature: 0.85,
 					openAIApiKey: openAiToken,
 					modelName: OpenAiModel.Gpt35Turbo1106,
 					maxTokens: 350
@@ -160,7 +174,7 @@ export async function brainModelRequest(
 		victimName: brainParams.victim.name,
 		victimDescription: brainParams.victim.description,
 		suspects: brainParams.suspects,
-		oldInfo: brainParams.eventInfo + '\n' + oldInfo
+		oldInfo
 	});
 	return res.text;
 }
