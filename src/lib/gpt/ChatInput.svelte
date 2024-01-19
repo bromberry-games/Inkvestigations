@@ -20,11 +20,11 @@
 	const dispatch = createEventDispatcher();
 
 	export let slug: string;
-	export let accuseMode = false;
 	export let chatUnbalanced: boolean;
 	export let authStatus: AuthStatus;
 	export let metered: boolean;
 
+	let accuseMode = false;
 	let debounceTimer: number | undefined;
 	let input = '';
 	let inputCopy = '';
