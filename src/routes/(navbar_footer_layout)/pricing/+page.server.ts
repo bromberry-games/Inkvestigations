@@ -32,6 +32,7 @@ export const load = async ({ locals: { getSession } }) => {
 		return price.recurring == null;
 	});
 
+	console.log(singlePrices);
 	let subType;
 	if (currentSubscription.length == 0) {
 		subType = SubscriptionBundles.Free;
