@@ -7,11 +7,7 @@
 	export let clickOutsideModal = false;
 	export let suspects: suspect[];
 	export let slug = '';
-	export let suspectToAccuse = '';
 	export let notes;
-	$: if (suspectToAccuse != '') {
-		clickOutsideModal = false;
-	}
 </script>
 
 <Modal

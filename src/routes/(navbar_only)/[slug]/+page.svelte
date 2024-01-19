@@ -12,7 +12,6 @@
 
 	export let data: PageData;
 
-	let suspectToAccuse = '';
 	let userMessages = { amount: 0, non_refillable_amount: 0 };
 	let tokenModal = data.session?.user.user_metadata.useMyOwnToken && $tokenStore == '';
 	let suspectModal = false;
@@ -21,11 +20,12 @@
 	$: messages = buildMessagesList(data.messages);
 	$: openAiToken = $tokenStore;
 	$: ({ slug } = data);
+	let notes = data.notes;
 	$: if (suspectModal == false) {
 		saveNotes();
 	}
 	async function saveNotes() {
-		const { error } = await data.supabase.from('conversation_notes').upsert({ conversation_id: data.convId, notes: data.notes });
+		const { error } = await data.supabase.from('conversation_notes').upsert({ conversation_id: data.convId, notes: notes });
 		if (error) console.log(error);
 	}
 
@@ -90,8 +90,7 @@
 	}
 </script>
 
-<SuspectModal bind:clickOutsideModal={suspectModal} bind:suspectToAccuse suspects={data.suspects} {slug} bind:notes={data.notes}
-></SuspectModal>
+<SuspectModal bind:clickOutsideModal={suspectModal} suspects={data.suspects} {slug} bind:notes></SuspectModal>
 {#if data.session?.user.user_metadata.useMyOwnToken}
 	<Modal title="Use own openai token" bind:open={tokenModal} autoclose>
 		<p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
@@ -123,7 +122,6 @@
 	{slug}
 	on:chatInput={addMessage}
 	on:messageReceived={updateUserMessageAmountAndAddMessage}
-	accuseMode={suspectToAccuse}
 	chatUnbalanced={messages.filter((m) => m.extra == undefined || m.extra == false).length % 2 !== 1}
 	authStatus={getAuthStatus(data.session)}
 	metered={data.metered}
