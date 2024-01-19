@@ -41,22 +41,25 @@
 </div>
 
 {#if currentView === PayMode.ONE_TIME}
-	<div class="my-8 mb-56 flex justify-center">
+	<div class="my-8 mb-56 flex justify-center gap-16">
 		{#each data.oneTimeItems as price}
 			<Card>
-				<h5 class="mb-4 font-primary text-xl font-medium">{price.product.name}</h5>
-				<p>{price.product.metadata.messages_amount} chat messages</p>
-				<p>{price.unit_amount / 100} {convertIsoStringToIcon(price.currency)}</p>
-				<form action="?/buy" method="POST">
+				<p class="font-primary text-4xl font-bold text-gray-900">{price.unit_amount / 100} {convertIsoStringToIcon(price.currency)}</p>
+				<!-- <h5 class="mb-4 font-primary text-xl font-medium">{price.product.name}</h5> -->
+				<p class="font-primary">
+					<span class="inline font-primary text-xl font-bold">{price.product.metadata.messages_amount}</span>
+					messages
+				</p>
+				<form action="?/buy" method="POST" class="mt-4">
 					<input type="hidden" name="price_id" value={price.id} />
-					<Button class="bg-quaternary font-primary text-xl" type="submit">Buy now</Button>
+					<Button class="w-full bg-quaternary font-primary text-xl" type="submit">Buy now</Button>
 				</form>
 			</Card>
 		{/each}
 	</div>
 {:else}
 	<div class="my-8 mb-56 flex justify-center gap-16">
-		<Card padding="xl">
+		<Card padding="xl" class="w-full">
 			<h5 class="mb-4 text-xl font-medium text-gray-500 dark:text-gray-400">Pay as you go</h5>
 			<div class="flex items-baseline text-gray-900 dark:text-white">
 				<span class="text-3xl font-semibold">$</span>
@@ -67,6 +70,7 @@
 			<ul class="my-7 space-y-4">
 				<CheckWithText text="5 daily messages for free" />
 				<CheckWithText text="Only $0.04 per message" />
+				<CheckWithText text="Play as many mysteries as you can" />
 			</ul>
 			{#if data.subType == SubscriptionBundles.Free}
 				<form action="?/subscribe" method="POST">
@@ -95,7 +99,8 @@
 			<ul class="my-7 space-y-4">
 				<CheckWithText text="10 daily messages for free" />
 				<CheckWithText text="Only $0.025 per message" />
-				<CheckWithText text="All subscriber only mysteries" />
+				<CheckWithText text="Access to subscriber only mysteries" />
+				<CheckWithText text="Special discord role" />
 			</ul>
 			{#if data.subType == SubscriptionBundles.Free}
 				<form action="?/subscribe" method="POST">
