@@ -47,7 +47,6 @@ async function accuseModelAnswer(
 			accuseLetterInfo: accuseLetterInfo,
 			suspects: accuseBrainRequestParams.suspects,
 			victim: accuseBrainRequestParams.victim,
-			accusedSuspect: accuseBrainRequestParams.accusedSuspect,
 			onResponseGenerated: addResult
 		},
 		openAiToken
@@ -63,7 +62,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	throwIfUnset('request data', requestData);
 	const game_config = requestData.game_config;
 	throwIfUnset('game_config', game_config);
-	const suspectToAccuse = game_config.suspectToAccuse ? game_config.suspectToAccuse : '';
+	const accuse: boolean = game_config.accuse;
 	throwIfUnset('Mystery name', game_config.mysteryName);
 	let message: string = requestData.message;
 	throwIfUnset('messages', message);
@@ -114,15 +113,18 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	try {
 		const gameInfo = await loadGameInfo(game_config.mysteryName, brainMessages.length);
 		isTAndThrowPostgresErrorIfNot(gameInfo);
-		const eventInfo = gameInfo.events.reduce((acc: string, event) => {
+		const eventClues = gameInfo.events.reduce((acc: string, event) => {
 			return acc + event.info + '\n';
 		}, '');
+		const eventTimeframes = gameInfo.events.reduce((acc: string, event) => {
+			return acc + event.timeframe + '\n';
+		}, '');
 
-		const suspectsArray = shuffleArray([
+		//Shuffle array so the murderer is not always the first suspect
+		const suspectsString = shuffleArray([
 			...gameInfo.suspects,
 			{ name: gameInfo.murderer.name, description: gameInfo.murderer.description, imagepath: gameInfo.murderer.imagepath }
-		]);
-		const suspectsString = suspectsArray.reduce((acc: string, suspect) => {
+		]).reduce((acc: string, suspect) => {
 			return acc + suspect.name + ': ' + suspect.description + '\n';
 		}, '');
 
@@ -131,14 +133,13 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 			description: gameInfo.victim_description
 		};
 
-		return suspectToAccuse
+		return accuse
 			? await accuseModelAnswer(
 					{
 						mysteryName: game_config.mysteryName,
 						accuseBrainRequestParams: {
 							promptMessage: message,
 							suspects: suspectsString,
-							accusedSuspect: suspectToAccuse,
 							victim,
 							murderer: {
 								murdererName: gameInfo.murderer.name,
@@ -161,7 +162,9 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 						setting: gameInfo.setting,
 						timeframe: gameInfo.timeframes,
 						actionClues: gameInfo.action_clues,
-						eventInfo
+						fewShots: gameInfo?.few_shots?.brain,
+						eventClues: eventClues,
+						eventTimeframes
 					},
 					game_config.mysteryName,
 					session.user.id,

@@ -63,6 +63,29 @@ export interface Database {
           }
         ]
       }
+      conversation_notes: {
+        Row: {
+          conversation_id: number
+          notes: Json | null
+        }
+        Insert: {
+          conversation_id: number
+          notes?: Json | null
+        }
+        Update: {
+          conversation_id?: number
+          notes?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_notes_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: true
+            referencedRelation: "user_mystery_conversations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       events: {
         Row: {
           id: number
@@ -70,6 +93,7 @@ export interface Database {
           letter: string
           mystery_id: number | null
           show_at_message: number
+          timeframe: string
         }
         Insert: {
           id?: number
@@ -77,6 +101,7 @@ export interface Database {
           letter: string
           mystery_id?: number | null
           show_at_message: number
+          timeframe: string
         }
         Update: {
           id?: number
@@ -84,12 +109,36 @@ export interface Database {
           letter?: string
           mystery_id?: number | null
           show_at_message?: number
+          timeframe?: string
         }
         Relationships: [
           {
             foreignKeyName: "events_mystery_id_fkey"
             columns: ["mystery_id"]
             isOneToOne: false
+            referencedRelation: "mysteries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      few_shots: {
+        Row: {
+          brain: Json
+          mystery_id: number
+        }
+        Insert: {
+          brain: Json
+          mystery_id: number
+        }
+        Update: {
+          brain?: Json
+          mystery_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "few_shots_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: true
             referencedRelation: "mysteries"
             referencedColumns: ["id"]
           }
@@ -115,7 +164,7 @@ export interface Database {
       }
       mysteries: {
         Row: {
-          access_code: string | null
+          access_code: string
           accuse_letter_prompt: string
           description: string
           filepath: string
@@ -130,7 +179,7 @@ export interface Database {
           victim_name: string
         }
         Insert: {
-          access_code?: string | null
+          access_code?: string
           accuse_letter_prompt: string
           description: string
           filepath: string
@@ -145,7 +194,7 @@ export interface Database {
           victim_name: string
         }
         Update: {
-          access_code?: string | null
+          access_code?: string
           accuse_letter_prompt?: string
           description?: string
           filepath?: string
