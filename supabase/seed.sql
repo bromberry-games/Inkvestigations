@@ -211,14 +211,14 @@ William "The Lad" Johnson: Local moneylender.
 Joseph Strickmeyer: Burgler and overall no-good kind of guy and very stupid. Police always thinks of this man first whenever something is suspicious.
 $$,
 (
-    'John Toilard',
+    'John Toillard',
     'kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives.',
-    'john_toilard.webp',
+    'john_toillard.webp',
     'Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.',
     'After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.',
     'The second pen in his home with traces of cyanide.'
 )::murderer_type,
-'John Toilard',
+'John Toillard',
 'kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives.',
 '/images/mysteries/forced_farewell.webp'
 );
@@ -254,7 +254,7 @@ VALUES
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '13:00PM', 'The butler leaves to fetch a doctor'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '13:30PM', 'The butler and the doctor return to find a mess in the apartment.'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '14:15PM', 'After a thorough search, the doctor leaves to inform Lord Toillard.'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '15:00PM', 'The doctor reaches Lord Toilard and he contacts the chief constable Smith'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '15:00PM', 'The doctor reaches Lord Toillard and he contacts the chief constable Smith'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '15:45PM', 'Lord Toillard, Smith and a few officers arrive at the estate');
 
 
