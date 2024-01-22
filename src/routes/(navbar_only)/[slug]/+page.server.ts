@@ -23,7 +23,7 @@ function createLetter(letterInfo: string) {
 			- Search
 			- Analyze
 
-			To familiarize yourself with the people involved in this case, I have attached their pictures to the left of your input text box. When you are certain you know who it was, select their picture from among the suspects and write your deduction. To solve this mystery, your deduction must have the following:
+			To familiarize yourself with the people involved in this case, I have attached their pictures in the lower left corner. When you are certain you know who it was, you can solve it by changing the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
 
 			- Motive
 			- Opportunity

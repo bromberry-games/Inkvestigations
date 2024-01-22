@@ -29,6 +29,7 @@ $$,
 
 INSERT INTO suspects (mystery_id, name, imagepath, description)
 VALUES
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Michael Terry', 'michael_terry.webp', 'Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Bianca White', 'bianca_white.webp', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Dexter Tin', 'dexter_tin.webp', 'Politician who was disgraced by Michael Terry.'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Maria Payton', 'maria_payton.webp', 'Long-time maid of Michael Terry.'),
