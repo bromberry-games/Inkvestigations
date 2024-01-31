@@ -28,9 +28,13 @@ export const load = async ({ locals: { getSession } }) => {
 			}
 		})()
 	]);
-	const singlePrices = stripePrices.data.filter((price) => {
-		return price.recurring == null;
-	});
+	const singlePrices = stripePrices.data
+		.filter((price) => {
+			return price.recurring == null;
+		})
+		.sort((a, b) => {
+			return a.unit_amount - b.unit_amount;
+		});
 
 	console.log(stripePrices);
 	let subType;

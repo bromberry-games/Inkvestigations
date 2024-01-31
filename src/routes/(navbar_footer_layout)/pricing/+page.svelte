@@ -40,12 +40,12 @@
 	</div>
 </div>
 
+<div class="h-screen">
 {#if currentView === PayMode.ONE_TIME}
-	<div class="my-8 mb-56 flex justify-center gap-16">
+	<div class="my-8 mb-56 flex justify-center gap-8 md:gap-16 flex-wrap">
 		{#each data.oneTimeItems as price}
 			<Card>
 				<p class="font-primary text-4xl font-bold text-gray-900">{price.unit_amount / 100} {convertIsoStringToIcon(price.currency)}</p>
-				<!-- <h5 class="mb-4 font-primary text-xl font-medium">{price.product.name}</h5> -->
 				<p class="font-primary">
 					<span class="inline font-primary text-xl font-bold">{price.product.metadata.messages_amount}</span>
 					messages
@@ -58,34 +58,39 @@
 		{/each}
 	</div>
 {:else}
-	<div class="my-8 mb-56 flex justify-center gap-16">
-		<Card padding="xl" class="w-full">
-			<h5 class="mb-4 text-xl font-medium text-gray-500 dark:text-gray-400">Pay as you go</h5>
-			<div class="flex items-baseline text-gray-900 dark:text-white">
+	<div class="my-8 mb-56 flex justify-center gap-16 flex-wrap">
+		<Card class="w-full flex justify-between flex-col">
+			<div>
+
+			<h5 class="mb-4 text-xl font-medium text-gray-500 ">Pay as you go</h5>
+			<div class="flex items-baseline text-gray-900 ">
 				<span class="text-3xl font-semibold">$</span>
 				<span class="text-5xl font-extrabold tracking-tight">0</span>
-				<span class="ms-1 text-xl font-normal text-gray-500 dark:text-gray-400">/month</span>
+				<span class="ms-1 text-xl font-normal text-gray-500 ">/month +</span>
 			</div>
-			<span class="ms-1 text-xl font-normal text-gray-500 dark:text-gray-400">+$0.80 per 20 messages billed every 3 months</span>
+			<span class="text-xl font-normal text-gray-500"><span class="text-3xl text-gray-900 font-bold">$0.90</span> per <span class="text-3xl text-gray-700 font-bold">30</span> messages billed every 3 months</span>
 			<ul class="my-7 space-y-4">
-				<CheckWithText text="5 daily messages for free" />
-				<CheckWithText text="Only $0.04 per message" />
-				<CheckWithText text="Play as many mysteries as you can" />
+				<CheckWithText> <span>5 daily messages for free</span> </CheckWithText>
+				<CheckWithText> <span>Only $0.03 per message</span> </CheckWithText>
+				<CheckWithText> <span>Play as many mysteries as you can</span> </CheckWithText>
 			</ul>
-			{#if data.subType == SubscriptionBundles.Free}
-				<form action="?/subscribe" method="POST">
-					<input type="hidden" name="paymode" value={SubscriptionBundles.ZeroDollar} />
-					<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">CHOOSE PLAN</Button>
-				</form>
-			{:else if data.subType == SubscriptionBundles.ZeroDollar}
-				<form action="?/cancel" method="POST">
-					<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">CANCEL PLAN</Button>
-				</form>
-			{:else if data.subType == SubscriptionBundles.NineDollar}
-				<form action="?/cancel" method="POST">
-					<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">DOWNGRADE PLAN</Button>
-				</form>
-			{/if}
+			</div>
+			<div class="self-end w-full">
+				{#if data.subType == SubscriptionBundles.Free}
+					<form action="?/subscribe" method="POST">
+						<input type="hidden" name="paymode" value={SubscriptionBundles.ZeroDollar} />
+						<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">CHOOSE PLAN</Button>
+					</form>
+				{:else if data.subType == SubscriptionBundles.ZeroDollar}
+					<form action="?/cancel" method="POST">
+						<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">CANCEL PLAN</Button>
+					</form>
+				{:else if data.subType == SubscriptionBundles.NineDollar}
+					<form action="?/cancel" method="POST">
+						<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">DOWNGRADE PLAN</Button>
+					</form>
+				{/if}
+			</div>
 		</Card>
 
 		<Card>
@@ -95,12 +100,13 @@
 				<span class="text-5xl font-extrabold tracking-tight">9</span>
 				<span class="ms-1 text-xl font-normal text-gray-500 dark:text-gray-400">/month</span>
 			</div>
-			<span class="ms-1 text-xl font-normal text-gray-500 dark:text-gray-400">+$0.50 per 20 messages billed monthly</span>
+			<span class="text-xl font-normal text-gray-500"><span class="text-3xl text-gray-900 font-bold">$0.60</span> per <span class="text-3xl text-gray-700 font-bold">30</span> messages billed every month</span>
 			<ul class="my-7 space-y-4">
-				<CheckWithText text="10 daily messages for free" />
-				<CheckWithText text="Only $0.025 per message" />
-				<CheckWithText text="Access to subscriber only mysteries" />
-				<CheckWithText text="Special discord role" />
+				<CheckWithText> <span>10 daily messages for free</span> </CheckWithText>
+				<CheckWithText> <span>Only $0.02 per message</span> </CheckWithText>
+				<CheckWithText> <span>Access to subscriber only mysteries</span> </CheckWithText>
+				<CheckWithText> <span>Special discord role</span> </CheckWithText>
+				<CheckWithText> <span>New mystery every week</span> </CheckWithText>
 			</ul>
 			{#if data.subType == SubscriptionBundles.Free}
 				<form action="?/subscribe" method="POST">
@@ -120,3 +126,4 @@
 		</Card>
 	</div>
 {/if}
+</div>
