@@ -123,14 +123,17 @@ export interface Database {
       }
       few_shots: {
         Row: {
+          accuse_brain: Json | null
           brain: Json
           mystery_id: number
         }
         Insert: {
+          accuse_brain?: Json | null
           brain: Json
           mystery_id: number
         }
         Update: {
+          accuse_brain?: Json | null
           brain?: Json
           mystery_id?: number
         }
