@@ -102,14 +102,5 @@ export const actions = {
 		const convoArchived = await archiveLastConversation(session.user.id, slug.replace(/_/g, ' '));
 		throwIfFalse(convoArchived, 'Could not archive conversation');
 		redirect(302, '/' + slug);
-	},
-	saveNotes: async ({ request, params, locals: { getSession } }) => {
-		const session: Session = await getSession();
-		if (!session) {
-			redirect(303, '/');
-		}
-		const { slug } = params;
-		const notes = form.data.notes;
-		const notesSaved = await saveNotes(session.user.id, slug.replace(/_/g, ' '), notes);
 	}
 };
