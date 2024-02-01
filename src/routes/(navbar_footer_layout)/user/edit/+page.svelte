@@ -37,7 +37,7 @@
 {/if}
 
 <div class="flex justify-center">
-	<div class="w-1/4">
+	<div class="md:w-1/4">
 		<form use:enhance method="POST" action="?/save">
 			<div class="my-4 flex items-center">
 				<label for="email" class="mr-2">Email</label>
