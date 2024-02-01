@@ -36,7 +36,14 @@ export const load = async ({ locals: { getSession } }) => {
 			return a.unit_amount - b.unit_amount;
 		});
 
-	console.log(stripePrices);
+	const recurring = stripePrices.data
+		.filter((price) => {
+			return price.recurring != null;
+		})
+		.sort((a, b) => {
+			return a.unit_amount - b.unit_amount;
+		});
+
 	let subType;
 	if (currentSubscription.length == 0) {
 		subType = SubscriptionBundles.Free;
@@ -46,7 +53,7 @@ export const load = async ({ locals: { getSession } }) => {
 		subType = SubscriptionBundles.NineDollar;
 	}
 
-	return { oneTimeItems: singlePrices, subType };
+	return { oneTimeItems: singlePrices, subType, freeTier: recurring[1], subTier: { payToGo: recurring[0], mysterySub: recurring[2] } };
 };
 
 export const actions = {
@@ -59,19 +66,28 @@ export const actions = {
 		isTAndThrowPostgresErrorIfNot(customerId);
 		let line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 		if (form_data.get('paymode') == SubscriptionBundles.ZeroDollar) {
+			const priceId = form_data.get('price-id');
+			if (!priceId) {
+				error(400, 'No price selected');
+			}
 			line_items = [
 				{
-					price: 'price_1OX3PyKIDbJkcynJ84FAWIsv'
+					price: priceId
 				}
 			];
 		} else if (form_data.get('paymode') == SubscriptionBundles.NineDollar) {
+			const payToGo = form_data.get('pay-to-go');
+			const mysterySub = form_data.get('mystery-sub');
+			if (!payToGo || !mysterySub) {
+				error(400, 'No price selected');
+			}
 			line_items = [
 				{
-					price: 'price_1Ng9UfKIDbJkcynJYsE9jPMZ',
+					price: mysterySub,
 					quantity: 1
 				},
 				{
-					price: 'price_1OX1RjKIDbJkcynJBNwlgnJ2'
+					price: payToGo
 				}
 			];
 		}
