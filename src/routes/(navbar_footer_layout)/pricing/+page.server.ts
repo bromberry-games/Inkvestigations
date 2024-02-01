@@ -104,7 +104,8 @@ export const actions = {
 				metadata: {
 					user_id: user_session ? user_session.user.id : ''
 				}
-			}
+			},
+			allow_promotion_codes: true
 		};
 		if (customerId) {
 			session = await stripe.checkout.sessions.create({
