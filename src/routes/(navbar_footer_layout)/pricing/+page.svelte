@@ -133,18 +133,32 @@
 			</Card>
 		</div>
 		<p class="text-center">
-			You can use your own <a href="" class="text-blue-700">OpenAI</a> Key if you are aware of the risks.
+			You can use your own <a href="/user/edit" class="text-blue-700">OpenAI</a> Key if you are aware of the risks.
 		</p>
 	{/if}
 </div>
-<div class="flex justify-center">
+<div class="mb-8 flex justify-center">
 	<div class="w-1/2 font-secondary">
 		<h2 class="text-3xl font-bold">Questions</h2>
 		<p class="text-xl">
-			If you have any questions about payments join our <a href="https://discord.gg/t3zTYNhNzp" class="text-blue-700">discord </a>or send us
-			a
+			If you have any questions or need help with payments join our <a href="https://discord.gg/t3zTYNhNzp" class="text-blue-700"
+				>discord
+			</a>or send us a
 			<a href="mailto:bromberrygames@pm.me" class="text-blue-700">mail</a>
 		</p>
 		<h3 class="mt-2 text-3xl font-bold">FAQ</h3>
+		<h4 class="text-xl font-bold">- Why pay to go pricing?</h4>
+		<p class="text-lg">
+			For every message you send we have to pay OpenAi. We think pay to go is the fairest pricing since you only pay for what you use. This
+			also allows you to use your own key if you want to and still be able to profit from our subscription.
+		</p>
+		<h4 class="mt-2 text-xl font-bold">- Why is the free tier only billed every 3 months?</h4>
+		<p class="text-lg">
+			We pay a flat fee for every transaction. Only charging every 3 months keeps costs for lower and allows us to offer at a cheaper price
+		</p>
+		<h4 class="mt-2 text-xl font-bold">- Do you offer any discounts?</h4>
+		<p class="text-xl">
+			Talk to us on our <a href="https://discord.gg/t3zTYNhNzp" class="text-blue-700">discord </a> and we can see what we can do.
+		</p>
 	</div>
 </div>
