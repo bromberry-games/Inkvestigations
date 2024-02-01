@@ -12,10 +12,10 @@
 		messageAmountStore
 	} from '$misc/stores';
 	import { approximateTokenCount } from '$misc/openai';
-	import { Toast, Button, Tooltip } from 'flowbite-svelte';
-	import { MAX_TOKENS } from '../../constants';
+	import { Button } from 'flowbite-svelte';
 	import Timer from '../../routes/(navbar_only)/[slug]/timer.svelte';
-	import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
+	import { AuthStatus } from '$lib/auth-helper';
+	import { textIsTooLong } from '$lib/message-conversation-lengths';
 
 	const dispatch = createEventDispatcher();
 
@@ -23,6 +23,7 @@
 	export let chatUnbalanced: boolean;
 	export let authStatus: AuthStatus;
 	export let metered: boolean;
+	export let blockWrite: boolean;
 
 	let accuseMode = false;
 	let debounceTimer: number | undefined;
@@ -34,8 +35,16 @@
 	let gameOver = false;
 
 	$: message = input.trim();
+	$: if (blockWrite) {
+		accuseMode = true;
+	}
 
 	function handleSubmit() {
+		const messageTokens = approximateTokenCount(message);
+		if (textIsTooLong(accuseMode, messageTokens) || message.length === 0) {
+			console.log('input too long or empty ');
+			return;
+		}
 		submitMessage(message);
 		dispatch('chatInput', { role: 'user', content: message });
 		input = '';
@@ -46,11 +55,6 @@
 	}
 
 	function submitMessage(messageToSubmit: string) {
-		messageTokens = approximateTokenCount(messageToSubmit);
-		if (messageTokens > MAX_TOKENS || messageToSubmit.length === 0) {
-			console.log('input too long or empty ' + messageTokens);
-		}
-
 		if (accuseMode) {
 			gameOver = true;
 		}
@@ -133,7 +137,7 @@
 
 	function handleKeyDown(event: KeyboardEvent) {
 		clearTimeout(debounceTimer);
-		debounceTimer = window.setTimeout(calculateMessageTokens, 750);
+		debounceTimer = window.setTimeout(calculateMessageTokens, 150);
 
 		if ($isLoadingAnswerStore) {
 			return;
@@ -175,7 +179,12 @@
 						<button
 							type="button"
 							class="btn btn-sm ml-2 border border-secondary bg-secondary p-2 font-primary"
-							on:click={() => (accuseMode = !accuseMode)}
+							disabled={blockWrite}
+							on:click={() => {
+								accuseMode = !accuseMode;
+								messageTokens = 0;
+								calculateMessageTokens();
+							}}
 						>
 							{#if accuseMode}
 								SOLVE
@@ -194,12 +203,6 @@
 							bind:this={textarea}
 							disabled={gameOver}
 						/>
-						<!-- <Tooltip class="w-1/5 font-secondary" -->
-						<!-- >Automatically prioritized for you: Your daily refillable messages are used first, and only after they're depleted, your -->
-						<!-- bought messages are utilized. -->
-						<!-- <p>Daily messages: {messagesAmount.amount}</p> -->
-						<!-- <p>Bought messages: {messagesAmount.non_refillable_amount}</p></Tooltip -->
-						<!-- > -->
 						<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
 							<button type="submit" class="btn btn-sm ml-2">
 								<PaperAirplane class="h-6 w-6" />
@@ -207,7 +210,7 @@
 						</div>
 					</div>
 				</form>
-				{#if messageTokens > 50}
+				{#if textIsTooLong(accuseMode, messageTokens)}
 					<div class="text-center text-red-700">Input text too long</div>
 				{/if}
 			</div>

@@ -9,6 +9,7 @@ import {
 } from './login-helpers';
 import { supabase_full_access } from './supabase_test_access';
 import { aw } from 'vitest/dist/reporters-OH1c16Kq.js';
+import { sendMessage } from './chat-helpers';
 
 async function logoutOfPage(page: Page, isMobile: boolean) {
 	await page.locator('#avatar-menu').click();
@@ -102,8 +103,8 @@ test('test try for free', async ({ page, isMobile }) => {
 	await page.waitForTimeout(3000);
 	//Cancels the animation
 	await page.getByRole('button', { name: 'rotate outline RESET CHAT' }).click();
-	await page.getByPlaceholder('Enter to send, Shift+Enter for newline').fill('test');
-	await page.locator('button[type="submit"]').nth(1).click();
+
+	await sendMessage(page, 'test');
 	const message = page.getByText('Police chief:').nth(1);
 	await message.waitFor({ timeout: 45000 });
 	await page.waitForLoadState('networkidle');

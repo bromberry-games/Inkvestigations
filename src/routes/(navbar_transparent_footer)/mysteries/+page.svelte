@@ -35,7 +35,7 @@
 </div>
 
 <div class="mx-2 mb-2 flex justify-center">
-	<div class="mx-4 grid w-full grid-cols-2 gap-6 lg:w-1/2">
+	<div class="mx-1 grid w-full grid-cols-2 md:mx-4 md:gap-6 lg:w-1/2">
 		<Radio name="custom" custom value="free" bind:group={subscription}>
 			<div
 				class="w-full cursor-pointer items-center justify-between rounded-lg border-4 bg-white p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-600 peer-checked:border-quaternary peer-checked:text-gray-900"
