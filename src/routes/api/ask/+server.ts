@@ -150,7 +150,8 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 								motive: gameInfo.murderer.motive,
 								opportunity: gameInfo.murderer.opportunity,
 								evidence: gameInfo.murderer.evidence
-							}
+							},
+							fewShots: gameInfo?.few_shots?.accuse_brain
 						},
 						userId: session.user.id,
 						accuseLetterInfo: gameInfo.accuse_letter_prompt

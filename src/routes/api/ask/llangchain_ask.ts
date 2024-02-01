@@ -215,13 +215,14 @@ export interface AccuseModelRequestParams {
 	victim: Victim;
 	promptMessage: string;
 	murderer: Murderer;
+	fewShots: Json | null;
 }
 
 export async function accuseBrainRequest(
-	{ suspects, victim, murderer, promptMessage }: AccuseModelRequestParams,
+	{ suspects, victim, murderer, promptMessage, fewShots }: AccuseModelRequestParams,
 	openAiToken: string
 ): Promise<RatingWithEpilogue> {
-	const prompt = createAccusePrompt();
+	const prompt = createAccusePrompt(parseFewShots(fewShots));
 	const llm = new ChatOpenAI({
 		temperature: 0.9,
 		openAIApiKey: openAiToken,
