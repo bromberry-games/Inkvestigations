@@ -7,6 +7,7 @@ import { shuffleArray } from '$lib/generic-helpers';
 import { isPostgresError, isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
 import { throwIfFalse } from '$misc/error';
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
+import { MAX_CONVERSATION_LENGTH } from '$lib/message-conversation-lengths';
 
 function createLetter(letterInfo: string) {
 	return {
@@ -68,6 +69,17 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 			redirect(303, '/mysteries');
 		}
 	}
+	eventMessages.push({
+		letter: `Dear Sherlock,
+		
+		the time has come to solve this mystery. I can not investigate any further. Please solve the case now.
+		
+		William Wellington,
+
+		Police chief of Zlockinbury
+		`,
+		show_at_message: MAX_CONVERSATION_LENGTH
+	});
 
 	return {
 		slug,

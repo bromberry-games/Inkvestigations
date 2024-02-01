@@ -9,6 +9,7 @@
 	import { AddressCardSolid, RotateOutline } from 'flowbite-svelte-icons';
 	import { getAuthStatus } from '$lib/auth-helper';
 	import SuspectModal from '$lib/gpt/SuspectModal.svelte';
+	import { MAX_CONVERSATION_LENGTH } from '$lib/message-conversation-lengths';
 
 	export let data: PageData;
 
@@ -125,6 +126,7 @@
 	chatUnbalanced={messages.filter((m) => m.extra == undefined || m.extra == false).length % 2 !== 1}
 	authStatus={getAuthStatus(data.session)}
 	metered={data.metered}
+	blockWrite={messages.length / 2 >= MAX_CONVERSATION_LENGTH}
 >
 	<Button
 		slot="notes-button"

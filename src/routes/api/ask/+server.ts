@@ -13,13 +13,13 @@ import {
 } from '$lib/supabase/conversations.server';
 import { getMessageAmountForUser, decreaseMessageForUser, increaseMessageForUser } from '$lib/supabase/message_amounts.server';
 import { approximateTokenCount } from '$misc/openai';
-import { MAX_TOKENS } from '../../../constants';
 import { shuffleArray } from '$lib/generic-helpers';
 import { standardInvestigationAnswer } from './conversation';
 import { isPostgresError, isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
 import { OPEN_AI_KEY } from '$env/static/private';
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
 import { stripeClient } from '$lib/stripe';
+import { MAX_CONVERSATION_LENGTH, textIsTooLong } from '$lib/message-conversation-lengths';
 
 interface AccuseModelAnswerParams {
 	mysteryName: string;
@@ -66,8 +66,8 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	throwIfUnset('Mystery name', game_config.mysteryName);
 	let message: string = requestData.message;
 	throwIfUnset('messages', message);
-	if (approximateTokenCount(message) > MAX_TOKENS) {
-		error(400, 'Message is too long.');
+	if (textIsTooLong(accuse, approximateTokenCount(message)) || message.length == 0) {
+		error(400, 'Message is too long or empty');
 	}
 
 	const [letterMessages, brainMessages, messagesAmount, currentSub] = await Promise.all([
@@ -83,6 +83,10 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	const requestToken = requestData.openAiToken;
 	const useBackendToken = requestToken == undefined || requestToken == '';
 	const openAiToken = useBackendToken ? OPEN_AI_KEY : requestToken;
+
+	if (brainMessages.length > MAX_CONVERSATION_LENGTH && !accuse) {
+		error(500, 'Too many messages. You have to accuse');
+	}
 
 	if (messagesAmount.amount <= 0 && messagesAmount.non_refillable_amount <= 0 && genNum >= 0 && useBackendToken) {
 		const meteredProd = currentSub.length == 1 ? currentSub[0].products.find((x) => x.metered_si != null) : undefined;

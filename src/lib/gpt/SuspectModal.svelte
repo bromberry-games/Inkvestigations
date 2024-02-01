@@ -21,7 +21,8 @@
 	<div class="flex w-full flex-col">
 		<textarea placeholder="Enter notes..." use:textareaAutosizeAction bind:value={notes.general} class="mb-4"></textarea>
 		{#each suspects as suspect}
-			<div class="my-1 flex">
+			<hr class="my-1 h-0.5 border-0 bg-gray-900 dark:bg-gray-700" />
+			<div class="mt-2 flex">
 				<div class="mr-4 flex flex-col items-center justify-between">
 					<img src={'/images/mysteries/' + slug.toLowerCase() + '/suspects/' + suspect.imagepath} alt={suspect.name} />
 				</div>
