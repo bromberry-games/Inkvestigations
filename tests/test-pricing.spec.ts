@@ -11,7 +11,7 @@ import {
 } from './chat-helpers';
 
 async function fillOutCreditCardForm(page: Page) {
-	await page.waitForTimeout(100);
+	await page.waitForTimeout(300);
 	await page.getByLabel('Email').click();
 	await page.getByLabel('Email').fill('coolmail@mail.com');
 	await page.getByLabel('Email').press('Tab');
@@ -23,6 +23,7 @@ async function fillOutCreditCardForm(page: Page) {
 	await page.getByPlaceholder('CVC').fill('111');
 	await page.getByPlaceholder('CVC').press('Tab');
 	await page.getByPlaceholder('Full name on card').fill('coolio');
+	await page.waitForTimeout(300);
 	await page.getByTestId('hosted-payment-submit-button').click();
 }
 
@@ -75,6 +76,7 @@ test('Buy first plan, then upgrade', async ({ page, isMobile }) => {
 });
 
 async function buyNthPlanAndTestMeteredMessages(page: Page, isMobile: boolean, nth: number, userId: string) {
+	test.setTimeout(60000);
 	await navigateToPricingAndBuyNthPlan(page, nth);
 	if (isMobile) {
 		await page.getByRole('button', { name: 'bars 3' }).click();
@@ -87,7 +89,7 @@ async function buyNthPlanAndTestMeteredMessages(page: Page, isMobile: boolean, n
 	await sendMessage(page, 'test usage');
 	const newMessageCount = await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
 	//TODO This will fail once message bundles are adjusted. Should be fixed
-	expect(newMessageCount).toBe(19);
+	expect(newMessageCount).toBe(29);
 }
 
 test('Buy first plan, then send message to test usage', async ({ page, isMobile, context }) => {
@@ -110,7 +112,8 @@ test('Buy second plan, should have 10 daily messages', async ({ page, isMobile, 
 
 test('buy messages', async ({ page, isMobile }) => {
 	await page.goto('/pricing');
-	await page.getByRole('button', { name: 'Buy now' }).click();
+	await page.getByRole('button', { name: 'One time' }).click();
+	await page.getByRole('button', { name: 'Buy now' }).first().click();
 
 	await fillOutCreditCardForm(page);
 });

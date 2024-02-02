@@ -303,7 +303,7 @@ $$,
 );
 
 
-INSERT INTO few_shots (mystery_id, brain) VALUES (
+INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
     $$
     {"messages": [
@@ -364,5 +364,49 @@ INSERT INTO few_shots (mystery_id, brain) VALUES (
 		"content": "We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to search 4 Patterson Street.\nHave I been provided this information? \nYes\nInformation:\n- We found that in that apartment lives a Mary Ann Woodcock and her daughters Hannah and Anna. Her husband Methusalem Woodcock is a sailor and has been at sea for months\nmood: disappointed"
 	}
 ]}
+    $$,
+    $$
+    {"messages": [
+    {
+      "role": "user",
+      "content": "It was Lord Baron Toillard. He hired thugs to steal John when he knew John would be alone. He wanted to pay back his debts to the local loan sharks without raising suspicions. "
+    },
+    {
+      "role": "assistant",
+      "content": "The players solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" could not be more wrong. \n\nRating: 0 stars \n\nEpilogue: \n- Despite their best efforts, the officers of the law couldn't find a single lead. \n- A storm of rumours and panic enveloped Romsey. \n- The whispers reached the local taverns, from the lowly market square to the manicured lawns of the Toillard estate. \n- The shadows kept their stains of concealed terror as young John Toillard remained missing and the ransom money, a stark reminder of his disappearance, lay untouched and uncashed"
+    },
+    {
+      "role": "user",
+      "content": "It was John himself because he just wanted to get away from home and he led them down a wrong trail with the ransom"
+    },
+    {
+      "role": "assistant",
+      "content": "The players solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is essentially correct, but lacking in details.\n\nRating: 2 stars\n\nEpilogue:\n- After receiving the theory, we were quick to act.\n- A surprise inspection at the Southampton port retched the truth from its depths.\n- We found young John, his clothes stained with grime and his eyes rooted in fear.\n- Despite the heart-pounding chase, the constables managed to capture him.\n- A heavy curtain of dread lifted off Romsey as news of John's safe return spread.\n- The Toillards send their deepest thanks and asked me to tell you that more tangible thanks are soon in your mail"
+    },
+    {
+      "role": "user",
+      "content": "The butler accidentally killed John and buried him in the back yard."
+    },
+    {
+      "role": "assistant",
+      "content": "The players solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is far from accurate. \n\nRating: 0 stars \n\nEpilogue: \n- No matter how much we dug into the matter, the answers we sought remained beyond our reach. \n- The once calm and vibrant New Forest echoed with grim silence that hung heavily over Romsey. \n- John Toillard's absence left a gaping void as unfamiliar as it was painful. \n- As weeks turned into months, the untouched ransom money became a grim reminder of our failure.\n- Our search for truth laid barren, and the mystery of young John's disappearance continued to hang like an albatross over our necks."
+    },
+    {
+      "role": "user",
+      "content": "The mother, Adelia Toillard, told him to run away so he could have a better future. She also told the butler who is in on it. She knows where John is so question her."
+    },
+    {
+      "role": "assistant",
+      "content": "The players solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is incorrect, as John acted alone. \n\nRating: 0 stars \n\nEpilogue: \n- Despite the countless hours of investigation and a sea of theories, we remained entangled in this webs of perplexity. \n- The peaceful woodland of New Forest now bore the silent screams of a mystery unsolved. \n- The smiles around Romsey were marred with unuttered questions. \n- The ransom money sat untouched, a testament to a case that gnawed at us with every passing day. \n- Young John was never found again and his mercurial fate kept the town locked in a perpetual somber air."
+    },
+    {
+      "role": "user",
+      "content": "it was his brother who accidentally killed him with poison"
+    },
+    {
+      "role": "assistant",
+      "content": "The players solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is incorrect.\n\nRating: 0 stars\n\nEpilogue:\n- The enigmatic disappearance of young John Toillard managed to elude us at every turn. \n- The woods of New Forest held tight to their secrets, leaving us with only questions and fleeting hopes.\n- The ransom money lay forgotten and untouched, a haunting echo of the unresolved mystery.\n- Romsey remained shrouded in disquiet, the absence of John casting a lingering shadow over the community."
+    }
+    ]}
     $$
 )

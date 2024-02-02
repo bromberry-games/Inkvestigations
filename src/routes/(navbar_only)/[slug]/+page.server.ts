@@ -7,6 +7,7 @@ import { shuffleArray } from '$lib/generic-helpers';
 import { isPostgresError, isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
 import { throwIfFalse } from '$misc/error';
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
+import { MAX_CONVERSATION_LENGTH } from '$lib/message-conversation-lengths';
 
 function createLetter(letterInfo: string) {
 	return {
@@ -68,6 +69,17 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 			redirect(303, '/mysteries');
 		}
 	}
+	eventMessages.push({
+		letter: `Dear Sherlock,
+		
+		the time has come to solve this mystery. I can not investigate any further. Please solve the case now.
+		
+		William Wellington,
+
+		Police chief of Zlockinbury
+		`,
+		show_at_message: MAX_CONVERSATION_LENGTH
+	});
 
 	return {
 		slug,
@@ -90,14 +102,5 @@ export const actions = {
 		const convoArchived = await archiveLastConversation(session.user.id, slug.replace(/_/g, ' '));
 		throwIfFalse(convoArchived, 'Could not archive conversation');
 		redirect(302, '/' + slug);
-	},
-	saveNotes: async ({ request, params, locals: { getSession } }) => {
-		const session: Session = await getSession();
-		if (!session) {
-			redirect(303, '/');
-		}
-		const { slug } = params;
-		const notes = form.data.notes;
-		const notesSaved = await saveNotes(session.user.id, slug.replace(/_/g, ' '), notes);
 	}
 };
