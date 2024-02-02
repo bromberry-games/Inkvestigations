@@ -1,5 +1,5 @@
 INSERT INTO mysteries 
-(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution) 
+(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings) 
 VALUES (
 'Mirror Mirror',
 'A journalist is found dead. But nobody knows what happened.',
@@ -21,7 +21,13 @@ $$
 It was Oliver Smith. Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.
 After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.
 The second pen in his home with traces of cyanide.
-$$
+$$,
+ROW(
+        'make something up',
+        'make something up',
+        'make something up',
+        'make something up'
+    )::star_ratings
 );
 
 INSERT INTO suspects (mystery_id, name, description)
