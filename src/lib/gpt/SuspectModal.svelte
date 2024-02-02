@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { convertToSnakeCaseEnhanced } from '$lib/generic-helpers';
 	import type { suspect } from '$lib/supabase/mystery_data.server';
 	import { Modal, Radio, Button, Textarea } from 'flowbite-svelte';
 	import { onMount } from 'svelte';
@@ -24,7 +25,10 @@
 			<hr class="my-1 h-0.5 border-0 bg-gray-900 dark:bg-gray-700" />
 			<div class="mt-2 flex">
 				<div class="mr-4 flex flex-col items-center justify-between">
-					<img src={'/images/mysteries/' + slug.toLowerCase() + '/suspects/' + suspect.imagepath} alt={suspect.name} />
+					<img
+						src={'/images/mysteries/' + slug.toLowerCase() + '/suspects/' + convertToSnakeCaseEnhanced(suspect.name) + '.webp'}
+						alt={suspect.name}
+					/>
 				</div>
 				<Textarea autoResize class="w-full" placeholder="Enter notes..." bind:value={notes[suspect.name]}></Textarea>
 			</div>

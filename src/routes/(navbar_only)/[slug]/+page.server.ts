@@ -1,7 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import type { Session } from '@supabase/supabase-js';
-import { loadMysteryLetterInfo, loadSuspects } from '$lib/supabase/mystery_data.server';
+import { loadMysteryLetterInfo, loadSuspects, loadVictim } from '$lib/supabase/mystery_data.server';
 import { archiveLastConversation, loadEventMessages, loadLetterMessagesNotesAndConversationId } from '$lib/supabase/conversations.server';
 import { shuffleArray } from '$lib/generic-helpers';
 import { isPostgresError, isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
@@ -48,20 +48,20 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 	const mysteryName = slug.replace(/_/g, ' ');
 
 	//TODO: Function or view?
-	const [letterInfo, messagesAndNotes, suspects, eventMessages, activeSub] = await Promise.all([
+	const [letterInfo, messagesAndNotes, suspects, eventMessages, activeSub, victim] = await Promise.all([
 		loadMysteryLetterInfo(session.user.id, mysteryName),
 		loadLetterMessagesNotesAndConversationId(session.user.id, mysteryName),
 		loadSuspects(mysteryName),
 		loadEventMessages(mysteryName),
-		loadActiveAndUncancelledSubscription(session.user.id)
+		loadActiveAndUncancelledSubscription(session.user.id),
+		loadVictim(mysteryName)
 	]);
 	isTAndThrowPostgresErrorIfNot(letterInfo);
 	isTAndThrowPostgresErrorIfNot(messagesAndNotes);
 	isTAndThrowPostgresErrorIfNot(eventMessages);
 	isTAndThrowPostgresErrorIfNot(activeSub);
-	if (!suspects) {
-		error(500, 'could not load suspects chat from data');
-	}
+	isTAndThrowPostgresErrorIfNot(victim);
+	isTAndThrowPostgresErrorIfNot(suspects);
 	if (letterInfo.access_code != 'free') {
 		if (activeSub[0]?.access_codes == null || activeSub.length == 0) {
 			redirect(303, '/mysteries');
@@ -84,7 +84,13 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 	return {
 		slug,
 		messages: [createLetter(letterInfo.letter_info), ...messagesAndNotes.messages],
-		suspects: suspects.sort((a, b) => a.name.localeCompare(b.name)),
+		suspects: [
+			{
+				name: victim.victim_name,
+				description: victim.victim_description
+			},
+			...suspects.sort((a, b) => a.name.localeCompare(b.name))
+		],
 		eventMessages,
 		metered: activeSub.length == 1 && activeSub[0].products.some((p) => p.metered_si != null),
 		notes: messagesAndNotes.notes?.[0]?.notes || {},

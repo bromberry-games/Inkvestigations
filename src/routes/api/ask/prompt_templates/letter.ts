@@ -1,4 +1,4 @@
-import { ChatPromptTemplate } from 'langchain/prompts';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { ChatMessage, type BaseMessage } from 'langchain/schema';
 
 const systemTemplate = `
