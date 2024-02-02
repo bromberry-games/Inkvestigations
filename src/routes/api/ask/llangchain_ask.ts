@@ -12,7 +12,6 @@ import { createAccuseLetterPrompt } from './prompt_templates/accusation_letter';
 import { USE_FAKE_LLM } from '$env/static/private';
 import { HttpResponseOutputParser } from 'langchain/output_parsers';
 import type { Json } from '../../../schema';
-import { before } from 'node:test';
 
 export interface Victim {
 	name: string;
