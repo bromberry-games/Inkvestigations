@@ -1,5 +1,5 @@
 INSERT INTO mysteries 
-(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, murderer, victim_name, victim_description, filepath) 
+(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings) 
 VALUES (
 'Mirror Mirror',
 'A journalist is found dead. But nobody knows what happened.',
@@ -14,26 +14,30 @@ $$,
 $$
 Your name is William Wellington, the police chief of Zlockingbury. You live in a moderately sized city set in the beginning of the 20th century in England. You talk like a noir cop and use metaphors often. Michael Terry was found dead, thrown through the mirror in his study. His maid called the police, but before we had arrived, the politician Dexter Tin was there. He was supposed to have a meeting with Terry. Three days prior, Terry held a party at his house, but between then and his death he should have been alone until his appointment with Mr. Tin. There is no sign of struggle or forced entry, but a suicide is unlikely because the method is so gruesome and strange. 
 $$,
-(
-    'Oliver Smith',
-    'Biggest fan before becoming his apprentice',
-    'oliver_smith.webp',
-    'Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.',
-    'After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.',
-    'The second pen in his home with traces of cyanide.'
-)::murderer_type,
 'Michael Terry',
-'Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.',
-'images/mysteries/mirror_mirror.webp'
+'Murdered. Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.',
+'images/mysteries/mirror_mirror.webp',
+$$
+It was Oliver Smith. Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.
+After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.
+The second pen in his home with traces of cyanide.
+$$,
+ROW(
+        'make something up',
+        'make something up',
+        'make something up',
+        'make something up'
+    )::star_ratings
 );
 
-INSERT INTO suspects (mystery_id, name, imagepath, description)
+INSERT INTO suspects (mystery_id, name, description)
 VALUES
-((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Bianca White', 'bianca_white.webp', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.'),
-((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Dexter Tin', 'dexter_tin.webp', 'Politician who was disgraced by Michael Terry.'),
-((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Maria Payton', 'maria_payton.webp', 'Long-time maid of Michael Terry.'),
-((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Angela Videl', 'angela_videl.webp', 'Rival columnist to Michael Terry.'),
-((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Peter O''Ranner', 'peter_oranner.webp', 'Retired detective who occasionally assisted Michael Terry with his articles.');
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Bianca White', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Dexter Tin', 'Politician who was disgraced by Michael Terry.'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Maria Payton', 'Long-time maid of Michael Terry.'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Angela Videl', 'Rival columnist to Michael Terry.'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Peter O''Ranner', 'Retired detective who occasionally assisted Michael Terry with his articles.'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Oliver Smith', 'Biggest fan before becoming his apprentice');
 
 INSERT INTO action_clues (mystery_id, action, clue)
 VALUES
@@ -118,17 +122,17 @@ where
 
 Insert INTO for_free_users (amount, daily_limit) VALUES (5, 5);
 
-INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, murderer, victim_name, victim_description, filepath) VALUES (
+INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings) VALUES (
     'Forced Farewell',
     'A boy is found missing.',
-    'pride and shame',
-    'England in the 1800s',
+    'escape and transformation',
+    'the woods of the New Forest near Romsey in the year 1889',
     $$
 I hope this letter finds you well and swiftly. My name is William Wellington, and I am the chief constable in our little town of Romsey. I write to you personally because we have read of your success in the case of the murders of Drebber and Stangerson in the papers. I confess, however, that what I am writing to you about is nothing like what you have encountered in London. A boy, John Toillard, the age of thirteen, was stolen from his home. The boy is Lord Baron Toillard's heir, so you understand if I'm writing to you with great urgency. I dearly hope you will read on and lend your mind so that we may solve this quickly.
 
 On the morn of Thursday July 14th, Lord Toillard and his family left their estate for a social function in the city. John Toillard was left at home because he was feeling unwell, a catarrh coming on, seemingly. It was not serious according to them, but as it was out of season they feared something worse and Lord Toillard left his son to recover under the care of their butler, Jessob.
 
-They left their estate around 10AM, and were attending a garden party with the local gentry, here in Romsey. Around 3PM a messenger hurried to them and gave them an urgent message from the butler. The message described that the butler had gone to attend another duty, and then the subsequent state of the house once he returned. After a thorough search he failed to locate the boy. He did, however, find a note demanding a ransom of £13,2; a peculiar sum indeed. Lord Toillard contacted me. I contacted you immediately after seeing the home with my own eyes.
+They left their estate around 10AM, and were attending a garden party with the local gentry, here in Romsey. Suddenly, around 3PM their local doctor hurried to them at the event. At first they feared John had taken a turn for the worse, but it was more sinister than that as you know. Their butler Jessob had left to fetch the doctor as John did indeed seem to get worse, but upon their return the estate was in disarray and the boy gone. After a thorough search they failed to locate the boy. They did, however, find a note demanding a ransom of £13,2; a peculiar sum indeed. Lord Toillard contacted me. I, in turn, contacted you immediately after seeing the home with my own eyes.
 
 The article said you make quick work of mysteries by simply reading or hearing about it. I hope what they write is true and that your deductive analysis matches the praise.
 $$,
@@ -170,29 +174,30 @@ William "The Lad" Johnson: Local moneylender.
 
 Joseph Strickmeyer: Burgler and overall no-good kind of guy and very stupid. Police always thinks of this man first whenever something is suspicious.
 $$,
-(
-    'John Toillard',
-    'kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives.',
-    'john_toillard.webp',
-    'Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.',
-    'After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.',
-    'The second pen in his home with traces of cyanide.'
-)::murderer_type,
 'John Toillard',
 'kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives.',
-'/images/mysteries/forced_farewell.webp'
+'/images/mysteries/forced_farewell.webp',
+$$
+It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.
+$$,
+ROW(
+        'John is never found again and the money is never picked up.',
+        'John makes it onto the ship SS City of New York, but the constables succeed in stopping the departure for a little and catch him. He is returned to the parents.',
+        'John is caught in the Southampton port dirty and frantically trying to get away. He is returned to the parents.',
+        'John is caught without problems and confesses everything in an emotional scene.'
+    )::star_ratings
 );
 
-INSERT INTO suspects (mystery_id, name, imagepath, description)
+INSERT INTO suspects (mystery_id, name, description)
 VALUES
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Lord Baron Charles Toillard', 'lord_baron_charles_toillard.webp', 'A newly titled baron, known for his achievements in diplomacy. Recently turned into a drunkard and gambler.'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Lady Adelia Toillard', 'lady_adelia_toillard.webp', 'From lower nobility, sullen and withdrawn, spends a lot of time with her children.'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Alice Toillard', 'alice_toillard.webp', 'Younger sister, 5 years old.'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Arthur Toillard', 'arthur_toillard.webp', 'Younger brother, 9 years old.'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Butler Jessob', 'butler_jessob.webp', 'A long-time butler and good friend of the family, loves the children.'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Doctor Jameson', 'doctor_jameson.webp', 'Local doctor.'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'William "The Lad" Johnson', 'william_the_lad_johnson.webp', 'Local moneylender.'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Joseph Strickmeyer', 'joseph_strickmeyer.webp', 'Burglar and overall no-good kind of guy, often suspected by police.');
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Lord Baron Charles Toillard', 'A newly titled baron, known for his achievements in diplomacy. Recently turned into a drunkard and gambler.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Lady Adelia Toillard', 'From lower nobility, sullen and withdrawn, spends a lot of time with her children.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Alice Toillard', 'Younger sister, 5 years old.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Arthur Toillard', 'Younger brother, 9 years old.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Butler Jessob', 'A long-time butler and good friend of the family, loves the children.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Doctor Jameson', 'Local doctor.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'William "The Lad" Johnson', 'Local moneylender.'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Joseph Strickmeyer', 'Burglar and overall no-good kind of guy, often suspected by police.');
 
 INSERT INTO action_clues (mystery_id, action, clue)
 VALUES
@@ -408,4 +413,4 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     }
     ]}
     $$
-)
+);

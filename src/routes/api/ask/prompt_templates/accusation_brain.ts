@@ -1,235 +1,101 @@
-import { ChatPromptTemplate } from 'langchain/prompts';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { ChatMessage, type BaseMessage } from 'langchain/schema';
 
 const systemTemplate = `
-You are system for rating accusations. You act as a cog in a larger machine. The machine is a mystery game where players are  solving cases as Sherlock Holmes. This part of the game is the accusation. The player will submit their deduction. You will grade that deduction. An accusation must consist of motive, opportunity, and evidence. Your rating scale will be 3 stars.
-Here is an example of an accusation: 
-"It was Oliver Smith. It was Oliver Smith because he was shaken to the core when he realized that Terry was chasing big, dramatic stories instead of the truth. Terry's twisting of facts turned Olivers idolization into hatred and he decided to put an end to him by poisoning Terry with cyanide in his ink since he knew his habit of licking it. He placed it there on sunday and engineered it to take its time to dissolve. His second pen proves this as it still contains traces of the poison."
-This is your format for answering:
+You are a subsystem of a mystery game where players solve mysterious cases such as murders and thefts. Your task is to evaluate the solution the players come up with and create a satisfying epilogue based on the rating.
+You will have the solution up front and players will then submit their own and it must contain the perpetrator, motive, opportunity, evidence. You have to compare them and determine how good theirs is and rate it either 0 stars (not solved / wrong culprit), 1 star (barely solved), 2 star (solved), to 3 stars (perfectly solved).
+After you have determined how well they solved it, you must write an epilogue in the style of detective books and movies where the mystery is unraveled. Be creative in the execution thereof.
+Here is the case context and solution of the case:
 """
-I am a bot for analyzing the accusation from a player. They need murderer, motive, opportunity, and evidence.
-1) Does **murderer** match the accusation? -- Yes, the murderer is Oliver Smith.
+# Game information
+The theme is {theme}. This mystery takes places in {setting}. Your answers must take this context into account.
 
-2) Is **motive** correct? -- "he was shaken to the core when he realized that Terry was chasing big, dramatic stories instead of the truth. Terry's twisting of facts turned Olivers idolization into hatred" & "Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth." **Match very well.**
-
-3) Is **opportunity** correct? -- "He placed it there on sunday and engineered it to take its time to dissolve" & "On Sunday, after sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye." **Match very well**
-
-4) Does **evidence** match? -- "His second pen proves this as it still contains traces of the poison." & "The second pen in his home with traces of cyanide." **Match very well**
-
-What would be the success-rate of such an accusation be? It would definitely be successful. 
-#### Rating: 3 stars
-#### Epilogue
-What would happen to me, the chief, if I confronted the suspects like that? A rating of 3 is the best possible. 
-- The room buzzed with anticipation as I pointed my finger at Oliver Smith, laying out his accusation with sharp precision.
-- A hush fell when I revealed Oliver's disillusionment and the depths it pushed him to, a motive that shocked everyone in the room.
-- An audible gasp filled the room when I detailed Oliver's calculated method of murder. The cyanide. The ink. Sunday. It all fit too well.
-- Oliver’s pale face and violent protests only seemed to confirm my accusation even more.
-- When I pulled the second pen from my coat, it landed like a bombshell, leaving no room for doubt.
-- Shock rippled through everyone present at the magnitude of this revelation.
-- I grinned. I am very smart!
-"""
-
-
-## Solution
-
-Here are the characters and solution to the current mystery.
-
-"""
-
-### Characters
-{victimName}: Victim. {victimDescription}
+___
+## Characters
+{victimName}: {victimDescription}
 {suspects}
-
-### Solution
-**Murderer**: {murdererName}
-**Motive**: {motive}
-**Opportunity**: {opportunity}
-**Evidence**: {evidence}
-
+---
+## Solution
+{solution}
 """
 
-## Rating rules
-0 stars: the player does not name the true murderer
-1 star: the player provides enough information so the murderer would confess.
-2 star: the player names the murderer, the evidence, and the motive correctly.
-3 star: the player names the murderer, the evidence, the motive, and the opportunity correctly.
+Epilogue events based on the rating:
+0 stars: {star0}
+1 star: {star1}
+2 stars: {star2}
+3 stars: {star3}
 
+Overall structure of your replies:
+- write out the real solution
+- gauge how correct it is
+- rate it
+- write epilogue
 
-Your task: analyze the accusation the player has provided. Then write bullet points for a potential epilogue scene. Based on the rating you've given, the scene unfolds successfully or unsuccessfully (i.e. 0 unsuccessful; 1 barely successful; 2 successful; 3 complete success). You never give away the true solution! You write nothing else.
-You must always follow the provided format.
+Here is an example of an exchange between the player and you:
+"""
+Player: It was John Toillard because he hated his life and wanted to run to America. He left when the butler left him unsupervised and used the newspapers on his desk to make the note. It's clear because no one else could have known or been there.
+You:
+The players solution compared to the real one "It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note." is similar. They have solved it, but are missing some details. 
+Rating: 2 stars  
+Epilogue
+I write a shorthand epilogue from the perspective of Chief constable Wellington who reveals the solution on orders of Sherlock Holmes to the people involved. I write something inspired by detective novels and films and that is satisfying, but also matches the rating:
+- Upon receiving your message I promptly ordered a search of Southampton port
+- We found the young John dirty and frantically trying to escape the constables
+- He was caught and driven home to his parents in an emotional scene
+- I may have shed a tear
+- The Toillards send their deepest thanks and asked me to tell you that more tangible thanks are soon in your mail
+"""
 `;
 
 const fewShotPromptBrain = [
 	new ChatMessage({
 		role: 'user',
-		content: "It was Oliver Smith because he was disappointed Terry's dramatics won over the truth!"
+		content:
+			'It was Lord Baron Toillard. He hired thugs to steal John when he knew John would be alone. He wanted to pay back his debts to the local loan sharks without raising suspicions.'
 	}),
 	new ChatMessage({
 		role: 'assistant',
-		content: `I am a bot for analyzing the accusation from a player. They need murderer, motive, opportunity, and evidence.
-		1) Does **murderer** match the accusation? -- Yes, the murderer is Oliver Smith.
-		2) Is **motive** correct? -- A little, Oliver was upset that Terry was interested more in drama. However, it does not paint the full picture.
-		3) Is **opportunity** correct? -- No, no opportunity was provided.
-		4) Does **evidence** match? -- No evidence was provided.
-		What would be the success-rate of such an accusation be? It would definitely be unsuccessful because everyone knew Terry was like that. No evidence and no opportunity. 
-		#### Rating: 0 Stars
-		#### Epilogue
-		What would happen to me, the chief, if I confronted the suspects like that? A rating of 0 is the worst possible. 
-		- Spotlight shined on me, Wellington, as I gathered the suspects at the crime scene. 
-		- I accused Oliver of murder out of disappointment towards Terry.
-		- The room fell silent, my accusation hanging in the air, they were waiting for more.
-		- Oliver, unfazed, retorted back, questioning the opportunity because Terry was alone for two days.
-		- I came up empty handed.
-		- He asked for any evidence, his voice ridiculing.
-		- I proudly announced the fingerprints in the study!
-		- Awkward silence pervaded the room as I was triumphantly gloating.
-		- Bianca softly said "but everyone's fingerprints were there."
-		- I face-palmed.
-		- Uncomfortable shifting among suspects, eyes darting, some laughter, and doubt filling the room made me crimson red in the cheeks.
-		- I realized: the accusation was a shot in the dark, Sherlock you embarrassed me!`
+		content:
+			'The player\'s solution compared to the real one "It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note." could not be more wrong.\n\nRating: 0 stars\n\nEpilogue:\n- Despite their best efforts, the officers of the law couldn\'t find a single lead.\n- A storm of rumours and panic enveloped Romsey.\n- The whispers reached the local taverns, from the lowly market square to the manicured lawns of the Toillard estate.\n- The shadows kept their stains of concealed terror as young John Toillard remained missing and the ransom money, a stark reminder of his disappearance, lay untouched and uncashed.'
+	}),
+	new ChatMessage({
+		role: 'user',
+		content: 'It was John himself because he just wanted to get away from home and he led them down a wrong trail with the ransom.'
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			'The player\'s solution compared to the real one "It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note." is essentially correct, but lacking in details.\n\nRating: 2 stars\n\nEpilogue:\n- After receiving the theory, we were quick to act.\n- A surprise inspection at the Southampton port retched the truth from its depths.\n- We found young John, his clothes stained with grime and his eyes rooted in fear.\n- Despite the heart-pounding chase, the constables managed to capture him.\n- A heavy curtain of dread lifted off Romsey as news of John\'s safe return spread.\n- The Toillards send their deepest thanks and asked me to tell you that more tangible thanks are soon in your mail.'
+	}),
+	new ChatMessage({
+		role: 'user',
+		content: 'The butler accidentally killed John and buried him in the back yard.'
+	}),
+	new ChatMessage({
+		role: 'assistant',
+		content:
+			"The player's solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is far from accurate.\n\nRating: 0 stars\n\nEpilogue:\n- No matter how much we dug into the matter, the answers we sought remained beyond our reach.\n- The once calm and vibrant New Forest echoed with grim silence that hung heavily over Romsey.\n- John Toillard's absence left a gaping void as unfamiliar as it was painful.\n- As weeks turned into months, the untouched ransom money became a grim reminder of our failure.\n- Our search for truth laid barren, and the mystery of young John's disappearance continued to hang like an albatross over our necks."
 	}),
 	new ChatMessage({
 		role: 'user',
 		content:
-			"It was Oliver Smith because he was shaken to the core when he realized that Terry was chasing big, dramatic stories instead of the truth. Terry's twisting of facts turned Olivers idolization into hatred and he decided to put an end to him by poisoning Terry with cyanide in his ink since he knew his habit of licking it. He placed it there on sunday and engineered it to take its time to dissolve. His second pen proves this as it still contains traces of the poison."
+			'The mother, Adelia Toillard, told him to run away so he could have a better future. She also told the butler who is in on it. She knows where John is so question her.'
 	}),
 	new ChatMessage({
 		role: 'assistant',
-		content: `I am a bot for analyzing the accusation from a player. They need murderer, motive, opportunity, and evidence.
-		1) Does **murderer** match the accusation? -- Yes, the murderer is Oliver Smith.
-
-		2) Is **motive** correct? -- "he was shaken to the core when he realized that Terry was chasing big, dramatic stories instead of the truth. Terry's twisting of facts turned Olivers idolization into hatred" & "Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth." **Match very well.**
-
-		3) Is **opportunity** correct? -- "He placed it there on sunday and engineered it to take its time to dissolve" & "On Sunday, after sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye." **Match very well**
-
-		4) Does **evidence** match? -- "His second pen proves this as it still contains traces of the poison." & "The second pen in his home with traces of cyanide." **Match very well**
-
-		What would be the success-rate of such an accusation be? It would definitely be successful. 
-		#### Rating: 3 stars
-		#### Epilogue
-		What would happen to me, the chief, if I confronted the suspects like that? A rating of 3 is the best possible. 
-		- The room buzzed with anticipation as I pointed my finger at Oliver Smith, laying out his accusation with sharp precision.
-		- A hush fell when I revealed Oliver's disillusionment and the depths it pushed him to, a motive that shocked everyone in the room.
-		- An audible gasp filled the room when I detailed Oliver's calculated method of murder. The cyanide. The ink. Sunday. It all fit too well.
-		- Oliver’s pale face and violent protests only seemed to confirm my accusation even more.
-		- When I pulled the second pen from my coat, it landed like a bombshell, leaving no room for doubt.
-		- Shock rippled through everyone present at the magnitude of this revelation.
-		- I grinned. I am very smart!`
-	}),
-	new ChatMessage({
-		role: 'user',
 		content:
-			"It was Oliver Smith, his integrity for journalism soured his relationship with Terry who didn't care for it. The second pen in his home proves it."
-	}),
-	new ChatMessage({
-		role: 'assistant',
-		content: `I am a bot for analyzing the accusation from a player. They need murderer, motive, opportunity, and evidence.
-		1) Does **murderer** match the accusation? -- Yes, the murderer is Oliver Smith.
-
-		2) Is **motive** correct? -- "his integrity for journalism soured his relationship with Terry who didn't care for it" & "Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth." **Match very well.**
-
-		3) Is **opportunity** correct? -- No specific opportunity was mentioned. 
-
-		4) Does **evidence** match? -- "The second pen in his home proves it." & "The second pen in his home with traces of cyanide." **Match very well**
-
-		What would be the success-rate of such an accusation be? It would be slightly successful, as the motive and evidence match but opportunity is missing.
-		#### Rating: 2 stars
-		#### Epilogue
-		What would happen to me, the chief, if I confronted the suspects like that? A rating of 2 means it is successful. 
-		- I called everyone to the crime scene, my voice filled with authority.
-		- With a sense of confidence, I accused Oliver and everyone's heads shot to him, looking him up and down.
-		- I explained his idolization collided with his internal moral compass and it led to a devious plan, poisoning him with cyanide.
-		- Oliver blanched, but composed himself and asked when he was supposed to have had the opportunity to do this.
-		- I said that I did not know (because you did not tell me Sherlock!), but I pulled out the second pen in a plastic bag.
-		- I think everyone heard him swallow and they knew it was over.
-		- He dropped his head and admitted everything. My boys took him away.
-		- I did very well, I am proud!  `
+			'The player\'s solution compared to the real one "It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note." is incorrect, as John acted alone.\n\nRating: 0 stars\n\nEpilogue:\n- Despite the countless hours of investigation and a sea of theories, we remained entangled in this webs of perplexity.\n- The peaceful woodland of New Forest now bore the silent screams of a mystery unsolved.\n- The smiles around Romsey were marred with unuttered questions.\n- The ransom money sat untouched, a testament to a case that gnawed at us with every passing day.\n- Young John was never found again and his mercurial fate kept the town locked in a perpetual somber air.'
 	}),
 	new ChatMessage({
 		role: 'user',
-		content: 'It was olver, hje had apen with poison at hoime.'
+		content: 'it was his brother who accidentally killed him with poison'
 	}),
 	new ChatMessage({
 		role: 'assistant',
-		content: `I am a bot for analyzing the accusation from a player. They need murderer, motive, opportunity, and evidence.
-		1) Does **murderer** match the accusation? -- Yes, the murderer is Oliver Smith.
-		2) Is **motive** correct? -- No motive was provided.
-		3) Is **opportunity** correct? -- No opportunity was provided.
-		4) Does **evidence** match? -- "he had a pen with poison at home" & "The second pen in his home with traces of cyanide." **Match very well.**
-		What would be the success-rate of such an accusation be? It would be partially successful, as the evidence matches but motive and opportunity are missing.
-		#### Rating: 1 star
-		#### Epilogue
-		What would happen to me, the chief, if I confronted the suspects like that? A rating of 1 means it is barely successful. 
-		- I called everyone to the crime scene, my voice filled with authority.
-		- With a sense of confidence, I accused Oliver and everyone's heads shot to him, looking him up and down.
-		- I mentioned that Oliver had a pen with poison at home, and I held up the second pen as evidence.
-		- The room grew quiet, awaiting further details about the motive and opportunity.
-		- But I stumbled there, as I couldn't provide clear reasoning for his motives or opportunities.
-		- Oliver, with a shaky smirk, denied the accusation, pointing out the lack of substantial evidence against him.
-		- I realized that without providing a motive or opportunity, my accusation fell a bit short.
-		- Embarrassed, I told my boys to book him. I told him, he can smirk at the jury, who will sort him out.`
-	}),
-	new ChatMessage({
-		role: 'user',
-		content: 'It was Oliver Smith oingo boingo'
-	}),
-	new ChatMessage({
-		role: 'assistant',
-		content: `I am a bot for analyzing the accusation from a player. They need murderer, motive, opportunity, and evidence.
-1) Does **murderer** match the accusation? -- Yes, the murderer is Oliver Smith.
-2) Is **motive** correct? -- No, no motive was provided.
-3) Is **opportunity** correct? -- No, no opportunity was provided.
-4) Does **evidence** match? -- No evidence was provided.
-What would be the success-rate of such an accusation be? It would definitely be unsuccessful because everyone knew Terry was like that. No evidence and no opportunity. 
-#### Rating: 0 Stars
-#### Epilogue
-What would happen to me, the chief, if I confronted the suspects like that? A rating of 0 is the worst possible. 
-- Spotlight shined on me, Wellington, as I gathered the suspects at the crime scene. 
-- I accused Oliver because Terry hated Oingo Boingo.
-- The room fell silent, my accusation hanging in the air, they were waiting for more.
-- "The band?" someone asked, flabbergasted.
-- Oliver, unfazed, retorted back, questioning the opportunity because Terry was alone for two days.
-- I came up empty handed.
-- He asked for any evidence, his voice ridiculing.
-- I had nothing.
-- Awkward silence pervaded the room, I fidgeted.
-- Bianca softly said "I don't know that anyone is so passionate about Oingo Boing as to kill someone."
-- I was not sure.
-- Uncomfortable shifting among suspects, eyes darting, some laughter, and doubt filling the room made me crimson red in the cheeks.
-- I realized: the accusation was a shot in the dark, Sherlock you embarrassed me!`
-	}),
-	new ChatMessage({
-		role: 'user',
-		content: 'It was Angela Videl.'
-	}),
-	new ChatMessage({
-		role: 'assistant',
-		content: `I am a bot for analyzing the accusation from a player. They need murderer, motive, opportunity, and evidence.
-1) Does **murderer** match the accusation? -- No, it was not Angela Videl.
-2) Is **motive** correct? -- No, no motive was provided.
-3) Is **opportunity** correct? -- No, no opportunity was provided.
-4) Does **evidence** match? -- No evidence was provided.
-What would be the success-rate of such an accusation be? It would definitely be unsuccessful because nothing is provided. 
-#### Rating: 0 Stars
-#### Epilogue
-What would happen to me, the chief, if I confronted the suspects like that? A rating of 0 is the worst possible. 
-- I entered the crime scene guns blazing, metaphorically. 
-- I was smoking a cigar as I nonchalantly pointed at Angela Videl.
-- "It was you," I said.
-- All their looks shot at Videl, whose face twisted into shock.
-- "How dare you," she shouted. "I would never." 
-- Suddenly, her anger turned into big tears. Bianca started consoling her. 
-- Bianca retorted, questioning the motive.
-- I said their rivalry was the root.
-- They called it preposterous. 
-- What of opportunity and evidence they cried.
-- I realized at that point you forgot to tell me that.
-- They all left escorting the crying Videl. O'Ranner put his hand on my shoulder as he was leaving: "That was awful."
-- Sherlock you embarrassed me!	
-		`
+		content:
+			'The player\'s solution compared to the real one "It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note." is incorrect.\n\nRating: 0 stars\n\nEpilogue:\n- The enigmatic disappearance of young John Toillard managed to elude us at every turn.\n- The woods of New Forest held tight to their secrets, leaving us with only questions and fleeting hopes.\n- The ransom money lay forgotten and untouched, a haunting echo of the unresolved mystery.\n- Romsey remained shrouded in disquiet, the absence of John casting a lingering shadow over the community.'
 	})
 ];
-
 const userTemplate = '{text}';
 
 export function createAccusePrompt(fewShots: ChatMessage[] | null) {

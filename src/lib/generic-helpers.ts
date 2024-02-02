@@ -5,3 +5,11 @@ export function shuffleArray<T>(array: T[]) {
 	}
 	return array;
 }
+
+export function convertToSnakeCaseEnhanced(str: string): string {
+	return str
+		.replace(/'|"/g, '')
+		.split(/(?=[A-Z])|\s+/)
+		.join('_')
+		.toLowerCase();
+}
