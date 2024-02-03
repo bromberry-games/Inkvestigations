@@ -73,7 +73,11 @@ export async function loadMysteryLetterInfo(userid: string, mystery: string) {
 }
 
 export async function loadMysteriesWithSolved(userId: string) {
-	const { error, data } = await supabase_full_access.from('mysteries').select('*, solved(rating)').eq('solved.user_id', userId);
+	const { error, data } = await supabase_full_access
+		.from('mysteries')
+		.select('*, solved(rating)')
+		.eq('solved.user_id', userId)
+		.order('order_int', { ascending: true });
 	if (error) {
 		console.error(error);
 		return error;
