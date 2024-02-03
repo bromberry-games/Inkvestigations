@@ -194,7 +194,7 @@
 						</button>
 						<textarea
 							data-testid="chat-input"
-							class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary"
+							class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary {accuseMode ? 'shadow-xl shadow-red-500' : ''}"
 							rows="1"
 							placeholder={placeholderText}
 							use:textareaAutosizeAction
