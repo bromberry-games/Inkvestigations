@@ -30,9 +30,12 @@
 						alt={suspect.name}
 					/>
 				</div>
-				<Textarea autoResize class="w-full" placeholder="Enter notes..." bind:value={notes[suspect.name]}></Textarea>
+				<div class="flex h-full w-full flex-col">
+					<p class="sm:text-md font-secondary md:text-xl">{suspect.name}</p>
+					<textarea class="h-full w-full" placeholder="Enter notes..." bind:value={notes[suspect.name]} rows="2" use:textareaAutosizeAction
+					></textarea>
+				</div>
 			</div>
-			<p class="sm:text-md md:text-lg">{suspect.name}</p>
 		{/each}
 	</div>
 </Modal>
