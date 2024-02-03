@@ -1,5 +1,4 @@
-import { FakeListLLM } from 'langchain/llms/fake';
-import { FakeListChatModel } from 'langchain/chat_models/fake';
+import { FakeListChatModel } from '@langchain/core/utils/testing';
 import type { LLMResult } from 'langchain/schema';
 
 export function createFakeLetterLLM(onResponseGenerated: (input: string) => Promise<any>): FakeListChatModel {
@@ -18,8 +17,8 @@ export function createFakeLetterLLM(onResponseGenerated: (input: string) => Prom
 	});
 }
 
-export function createFakeBrainLLM(): FakeListLLM {
-	return new FakeListLLM({
+export function createFakeBrainLLM() {
+	return new FakeListChatModel({
 		responses: [
 			`We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery. 
 				The player has asked me to search the house.
