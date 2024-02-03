@@ -113,7 +113,7 @@ test('test try for free', async ({ page, isMobile }) => {
 	await fillOutSingupFormConfirmMailLogin(page, isMobile);
 	await expect(page.locator('#avatar-menu')).toBeVisible();
 
-	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
+	await page.getByRole('link', { name: 'Forced Farewell ☆ ☆ ☆' }).click();
 	await expect(page.getByText('Police chief:').nth(1)).toBeVisible();
 });
 

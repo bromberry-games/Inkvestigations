@@ -1,5 +1,5 @@
 INSERT INTO mysteries 
-(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings) 
+(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings, order_int) 
 VALUES (
 'Mirror Mirror',
 'A journalist is found dead. But nobody knows what happened.',
@@ -27,7 +27,8 @@ ROW(
         'make something up',
         'make something up',
         'make something up'
-    )::star_ratings
+    )::star_ratings,
+    2
 );
 
 INSERT INTO suspects (mystery_id, name, description)
@@ -122,7 +123,7 @@ where
 
 Insert INTO for_free_users (amount, daily_limit) VALUES (5, 5);
 
-INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings) VALUES (
+INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings, order_int) VALUES (
     'Forced Farewell',
     'A boy is found missing.',
     'escape and transformation',
@@ -186,6 +187,7 @@ ROW(
         'John is caught in the Southampton port dirty and frantically trying to get away. He is returned to the parents.',
         'John is caught without problems and confesses everything in an emotional scene.'
     )::star_ratings
+    ,1
 );
 
 INSERT INTO suspects (mystery_id, name, description)

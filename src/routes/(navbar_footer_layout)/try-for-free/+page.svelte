@@ -15,7 +15,7 @@
 		});
 	}
 	$: if (getAuthStatus(data.session) == AuthStatus.AnonymousLogin) {
-		goto('/Mirror_Mirror');
+		goto('/Forced_Farewell');
 	}
 </script>
 

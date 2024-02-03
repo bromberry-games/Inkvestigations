@@ -175,6 +175,7 @@ export interface Database {
           letter_info: string
           letter_prompt: string
           name: string
+          order_int: number
           setting: string
           solution: string | null
           star_ratings:
@@ -193,6 +194,7 @@ export interface Database {
           letter_info: string
           letter_prompt: string
           name: string
+          order_int?: number
           setting: string
           solution?: string | null
           star_ratings?:
@@ -211,6 +213,7 @@ export interface Database {
           letter_info?: string
           letter_prompt?: string
           name?: string
+          order_int?: number
           setting?: string
           solution?: string | null
           star_ratings?:
