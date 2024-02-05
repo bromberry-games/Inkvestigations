@@ -204,15 +204,26 @@ VALUES
 INSERT INTO action_clues (mystery_id, action, clue)
 VALUES
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogate Toillard household', 'create a line for each suspect about how worried they are'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search house', 'there is shattered glass at a garden door; John''s room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; the ransom note'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search house', 'the estate is remote and surrounded by a garden and then by thick forest behind it, there is shattered glass at a garden door; John''s room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; there is a ransom note'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Who was in the house when the boy disappeared', 'there was no one in the house, the butler says it was an emergency and that''s he left him alone'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'How much did the Baron owe', 'after a certain amount of circumlocution, he says that it was certainly hundreds of times more than the ransom'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Who could have known John would be alone', 'it was not planned so no one could have known in advance, but it was apparent that he was left at home when the Toillards arrived in Romsey'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'people who left the garden party', 'it was only going into full swing when the doctor stormed in, no one had left at that point'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Investigate ransom note', 'it''s old newspaper cutouts demanding that on Monday July 18 £13.2 be posted to the following address in London: 4 Patterson Street'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Searching 4 Patterson Street in London', 'in that apartment lives a Mary Ann Woodcock and her daughters Hannah and Anna. Her husband Methusalem Woodcock is a sailor and has been at sea for months'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogate Butler Jessob', 'he says he was tending to the sickly John who seemed to be getting worse, so he rode out to fetch the local doctor, they couldn''t have been gone more than an hour; and when they returned they searched everywhere, but couldn''t find John; so Jessob sent the doctor to ride for Romsey to inform the Toillards'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Jessob and his relationship to the boy', $$ as I'm rather young I've come to think of the boy as my little brother, I care for him dearly and we talked about all sorts of topics: America, steam engines, and geography. He knows much more than me already. What a bright young man he is. I'm going mad with guilt. I didn't mean to let it come to this.$$),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search John''s room', 'all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Questioning Baron Toillard whom he suspects', 'he suspects "The Lad" Johnson because he borrowed money from The Lad, but it''s peculiar that the ransom is much less than he borrowed from The Lad'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search the estate and the surroundings', 'no clues as there wasn''t any rain for footprints and they seem very careful not to leave any tracks'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Questioning the family if they know of Sherlock Holmes', 'they say that obviously everyone''s heard of him since he solved the murder of the Cleveland man, John was particularly amazed by the The Book of Life and he chewed their ears off about it'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogating William Johnson', 'he lent money to the Baron, but he says he has other was of getting money back fair and square, and that he doesn''t have to rely on stealing children; besides it''s much much less than he''s owed');
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question ', 'says he doesn''t even know who the boy is, is furious at this suspicion'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Strickmeyer', 'says he doesn''t even know who the boy is, is furious at this suspicion'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Alice or Arthur', $$ Alice is very shy and doesn't seem to understand what all the tension is about. Arthur doesn't grasp the situation either, thinks John went out for fun and will come back soon.$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Lady Toillard', 'cathartic with grief, it''s hard getting anything out of her, appears to think John is already dead'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Jameson', 'He is quite distressed as he cared for the boy for all the thirteen years, was urgently called by Jessob, then found the boy missing, rushed to Romsey and that was that'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question William Johnson', 'he lent money to the Baron, but he says he has other ways of getting money back legally, and that he doesn''t have to rely on stealing children; besides it''s much much less than he''s owed');
+
 
 INSERT INTO timeframes (mystery_id, timeframe, event_happened)
 VALUES
@@ -221,8 +232,8 @@ VALUES
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '13:00PM', 'The butler leaves to fetch a doctor'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '13:30PM', 'The butler and the doctor return to find a mess in the apartment.'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '14:15PM', 'After a thorough search, the doctor leaves to inform Lord Toillard.'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '15:00PM', 'The doctor reaches Lord Toillard and he contacts the chief constable Smith'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '15:45PM', 'Lord Toillard, Smith and a few officers arrive at the estate');
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '15:00PM', 'The doctor reaches Lord Toillard and he contacts the chief constable Wellington'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '15:45PM', 'Lord Toillard, Wellington and a few officers arrive at the estate');
 
 
 
@@ -275,15 +286,15 @@ PPps: I won't sign my name any more, as you know who I am, and so that I don't h
 
 25.3.1889
 Dear diary,
-today was another dreadful day. Sometimes the air in the house is reminiscent of the time we went through the Marsh Lane Tunnel some years ago. We were no strangers to locomotives and I particularly enjoyed them. But people were always telling us to beware the tunnel. After a scenic journey it was time to enter the it and all my excitement vanished. We were swallowed by near total darkness and drowned in the thundering of the locomotive, and the heat of steam about us all. Many women screamed, and I felt the need to claw at my skin. I imagine that is what hell must be like. And though it was just steam and you could move normally, I felt as if I was in a thick cloud of languor. That is what this house is like often.
+today was another dreadful day. Sometimes the air in the house is reminiscent of the time we went through the Marsh Lane Tunnel some years ago. We are no strangers to locomotives and I, particularly, love them. Though people have always spoken of that tunnel with a horror, I couldn't imagine how anyone could be terrified by a tunnel. Riding in the locomotive, after a beautiful journey through the low rolling land, it was time to enter the Marsh Lane and all my excitement vanished as we were swallowed by near total darkness. Suddenly we drowned in the thundering of the engines, echoing all around us, and were trapped by the heat of steam about us all. Many women screamed and swooned, and I felt the sudden urge to claw at my skin. My father laughed about it afterwards. Still, I imagine that is what hell must be like. And though it was just steam and you could move normally, I felt as if I was in a stone wall cage. That is what this house is like often.
 
-26.3.1889
+29.3.1889
 Dear Diary,
-I have decided to take Jessob's words to heart. You are only a place for greatness, so I will avoid any and all dark writing such as yesterday's. Today I will write about the New World. America is now only £13 away with the steamboats. Though father and his friends sneer at it and call it Wild World, one only has to look at the paper. With a dollar in your pocket, you can become anyone you want and achieve anything you want. That's only 20 pence! I don't mind what they say that it has no culture and no history, neither does my father! They tease him, too, on the novelty of his title. And if one were to get a whiff of his culture, it would reek of brandy. 
+I have decided to take Jessob's words to heart. You are only a place for greatness, so I will avoid any and all dark writing such as yesterday's. I forgot to write in you for some days, but I will be more disciplined from now. You see, I was busier than usual with my studies since mother was in a terrible excitement with public school not far off. I will be starting at Eton after the summer. She tells me we're Lords only in title and that prudent stewardship is a necessary prerequisite to be a real Lord. We can only afford one tutor now, who instructs me in the usual subjects and then I must make a point of passing on my knowledge to my brother. That is quite exhausting as he really doesn't seem to grasp my explanations.
 
 2.4.1889
 Dear Diary,
-I forgot to write in you for some days, but I will be more disciplined from now. You see, I was busier than usual with my studies since mother was in a terrible excitement with public school not far off. I will be starting at Eton after the summer. She tells me we're Lords only in title and that prudent stewardship is a necessary prerequisite to be a real Lord. We can only afford one tutor now, who instructs me in the usual subjects and then I must make a point of passing on my knowledge to my brother. That is quite exhausting as he really doesn't seem to grasp my explanations.
+Today I will write about the New World. Though father and his friends sneer at it and call it Wild West, one only has to look at the paper. All those grand machines and things they are discovering... With a dollar in your pocket, you can become anyone you want and achieve anything you want. That's only 20 pence! I don't mind what they say that it has no culture and no history, neither does my father! They tease him, too, on the novelty of his title. And if one were to get a whiff of his culture, it would reek of brandy.
 
 12.4.1889
 Dear Diary,
