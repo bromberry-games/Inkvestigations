@@ -116,6 +116,8 @@ function createLetterModel(onResponseGenerated: (input: string) => Promise<any>,
 		{
 			handleLLMEnd: async (output: LLMResult) => {
 				await onResponseGenerated(output.generations[0][0].text);
+				//Delay for 3 secs
+				// await new Promise((r) => setTimeout(r, 3000));
 			},
 			handleLLMError: async (error: Error) => {
 				console.log('llm error: ', error);
