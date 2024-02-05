@@ -10,7 +10,8 @@ Dear Mr. Holmes,
 
 your reputation for an interest in curious cases reaches far and wide. I have a case on my hands that might pique your interest.
 
-Michael Terry, a prominent resident, met a bizarre and gruesome end, thrown through the mirror in his own study. The timing of this macabre incident is uncanny, as it occurred just before a meeting with the disgraced politician, Dexter Tin, who had a score to settle with Terry. However, he had been alone over the weekend. No signs of forced entry, no struggle, and a method that defies logic. This is no ordinary crime. In addition to Tin, our prime suspect, we have a web of connections, including Terry's closest: his best friend Bianca White and his devoted fan turned apprentice Oliver Smith. Also His long-time maid Maria Payton. On top of that, there's the rivalry with columnist Angela Videl and the retired detective, Peter O'Ranner, who occasionally assisted Terry.
+Michael Terry, a prominent resident, met a bizarre and gruesome end, thrown through the mirror in his own study. The timing of this macabre incident is uncanny. On monday he was found before a meeting with the politician he disgraced in one of his articles, Dexter Tin. However, he had been alone the whole weekend. No signs of forced entry, no struggle, and a method that defies logic. It's a locked, remote house mystery! 
+In addition to Tin, our prime suspect, we have a web of connections, including Terry's closest: his best friend Bianca White and his devoted fan turned apprentice Oliver Smith. Also His long-time maid Maria Payton, who discovered him. On top of that, there's the rivalry with columnist Angela Videl and the retired detective, Peter O'Ranner, who occasionally assisted Terry.
 
 We have been stumped, I must admit, so I will do anything you demand. 
 
