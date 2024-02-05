@@ -6,7 +6,31 @@ VALUES (
 'pride and shame',
 'England in the 1930s',
 $$
-Michael Terry, a prominent resident, met a bizarre and gruesome end – thrown through the mirror in his own study. The timing of this macabre incident is uncanny, as it occurred just before a meeting with the disgraced politician, Dexter Tin, who had a score to settle with Terry. No signs of forced entry, no struggle, and a method that defies logic – this is no ordinary crime. We have a web of connections, including Terry's best friend Bianca White, his devoted fan turned apprentice Oliver Smith, and his long-time maid Maria Payton. On top of that, there's the rivalry with columnist Angela Videl and the retired detective, Peter O'Ranner, who occasionally assisted Terry.
+Dear Mr. Holmes, 
+
+your reputation for an interest in curious cases reaches far and wide. I have a case on my hands that might pique your interest.
+
+Michael Terry, a prominent resident, met a bizarre and gruesome end, thrown through the mirror in his own study. The timing of this macabre incident is uncanny, as it occurred just before a meeting with the disgraced politician, Dexter Tin, who had a score to settle with Terry. However, he had been alone over the weekend. No signs of forced entry, no struggle, and a method that defies logic. This is no ordinary crime. In addition to Tin, our prime suspect, we have a web of connections, including Terry's closest: his best friend Bianca White and his devoted fan turned apprentice Oliver Smith. Also His long-time maid Maria Payton. On top of that, there's the rivalry with columnist Angela Videl and the retired detective, Peter O'Ranner, who occasionally assisted Terry.
+
+We have been stumped, I must admit, so I will do anything you demand. 
+
+Some things you can ask of me are:
+
+			- Question a suspect
+			- Inspect something we have found
+			- Search a location
+      - Analyze a clue
+
+To familiarize yourself with the people involved in this case, I have attached their pictures in the lower left corner. When you are certain you know who it was, you can solve it by changing the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
+
+			- Motive
+			- Opportunity
+			- Evidence
+
+I hope you can lend your mind in this most serious matter.
+
+William Wellington,
+Zlockingbury Chief of Police. 
 $$,
 $$
 Your name is William Wellington, the police chief of Zlockingbury. You live in a moderately sized city set in the beginning of the 20th century in England. You talk like a noir cop and use metaphors often. Michael Terry was found dead, thrown through the mirror in his study. His maid called the police, but before we had arrived, the politician Dexter Tin was there. He was supposed to have a meeting with Terry. Three days prior, Terry held a party at his house, but between then and his death he should have been alone until his appointment with Mr. Tin. There is no sign of struggle or forced entry, but a suicide is unlikely because the method is so gruesome and strange.
@@ -129,13 +153,34 @@ INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_pr
     'escape and transformation',
     'the woods of the New Forest near Romsey in the year 1889',
     $$
+Dear Mr. Sherlock Holmes,
+
 I hope this letter finds you well and swiftly. My name is William Wellington, and I am the chief constable in our little town of Romsey. I write to you personally because we have read of your success in the case of the murders of Drebber and Stangerson in the papers. I confess, however, that what I am writing to you about is nothing like what you have encountered in London. A boy, John Toillard, the age of thirteen, was stolen from his home. The boy is Lord Baron Toillard's heir, so you understand if I'm writing to you with great urgency. I dearly hope you will read on and lend your mind so that we may solve this quickly.
 
 On the morn of Thursday July 14th, Lord Toillard and his family left their estate for a social function in the city. John Toillard was left at home because he was feeling unwell, a catarrh coming on, seemingly. It was not serious according to them, but as it was out of season they feared something worse and Lord Toillard left his son to recover under the care of their butler, Jessob.
 
 They left their estate around 10AM, and were attending a garden party with the local gentry, here in Romsey. Suddenly, around 3PM their local doctor hurried to them at the event. At first they feared John had taken a turn for the worse, but it was more sinister than that as you know. Their butler Jessob had left to fetch the doctor as John did indeed seem to get worse, but upon their return the estate was in disarray and the boy gone. After a thorough search they failed to locate the boy. They did, however, find a note demanding a ransom of £13,2; a peculiar sum indeed. Lord Toillard contacted me. I, in turn, contacted you immediately after seeing the home with my own eyes.
 
-The article said you make quick work of mysteries by simply reading or hearing about it. I hope what they write is true and that your deductive analysis matches the praise.
+The article said you make quick work of mysteries by simply reading or hearing about it. I hope what they write is true and that your deductive analysis matches the praise. I will of course, follow your orders to the letter. 
+
+Some things you can ask of me are:
+
+			- Question a suspect
+			- Inspect something we have found
+			- Search a location
+
+			To familiarize yourself with the people involved in this case, I have attached their pictures in the lower left corner. When you are certain you know who it was, you can solve it by changing the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
+
+			- Motive
+			- Opportunity
+			- Evidence
+
+			I hope you can lend your mind in this most serious matter.
+
+			William Wellington,
+
+			Chief constable of Romsey
+
 $$,
 $$
 Your name is William Wellington and you are the chief constable of Romsey, a small town in the south of England. And your writing should reflect the period, use the style of Arthur Conan Doyle as inspiration. It is 1889 in Victorian era England. John Toillard, a boy the age of 13, has been abducted. His father is Lord Baron Charles Toillard, so it is especially urgent. On the morn of Thursday July 14th, Lord Toillard and his family left their estate for a social function in the city. John Toillard was left at home because he was feeling unwell, a catarrh coming on, seemingly. It was not serious according to them, but as it was out of season they feared something worse and Lord Toillard left his son to recover under the care of their butler, Jessob.
