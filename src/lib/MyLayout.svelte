@@ -36,7 +36,7 @@
 
 <Navbar let:hidden let:toggle let:NavContainer class="sticky top-0 w-full !bg-transparent " id="nav">
 	<NavContainer class="mx-auto flex flex-wrap items-center justify-between">
-		<NavBrand href="/" class="sm:1/6 md:1/4 xl:w-1/2">
+		<NavBrand href={authStatus == AuthStatus.LoggedIn ? '/home' : '/'} class="sm:1/6 md:1/4 xl:w-1/2">
 			<Logo class="h-16 w-40 font-tertiary md:w-60 lg:w-80"></Logo>
 		</NavBrand>
 		<div class="flex items-center md:order-2">
