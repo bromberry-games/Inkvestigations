@@ -1,5 +1,5 @@
 INSERT INTO mysteries 
-(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings, order_int) 
+(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings) 
 VALUES (
 'Mirror Mirror',
 'A journalist is found dead. But nobody knows what happened.',
@@ -23,12 +23,11 @@ After sleeping over after the party, he had time to slip into the study and plac
 The second pen in his home with traces of cyanide.
 $$,
 ROW(
-        'make something up',
-        'make something up',
-        'make something up',
-        'make something up'
-    )::star_ratings,
-    2
+        'Angela Videl publishes a sincere and heartfelt farewell to her colleague. Some frustration about the failure of the investigators is visible.',
+        'Oliver is arrested though he protests it. Everyone is divided between complete disbelief and not being surprised at all. Maria Payton comments that it is old wisdom that the biggest love may lead to the strongest anger.',
+        'Oliver breaks down under the accusation. He falls to the ground admitting his crime. But he shouts that if Terry had shown any kind of regret he would have forgiven him.',
+        'All heads shoot to Oliver. Blanched and shaking he tries to move backwards but his back is against the wall. He slides down and admits it, head in his hands. Terry misused his influence, showing no regard for the people that were affected. Since becoming his apprentice, he had witnessed how Terry literally made up articles out of thin air, and the results always somehow helped Terry. Oliver looked Wellington in the eyes and says that he would do it again.'
+    )::star_ratings
 );
 
 INSERT INTO suspects (mystery_id, name, description)
@@ -123,7 +122,7 @@ where
 
 Insert INTO for_free_users (amount, daily_limit) VALUES (5, 5);
 
-INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings, order_int) VALUES (
+INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings) VALUES (
     'Forced Farewell',
     'A boy is found missing.',
     'escape and transformation',
@@ -187,7 +186,6 @@ ROW(
         'John is caught in the Southampton port dirty and frantically trying to get away. He is returned to the parents.',
         'John is caught without problems and confesses everything in an emotional scene.'
     )::star_ratings
-    ,1
 );
 
 INSERT INTO suspects (mystery_id, name, description)
