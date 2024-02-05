@@ -3,7 +3,6 @@
 	import { updateMessageCounter, messageAmountStore } from '$misc/stores';
 	import {
 		Avatar,
-		Button,
 		Dropdown,
 		DropdownDivider,
 		DropdownHeader,
@@ -17,7 +16,6 @@
 	import Logo from '/src/images/logo_2.svg?component';
 	import type { Session, SupabaseClient } from '@supabase/supabase-js';
 	import { AuthStatus, getAuthStatus } from './auth-helper';
-	import NavContainer from 'flowbite-svelte/NavContainer.svelte';
 	import { onMount } from 'svelte';
 
 	export let supabase: SupabaseClient;
