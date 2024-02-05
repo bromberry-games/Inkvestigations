@@ -16,16 +16,16 @@ We have been stumped, I must admit, so I will do anything you demand.
 
 Some things you can ask of me are:
 
-			- Question a suspect
-			- Inspect something we have found
-			- Search a location
-      - Analyze a clue
+- Question a suspect
+- Inspect something we have found
+- Search a location
+- Analyze a clue
 
 To familiarize yourself with the people involved in this case, I have attached their pictures in the lower left corner. When you are certain you know who it was, you can solve it by changing the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
 
-			- Motive
-			- Opportunity
-			- Evidence
+- Motive
+- Opportunity
+- Evidence
 
 I hope you can lend your mind in this most serious matter.
 
@@ -165,21 +165,20 @@ The article said you make quick work of mysteries by simply reading or hearing a
 
 Some things you can ask of me are:
 
-			- Question a suspect
-			- Inspect something we have found
-			- Search a location
+- Question a suspect
+- Inspect something we have found
+- Search a location
 
-			To familiarize yourself with the people involved in this case, I have attached their pictures in the lower left corner. When you are certain you know who it was, you can solve it by changing the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
+To familiarize yourself with the people involved in this case, I have attached their pictures in the lower left corner. When you are certain you know who it was, you can solve it by changing the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
 
-			- Motive
-			- Opportunity
-			- Evidence
+- Motive
+- Opportunity
+- Evidence
 
-			I hope you can lend your mind in this most serious matter.
+I hope you can lend your mind in this most serious matter.
 
-			William Wellington,
-
-			Chief constable of Romsey
+William Wellington,
+Chief constable of Romsey
 
 $$,
 $$
