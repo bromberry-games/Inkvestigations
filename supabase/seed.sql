@@ -22,7 +22,7 @@ Some things you can ask of me are:
 - Search a location
 - Analyze a clue
 
-To familiarize yourself with the people involved in this case, I have attached their pictures in the lower left corner. When you are certain you know who it was, you can solve it by changing the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
+You can see the characters in your notes panel next to your input window. I have also provided you with space to take notes next to their pictures. When you are ready, you can solve this case by tapping on "write" to change the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
 
 - Motive
 - Opportunity
@@ -162,7 +162,7 @@ On the morn of Thursday July 14th, Lord Toillard and his family left their estat
 
 They left their estate around 10AM, and were attending a garden party with the local gentry, here in Romsey. Suddenly, around 3PM their local doctor hurried to them at the event. At first they feared John had taken a turn for the worse, but it was more sinister than that as you know. Their butler Jessob had left to fetch the doctor as John did indeed seem to get worse, but upon their return the estate was in disarray and the boy gone. After a thorough search they failed to locate the boy. They did, however, find a note demanding a ransom of £13,2; a peculiar sum indeed. Lord Toillard contacted me. I, in turn, contacted you immediately after seeing the home with my own eyes.
 
-The article said you make quick work of mysteries by simply reading or hearing about it. I hope what they write is true and that your deductive analysis matches the praise. I will of course, follow your orders to the letter. 
+The article said you make quick work of mysteries by simply reading or hearing about it.  I hope what they write is true and that your deductive analysis matches the praise. I will of course, follow your orders to the letter. 
 
 Some things you can ask of me are:
 
@@ -170,7 +170,7 @@ Some things you can ask of me are:
 - Inspect something we have found
 - Search a location
 
-To familiarize yourself with the people involved in this case, I have attached their pictures in the lower left corner. When you are certain you know who it was, you can solve it by changing the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
+You can see the characters in your notes panel next to your input window. I have also provided you with ample space to take notes next to their pictures. When you are ready, you can solve this case by tapping on "write" to change the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
 
 - Motive
 - Opportunity
