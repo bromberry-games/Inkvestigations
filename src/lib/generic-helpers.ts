@@ -13,3 +13,8 @@ export function convertToSnakeCaseEnhanced(str: string): string {
 		.join('_')
 		.toLowerCase();
 }
+
+// This might be a problem with touch laptops? But for now I don't care
+export function isMobile(navigator: Navigator) {
+	return navigator.maxTouchPoints > 0;
+}

@@ -16,6 +16,7 @@
 	import Timer from '../../routes/(navbar_only)/[slug]/timer.svelte';
 	import { AuthStatus } from '$lib/auth-helper';
 	import { textIsTooLong } from '$lib/message-conversation-lengths';
+	import { isMobile } from '$lib/generic-helpers';
 
 	const dispatch = createEventDispatcher();
 
@@ -143,7 +144,7 @@
 			return;
 		}
 
-		if (event.key === 'Enter' && !event.shiftKey) {
+		if (!isMobile(navigator) && event.key === 'Enter' && !event.shiftKey) {
 			handleSubmit();
 		}
 	}
