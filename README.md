@@ -1,4 +1,8 @@
 # Inkvestigations
+<p align="center">
+  <img src="/assets/logo.png" width="50%" height="auto">
+</p>
+
 
 Inkvestigations is a webgame using LLM technology (currently GPT) to create interactive mystery games. 
 
