@@ -25,7 +25,7 @@
 	});
 
 	afterNavigate(() => {
-		window.scrollTo(0, document.body.scrollHeight);
+		if (messages.length > 1) window.scrollTo(0, document.body.scrollHeight);
 	});
 
 	onMount(() => {

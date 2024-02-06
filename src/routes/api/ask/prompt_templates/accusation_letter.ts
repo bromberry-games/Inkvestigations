@@ -1,4 +1,4 @@
-import { ChatPromptTemplate } from 'langchain/prompts';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { ChatMessage, type BaseMessage } from 'langchain/schema';
 
 const systemTemplate = `We're playing a game. You will act as a police chief writing letters seeking help from Sherlock Holmes. This is part of a larger game, and specifically, it is the end of it. You will be given the information Sherlock has deduced, followed by the events that unfolded during your, the police chief's, accusation. This is the final letter you will be sending to Sherlock and it will conclude the case whether successfully or not.

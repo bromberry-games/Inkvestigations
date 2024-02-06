@@ -3,7 +3,6 @@
 	import { updateMessageCounter, messageAmountStore } from '$misc/stores';
 	import {
 		Avatar,
-		Button,
 		Dropdown,
 		DropdownDivider,
 		DropdownHeader,
@@ -17,7 +16,6 @@
 	import Logo from '/src/images/logo_2.svg?component';
 	import type { Session, SupabaseClient } from '@supabase/supabase-js';
 	import { AuthStatus, getAuthStatus } from './auth-helper';
-	import NavContainer from 'flowbite-svelte/NavContainer.svelte';
 	import { onMount } from 'svelte';
 
 	export let supabase: SupabaseClient;
@@ -36,12 +34,8 @@
 
 <Navbar let:hidden let:toggle let:NavContainer class="sticky top-0 w-full !bg-transparent " id="nav">
 	<NavContainer class="mx-auto flex flex-wrap items-center justify-between">
-		<!-- navDivClass="mx-auto flex flex-wrap justify-between items-center" -->
-		<NavBrand href="/" class="sm:1/6 md:1/4 xl:w-1/2">
-			<Logo class="h-16 w-60 font-tertiary"></Logo>
-			<!-- <div class="inline font-tertiary" id="logo-container"> -->
-			<!-- {@html logo} -->
-			<!-- </div> -->
+		<NavBrand href={authStatus == AuthStatus.LoggedIn ? '/home' : '/'} class="sm:1/6 md:1/4 xl:w-1/2">
+			<Logo class="h-16 w-40 font-tertiary md:w-60 lg:w-80"></Logo>
 		</NavBrand>
 		<div class="flex items-center md:order-2">
 			{#if authStatus == AuthStatus.LoggedIn}

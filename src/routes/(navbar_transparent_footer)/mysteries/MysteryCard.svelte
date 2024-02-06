@@ -23,7 +23,7 @@
 			</h5>
 			<div class="flex justify-center">
 				{#each Array(3) as _, index}
-					<p class="mx-2 inline text-4xl">
+					<p class="mx-2 inline text-3xl md:text-4xl">
 						{#if index < rating}
 							★
 						{:else}

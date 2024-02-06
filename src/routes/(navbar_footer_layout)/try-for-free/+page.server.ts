@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ url, locals: { getSession } }) => {
 	const session = await getSession();
 	const authStatus = getAuthStatus(session);
 	if (authStatus == AuthStatus.LoggedIn) {
-		redirect(303, '/mysteries');
+		redirect(303, '/home');
 	} else if (authStatus == AuthStatus.LoggedOut) {
 		const canCreateUser = await checkIfCanCreateTempUser();
 		isTAndThrowPostgresErrorIfNot(canCreateUser);

@@ -177,3 +177,24 @@ export async function loadEventMessages(mystery: string) {
 	}
 	return data;
 }
+
+export async function loadLastPlayedMysteryOrNextPlayableOne(userid: string) {
+	const { data, error } = await supabase_full_access
+		.from('user_mystery_messages')
+		.select('content, user_mystery_conversations!inner(mystery_name)')
+		.eq('user_mystery_conversations.user_id', userid)
+		.order('created_at', { ascending: false })
+		.limit(1);
+	if (error) {
+		return error;
+	}
+	return data;
+}
+
+export async function loadFirstMystery() {
+	const { data, error } = await supabase_full_access.from('mysteries').select('*').order('order_int', { ascending: true }).limit(1);
+	if (error) {
+		return error;
+	}
+	return data;
+}

@@ -6,7 +6,7 @@ export const load = async ({ locals: { getSession } }) => {
 		const session = await getSession();
 		const authStatus = getAuthStatus(session);
 		if (authStatus == AuthStatus.LoggedIn) {
-			redirect(303, '/mysteries');
+			redirect(303, '/home');
 		}
 	}
 };

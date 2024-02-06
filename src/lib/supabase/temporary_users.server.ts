@@ -15,6 +15,7 @@ export async function checkIfCanCreateTempUser() {
 		console.error(error);
 		return error;
 	}
+	console.log(data);
 	return data.amount > 0;
 }
 
