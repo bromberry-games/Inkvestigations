@@ -54,7 +54,21 @@ ROW(
         'All heads shoot to Oliver. Blanched and shaking he tries to move backwards but his back is against the wall. He slides down and admits it, head in his hands. Terry misused his influence, showing no regard for the people that were affected. Since becoming his apprentice, he had witnessed how Terry literally made up articles out of thin air, and the results always somehow helped Terry. Oliver looked Wellington in the eyes and says that he would do it again.'
     )::star_ratings,
     2
-);
+)
+ON CONFLICT (name)
+DO UPDATE SET 
+    description = EXCLUDED.description,
+    theme = EXCLUDED.theme,
+    setting = EXCLUDED.setting,
+    letter_info = EXCLUDED.letter_info,
+    letter_prompt = EXCLUDED.letter_prompt,
+    accuse_letter_prompt = EXCLUDED.accuse_letter_prompt,
+    victim_name = EXCLUDED.victim_name,
+    victim_description = EXCLUDED.victim_description,
+    filepath = EXCLUDED.filepath,
+    solution = EXCLUDED.solution,
+    star_ratings = EXCLUDED.star_ratings,
+    order_int = EXCLUDED.order_int;
 
 INSERT INTO suspects (mystery_id, name, description)
 VALUES
@@ -233,8 +247,22 @@ ROW(
         'John is caught without problems and confesses everything in an emotional scene.'
     )::star_ratings,
     1
-);
+) ON CONFLICT (name)
+DO UPDATE SET 
+    description = EXCLUDED.description,
+    theme = EXCLUDED.theme,
+    setting = EXCLUDED.setting,
+    letter_info = EXCLUDED.letter_info,
+    letter_prompt = EXCLUDED.letter_prompt,
+    accuse_letter_prompt = EXCLUDED.accuse_letter_prompt,
+    victim_name = EXCLUDED.victim_name,
+    victim_description = EXCLUDED.victim_description,
+    filepath = EXCLUDED.filepath,
+    solution = EXCLUDED.solution,
+    star_ratings = EXCLUDED.star_ratings,
+    order_int = EXCLUDED.order_int;
 
+DELETE FROM suspects WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Forced Farewell');
 INSERT INTO suspects (mystery_id, name, description)
 VALUES
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Lord Baron Charles Toillard', 'A newly titled baron, known for his achievements in diplomacy. Recently turned into a drunkard and gambler.'),
@@ -246,6 +274,7 @@ VALUES
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'William "The Lad" Johnson', 'Local moneylender.'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Joseph Strickmeyer', 'Burglar and overall no-good kind of guy, often suspected by police.');
 
+DELETE FROM action_clues WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Forced Farewell');
 INSERT INTO action_clues (mystery_id, action, clue)
 VALUES
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogate Toillard household', 'create a line for each suspect about how worried they are'),
@@ -259,6 +288,7 @@ VALUES
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Questioning the family if they know of Sherlock Holmes', 'they say that obviously everyone''s heard of him since he solved the murder of the Cleveland man, John was particularly amazed by the The Book of Life and he chewed their ears off about it'),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogating William Johnson', 'he lent money to the Baron, but he says he has other was of getting money back fair and square, and that he doesn''t have to rely on stealing children; besides it''s much much less than he''s owed');
 
+DELETE FROM timeframes WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Forced Farewell');
 INSERT INTO timeframes (mystery_id, timeframe, event_happened)
 VALUES
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), '09:00AM', 'The Toillards leave the butler Jessob and John at home'),
@@ -271,6 +301,7 @@ VALUES
 
 
 
+DELETE FROM events WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Forced Farewell');
 INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
 VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
     $$
@@ -354,6 +385,7 @@ $$,
 );
 
 
+DELETE FROM few_shots;
 INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
     $$
