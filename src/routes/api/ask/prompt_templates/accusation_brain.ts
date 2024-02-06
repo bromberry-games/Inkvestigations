@@ -86,7 +86,8 @@ const fewShotPromptBrain = [
 			'The player\'s solution compared to the real one "It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note." is incorrect.\n\nRating: 0 stars\n\nEpilogue:\n- The enigmatic disappearance of young John Toillard managed to elude us at every turn.\n- The woods of New Forest held tight to their secrets, leaving us with only questions and fleeting hopes.\n- The ransom money lay forgotten and untouched, a haunting echo of the unresolved mystery.\n- Romsey remained shrouded in disquiet, the absence of John casting a lingering shadow over the community.'
 	})
 ];
-const userTemplate = 'Player solution: {text}\nActual solution: ${solution}\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue.';
+const userTemplate =
+	'Player solution: {text}\nActual solution: {solution}\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue.';
 
 export function createAccusePrompt(fewShots: ChatMessage[] | null) {
 	const toInsert = fewShots ? fewShots : fewShotPromptBrain;
