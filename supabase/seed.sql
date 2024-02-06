@@ -102,64 +102,64 @@ VALUES
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Sunday', 'Terry is alone writing'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Monday', 'Around noon, the maid finds Terry dead, fallen through the mirror in his study. Dexter Tin arrives.');
 
-DELETE FROM auth.users;
-alter table auth.identities alter column provider_id drop not null;
+-- DELETE FROM auth.users;
+-- alter table auth.identities alter column provider_id drop not null;
 
-DO $$
-DECLARE
-    email text := 'test@mail.com';
-    password text := 'password';
-    user_id uuid;
-    encrypted_pw text;
-BEGIN
-    user_id := gen_random_uuid();
-    encrypted_pw := crypt(password, gen_salt('bf'));
-
-    INSERT INTO auth.users
-        (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, recovery_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
-    VALUES
-        ('00000000-0000-0000-0000-000000000000', user_id, 'authenticated', 'authenticated', email, encrypted_pw, '2023-05-03 19:41:43.585805+00', '2023-04-22 13:10:03.275387+00', '2023-04-22 13:10:31.458239+00', '{"provider":"email","providers":["email"]}', '{}', '2023-05-03 19:41:43.580424+00', '2023-05-03 19:41:43.585948+00', '', '', '', '');
-
-    INSERT INTO auth.identities (id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
-    VALUES
-        (gen_random_uuid(), user_id, format('{"sub":"%s","email":"%s"}', user_id::text, email)::jsonb, 'email', '2023-05-03 19:41:43.582456+00', '2023-05-03 19:41:43.582497+00', '2023-05-03 19:41:43.582497+00');
-END;
-$$ LANGUAGE plpgsql;
-
-DO $$
-DECLARE
-    email text := 'test-only-user@mail.com';
-    password text := 'password-test-user';
-    user_id uuid;
-    encrypted_pw text;
-BEGIN
-    user_id := gen_random_uuid();
-    encrypted_pw := crypt(password, gen_salt('bf'));
-
-    INSERT INTO auth.users
-        (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, recovery_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
-    VALUES
-        ('00000000-0000-0000-0000-000000000000', user_id, 'authenticated', 'authenticated', email, encrypted_pw, '2023-05-03 19:41:43.585805+00', '2023-04-22 13:10:03.275387+00', '2023-04-22 13:10:31.458239+00', '{"provider":"email","providers":["email"]}', '{}', '2023-05-03 19:41:43.580424+00', '2023-05-03 19:41:43.585948+00', '', '', '', '');
-
-    INSERT INTO auth.identities (id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
-    VALUES
-        (gen_random_uuid(), user_id, format('{"sub":"%s","email":"%s"}', user_id::text, email)::jsonb, 'email', '2023-05-03 19:41:43.582456+00', '2023-05-03 19:41:43.582497+00', '2023-05-03 19:41:43.582497+00');
-END;
-$$ LANGUAGE plpgsql;
-
-update public.user_messages
-set
-  amount = amount + 15
-where
-  user_id = (
-    select
-      id
-    from
-      auth.users
-    where
-      email = 'test-only-user@mail.com'
-  );
-
+-- DO $$
+-- DECLARE
+--     email text := 'test@mail.com';
+--     password text := 'password';
+--     user_id uuid;
+--     encrypted_pw text;
+-- BEGIN
+--     user_id := gen_random_uuid();
+--     encrypted_pw := crypt(password, gen_salt('bf'));
+-- 
+--     INSERT INTO auth.users
+--         (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, recovery_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
+--     VALUES
+--         ('00000000-0000-0000-0000-000000000000', user_id, 'authenticated', 'authenticated', email, encrypted_pw, '2023-05-03 19:41:43.585805+00', '2023-04-22 13:10:03.275387+00', '2023-04-22 13:10:31.458239+00', '{"provider":"email","providers":["email"]}', '{}', '2023-05-03 19:41:43.580424+00', '2023-05-03 19:41:43.585948+00', '', '', '', '');
+-- 
+--     INSERT INTO auth.identities (id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+--     VALUES
+--         (gen_random_uuid(), user_id, format('{"sub":"%s","email":"%s"}', user_id::text, email)::jsonb, 'email', '2023-05-03 19:41:43.582456+00', '2023-05-03 19:41:43.582497+00', '2023-05-03 19:41:43.582497+00');
+-- END;
+-- $$ LANGUAGE plpgsql;
+-- 
+-- DO $$
+-- DECLARE
+--     email text := 'test-only-user@mail.com';
+--     password text := 'password-test-user';
+--     user_id uuid;
+--     encrypted_pw text;
+-- BEGIN
+--     user_id := gen_random_uuid();
+--     encrypted_pw := crypt(password, gen_salt('bf'));
+-- 
+--     INSERT INTO auth.users
+--         (instance_id, id, aud, role, email, encrypted_password, email_confirmed_at, recovery_sent_at, last_sign_in_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at, confirmation_token, email_change, email_change_token_new, recovery_token)
+--     VALUES
+--         ('00000000-0000-0000-0000-000000000000', user_id, 'authenticated', 'authenticated', email, encrypted_pw, '2023-05-03 19:41:43.585805+00', '2023-04-22 13:10:03.275387+00', '2023-04-22 13:10:31.458239+00', '{"provider":"email","providers":["email"]}', '{}', '2023-05-03 19:41:43.580424+00', '2023-05-03 19:41:43.585948+00', '', '', '', '');
+-- 
+--     INSERT INTO auth.identities (id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at)
+--     VALUES
+--         (gen_random_uuid(), user_id, format('{"sub":"%s","email":"%s"}', user_id::text, email)::jsonb, 'email', '2023-05-03 19:41:43.582456+00', '2023-05-03 19:41:43.582497+00', '2023-05-03 19:41:43.582497+00');
+-- END;
+-- $$ LANGUAGE plpgsql;
+-- 
+-- update public.user_messages
+-- set
+--   amount = amount + 15
+-- where
+--   user_id = (
+--     select
+--       id
+--     from
+--       auth.users
+--     where
+--       email = 'test-only-user@mail.com'
+--   );
+-- 
 Insert INTO for_free_users (amount, daily_limit) VALUES (5, 5);
 
 INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings, order_int) VALUES (
@@ -396,7 +396,7 @@ $$,
 );
 
 
-DELETE FROM few_shots;
+DELETE FROM few_shots WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Forced Farewell');
 INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
     $$
