@@ -14,7 +14,8 @@ export async function loadBrainMessages(userId: string, mystery: string): Promis
 	const { data, error } = await supabase_full_access
 		.from('user_mystery_brain_messages')
 		.select('mood, info, chainOfThought:chain_of_thought')
-		.eq('conversation_id', conversationId);
+		.eq('conversation_id', conversationId)
+		.order('created_at', { ascending: true });
 	if (error) {
 		console.error(error);
 		return error;
@@ -86,7 +87,8 @@ async function loadLetterMessagesFromConvId(conversationId: number): Promise<Cha
 	const { data: messageData, error: messageError } = await supabase_full_access
 		.from('user_mystery_messages')
 		.select('content, created_at')
-		.eq('conversation_id', conversationId);
+		.eq('conversation_id', conversationId)
+		.order('created_at', { ascending: true });
 
 	if (messageError) {
 		console.error('error querying messages: ', messageError);
