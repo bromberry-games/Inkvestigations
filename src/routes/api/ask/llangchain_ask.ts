@@ -12,6 +12,7 @@ import { createAccuseLetterPrompt } from './prompt_templates/accusation_letter';
 import { USE_FAKE_LLM } from '$env/static/private';
 import { HttpResponseOutputParser } from 'langchain/output_parsers';
 import type { Json } from '../../../schema';
+import { CHAIN_OF_THOUGHT_TEXT } from './consts';
 
 export interface Victim {
 	name: string;
@@ -144,7 +145,11 @@ class BrainParser extends BaseOutputParser<BrainOutput> {
 	async parse(text: string): Promise<BrainOutput> {
 		const infoMatch = text.match(INFO_REGEX);
 		if (!infoMatch) {
-			error(500, 'Could not parse rating');
+			return {
+				chainOfThought: CHAIN_OF_THOUGHT_TEXT,
+				info: text,
+				mood: 'apathetic'
+			};
 		}
 		return {
 			chainOfThought: infoMatch[1],
@@ -200,17 +205,21 @@ export async function brainModelRequest(
 				});
 
 	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
-	const res = await chain.call({
-		theme: brainParams.theme,
-		setting: brainParams.setting,
-		text: brainParams.question,
-		timeframe,
-		actionClues,
-		victimName: brainParams.victim.name,
-		victimDescription: brainParams.victim.description,
-		suspects: brainParams.suspects,
-		oldInfo
-	});
+	const res = await chain
+		.call({
+			theme: brainParams.theme,
+			setting: brainParams.setting,
+			text: brainParams.question,
+			timeframe,
+			actionClues,
+			victimName: brainParams.victim.name,
+			victimDescription: brainParams.victim.description,
+			suspects: brainParams.suspects,
+			oldInfo
+		})
+		.catch((e) => {
+			console.error('brain model request', e);
+		});
 	return res.text;
 }
 
