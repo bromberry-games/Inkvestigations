@@ -536,64 +536,73 @@ DELETE FROM few_shots WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 
 INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
     $$
-    {"messages": [
-	{
-		"role": "user",
-		"content": "search the house"
-	},
-	{
-		"role": "assistant",
-		"content": "We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to search the house.\nHave I been provided this information? \nYes\nInformation:\n- The house was in disarray with shattered glass at a garden door, John's room in disarray and various items knocked over throughout the house, but nothing appeared to be stolen.\n- mood: curious"
-	},
-	{
-		"role": "user",
-		"content": "interrogate the family"
-	},
-	{
-		"role": "assistant",
-		"content": "We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to interrogate the family.\nHave I been provided this information? \nYes\nInformation:\n- Barond Charles Toillard seems terrified and devastated, he bemoaned his terrible luck in all parts of life \n- Adelia Toillard could not stop weeping and fearing for her boy\n- Alice Toillard seems afraid because of her parents behavior\n- Arthur understands what happened but is trying to be brave, he puts a lot of trust into us\n- Butler Jessob feels very guilty and repeats that he left for the boy's sake, he seems unable to forgive himself\n- Doctor Jameson is really anxious and says he is triple locking his house and his family\n- mood: tense"
-	},
-	{
-		"role": "user",
-		"content": "hi"
-	},
-	{
-		"role": "assistant",
-		"content": "We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has greeted me. \nDo I have information for that? \nNo.\nI make up something  funny but realistic. Wellington would react like this: \nInformation:\n- By the way, someone has reported a missing cat here in Romsey, and they suspect it may have found its way into the local bakery. But do lend your Science of Deduction and Analysis if you have the time!\n- mood: eager"
-	},
-	{
-		"role": "user",
-		"content": "ask the pope for help"
-	},
-	{
-		"role": "assistant",
-		"content": "We're playing a game where I'm police a chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to ask the pope for help.\nDo I have information for that? \nNo.\nI make up something  funny but realistic. Wellington would react like this: \nInformation:\n- Here in Romsey we are Anglicans and do not like His Holiness to interfere in our business. On your request however, I have reached out and was told that he would pray for young John Toillard. He may not be so bad after all. \n- mood: warming to the pope"
-	},
-	{
-		"role": "user",
-		"content": "search the butler's room "
-	},
-	{
-		"role": "assistant",
-		"content": "We're playing a game where I'm police a chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to search the butler's room.\nDo I have information for that? \nNo.\nI make up something  funny but realistic. Wellington would react like this:\nInformation:\n- Jessob's room look impeccable as one would expect from a butler. We did find some uncouth images under his mattress. \n- mood: blushing  "
-	},
-	{
-		"role": "user",
-		"content": "accuse Lord Toillard for the kidnapping"
-	},
-	{
-		"role": "assistant",
-		"content": "We're playing a game where I'm police a chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to accuse Lord Toillard for the kidnapping.\nDo I have information for that? \nNo.\nI make up something  funny but realistic. Wellington would react like this:\nInformation:\n- It is not proper procedure to simply point fingers. We need motive, opportunity and evidence.  \n- mood: stern"
-	},
-	{
-		"role": "user",
-		"content": "Search 4 Patterson Street "
-	},
-	{
-		"role": "assistant",
-		"content": "We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery. \nThe player has asked me to search 4 Patterson Street.\nHave I been provided this information? \nYes\nInformation:\n- We found that in that apartment lives a Mary Ann Woodcock and her daughters Hannah and Anna. Her husband Methusalem Woodcock is a sailor and has been at sea for months\nmood: disappointed"
-	}
-]}
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "search the mansion"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves. \nInformation:\n- there is shattered glass at a garden door; John's room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; the ransom note;\n- mood: curious"
+    },
+    {
+      "role": "user",
+      "content": "search John's room"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves. \nInformation:\n- all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science\n- mood: curious"
+    },
+    {
+      "role": "user",
+      "content": "what are the newspaper articles about"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves. \nInformation:\n- The newspaper articles in John's scrapbook are a mix of topics, including: An article about the latest inventions and advancements in electricity in America. A story about a group of explorers uncovering a lost civilization in the Amazon rainforest.\n- It seems that John is fascinated by science, adventure, and the idea of escaping from the ordinary.\n- mood: curious"
+    },
+    {
+      "role": "user",
+      "content": "question the baron"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves.\nInformation:\n- The Baron recalls borrowing money from William \"The Lad\" Johnson, the local moneylender.\n- He suspects \"The Lad\" Johnson because of the debt owed, but finds it strange that the ransom demanded is much less than the amount he borrowed.\n- The Baron seems concerned about his financial situation and is prone to impulsive behaviors like hitting family members.\n- mood: suspicious"
+    },
+    {
+      "role": "user",
+      "content": "ask the pope for help"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves. \nInformation:\n- Here in Romsey we are Anglicans and do not like His Holiness to interfere in our business. On your request however, I have reached out and was told that he would pray for young John Toillard. He may not be so bad after all. \nmood: warming to the pope"
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves. \nInformation:\n- By the way, someone has reported a missing cat here in Romsey, and they suspect it may have found its way into the local bakery. But do lend your Science of Deduction and Analysis if you have the time!\n- mood: eager"
+    },
+    {
+      "role": "user",
+      "content": "search the butler's room"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves.\nInformation:\n- The butler's room is tidy and well-organized, with no signs of disturbance.\n- There is a shelf filled with books about etiquette, household management, and history.\n- There is also a small photo album with pictures of the butler with the Toillard family on various occasions.\n- mood: observant"
+    },
+    {
+      "role": "user",
+      "content": "accuse Lord Toillard for the kidnapping"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves.\nInformation:\n- While Lord Toillard has shown impulsive behavior in the past, there is no concrete evidence to directly accuse him of the kidnapping. I need motive, opportunity and evidence before I can accuse someone.\n- mood: cautious"
+    }]
+}
     $$,
     $$
     {"messages": [
