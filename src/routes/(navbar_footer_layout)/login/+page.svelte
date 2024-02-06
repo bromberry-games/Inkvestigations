@@ -80,7 +80,7 @@
 							}}
 							providers={['github', 'google', 'facebook']}
 							{socialLayout}
-							redirectTo={`${data.url}/auth/callback?next=/mysteries`}
+							redirectTo={`${data.url}/auth/callback?next=/login`}
 							forgottenPasswordRedirect={`${data.url}/auth/callback?next=/update-password`}
 							oldUserId={data.session && data.session.user.user_metadata.anonymous == true ? data.session.user.id : undefined}
 						/>

@@ -72,9 +72,9 @@ test('login logout and login should redirect', async ({ page, isMobile }) => {
 	const { mail, password } = await createNewUserAndLogin(page, isMobile);
 	await logoutOfPage(page, isMobile);
 	await loginOnPage(page, isMobile, mail, password);
-	await page.waitForURL('/mysteries');
+	await page.waitForURL('/home');
 
-	await expect(new URL(page.url()).pathname).toBe('/mysteries');
+	await expect(new URL(page.url()).pathname).toBe('/home');
 });
 
 test('signup user and confirm email', async ({ page, isMobile }) => {
@@ -112,6 +112,7 @@ test('test try for free', async ({ page, isMobile }) => {
 	await page.waitForTimeout(200);
 	await fillOutSingupFormConfirmMailLogin(page, isMobile);
 	await expect(page.locator('#avatar-menu')).toBeVisible();
+	await page.goto('/mysteries', { waitUntil: 'networkidle' });
 
 	await page.getByRole('link', { name: 'Forced Farewell ☆ ☆ ☆' }).click();
 	await expect(page.getByText('Police chief:').nth(1)).toBeVisible();
