@@ -33,9 +33,7 @@ ${item.info}
 			);
 		});
 
-		console.log('before brain request');
 		brainResponse = await brainModelRequest(brainParams, brainConversation, brainMessages);
-		console.log('after brain request');
 
 		const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
 		throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
@@ -48,8 +46,6 @@ ${item.info}
 		error(500, 'brainResponse is empty');
 	}
 
-	console.log('hello from brain');
-	console.log(brainResponse);
 	const assistantLetterAnswers = letterMessages.filter((m) => m.role === 'assistant');
 
 	const messages: BaseMessage[] = [];

@@ -15,7 +15,6 @@
 		currentPage = 0;
 		return data.mysteries.filter((mystery) => mystery.access_code === subsToShow);
 	}
-	$: console.log(sizeToAmount[screenSize], screenSize);
 
 	const sizeToAmount = {
 		sm: 4,

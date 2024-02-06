@@ -17,8 +17,8 @@ export function createFakeLetterLLM(onResponseGenerated: (input: string) => Prom
 	});
 }
 
-export function createFakeBrainLLM(): FakeListLLM {
-	return new FakeListLLM({
+export function createFakeBrainLLM(): FakeListChatModel {
+	return new FakeListChatModel({
 		responses: ['Hello']
 		// responses: [
 		// `We're playing a game where I'm police chief Wellington acting on orders of Sherlock Holmes to solve a mystery.
