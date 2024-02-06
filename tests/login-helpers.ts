@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 import { supabase_full_access } from './supabase_test_access';
 import 'dotenv/config';
 
@@ -51,9 +51,9 @@ export async function createRandomUser() {
 }
 
 export async function createNewUserAndLogin(page: Page, isMobile: boolean) {
-	const { email, password } = await createRandomUser();
+	const { email, password, userId } = await createRandomUser();
 	await loginOnPage(page, isMobile, email, password);
-	return { mail: email, password };
+	return { mail: email, password, userId };
 }
 
 export async function createNeUserAndLoginViaUrl(page: Page, url: string) {
@@ -69,7 +69,7 @@ export async function fillOutSingupFormConfirmMailLogin(page: Page, isMobile: bo
 	await fillOutLoginOrSignupForm(page, email, 'password-new-user');
 	await page.getByRole('checkbox').click();
 	await page.getByRole('button', { name: 'Sign up' }).click();
-	await page.waitForTimeout(100);
+	await expect(page.getByText('Check your email for the')).toBeVisible();
 	if (isMobile || process.env.ENV_TO_TEST == 'DEV') {
 		const users = (await supabase_full_access.auth.admin.listUsers()).data.users;
 		const user = users.find((user) => {
