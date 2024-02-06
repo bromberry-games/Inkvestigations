@@ -20,6 +20,7 @@ import { OPEN_AI_KEY } from '$env/static/private';
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
 import { stripeClient } from '$lib/stripe';
 import { MAX_CONVERSATION_LENGTH, textIsTooLong } from '$lib/message-conversation-lengths';
+import type { Json } from '../../../schema';
 
 interface AccuseModelAnswerParams {
 	mysteryName: string;
@@ -141,9 +142,10 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 					accuseBrainRequestParams: {
 						...baseParams,
 						promptMessage: message,
-						fewShots: gameInfo?.few_shots?.accuse_brain,
+						fewShots: gameInfo?.few_shots?.accuse_brain as Json,
 						openAiToken,
-						starRatings: gameInfo?.star_ratings
+						starRatings: gameInfo?.star_ratings as { star0: string; star1: string; star2: string; star3: string },
+						solution: gameInfo.solution as string
 					},
 					userId: session.user.id,
 					accuseLetterInfo: gameInfo.accuse_letter_prompt
@@ -154,9 +156,9 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 						question: message,
 						timeframe: gameInfo.timeframes,
 						actionClues: gameInfo.action_clues,
-						fewShots: gameInfo?.few_shots?.brain,
+						fewShots: gameInfo?.few_shots?.brain as Json,
 						eventClues: eventClues,
-						eventTimeframes,
+						eventTimeframe: eventTimeframes,
 						openAiToken
 					},
 					game_config.mysteryName,

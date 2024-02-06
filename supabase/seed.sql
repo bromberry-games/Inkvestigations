@@ -102,6 +102,142 @@ VALUES
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Sunday', 'Terry is alone writing'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Monday', 'Around noon, the maid finds Terry dead, fallen through the mirror in his study. Dexter Tin arrives.');
 
+DELETE FROM few_shots WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Mirror Mirror');
+INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
+    (SELECT id FROM mysteries WHERE name = 'Mirror Mirror'),
+$$
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "search the house"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- the house has a library with a wide array of books, on writing, encyclopedias, fiction, etc. \n- a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry's desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;\n- mood: curious"
+    },
+    {
+      "role": "user",
+      "content": "Interrogate all the suspects"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- Maria Payton is deeply distraught by the sight and it's hard for her to talk\n- Angela Videl is sad of course but knows Terry had alienated a lot of people\n- Dexter Tin says he didn't need to see that to be honest\n- Bianca White is crying heavily and saying he didn't deserve that\n- Oliver is teary eyed and sad because Terry had so much more to give\n- O'Ranner is not surprised because he knew Terry had an edge to his style\n- mood: focused "
+    },
+    {
+      "role": "user",
+      "content": "ask the pope for help"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n-  I reached out and his office was kind enough to relay the message\n- They promise us prayer of aid\n- mood: spiritual"
+    },
+    {
+      "role": "user",
+      "content": "hi"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- Hey, did you hear of that new falafel place they opened, maybe we could go there together some time  \n- mood: bashful"
+    },
+    {
+      "role": "user",
+      "content": "who is the mafia boss terry was writing about"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- There is no specific mention of the name of the mafia boss in Terry's half-written piece. It seems that he was in the early stages of investigation and hadn't yet uncovered the boss's identity. \n- mood: mysterious"
+    },
+    {
+      "role": "user",
+      "content": "search your database for known mafia bosses in your area"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- There is one small time mobster in prison not far from here, Antonio Bellucci.\n- I wouldn't call him a mafia boss necessarily\n- mood: curious"
+    },
+    {
+      "role": "user",
+      "content": "visit belluci and ask him about terry"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- Bellucci says Terry visited him because he was writing a fiction piece on mafia bosses, inspired by the godfather, and Belluci was the closest thing he had for reference"
+    },
+    {
+      "role": "user",
+      "content": "inspect the pen"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- As you inspect Terry's pen, you notice that it is a high-quality ink pen with a distinctive design. It has a silver body and a small engraving of Terry's initials on the cap. The inkwell of the pen is filled with gelatin, which is a common way to encase pills for consumption. Upon further analysis, traces of cyanide are found in the inkwell.\n- Mood: Investigative"
+    },
+    {
+      "role": "user",
+      "content": "interrogate oliver"
+    },
+    {
+      "role": "assistant",
+      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- When you interrogate Oliver, he appears nervous but cooperative. He insists that he had nothing to do with Terry's death and was at home working on a piece during the time of the incident.\n- Oliver admits that he is a huge fan of Terry and had sent him fan letters in the past. He even shows you the letters he had written to Terry"
+    }
+  ]}
+$$
+,
+$$
+{"messages": [
+    
+    {
+      "role": "user",
+      "content": "Player solution: It was angela videl because she was jealous of Terry's success\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The solution misses the murderer and is therefore not solved.\n# Rating 0 stars\n## Epilogue\n- Gathering everyone in Terry's study, some scattering nervous glances around.\n- Summarized the investigation, but the room felt heavy with confusion.\n- When I said I had evidence, everyone hunched closer unknowingly holding their breathes.\n- I promptly stated it was pure jealous, the room fell silent.\n- Their attention shifted to Angela as I mentioned her in a cold voice.\n- The shock was real, but no admittance came from her side.\n- She asked what my evidence was, and I said her jealousy. \n- About motive and opportunity I had nothing to say.\n- She became furious and attacked me in a garish fashion\n- When I glanced around, everyone else was really confused\n- After all was said and done she published an article commemorating her colleague and subtly putting down our investigative efforts\n- This was quite embarrasing\n"
+    },
+    {
+      "role": "user",
+      "content": "Player solution: It was Oliver Smith because he was disappointed Terry's dramatics won over the truth!\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player's solution correctly identifies the murderer but falls doesn't provide a good motive and no opportunity and evidence at all. \n\n# Rating: 0 stars\n\n## Epilogue\n- As the Police Chief, I gathered everyone involved in the drawing room, their faces a mix of fear, curiosity, and anticipation.\n- I slowly summarized the chain of events, thinking I saw the realization slowly dawn on their faces.\n- I revealed the evidence, or I would have, but you didn't provide it. They sat in shocked silence.\n- I then turned my attention to Oliver Smith, the ambitious apprentice, who was visibly uncomfortable.\n- His surprise switched to defiance as I detailed out his anger at Terry's dramatics.\n- Then the others joined in asking how it was done and when and what the evidence was.\n- I didn't have any of that, but I assured them our very own detective consultant had concluded it thus.\n- We tried to apprehend Oliver but he said he would sue the city into poverty, so we had to let him go.\n- Angela Videl published a paper commemorating her colleague and suggested the murderer was at large due to the incompetence of the police"
+    },
+    {
+      "role": "user",
+      "content": "Player solution: it was your momma\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player's solution misidentifies the murderer and doesn't include the motive, opportunity, and evidence correctly.\n\n# Rating: 0 stars\n\n## Epilogue\n- After gathering everyone in Terry's study, I presented the investigation in detail, pointing out the various clues we had discovered.\n- But as I reached the part of the solution, the room grew tense and anxious.\n- When I finally revealed that Sherlock suspected someone's mother\n- Everyone stared at me their faces a mix of shock and disbelief.\n- They burst out laughing\n- I explained that our investigation was thorough and that Sherlock was never wrong.\n- They wiped their teary eyes and marched out of the rooms holding their bellies\n- With no evidence against anyone's mother, I had to let them go.\n- I swear they must have all been in it together. \n- Angela Videl, sensing the discord, published an article expressing her frustration with the investigation and pointing fingers at the incompetence of the police force.\n- The case remained open, with neither the true murderer nor their motives discovered."
+    },
+    {
+      "role": "user",
+      "content": "Player solution: It was Oliver Smith because he was angry that Terry didn't have any morals. After the party, he slipped into the study and planted the cyanide capsule. The second pen in his home confirms it\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player's solution correctly identifies Oliver Smith as the murderer and provides a motive, opportunity, and evidence that aligns with the actual solution.\n\n# Rating: 3 stars\n\n## Epilogue\n- As the Police Chief, I gather everyone involved in the grand parlor, their eyes fixed on me, expectant and anxious.\n- I begin by summarizing the investigation, detailing the various clues and evidence we uncovered.\n- As I reach the climax, the room falls into a heavy silence, anticipation hanging in the air.\n- I reveal that the perpetrator is none other than Oliver Smith, the ambitious apprentice.\n- Gasps of shock and disbelief fill the room as Oliver's face drains of color, his hand trembling.\n- Oliver breaks down under the accusation, falling to the ground, admitting his crime.\n- The room erupts into a mix of shock, anger, and confusion.\n- Oliver shouts, his voice filled with a mix of anguish and betrayal, expressing his disappointment in Terry's lack of morals.\n- He admits to slipping into the study after the party and planting the cyanide capsule in the inkwell.\n- As Oliver's words hang in the air, Terry's former colleagues exchange glances of both disbelief and understanding.\n- Angela Videl publishes a sincere and heartfelt farewell to her colleague, expressing gratitude for the  investigators."
+    },
+    {
+      "role": "user",
+      "content": "Player solution: It was oliver who was angry at terry for his twisted morals, the second pen in his home shows it\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player's solution correctly identifies Oliver Smith as the murderer and includes a reasonable motive and evidence that aligns with the actual solution.\n\n# Rating: 2 stars\n\n## Epilogue\n- With a mix of anticipation and curiosity, I gather everyone in Terry's study, prepared to reveal the conclusion of the investigation.\n- I carefully summarize the facts, highlighting the various clues and evidence that led us to the perpetrator.\n- As I reveal that Oliver Smith is the culprit, the room erupts into a chorus of gasps and murmurs.\n- Oliver's face contorts with a mixture of shock and guilt as all eyes turn towards him.\n- The tension builds as I produce the second pen found in Oliver's home, with traces of cyanide.\n- The room falls into a heavy silence as the weight of the evidence sinks in for everyone present.\n- Oliver breaks down under the weight of the accusation, his voice trembling as he admits his crime.\n- Although his motive is not explicitly mentioned, the pieces of the puzzle start to come together for the assembled group.\n- The shocked reactions and whispers of disbelief fill the room, while Oliver's actions leave some questioning their own judgment.\n- Angela Videl, lamenting the tragic end of her colleague, praises the determination of the police."
+    },
+    {
+      "role": "user",
+      "content": "Player solution: It was oliver who murdered terry with cyanide after the party\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player's solution correctly identifies Oliver Smith as the murderer and provides a method of how the murder was committed.\n\n# Rating: 1 star\n\n## Epilogue\n- As the Police Chief, I gather everyone involved in the study, a mix of anticipation and unease filling the air.\n- I summarize the investigation, highlighting the various pieces of evidence we collected.\n- As I reveal that Oliver Smith is the culprit, a wave of disbelief washes over the room.\n- Oliver protests his innocence, denying any involvement in Terry's murder.\n- Without concrete evidence to support the claim, doubts and suspicion linger among the gathered individuals.\n- However, we detain Oliver for further questioning, and he cracks under the weight.\n- The case is closed, leaving the true nature of Terry's resolved."
+  }
+  ]}
+  $$
+);
+
 -- DELETE FROM auth.users;
 -- alter table auth.identities alter column provider_id drop not null;
 
