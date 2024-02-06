@@ -58,9 +58,7 @@
 	<MyPagination {totalPages} bind:currentPage></MyPagination>
 </div>
 
-<div
-	class="h-dvh mx-8 grid grid-cols-2 gap-x-8 gap-y-4 md:mx-16 md:gap-x-16 lg:grid-cols-3 lg:gap-x-36 xl:mx-40 xl:grid-cols-4 xl:gap-x-40"
->
+<div class="mx-8 grid grid-cols-2 gap-x-8 gap-y-4 md:mx-16 md:gap-x-16 lg:grid-cols-3 lg:gap-x-36 xl:mx-40 xl:grid-cols-4 xl:gap-x-40">
 	{#each toDisplay as mystery, i}
 		<MysteryCard
 			{mystery}
