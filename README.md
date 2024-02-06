@@ -1,4 +1,6 @@
 # Inkvestigations
+![Discord](https://img.shields.io/discord/1176909898651549756?style=for-the-badge&logo=discord&label=%20Discord&color=%20%237289da&link=https%3A%2F%2Fdiscord.gg%2FReHNSbCHpB)
+
 <p align="center">
   <img src="/assets/logo.png" width="50%" height="auto">
 </p>
