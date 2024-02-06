@@ -17,9 +17,6 @@ If you have any opinions or ideas for where this project might go, please share 
 - [ ] Langchain example selector
 - [ ] Persistent universe mysteries with langchain
 - [x] Runs well on GPT-3.5
+- [x] use own API token
 - [x] Consistent accusations
 - [x] Characters and notes
-
-## Installation
-You can play it on the website, or alternatively you can run it locally.
-To do that 
