@@ -123,14 +123,17 @@ export interface Database {
       }
       few_shots: {
         Row: {
+          accuse_brain: Json | null
           brain: Json
           mystery_id: number
         }
         Insert: {
+          accuse_brain?: Json | null
           brain: Json
           mystery_id: number
         }
         Update: {
+          accuse_brain?: Json | null
           brain?: Json
           mystery_id?: number
         }
@@ -171,9 +174,13 @@ export interface Database {
           id: number
           letter_info: string
           letter_prompt: string
-          murderer: Database["public"]["CompositeTypes"]["murderer_type"]
           name: string
+          order_int: number
           setting: string
+          solution: string | null
+          star_ratings:
+            | Database["public"]["CompositeTypes"]["star_ratings"]
+            | null
           theme: string
           victim_description: string
           victim_name: string
@@ -186,9 +193,13 @@ export interface Database {
           id?: number
           letter_info: string
           letter_prompt: string
-          murderer: Database["public"]["CompositeTypes"]["murderer_type"]
           name: string
+          order_int?: number
           setting: string
+          solution?: string | null
+          star_ratings?:
+            | Database["public"]["CompositeTypes"]["star_ratings"]
+            | null
           theme: string
           victim_description: string
           victim_name: string
@@ -201,9 +212,13 @@ export interface Database {
           id?: number
           letter_info?: string
           letter_prompt?: string
-          murderer?: Database["public"]["CompositeTypes"]["murderer_type"]
           name?: string
+          order_int?: number
           setting?: string
+          solution?: string | null
+          star_ratings?:
+            | Database["public"]["CompositeTypes"]["star_ratings"]
+            | null
           theme?: string
           victim_description?: string
           victim_name?: string
@@ -288,21 +303,18 @@ export interface Database {
         Row: {
           description: string
           id: number
-          imagepath: string
           mystery_id: number
           name: string
         }
         Insert: {
           description: string
           id?: number
-          imagepath: string
           mystery_id: number
           name: string
         }
         Update: {
           description?: string
           id?: number
-          imagepath?: string
           mystery_id?: number
           name?: string
         }
@@ -570,17 +582,15 @@ export interface Database {
       [_ in never]: never
     }
     CompositeTypes: {
-      murderer_type: {
-        name: string
-        description: string
-        imagepath: string
-        motive: string
-        opportunity: string
-        evidence: string
-      }
       product_type: {
         product_id: string
         metered_si: string
+      }
+      star_ratings: {
+        star0: string
+        star1: string
+        star2: string
+        star3: string
       }
     }
   }

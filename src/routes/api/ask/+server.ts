@@ -13,13 +13,13 @@ import {
 } from '$lib/supabase/conversations.server';
 import { getMessageAmountForUser, decreaseMessageForUser, increaseMessageForUser } from '$lib/supabase/message_amounts.server';
 import { approximateTokenCount } from '$misc/openai';
-import { MAX_TOKENS } from '../../../constants';
 import { shuffleArray } from '$lib/generic-helpers';
 import { standardInvestigationAnswer } from './conversation';
 import { isPostgresError, isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
 import { OPEN_AI_KEY } from '$env/static/private';
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
 import { stripeClient } from '$lib/stripe';
+import { MAX_CONVERSATION_LENGTH, textIsTooLong } from '$lib/message-conversation-lengths';
 
 interface AccuseModelAnswerParams {
 	mysteryName: string;
@@ -28,11 +28,8 @@ interface AccuseModelAnswerParams {
 	accuseBrainRequestParams: AccuseModelRequestParams;
 }
 
-async function accuseModelAnswer(
-	{ mysteryName, userId, accuseBrainRequestParams, accuseLetterInfo }: AccuseModelAnswerParams,
-	openAiToken: string
-) {
-	const response = await accuseBrainRequest(accuseBrainRequestParams, openAiToken);
+async function accuseModelAnswer({ mysteryName, userId, accuseBrainRequestParams, accuseLetterInfo }: AccuseModelAnswerParams) {
+	const response = await accuseBrainRequest(accuseBrainRequestParams);
 	const ratingSet = await setRating(mysteryName, userId, response.rating);
 	throwIfFalse(ratingSet, 'Could not set rating');
 	const addResult = async (message: string) => {
@@ -40,17 +37,15 @@ async function accuseModelAnswer(
 		throwIfFalse(addedMessage, 'Could not add message to chat');
 		await archiveLastConversation(userId, mysteryName);
 	};
-	return accuseLetterModelRequest(
-		{
-			accusation: accuseBrainRequestParams.promptMessage,
-			epilogue: response.epilogue,
-			accuseLetterInfo: accuseLetterInfo,
-			suspects: accuseBrainRequestParams.suspects,
-			victim: accuseBrainRequestParams.victim,
-			onResponseGenerated: addResult
-		},
-		openAiToken
-	);
+	return accuseLetterModelRequest({
+		accusation: accuseBrainRequestParams.promptMessage,
+		epilogue: response.epilogue,
+		accuseLetterInfo: accuseLetterInfo,
+		suspects: accuseBrainRequestParams.suspects,
+		victim: accuseBrainRequestParams.victim,
+		onResponseGenerated: addResult,
+		openAiToken: accuseBrainRequestParams.openAiToken
+	});
 }
 
 export const POST: RequestHandler = async ({ request, locals: { getSession } }) => {
@@ -66,8 +61,8 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	throwIfUnset('Mystery name', game_config.mysteryName);
 	let message: string = requestData.message;
 	throwIfUnset('messages', message);
-	if (approximateTokenCount(message) > MAX_TOKENS) {
-		error(400, 'Message is too long.');
+	if (textIsTooLong(accuse, approximateTokenCount(message)) || message.length == 0) {
+		error(400, 'Message is too long or empty');
 	}
 
 	const [letterMessages, brainMessages, messagesAmount, currentSub] = await Promise.all([
@@ -83,6 +78,10 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	const requestToken = requestData.openAiToken;
 	const useBackendToken = requestToken == undefined || requestToken == '';
 	const openAiToken = useBackendToken ? OPEN_AI_KEY : requestToken;
+
+	if (brainMessages.length > MAX_CONVERSATION_LENGTH && !accuse) {
+		error(500, 'Too many messages. You have to accuse');
+	}
 
 	if (messagesAmount.amount <= 0 && messagesAmount.non_refillable_amount <= 0 && genNum >= 0 && useBackendToken) {
 		const meteredProd = currentSub.length == 1 ? currentSub[0].products.find((x) => x.metered_si != null) : undefined;
@@ -121,10 +120,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		}, '');
 
 		//Shuffle array so the murderer is not always the first suspect
-		const suspectsString = shuffleArray([
-			...gameInfo.suspects,
-			{ name: gameInfo.murderer.name, description: gameInfo.murderer.description, imagepath: gameInfo.murderer.imagepath }
-		]).reduce((acc: string, suspect) => {
+		const suspectsString = shuffleArray([...gameInfo.suspects]).reduce((acc: string, suspect) => {
 			return acc + suspect.name + ': ' + suspect.description + '\n';
 		}, '');
 
@@ -132,47 +128,43 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 			name: gameInfo.victim_name,
 			description: gameInfo.victim_description
 		};
+		const baseParams = {
+			suspects: suspectsString,
+			victim,
+			theme: gameInfo.theme,
+			setting: gameInfo.setting
+		};
 
 		return accuse
-			? await accuseModelAnswer(
-					{
-						mysteryName: game_config.mysteryName,
-						accuseBrainRequestParams: {
-							promptMessage: message,
-							suspects: suspectsString,
-							victim,
-							murderer: {
-								murdererName: gameInfo.murderer.name,
-								motive: gameInfo.murderer.motive,
-								opportunity: gameInfo.murderer.opportunity,
-								evidence: gameInfo.murderer.evidence
-							}
-						},
-						userId: session.user.id,
-						accuseLetterInfo: gameInfo.accuse_letter_prompt
+			? await accuseModelAnswer({
+					mysteryName: game_config.mysteryName,
+					accuseBrainRequestParams: {
+						...baseParams,
+						promptMessage: message,
+						fewShots: gameInfo?.few_shots?.accuse_brain,
+						openAiToken,
+						starRatings: gameInfo?.star_ratings
 					},
-					openAiToken
-				)
+					userId: session.user.id,
+					accuseLetterInfo: gameInfo.accuse_letter_prompt
+				})
 			: await standardInvestigationAnswer(
 					{
-						suspects: suspectsString,
-						victim: victim,
+						...baseParams,
 						question: message,
-						theme: gameInfo.theme,
-						setting: gameInfo.setting,
 						timeframe: gameInfo.timeframes,
 						actionClues: gameInfo.action_clues,
 						fewShots: gameInfo?.few_shots?.brain,
 						eventClues: eventClues,
-						eventTimeframes
+						eventTimeframes,
+						openAiToken
 					},
 					game_config.mysteryName,
 					session.user.id,
 					gameInfo.letter_prompt,
 					letterMessages,
 					brainMessages,
-					genNum,
-					openAiToken
+					genNum
 				);
 	} catch (err) {
 		error(500, getErrorMessage(err));

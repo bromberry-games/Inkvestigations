@@ -1,5 +1,4 @@
-import { FakeListLLM } from 'langchain/llms/fake';
-import { FakeListChatModel } from 'langchain/chat_models/fake';
+import { FakeListChatModel } from '@langchain/core/utils/testing';
 import type { LLMResult } from 'langchain/schema';
 
 export function createFakeLetterLLM(onResponseGenerated: (input: string) => Promise<any>): FakeListChatModel {

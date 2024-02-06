@@ -1,0 +1,1 @@
+Alter TABLE few_shots ADD Column accuse_brain JSON;

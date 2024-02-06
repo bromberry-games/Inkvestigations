@@ -5,37 +5,43 @@ export interface suspect {
 	imagepath: string;
 	description: string;
 }
-export async function loadSuspects(mysterName: string): Promise<suspect[] | null> {
+export async function loadSuspects(mysterName: string) {
 	const { data, error } = await supabase_full_access
 		.from('mysteries')
-		.select('murderer, suspects(name, imagepath, description)')
+		.select('suspects(name, description)')
 		.eq('name', mysterName)
 		.limit(1)
 		.single();
 	if (error) {
 		console.error(error);
-		return null;
+		return error;
 	}
-	return [
-		...data.suspects,
-		{
-			name: data.murderer.name,
-			imagepath: data.murderer.imagepath,
-			description: data.murderer.description
-		}
-	];
+	return data.suspects;
+}
+
+export async function loadVictim(mysterName: string) {
+	const { data, error } = await supabase_full_access
+		.from('mysteries')
+		.select('victim_name, victim_description')
+		.eq('name', mysterName)
+		.limit(1)
+		.single();
+	if (error) {
+		return error;
+	}
+	return data;
 }
 
 export async function loadGameInfo(mystery: string, messageLength: number) {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('mysteries')
 		.select(
-			`theme, setting, letter_prompt, accuse_letter_prompt, murderer, victim_name, victim_description, 
-			suspects(name, imagepath, description), 
+			`theme, setting, letter_prompt, accuse_letter_prompt, solution, victim_name, victim_description, star_ratings, 
+			suspects(name, description), 
 			action_clues(action, clue),
 			timeframes(timeframe, event_happened),
 			events(letter, info, show_at_message, timeframe),
-			few_shots(brain)
+			few_shots(brain, accuse_brain)
 			`
 		)
 		.eq('name', mystery)
@@ -67,7 +73,11 @@ export async function loadMysteryLetterInfo(userid: string, mystery: string) {
 }
 
 export async function loadMysteriesWithSolved(userId: string) {
-	const { error, data } = await supabase_full_access.from('mysteries').select('*, solved(rating)').eq('solved.user_id', userId);
+	const { error, data } = await supabase_full_access
+		.from('mysteries')
+		.select('*, solved(rating)')
+		.eq('solved.user_id', userId)
+		.order('order_int', { ascending: true });
 	if (error) {
 		console.error(error);
 		return error;
