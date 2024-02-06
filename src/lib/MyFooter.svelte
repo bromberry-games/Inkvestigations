@@ -22,6 +22,7 @@
 				<FooterLinkGroup>
 					<!-- <FooterLink liClass="mb-4" href="/">GitHub</FooterLink> -->
 					<FooterLink liClass="mb-4" href="https://discord.gg/t3zTYNhNzp">Discord</FooterLink>
+					<FooterLink liClass="mb-4" href="https://github.com/bromberry-games/Inkvestigations">Github</FooterLink>
 				</FooterLinkGroup>
 			</div>
 			<div>
@@ -52,9 +53,9 @@
 			<!-- <FooterIcon href="/"> -->
 			<!-- <TwitterSolid class="h-4 w-4 text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white" /> -->
 			<!-- </FooterIcon> -->
-			<!-- <FooterIcon href="/"> -->
-			<!-- <GithubSolid class="h-4 w-4 text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white" /> -->
-			<!-- </FooterIcon> -->
+			<FooterIcon href="https://github.com/bromberry-games/Inkvestigations">
+				<GithubSolid class="h-4 w-4 text-gray-500 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white" />
+			</FooterIcon>
 		</div>
 	</div>
 </Footer>
