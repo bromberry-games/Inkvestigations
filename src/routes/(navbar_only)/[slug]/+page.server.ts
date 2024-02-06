@@ -12,30 +12,7 @@ import { MAX_CONVERSATION_LENGTH } from '$lib/message-conversation-lengths';
 function createLetter(letterInfo: string) {
 	return {
 		role: 'assistant',
-		content: `
-			Dear Mr. Holmes,
-
-			I'm sorry to have to write under these circumstances.
-			${letterInfo}
-			I will follow your orders to the best of my ability. Some things you can ask of me are:
-
-			- Inspect
-			- Question
-			- Search
-			- Analyze
-
-			To familiarize yourself with the people involved in this case, I have attached their pictures in the lower left corner. When you are certain you know who it was, you can solve it by changing the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
-
-			- Motive
-			- Opportunity
-			- Evidence
-
-			I hope you can help me with this case.
-
-			William Wellington,
-
-			Police chief of Zlockinbury
-		`
+		content: `${letterInfo}`
 	};
 }
 
