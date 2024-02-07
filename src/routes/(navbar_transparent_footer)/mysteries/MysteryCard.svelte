@@ -8,7 +8,7 @@
 </script>
 
 <Card
-	img={mystery.filepath}
+	img={'/images/mysteries/' + mystery.name.replace(/ /g, '_').toLowerCase() + '.webp'}
 	class="rounded border-8 border-quaternary !bg-quaternary"
 	padding="none"
 	href={unlocked ? mystery.name.replace(/\s+/g, '_') : undefined}

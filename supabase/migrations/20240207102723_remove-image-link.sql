@@ -1,0 +1,1 @@
+ALTER TABLE mysteries DROP COLUMN filepath;
