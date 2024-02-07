@@ -1,5 +1,5 @@
 INSERT INTO mysteries 
-(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings, order_int) 
+(name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, solution, star_ratings, order_int) 
 VALUES (
 'Mirror Mirror',
 'A journalist is found dead. But nobody knows what happened.',
@@ -41,7 +41,6 @@ Your name is William Wellington, the police chief of Zlockingbury. You live in a
 $$,
 'Michael Terry',
 'Murdered. Reputation as a rockstar journalist, but rumored to not always follow the truth, or at least embellish a little. Recently he privately started writing fiction without anybody knowing.',
-'images/mysteries/mirror_mirror.webp',
 $$
 It was Oliver Smith. Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.
 After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.
@@ -65,7 +64,6 @@ DO UPDATE SET
     accuse_letter_prompt = EXCLUDED.accuse_letter_prompt,
     victim_name = EXCLUDED.victim_name,
     victim_description = EXCLUDED.victim_description,
-    filepath = EXCLUDED.filepath,
     solution = EXCLUDED.solution,
     star_ratings = EXCLUDED.star_ratings,
     order_int = EXCLUDED.order_int;
@@ -298,7 +296,7 @@ $$
 -- 
 Insert INTO for_free_users (amount, daily_limit) VALUES (5, 5);
 
-INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, filepath, solution, star_ratings, order_int) VALUES (
+INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, solution, star_ratings, order_int) VALUES (
     'Forced Farewell',
     'A boy is found missing.',
     'escape and transformation',
@@ -372,7 +370,6 @@ Joseph Strickmeyer: Burgler and overall no-good kind of guy and very stupid. Pol
 $$,
 'John Toillard',
 'kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives.',
-'/images/mysteries/forced_farewell.webp',
 $$
 It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.
 $$,
@@ -393,7 +390,6 @@ DO UPDATE SET
     accuse_letter_prompt = EXCLUDED.accuse_letter_prompt,
     victim_name = EXCLUDED.victim_name,
     victim_description = EXCLUDED.victim_description,
-    filepath = EXCLUDED.filepath,
     solution = EXCLUDED.solution,
     star_ratings = EXCLUDED.star_ratings,
     order_int = EXCLUDED.order_int;

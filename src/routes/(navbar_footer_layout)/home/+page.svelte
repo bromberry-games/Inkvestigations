@@ -7,14 +7,14 @@
 	$: mysterData =
 		data.lastPlayed != undefined
 			? {
-					slug: data.lastPlayed.user_mystery_conversations?.mystery_name.replace(/ /, '_'),
-					image: data.lastPlayed.user_mystery_conversations?.mystery_name.replace(/ /, '_').toLowerCase(),
+					slug: data.lastPlayed.user_mystery_conversations?.mystery_name.replace(/ /g, '_'),
+					image: data.lastPlayed.user_mystery_conversations?.mystery_name.replace(/ /g, '_').toLowerCase(),
 					message: data.lastPlayed.content,
 					name: data.lastPlayed.user_mystery_conversations?.mystery_name
 				}
 			: {
-					slug: data.first.name.replace(/ /, '_'),
-					image: data.first.name.replace(/ /, '_').toLowerCase(),
+					slug: data.first.name.replace(/ /g, '_'),
+					image: data.first.name.replace(/ /g, '_').toLowerCase(),
 					message: data.first.description,
 					name: data.first.name
 				};
