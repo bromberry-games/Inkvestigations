@@ -107,77 +107,77 @@ $$
 {
   "messages": [
     {
-      "role": "user",
-      "content": "search the house"
-    },
-    {
-      "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- the house has a library with a wide array of books, on writing, encyclopedias, fiction, etc. \n- a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry's desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;\n- mood: curious"
-    },
-    {
-      "role": "user",
-      "content": "Interrogate all the suspects"
-    },
-    {
-      "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- Maria Payton is deeply distraught by the sight and it's hard for her to talk\n- Angela Videl is sad of course but knows Terry had alienated a lot of people\n- Dexter Tin says he didn't need to see that to be honest\n- Bianca White is crying heavily and saying he didn't deserve that\n- Oliver is teary eyed and sad because Terry had so much more to give\n- O'Ranner is not surprised because he knew Terry had an edge to his style\n- mood: focused "
-    },
-    {
-      "role": "user",
-      "content": "ask the pope for help"
-    },
-    {
-      "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n-  I reached out and his office was kind enough to relay the message\n- They promise us prayer of aid\n- mood: spiritual"
-    },
-    {
-      "role": "user",
-      "content": "hi"
-    },
-    {
-      "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- Hey, did you hear of that new falafel place they opened, maybe we could go there together some time  \n- mood: bashful"
-    },
-    {
-      "role": "user",
-      "content": "who is the mafia boss terry was writing about"
-    },
-    {
-      "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- There is no specific mention of the name of the mafia boss in Terry's half-written piece. It seems that he was in the early stages of investigation and hadn't yet uncovered the boss's identity. \n- mood: mysterious"
-    },
-    {
-      "role": "user",
-      "content": "search your database for known mafia bosses in your area"
-    },
-    {
-      "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- There is one small time mobster in prison not far from here, Antonio Bellucci.\n- I wouldn't call him a mafia boss necessarily\n- mood: curious"
-    },
-    {
-      "role": "user",
-      "content": "visit belluci and ask him about terry"
-    },
-    {
-      "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- Bellucci says Terry visited him because he was writing a fiction piece on mafia bosses, inspired by the godfather, and Belluci was the closest thing he had for reference"
-    },
-    {
-      "role": "user",
-      "content": "inspect the pen"
-    },
-    {
-      "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- As you inspect Terry's pen, you notice that it is a high-quality ink pen with a distinctive design. It has a silver body and a small engraving of Terry's initials on the cap. The inkwell of the pen is filled with gelatin, which is a common way to encase pills for consumption. Upon further analysis, traces of cyanide are found in the inkwell.\n- Mood: Investigative"
-    },
-    {
-      "role": "user",
-      "content": "interrogate oliver"
-    },
-    {
-      "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.\nInformation:\n- When you interrogate Oliver, he appears nervous but cooperative. He insists that he had nothing to do with Terry's death and was at home working on a piece during the time of the incident.\n- Oliver admits that he is a huge fan of Terry and had sent him fan letters in the past. He even shows you the letters he had written to Terry"
-    }
+  "role": "user",
+  "content": "search the house\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+},
+{
+  "role": "assistant",
+  "content": "Information:\n- the house has a library with a wide array of books, on writing, encyclopedias, fiction, etc. \n- a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry's desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;\n- mood: curious"
+},
+{
+  "role": "user",
+  "content": "Interrogate all the suspects\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+},
+{
+  "role": "assistant",
+  "content": "Information:\n- Maria Payton is deeply distraught by the sight and it's hard for her to talk\n- Angela Videl is sad of course but knows Terry had alienated a lot of people\n- Dexter Tin says he didn't need to see that to be honest\n- Bianca White is crying heavily and saying he didn't deserve that\n- Oliver is teary eyed and sad because Terry had so much more to give\n- O'Ranner is not surprised because he knew Terry had an edge to his style\n- mood: focused"
+},
+{
+  "role": "user",
+  "content": "ask the pope for help\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+},
+{
+  "role": "assistant",
+  "content": "Information:\n- I reached out and his office was kind enough to relay the message\n- They promise us prayer of aid\n- mood: spiritual"
+},
+{
+  "role": "user",
+  "content": "hi\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+},
+{
+  "role": "assistant",
+  "content": "Information:\n- Hey, did you hear of that new falafel place they opened, maybe we could go there together some time\n- mood: bashful"
+},
+{
+  "role": "user",
+  "content": "who is the mafia boss terry was writing about\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+},
+{
+  "role": "assistant",
+  "content": "Information:\n- There is no specific mention of the name of the mafia boss in Terry's half-written piece. It seems that he was in the early stages of investigation and hadn't yet uncovered the boss's identity.\n- mood: mysterious"
+},
+{
+  "role": "user",
+  "content": "search your database for known mafia bosses in your area\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+},
+{
+  "role": "assistant",
+  "content": "Information:\n- There is one small time mobster in prison not far from here, Antonio Bellucci.\n- I wouldn't call him a mafia boss necessarily\n- mood: curious"
+},
+{
+  "role": "user",
+  "content": "visit belluci and ask him about terry\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+},
+{
+  "role": "assistant",
+  "content": "Information:\n- Bellucci says Terry visited him because he was writing a fiction piece on mafia bosses, inspired by the godfather, and Bellucci was the closest thing he had for reference"
+},
+{
+  "role": "user",
+  "content": "inspect the pen\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+},
+{
+  "role": "assistant",
+  "content": "Information:\n- I inspected Terry's pen, it is a high-quality ink pen with a distinctive design. It has a silver body and a small engraving of Terry's initials on the cap. The inkwell of the pen is filled with gelatin, which is a common way to encase pills for consumption. Upon further analysis, traces of cyanide are found in the inkwell.\n- Mood: Investigative"
+},
+{
+  "role": "user",
+  "content": "interrogate oliver\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+},
+{
+  "role": "assistant",
+  "content": "Information:\n- When you interrogate Oliver, he appears nervous but cooperative. He insists that he had nothing to do with Terry's death and was at home working on a piece during the time of the incident.\n- Oliver admits that he is a huge fan of Terry and had sent him fan letters in the past. He even shows you the letters he had written to Terry"
+}
   ]}
 $$
 ,
@@ -409,24 +409,25 @@ VALUES
 DELETE FROM action_clues WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Forced Farewell');
 INSERT INTO action_clues (mystery_id, action, clue)
 VALUES
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogate Toillard household', 'create a line for each suspect about how worried they are'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search house', 'the estate is remote and surrounded by a garden and then by thick forest behind it, there is shattered glass at a garden door; John''s room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; there is a ransom note'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Who was in the house when the boy disappeared', 'there was no one in the house, the butler says it was an emergency and that''s he left him alone'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'How much did the Baron owe', 'after a certain amount of circumlocution, he says that it was certainly hundreds of times more than the ransom'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Who could have known John would be alone', 'it was not planned so no one could have known in advance, but it was apparent that he was left at home when the Toillards arrived in Romsey'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'people who left the garden party', 'it was only going into full swing when the doctor stormed in, no one had left at that point'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Investigate ransom note', 'it''s old newspaper cutouts demanding that on Monday July 18 £13.2 be posted to the following address in London: 4 Patterson Street'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Searching 4 Patterson Street in London', 'in that apartment lives a Mary Ann Woodcock and her daughters Hannah and Anna. Her husband Methusalem Woodcock is a sailor and has been at sea for months'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogate Butler Jessob', 'he says he was tending to the sickly John who seemed to be getting worse, so he rode out to fetch the local doctor, they couldn''t have been gone more than an hour; and when they returned they searched everywhere, but couldn''t find John; so Jessob sent the doctor to ride for Romsey to inform the Toillards'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogate Toillard household', $$ create a line for each suspect about how worried they are$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search house', $$the estate is remote and surrounded by a garden and then by thick forest behind it, there is shattered glass at a garden door; John''s room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; there is a ransom note$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Who was in the house when the boy disappeared', $$there was no one in the house, the butler says it was an emergency and that''s he left him alone$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'How much did the Baron owe', $$after a certain amount of circumlocution, he says that it was certainly hundreds of times more than the ransom$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Who could have known John would be alone', $$it was not planned so no one could have known in advance, but it was apparent that he was left at home when the Toillards arrived in Romsey$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'people who left the garden party', $$it was only going into full swing when the doctor stormed in, no one had left at that point$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Investigate ransom note',$$ it's old newspaper cutouts demanding that on Monday July 18 £13.2 be posted to the following address in London: 4 Patterson Street. That peculiar sum would be enough for a few month's rent and living expenses, but nothing life-changing.$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Searching 4 Patterson Street in London', $$in that apartment lives a Mary Ann Woodcock and her daughters Hannah and Anna. Her husband Methusalem Woodcock is a sailor and has been at sea for months$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Interrogate Butler Jessob', $$he says he was tending to the sickly John who seemed to be getting worse, so he rode out to fetch the local doctor, they couldn''t have been gone more than an hour; and when they returned they searched everywhere, but couldn''t find John; so Jessob sent the doctor to ride for Romsey to inform the Toillards$$),
 ((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Jessob and his relationship to the boy', $$ as I'm rather young I've come to think of the boy as my little brother, I care for him dearly and we talked about all sorts of topics: America, steam engines, and geography. He knows much more than me already. What a bright young man he is. I'm going mad with guilt. I didn't mean to let it come to this.$$),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search John''s room', 'all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Questioning Baron Toillard whom he suspects', 'he suspects "The Lad" Johnson because he borrowed money from The Lad, but it''s peculiar that the ransom is much less than he borrowed from The Lad'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search the estate and the surroundings', 'no clues as there wasn''t any rain for footprints and they seem very careful not to leave any tracks'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Questioning the family if they know of Sherlock Holmes', 'they say that obviously everyone''s heard of him since he solved the murder of the Cleveland man, John was particularly amazed by the The Book of Life and he chewed their ears off about it'),((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Strickmeyer', 'says he doesn''t even know who the boy is, is furious at this suspicion'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Alice or Arthur', $$ Alice is very shy and doesn't seem to understand what all the tension is about. Arthur doesn't grasp the situation either, thinks John went out for fun and will come back soon.$$),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Lady Toillard', 'cathartic with grief, it''s hard getting anything out of her, appears to think John is already dead'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Jameson', 'He is quite distressed as he cared for the boy for all the thirteen years, was urgently called by Jessob, then found the boy missing, rushed to Romsey and that was that'),
-((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question William Johnson', 'he lent money to the Baron, but he says he has other ways of getting money back legally, and that he doesn''t have to rely on stealing children; besides it''s much much less than he''s owed');
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search John''s room', $$all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science'),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Questioning Baron Toillard whom he suspects', 'he suspects "The Lad" Johnson because he borrowed money from The Lad, but it''s peculiar that the ransom is much less than he borrowed from The Lad$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Search the estate and the surroundings', $$no clues as there wasn''t any rain for footprints and they seem very careful not to leave any tracks$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Questioning the family if they know of Sherlock Holmes', $$they say that obviously everyone''s heard of him since he solved the murder of the Cleveland man, John was particularly amazed by the The Book of Life and he chewed their ears off about it$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Strickmeyer', $$says he doesn''t even know who the boy is, is furious at this suspicion, says he didn't even hear about any plans about stealing any child$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Alice or Arthur', $$ Alice is very shy and doesn't seem to understand what all the tension is about. Arthur doesn't grasp the situation either, John always wanted to go, thinks John went out for fun and will come back soon.$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Lady Toillard', $$cathartic with grief, it's hard getting anything out of her, appears to think John is already dead$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question Jameson', $$He is quite distressed as he cared for the boy for all the thirteen years, was urgently called by Jessob, then found the boy missing, rushed to Romsey and that was that$$),
+((SELECT id FROM mysteries WHERE name = 'Forced Farewell'), 'Question William Johnson', $$he lent money to the Baron, but he says he has other ways of getting money back legally, and that he doesn't have to rely on stealing children; besides it's much much less than he's owed$$);
 
 
 DELETE FROM timeframes WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Forced Farewell');
@@ -519,7 +520,7 @@ Dear Diary,
 I can hardly write. The business venture my father pursued in America has turned out to be a swindle. My father has just told me that due to these financial circumstances he cannot send me to Eton this summer. I am to choose between private tutoring or attending some inferior public school. He guarantees me next year I will definitely be able to go, but I do not believe him. He seems to bad appraiser of situations if he got deceived so easily. He is incensed of course, but who is to blame? He started to say all kinds of things about America and her citizens. How they are no good company and that anyone going there will inevitably succumb to their evil ways. Rubbish of course, since he's the prime swindler become Baron among all these fine people. He did not say it but it seems he will not send me to America. And with subclass education I will not be able to attend university. I have to do something about it as soon as possible.
 
 $$,
-   $$ 'investigate diary -- a nice and luxurious diary, dedicated to John by the butler, John writes about his every day life' $$,
+   $$ investigate diary -- a nice and luxurious diary, dedicated to John by the butler, John writes about his every day life\nsearch southampton port -- multiple reports of a boy matching the description trying to get onto the boat\nhow to get to America -- the port in southampton, the SS City of New York is leaving on July 19th$$,
     13,
 
  $$Monday 18th of July: John's diary is discovered in a secondhand shop in Southampton.$$
@@ -534,68 +535,69 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
   "messages": [
     {
       "role": "user",
-      "content": "search the mansion"
+      "content": "search the mansion\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
     },
     {
       "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves. \nInformation:\n- there is shattered glass at a garden door; John's room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; the ransom note;\n- mood: curious"
+      "content": "Information:\n- there is shattered glass at a garden door; John's room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; the ransom note;\n- mood: curious"
     },
     {
       "role": "user",
-      "content": "search John's room"
+      "content": "search John's room\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
     },
     {
       "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves. \nInformation:\n- all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science\n- mood: curious"
+      "content": "Information:\n- all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science\n- mood: curious"
     },
     {
       "role": "user",
-      "content": "what are the newspaper articles about"
+      "content": "what are the newspaper articles about\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
     },
     {
       "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves. \nInformation:\n- The newspaper articles in John's scrapbook are a mix of topics, including: An article about the latest inventions and advancements in electricity in America. A story about a group of explorers uncovering a lost civilization in the Amazon rainforest.\n- It seems that John is fascinated by science, adventure, and the idea of escaping from the ordinary.\n- mood: curious"
+      "content": "Information:\n- The newspaper articles in John's scrapbook are a mix of topics, including: An article about the latest inventions and advancements in electricity in America. A story about a group of explorers uncovering a lost civilization in the Amazon rainforest.\n- mood: curious"
     },
     {
       "role": "user",
-      "content": "question the baron"
+      "content": "question the baron\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
     },
     {
       "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves.\nInformation:\n- The Baron recalls borrowing money from William \"The Lad\" Johnson, the local moneylender.\n- He suspects \"The Lad\" Johnson because of the debt owed, but finds it strange that the ransom demanded is much less than the amount he borrowed.\n- The Baron seems concerned about his financial situation and is prone to impulsive behaviors like hitting family members.\n- mood: suspicious"
+      "content": "Information:\n- He suspects \"The Lad\" Johnson because of the debt owed, but finds it strange that the ransom demanded is much less than the amount he borrowed.\n- mood: suspicious"
     },
     {
       "role": "user",
-      "content": "ask the pope for help"
+      "content": "ask the pope for help\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
     },
     {
       "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves. \nInformation:\n- Here in Romsey we are Anglicans and do not like His Holiness to interfere in our business. On your request however, I have reached out and was told that he would pray for young John Toillard. He may not be so bad after all. \nmood: warming to the pope"
+      "content": "Information:\n- Here in Romsey we are Anglicans and do not like His Holiness to interfere in our business. On your request however, I have reached out and was told that he would pray for young John Toillard. He may not be so bad after all. \nmood: warming to the pope"
     },
     {
       "role": "user",
-      "content": "hi"
+      "content": "hi\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
     },
     {
       "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves. \nInformation:\n- By the way, someone has reported a missing cat here in Romsey, and they suspect it may have found its way into the local bakery. But do lend your Science of Deduction and Analysis if you have the time!\n- mood: eager"
+      "content": "Information:\n- By the way, someone has reported a missing cat here in Romsey, and they suspect it may have found its way into the local bakery. But do lend your Science of Deduction and Analysis if you have the time!\n- mood: eager"
     },
     {
       "role": "user",
-      "content": "search the butler's room"
+      "content": "search the butler's room\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
     },
     {
       "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves.\nInformation:\n- The butler's room is tidy and well-organized, with no signs of disturbance.\n- There is a shelf filled with books about etiquette, household management, and history.\n- There is also a small photo album with pictures of the butler with the Toillard family on various occasions.\n- mood: observant"
-    },
-    {
-      "role": "user",
-      "content": "accuse Lord Toillard for the kidnapping"
+      "content": "Information:\n- The butler's room is tidy and well-organized, with no signs of disturbance, a shelf is filled with books about etiquette, household management, and history. There is also a small photo album with pictures of the butler with the Toillard family on various occasions.\n- mood: observant"
     },
     {
       "role": "assistant",
-      "content": "I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery fun and engaging. I let the player think for themselves.\nInformation:\n- While Lord Toillard has shown impulsive behavior in the past, there is no concrete evidence to directly accuse him of the kidnapping. I need motive, opportunity and evidence before I can accuse someone.\n- mood: cautious"
-    }]
+      "content": "accuse Lord Toillard for the kidnapping\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+    },
+    {
+      "role": "assistant",
+      "content": "Information:\n- While Lord Toillard has shown impulsive behavior in the past, there is no concrete evidence to directly accuse him of the kidnapping. I need motive, opportunity and evidence before I can accuse someone.\n- mood: cautious"
+    }
+  ]
 }
     $$,
     $$

@@ -2,13 +2,17 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { BaseMessage, ChatMessage } from 'langchain/schema';
 
 const brainPromptTemplate = `
-You are the DM for a mystery game. You always respond in this format:
+You are the DM for a mystery game. You take the role of William Wellington a local police chief. The player is Sherlock Holmes.
+Sherlock will always give you orders in this format:
 """
-I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.
+[order]
+You are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything.
+- mood: [some mood]
+"""
+You always respond in this format:
+"""
 Information:
-- [insert relevant or made up information depending on the context]
-"""
-Here is the game information:
+- [insert relevant or made up information gained by performing the order]
 """
 
 ## Game information
@@ -38,9 +42,9 @@ None of these facts are known to the player. They need to perform an action to g
 {oldInfo}
 """
 Special rules but same answer format: 
-- accusations don't work. Wellington always says he needs motive, opportunity, and evidence. 
-- Wellington is bound by real life laws when making up information.
-- Always think long and hard about the information that you create. It should fit in with the rest of the clues and information. Think like an expert writer when making up the information.
+- you write from the perspective of Wellington adressing Sherlock
+- never mention secret codes, hidden compartments, or unknown numbers unless they are specified in the information given to you
+- never say there is no evidence for something
 
 Your TASK:
 Create an engaging mystery experience. This is achieved by always giving only relevant information the player explicitly asked for. The player must think by themselves. However, if they fool around, play along, but never influence the overall game. 
@@ -198,8 +202,8 @@ const fewShotPromptBrain = [
 		- mood: attentive`
 	})
 ];
-
-const userTemplate = '{text}';
+ 
+const userTemplate = '"{text}"\n You are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren not provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything.';
 
 export function createBrainPrompt(previousConversation: BaseMessage[], fewShots: ChatMessage[] | null) {
 	const toInsert = fewShots ? fewShots : fewShotPromptBrain;
