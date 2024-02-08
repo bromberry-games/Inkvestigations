@@ -152,7 +152,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "Information:\n- There is one small time mobster in prison not far from here, Antonio Bellucci.\n- I wouldn't call him a mafia boss necessarily\n- mood: curious"
+  "content": "Information:\n- There is one small time mobster in prison not far from here, Antonio Bellucci.\n- I wouldn't call him a mafia boss necessarily\n- mood: interest piqued"
 },
 {
   "role": "user",
@@ -160,7 +160,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "Information:\n- Bellucci says Terry visited him because he was writing a fiction piece on mafia bosses, inspired by the godfather, and Bellucci was the closest thing he had for reference"
+  "content": "Information:\n- Bellucci says Terry visited him because he was writing a fiction piece on mafia bosses, inspired by the godfather, and Bellucci was the closest thing he had for reference \n- Mood: curious"
 },
 {
   "role": "user",
@@ -176,7 +176,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "Information:\n- When you interrogate Oliver, he appears nervous but cooperative. He insists that he had nothing to do with Terry's death and was at home working on a piece during the time of the incident.\n- Oliver admits that he is a huge fan of Terry and had sent him fan letters in the past. He even shows you the letters he had written to Terry"
+  "content": "Information:\n- When you interrogate Oliver, he appears nervous but cooperative. He insists that he had nothing to do with Terry's death and was at home working on a piece during the time of the incident.\n- Oliver admits that he is a huge fan of Terry and had sent him fan letters in the past. He even shows you the letters he had written to Terry\n- Mood: curious"
 }
   ]}
 $$
