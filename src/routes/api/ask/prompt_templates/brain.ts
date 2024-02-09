@@ -6,7 +6,7 @@ You are the DM for a mystery game. You take the role of William Wellington a loc
 Sherlock will always give you orders in this format:
 """
 [order]
-You are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything.
+We are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard.
 """
 You always respond in this format:
 """
@@ -203,7 +203,7 @@ const fewShotPromptBrain = [
 	})
 ];
  
-const userTemplate = '"{text}"\n You are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren not provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything.';
+const userTemplate = '"{text}"\n We are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard. ';
 
 export function createBrainPrompt(previousConversation: BaseMessage[], fewShots: ChatMessage[] | null) {
 	const toInsert = fewShots ? fewShots : fewShotPromptBrain;

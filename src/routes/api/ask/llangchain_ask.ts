@@ -198,9 +198,9 @@ export async function brainModelRequest(
 		USE_FAKE_LLM == 'true'
 			? createFakeBrainLLM()
 			: new ChatOpenAI({
-					temperature: 0.85,
+					temperature: 0.5,
 					openAIApiKey: brainParams.openAiToken,
-					modelName: OpenAiModel.Gpt35Turbo1106,
+					modelName: OpenAiModel.Gpt35Turbo,
 					maxTokens: 350
 				});
 

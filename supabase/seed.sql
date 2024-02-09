@@ -108,7 +108,7 @@ $$
   "messages": [
     {
   "role": "user",
-  "content": "search the house\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+  "content": "search the house\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
 },
 {
   "role": "assistant",
@@ -116,7 +116,7 @@ $$
 },
 {
   "role": "user",
-  "content": "Interrogate all the suspects\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+  "content": "Interrogate all the suspects\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
 },
 {
   "role": "assistant",
@@ -124,7 +124,7 @@ $$
 },
 {
   "role": "user",
-  "content": "ask the pope for help\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+  "content": "ask the pope for help\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
 },
 {
   "role": "assistant",
@@ -132,7 +132,7 @@ $$
 },
 {
   "role": "user",
-  "content": "hi\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+  "content": "hi\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
 },
 {
   "role": "assistant",
@@ -140,7 +140,7 @@ $$
 },
 {
   "role": "user",
-  "content": "who is the mafia boss terry was writing about\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+  "content": "who is the mafia boss terry was writing about\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
 },
 {
   "role": "assistant",
@@ -148,7 +148,7 @@ $$
 },
 {
   "role": "user",
-  "content": "search your database for known mafia bosses in your area\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+  "content": "search your database for known mafia bosses in your area\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
 },
 {
   "role": "assistant",
@@ -156,7 +156,7 @@ $$
 },
 {
   "role": "user",
-  "content": "visit belluci and ask him about terry\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+  "content": "visit belluci and ask him about terry\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
 },
 {
   "role": "assistant",
@@ -164,7 +164,7 @@ $$
 },
 {
   "role": "user",
-  "content": "inspect the pen\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+  "content": "inspect the pen\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
 },
 {
   "role": "assistant",
@@ -172,7 +172,7 @@ $$
 },
 {
   "role": "user",
-  "content": "interrogate oliver\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues, timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+  "content": "interrogate oliver\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
 },
 {
   "role": "assistant",
@@ -535,7 +535,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
   "messages": [
     {
       "role": "user",
-      "content": "search the mansion\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+      "content": "search the mansion\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
     },
     {
       "role": "assistant",
@@ -543,7 +543,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "user",
-      "content": "search John's room\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+      "content": "search John's room\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
     },
     {
       "role": "assistant",
@@ -551,7 +551,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "user",
-      "content": "what are the newspaper articles about\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+      "content": "what are the newspaper articles about\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
     },
     {
       "role": "assistant",
@@ -559,7 +559,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "user",
-      "content": "question the baron\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+      "content": "question the baron\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
     },
     {
       "role": "assistant",
@@ -567,7 +567,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "user",
-      "content": "ask the pope for help\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+      "content": "ask the pope for help\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
     },
     {
       "role": "assistant",
@@ -575,7 +575,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "user",
-      "content": "hi\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+      "content": "hi\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
     },
     {
       "role": "assistant",
@@ -583,7 +583,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "user",
-      "content": "search the butler's room\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+      "content": "search the butler's room\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
     },
     {
       "role": "assistant",
@@ -591,13 +591,18 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "accuse Lord Toillard for the kidnapping\nYou are the police chief and you think long and hard about how the order turns out. You must keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. If you weren't provided the info, you make up something that keeps in line with the mystery. You are reporting the results of the order. You let Sherlock think for himself and do not suggest anything."
+      "content": "accuse Lord Toillard for the kidnapping\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
     },
     {
       "role": "assistant",
       "content": "Information:\n- While Lord Toillard has shown impulsive behavior in the past, there is no concrete evidence to directly accuse him of the kidnapping. I need motive, opportunity and evidence before I can accuse someone.\n- mood: cautious"
     }
-  ]
+  ],
+    "temperature": 0,
+  "max_tokens": 256,
+  "top_p": 1,
+  "frequency_penalty": 0,
+  "presence_penalty": 0
 }
     $$,
     $$
