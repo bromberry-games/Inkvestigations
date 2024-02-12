@@ -148,7 +148,7 @@ class BrainParser extends BaseOutputParser<BrainOutput> {
 			return {
 				chainOfThought: CHAIN_OF_THOUGHT_TEXT,
 				info: text,
-				mood: 'apathetic'
+				mood: 'neutral'
 			};
 		}
 		return {
