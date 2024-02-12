@@ -10,6 +10,7 @@
 	import { getAuthStatus } from '$lib/auth-helper';
 	import SuspectModal from '$lib/gpt/SuspectModal.svelte';
 	import { MAX_CONVERSATION_LENGTH } from '$lib/message-conversation-lengths';
+	import Tutorial from './tutorial.svelte';
 
 	export let data: PageData;
 
@@ -129,8 +130,11 @@
 	blockWrite={messages.length / 2 >= MAX_CONVERSATION_LENGTH}
 >
 	<Button
+		id="notes-button"
 		slot="notes-button"
-		class="mr-1 h-full rounded-none border border-secondary bg-secondary !p-2.5 font-primary text-xl text-quaternary md:mx-1 md:px-5"
+		class="mr-1 h-full rounded-none border border-secondary bg-secondary !p-2.5 font-primary text-xl text-quaternary disabled:cursor-not-allowed disabled:opacity-30 md:mx-1 md:px-5"
 		on:click={() => (suspectModal = true)}><AddressCardSolid></AddressCardSolid></Button
 	>
 </ChatInput>
+
+<Tutorial {messages}></Tutorial>

@@ -194,6 +194,7 @@
 							{/if}
 						</button>
 						<textarea
+							id="chat-input"
 							data-testid="chat-input"
 							class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary {accuseMode ? 'shadow-xl shadow-red-500' : ''}"
 							rows="1"
@@ -205,7 +206,7 @@
 							disabled={gameOver}
 						/>
 						<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
-							<button type="submit" class="btn btn-sm ml-2">
+							<button type="submit" class="btn btn-sm ml-2" id="chat-submit">
 								<PaperAirplane class="h-6 w-6" />
 							</button>
 						</div>

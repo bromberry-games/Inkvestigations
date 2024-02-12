@@ -5,6 +5,7 @@
 
 	export let message: ChatMessage;
 	export let animate: boolean = false;
+	export let i: string;
 </script>
 
 <div
@@ -27,7 +28,7 @@
 			{@html snarkdown(message.content.replace(/\n/g, '<br>'))}
 		</div>
 	{:else}
-		<div class="font-secondary text-lg">
+		<div class="font-secondary text-lg" id={'message-' + i + '-content'}>
 			{@html snarkdown(message.content.replace(/\n/g, '<br>'))}
 		</div>
 	{/if}
