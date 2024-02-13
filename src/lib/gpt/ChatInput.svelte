@@ -55,7 +55,7 @@
 	function handleRegenerate() {
 		if (lastUserMessage != null) {
 			submitMessage(lastUserMessage);
-		} else {
+		} else if(){
 			console.log('last user message is null, have to reload the page');
 			invalidateAll();
 		}
