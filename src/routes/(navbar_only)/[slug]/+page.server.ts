@@ -26,7 +26,7 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 
 	//TODO: Function or view?
 	const [letterInfo, messagesAndNotes, suspects, eventMessages, activeSub, victim] = await Promise.all([
-		loadMysteryLetterInfo(session.user.id, mysteryName),
+		loadMysteryLetterInfo(mysteryName),
 		loadLetterMessagesNotesAndConversationId(session.user.id, mysteryName),
 		loadSuspects(mysteryName),
 		loadEventMessages(mysteryName),
@@ -55,7 +55,10 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 
 		Police chief of Zlockinbury
 		`,
-		show_at_message: MAX_CONVERSATION_LENGTH
+		show_at_message: MAX_CONVERSATION_LENGTH,
+		mysteries: {
+			name: mysteryName
+		}
 	});
 
 	return {
@@ -71,7 +74,8 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		eventMessages,
 		metered: activeSub.length == 1 && activeSub[0].products.some((p) => p.metered_si != null),
 		notes: messagesAndNotes.notes?.[0]?.notes || {},
-		convId: messagesAndNotes.conversationId
+		convId: messagesAndNotes.conversationId,
+		orderInt: letterInfo.order_int
 	};
 };
 

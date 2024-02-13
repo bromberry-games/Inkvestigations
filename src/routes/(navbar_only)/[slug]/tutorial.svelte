@@ -1,98 +1,130 @@
 <script lang="ts">
 	import { messageAmountStore } from '$misc/stores';
-	import { driver } from 'driver.js';
+	import { driver, type Driver, type DriveStep } from 'driver.js';
 	import 'driver.js/dist/driver.css';
-	import type { Button } from 'flowbite-svelte';
 
 	export let messages: any[];
 
+	function setupDriveOnTextArea(driverSteps: DriveStep[]) {
+		const textarea = document.querySelector('#chat-input');
+		if (textarea) {
+			const startDrive = () => {
+				const driverObj = driver({
+					steps: driverSteps
+				});
+				driverObj.drive();
+				const textarea = document.querySelector('#chat-input');
+				textarea?.removeEventListener('click', startDrive);
+			};
+
+			textarea.addEventListener('click', startDrive);
+		}
+	}
+
 	//Hacky, but needed since the chat input only renders only when the messageAmountStore is greater than 0
 	$: if ($messageAmountStore > 0) {
-		const notesButton = document.querySelector('#notes-button');
-		const solveButton = document.querySelector('#solve-button');
-		if (!notesButton) throw new Error('Notes button not found');
-		notesButton.disabled = true;
-		if (!solveButton) throw new Error('Solve button not found');
-		solveButton.disabled = true;
+		const notesButton: HTMLButtonElement | null = document.querySelector('#notes-button');
+		const solveButton: HTMLButtonElement | null = document.querySelector('#solve-button');
+		if (notesButton && solveButton) {
+			notesButton.disabled = true;
+			solveButton.disabled = true;
 
-		if (messages.length == 1) {
-			const driverObj = driver({
-				showProgress: true,
-				steps: [
+			if (messages.length == 1) {
+				const driverSteps = [
 					{
 						element: '#chat-input',
 						popover: {
-							title: 'Title',
-							description: `Chat with the police chief here. You can ask him anything you want.
-                    <br>For example: Hello Chief, please interrogate the father of the victim.
-                    <br>Press enter to send the message.
-                    <br>Press shift + enter to create a new line
+							// title: 'Title',
+							description: `<p><strong>Talk to the Police Chief:</strong> Ask anything to uncover clues.</p>
+  <ul>
+    <li><strong>Example:</strong> "Hello Chief, Please interrogate the victims father."</li>
+    <li><strong>Send Message:</strong> Press <strong>Enter</strong> to send.</li>
+    <li><strong>New Line:</strong> Use <strong>Shift + Enter</strong> for line breaks.</li>
+  </ul>
                     `
 						}
 					}
-				]
-			});
+				];
 
-			const textarea = document.querySelector('#chat-input');
-			if (!textarea) {
-				return;
+				setupDriveOnTextArea(driverSteps);
+				// const textarea = document.querySelector('#chat-input');
+				// if (textarea) {
+				// const drive = () => {
+				// driverObj.drive();
+				// const textarea = document.querySelector('#chat-input');
+				// textarea?.removeEventListener('click', drive);
+				// };
+				//
+				// textarea.addEventListener('click', drive);
+				// }
 			}
+			if (messages.length == 3) {
+				notesButton.disabled = false;
+				const messageDriverSteps = [
+					{
+						element: '#chat-input',
+						popover: {
+							description: `<p><strong>Talk to the Police Chief:</strong> You can also ask him do to actions in the world</p>
+  <ul>
+    <li><strong>Example:</strong> "Hello Chief, Please search the victims room."</li>
+    <li><strong>Or:</strong> "Hello Chief, conduct a search of the toilards estate."
+    <li><strong>Or:</strong> "Analyse the ransom note".</li>
+  </ul>
+                    `
+						}
+					}
+				];
+				setupDriveOnTextArea(messageDriverSteps);
 
-			const drive = () => {
+				const notesDriver = driver({
+					showProgress: true,
+					steps: [
+						{
+							element: '#message-2-content',
+							popover: {
+								title: 'Notes',
+								description: `You got new information. To track it, you can add it to your notes.
+                    `
+							}
+						},
+						{
+							element: '#notes-button',
+							popover: {
+								title: 'Notes',
+								description: `You got new information. To track it, you can add it to your notes.
+                    `
+							}
+						}
+					]
+				});
+				notesDriver.drive();
+				notesButton.addEventListener('click', () => {
+					notesDriver.destroy();
+				});
+			} else if (messages.length == 5) {
+				solveButton.disabled = false;
+				notesButton.disabled = false;
+				const driverObj = driver({
+					showProgress: true,
+					steps: [
+						{
+							element: '#solve-button',
+							popover: {
+								title: 'Solve',
+								description: `Once you have enough information you can click here to solve the mystery. Be careful since you can only solve once.
+                    `
+							}
+						}
+					]
+				});
 				driverObj.drive();
-				const textarea = document.querySelector('#chat-input');
-				textarea?.removeEventListener('click', drive);
-			};
-
-			textarea.addEventListener('click', drive);
-		}
-		if (messages.length == 3) {
-			notesButton.disabled = false;
-
-			const driverObj = driver({
-				showProgress: true,
-				steps: [
-					{
-						element: '#message-2-content',
-						popover: {
-							title: 'Notes',
-							description: `You got new information. To track it, you can add it to your notes.
-                    `
-						}
-					},
-					{
-						element: '#notes-button',
-						popover: {
-							title: 'Notes',
-							description: `You got new information. To track it, you can add it to your notes.
-                    `
-						}
-					}
-				]
-			});
-			driverObj.drive();
-			notesButton.addEventListener('click', () => {
-				driverObj.destroy();
-			});
-		} else if (messages.length == 5) {
-			solveButton.disabled = false;
-			const driverObj = driver({
-				showProgress: true,
-				steps: [
-					{
-						element: '#solve-button',
-						popover: {
-							title: 'Solve',
-							description: `Once you have enough information you can click here to solve the mystery. Be careful since you can only solve once.
-                    `
-						}
-					}
-				]
-			});
-			driverObj.drive();
-			solveButton.addEventListener('click', () => {
-				driverObj.destroy();
-			});
+				solveButton.addEventListener('click', () => {
+					driverObj.destroy();
+				});
+			} else if (messages.length > 5) {
+				solveButton.disabled = false;
+				notesButton.disabled = false;
+			}
 		}
 	}
 </script>

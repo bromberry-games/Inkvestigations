@@ -59,7 +59,6 @@
 	async function updateUserMessageAmountAndAddMessage(event: CustomEvent<ChatMessage>) {
 		addMessage(event);
 		updateMessageCounter(data.supabase, data.session?.user.id);
-		// updateUserMessagesAmount();
 	}
 
 	async function updateUserMessagesAmount() {
@@ -137,4 +136,6 @@
 	>
 </ChatInput>
 
-<Tutorial {messages}></Tutorial>
+{#if data.orderInt == 1}
+	<Tutorial {messages}></Tutorial>
+{/if}
