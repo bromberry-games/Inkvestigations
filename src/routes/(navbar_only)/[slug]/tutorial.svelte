@@ -80,6 +80,14 @@
 					showProgress: true,
 					steps: [
 						{
+							element: '#message-counter',
+							popover: {
+								title: 'Message counter',
+								description: `Every message you send decreases your message counter. Once it is at 0 you can no longer send messages and will have to wait until the next day or buy more messages.`
+							}
+						},
+
+						{
 							element: '#message-2-content',
 							popover: {
 								title: 'Notes',

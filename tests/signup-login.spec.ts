@@ -112,6 +112,7 @@ test('test try for free', async ({ page, isMobile }) => {
 	await sendMessage(page, 'test');
 	const message = page.getByText('Police chief:').nth(1);
 	await message.waitFor({ timeout: 45000 });
+	await page.getByLabel('Close').click();
 	await page.waitForLoadState('networkidle');
 	await navToLogin(page, isMobile);
 	await page.waitForTimeout(200);
