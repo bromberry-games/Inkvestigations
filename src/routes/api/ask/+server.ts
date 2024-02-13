@@ -79,12 +79,13 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 	const requestToken = requestData.openAiToken;
 	const useBackendToken = requestToken == undefined || requestToken == '';
 	const openAiToken = useBackendToken ? OPEN_AI_KEY : requestToken;
+	const hasNoMessages = messagesAmount.amount <= 0 && messagesAmount.non_refillable_amount <= 0;
 
 	if (brainMessages.length > MAX_CONVERSATION_LENGTH && !accuse) {
 		error(500, 'Too many messages. You have to accuse');
 	}
 
-	if (messagesAmount.amount <= 0 && messagesAmount.non_refillable_amount <= 0 && genNum >= 0 && useBackendToken) {
+	if (hasNoMessages && genNum >= 0 && useBackendToken) {
 		const meteredProd = currentSub.length == 1 ? currentSub[0].products.find((x) => x.metered_si != null) : undefined;
 		if (meteredProd) {
 			const prod = await stripeClient.products.retrieve(meteredProd.product_id);
@@ -99,7 +100,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		} else {
 			error(500, 'You have no messages.');
 		}
-	} else if ((messagesAmount.amount > 0 || messagesAmount.non_refillable_amount > 0 || !useBackendToken) && genNum == 0) {
+	} else if ((!hasNoMessages || !useBackendToken) && genNum == 0) {
 		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);
 		throwIfFalse(messageAdded, 'Could not add message to chat');
 		if (useBackendToken) {

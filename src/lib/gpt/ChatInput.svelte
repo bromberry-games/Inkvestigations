@@ -17,6 +17,7 @@
 	import { AuthStatus } from '$lib/auth-helper';
 	import { textIsTooLong } from '$lib/message-conversation-lengths';
 	import { isMobile } from '$lib/generic-helpers';
+	import { invalidateAll } from '$app/navigation';
 
 	const dispatch = createEventDispatcher();
 
@@ -52,7 +53,12 @@
 	}
 
 	function handleRegenerate() {
-		submitMessage(lastUserMessage || 'tmp');
+		if (lastUserMessage != null) {
+			submitMessage(lastUserMessage);
+		} else {
+			console.log('last user message is null, have to reload the page');
+			invalidateAll();
+		}
 	}
 
 	function submitMessage(messageToSubmit: string) {
