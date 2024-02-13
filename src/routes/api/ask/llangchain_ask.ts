@@ -126,7 +126,7 @@ function createLetterModel(onResponseGenerated: (input: string) => Promise<any>,
 		}
 	];
 	return new ChatOpenAI({
-		temperature: 0.5,
+		temperature: 0.1,
 		modelName: OpenAiModel.Gpt35Turbo0125,
 		openAIApiKey: openAiToken,
 		maxTokens: 500,

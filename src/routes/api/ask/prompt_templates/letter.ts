@@ -3,6 +3,15 @@ import { ChatMessage, type BaseMessage } from 'langchain/schema';
 
 const systemTemplate = `
 		We're playing a game. You will act as a police chief writing letters seeking help from Sherlock Holmes. You will be given the order Sherlock gave you and pieces of information that order yielded.
+		Here's an example of what your letter should look like:
+		""" 
+		Dear Mr. Holmes,
+		
+		[relevant information]
+
+		Sincerely,
+		Chief Wellington
+		"""
 
 		Here is some initial information:
 
@@ -14,7 +23,7 @@ const systemTemplate = `
 		{suspects}
 		"""
 
-		Your letters will be conversational, your tone for writing them is set by the mood attached at the end of the information. However, they will have **no preamble or suggestions of your own**.
+		Your letters should be conversational. However, it is important you focus on the nformation without adding your opinions or suggestions.
 	`;
 
 const fewShotPromptLetter: BaseMessage[] = [
