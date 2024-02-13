@@ -649,3 +649,297 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     ]}
     $$
 );
+
+INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, solution, star_ratings, order_int) VALUES (
+    'Prison',
+    'A prison guard meets his end halfway between freedom and chains.',
+    'Corruption and integrity',
+    'This story is set in 1889 in England',
+$$
+Dear Mr. Holmes,
+a murder has occurred and I am writing you at the behest of prison governor Ernie Orion. A warden in Pentonville named Leonard Corcoran was found strangled in the visitor's room of the prison. We have already performed our routine investigations and determined the cause of death, interrogated several prisoners as well as the staff. We have narrowed it down to only two possible individuals. As impossible as it may seem, there are only two people not accounted for during part of the window where the murder occured. The first one is Heinrich Mann, a prisoner locked up for forging wills and unlawfully stealing estates from those to whom they rightfully should have passed. He was seen with Corcoran by the other prisoners when they were leaving for the yard. The second is the very same who called for you, Ernest Orion. He was not seen for part of that window. He claimed to have been on the toilet.
+
+This is a personal matter to me in a way. Ernie is a good friend of mine and used to be the finest detective of Scotland Yard in his day. When he could no longer work as a detective they promoted him to govern the Ville. He is about to retire, and I see no way in which he could have done this. It would simply make no sense. I told him as much and was happy to put this whole thing to rest, but he insisted upon your intervention. 
+Mr. Holmes, please do this favor to my wayward friend and colleague, but do not overthink it.
+
+f course, I will perform everything you say to the letter, for example:
+- question Heinrich
+- search the place of the murder
+- inspect certain items
+
+You can see the suspects' pictures in your notes next to your input window. I have also provided you with ample space to take notes next to their pictures. When you are ready, you can solve this case by tapping on "write" to change the input command to "solve" and make your case there. But be careful: to solve this mystery, your deduction must have the following:
+- Motive
+- Opportunity
+- Evidence
+
+Yours truly,
+William Wellington
+$$,
+$$
+Your name is William Wellington chief constable of London in the year 1889. A warden in Pentonville named Leonard Corcoran was found strangled in the visitor's room of the prison. The issue is that there are only two possible suspects: Heinrich Mann, an imprisoned forgerer, and Ernest "The Hunter" Orion, the prison governer and your old friend.
+$$,
+$$
+Your name is William Wellington chief constable of London in the year 1889. A warden in Pentonville named Leonard Corcoran was found strangled in the visitor's room of the prison. The issue is that there are only two possible suspects: Heinrich Mann, an imprisoned forgerer, and Ernest "The Hunter" Orion, the prison governer and your old friend.
+
+$$,
+'Leonard Corcoran',
+'A 40 year old prison warden.',
+$$
+It was Heinrich Mann because Leonard, who was stringing Mann along with promises that he would be freed if he helped Leonard, but Leonard never delivered on his promises. During one of their usual forgery sessions when they were alone. As evidence we can take the forged official pardon, or the rejection of visitation for Mrs. Mann. 
+$$,
+ROW(
+        $$There is no trial. Out of respect for the old governor, Orion is allowed to retire quietly.$$,
+        $$Mann confesses that he was driven to madness by the sheer corruption of Leonard. He says he wasn't thinking straight after he was told that his wife wouldn't make it this week. Mann had figured out that Leonard was the one who denied visitation to keep him on a short leash. A week later Mann is hung for his crime.$$,
+        $$Mann confesses and is tried for his crime. He says that in a moment of fury upon realizing Leonard was the one denying his wife's visits, he snapped. Orion arranged for the Manns to spend his final week together under close supervision. On his way to the gallows, Mann thanked Orion.$$,
+        $$Mann confesses and is tried for his crime. He says that in a moment of fury upon realizing Leonard was the one denying his wife's visits, he snapped. Orion arranged for the Manns to spend his final week together under close supervision. On his way to the gallows, Mann thanked Orion. Orion sends Sherlock bottle a whiskey and a note that only says "Thank you."$$
+    )::star_ratings,
+    $$4$$
+)
+ON CONFLICT(name)
+DO UPDATE SET 
+    description = EXCLUDED.description,
+    theme = EXCLUDED.theme,
+    setting = EXCLUDED.setting,
+    letter_info = EXCLUDED.letter_info,
+    letter_prompt = EXCLUDED.letter_prompt,
+    accuse_letter_prompt = EXCLUDED.accuse_letter_prompt,
+    victim_name = EXCLUDED.victim_name,
+    victim_description = EXCLUDED.victim_description,
+    solution = EXCLUDED.solution,
+    star_ratings = EXCLUDED.star_ratings,
+    order_int = EXCLUDED.order_int;
+
+DELETE FROM suspects WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Prison');
+INSERT INTO suspects (mystery_id, name, description)
+VALUES
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$Ernest "The Hunter" Orion$$, $$A 65 year old prison governer. Used to be the best detective for Scotland and got the nickname "The Hunter". Close to retirenment. Archetype: The Mentor.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$Heinrich Mann$$, $$A 28 year old imprisoned forger. Archetype: The Magician.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$Millicent Hagan$$, $$A 35 year old secretary of Ernie Orion in Pentonville. Archetype: The Caregiver.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$Joe Tovy$$, $$A 30 year old doctor in Pentonville. Archetype: The Magician.$$)
+;
+
+DELETE FROM action_clues WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Prison');
+INSERT INTO action_clues (mystery_id, action, clue)
+VALUES
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$question Heinrich Mann$$, $$Mann swears he didn't do it, he's already done most of his sentence. It would make no sense. He just wants to see his wife. He was just really friendly with Leondard. Asks if we might let him see his wife.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$question Orion$$, $$Orion says he obviously didn't do it, but he doesn't need to waste breath on it. He smiled a devilish grin, making me uncomfortable.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$question Millicent Hagan$$, $$Governor Orion often goes to the toilet because--she stopped. He simply does. I stopped paying attention to his comings and goings, he is gone for about 10 minutes usually.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$question Joe Tovy$$, $$Tovy says he sees Governor Orion pass his door many times a day going to the bathroom since he suffers from diabetes melitus. But Tovy doesn't see the door to the toilet so he doesn't know if that's where he went.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$question the other prisoners$$, $$During their time outside, Mann sometimes stayed in and talked with Corcoran. It wasn't unusual. The prisoners chanted that Mann would never kill! Also everyone apprently knew Corcoran was as corrupt as they come. Prisoners in his favor always moved into better conditions, somehow they always got the approval of the governor.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$autopsy of Corcoran$$, $$It looks like he suffocated, but he had a broken neck from strangulation with his own manacles. It was over in an instant, not even time to scream. Every warden carries one pair with them. The imprint of the chain is clearly visible.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$What does the prison look like$$, $$It's a symmetrical building. Two square blocks are connected with a long corridor the middle of which is also the point of entrance. On the left side is the prisoners wing. On the right is the executive wing. The prisoner's wing is separated with two self-locking steel bar gates from the corridor. The visitor's center has two regular doors, one close to the prisoner's wing, the other close to executive wing.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$Scene of the murder in the visitors center$$, $$The body was inside the visitors center which was closer to the prisoners wing. He was close to the open door feet facing toward the open door. The keys were at his feet.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$ask Orion about his name$$, $$Orion says his father was an Astronomer and had his name legally changed to Orion. Ernest wanted to live up to it. His nickname came about through his skill in hunting down criminals in his golden detective years.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$how strong is Ernest Orion$$, $$He is proud of his strength, at parties he sometimes pretends he's angry and twists an iron poker used for fire places. He pretends it was an accident and twists it back.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$search Leonard's clothes$$, $$He has a pocketwatch inscribed with "L.C.", an official pardon for Frederick Upton signed by Ernest Orion, a handkerchief, and some money.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$Frederick Upton$$, $$Upton is a murderer and rapist known for his barbaric murder scenes, talking to him is impossible as he only rambles like a madman. His execution is in a few weeks. Pardoning him would be a scandal.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$official pardon$$, $$Orion denies making something like that, it would end his career. Upton doesn't know anything and seems to be out of his mind anyway. Mann says he has never seen that document. Mrs. Hagan says she should have known about such a document.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$wife of Mann$$, $$In his letters he can't wait to show off how his training has developed his body. She hasn't seen Heinrich in a long time because she is always denied visitation. Even though he always says that he's good friends with the warden and that he is helping the warden, so he'll be rewarded with visitation Her Heinrich would never do such a thing!$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$search Mann's cell$$, $$writing supplies tucked in mattress$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$visitation rights denied$$, $$Orion has never denied anything to Mrs. Mann. She is free to see him of course. Leonard was in charge of visitation.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$question other guards$$, $$two were watching the prisoners outside, they found him when they were returning, the others were playing cards in their room. It wasn't unusual for Leonard to be gone for a few hours when the prisoners were in the yard.$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), $$analyze the official pardon$$, $$it is the genuine article even under scrutiny, but the give-away is that Orion uses a different kind of ink$$)
+;
+
+DELETE FROM timeframes WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Prison');
+INSERT INTO timeframes (mystery_id, timeframe, event_happened)
+VALUES
+((SELECT id FROM mysteries WHERE name = 'Prison'), '6:00AM', $$Night shift ends, day wardens arrive$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), '7:00AM', $$Orion arrives$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), '8:00AM', $$Millicent Hagan and Tovy arrive$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), '12:00PM', $$Lunch$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), '2:00PM', $$Prisoners have time outside$$),
+((SELECT id FROM mysteries WHERE name = 'Prison'), '4:00PM', $$Wardens who were returning from watching prisoners outside find Leonard$$);
+
+INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
+VALUES ((SELECT id FROM mysteries WHERE name = 'Prison'), 
+$$
+P.S.: I just wanted to paint a picture of Ernie for you. He once took a demotion for protecting a fellow constable when he was still in Soctland Yard. The constable was drunk on his watch and was an overall no good kind of man. I am not saying old Orion was in the right. I just can't imagine a man of such solidarity to turn on a fellow officer in such a way.
+$$, 
+$$ 
+What was the issue between Orion and Corcoran -- Everyone knows they had very serious fights, but no one knows about what. Orion refuses to share stating that it is between him and his former subordinate.
+$$, 
+1,
+$$ 
+ 
+$$
+);
+
+INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
+VALUES ((SELECT id FROM mysteries WHERE name = 'Prison'), 
+$$
+P.S.: Since I gave you an idea of Ernie, I'll do so for Mann. He was caught defrauding grieving families of veterans during the war against the Zulus. Pretending he served with them in the war, he showed them forged wills that their men had passed all or most of their posessions to Mann. He claimed that he saved their lives and similar nonesense. 
+$$, 
+$$ 
+why was Mann imprisoned -- forging wills and as a result stealing thousands of pounds from families
+$$, 
+2,
+$$ 
+ 
+$$
+);
+
+INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
+VALUES ((SELECT id FROM mysteries WHERE name = 'Prison'), 
+$$
+Dear Sherlock,
+I am sending you an unofficial letter. I know you are doing your utmost, but I have a favor to ask. Please listen to an old man and focus on Mann. I will of course do whatever you say. Orion is not as young as he used to be, and people are talking about his retirenment against his wishes. Especially now that a warden has died under his nose. This is all a strain on him, and I don't know why he is so stubborn. I know it in my heart of hearts that it must have been Mann.
+Yours,
+William
+$$, 
+$$ 
+Orion and retirenment -- he doesn't want to hear of it, he will die in his chair as governor of the prison. Leonard could barely wait for that as he was next in line for governor;\n the key -- could have been thrown into the visitor room from the prison block;\n talk to mann -- insists on seeing his wife, seems desperate; 
+$$, 
+7,
+$$ 
+
+$$
+);
+
+INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
+VALUES ((SELECT id FROM mysteries WHERE name = 'Prison'), 
+$$
+Dear Sherlock,
+I must really insist you draw your conclusion now and end this farce. I think we've seen that Orion has only been stubborn. Mann is your man. 
+Sincerely, 
+Wellington
+$$, 
+$$ 
+show Mann the official pardon -- he caves and says that he made it for Leonard. Leonard promised to pardon Mann if he helped him become prison governor. The first thing he would get was a pardon. 
+$$, 
+20,
+$$ 
+
+$$
+);
+
+
+
+DELETE FROM few_shots WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Prison');
+INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
+(SELECT id FROM mysteries WHERE name = 'Prison'), 
+$$
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "ask the pope for help\nYou're Wellington and are reporting what performing my order did"
+    },
+    {
+      "role": "assistant",
+      "content": "We're playing a game where I generate information thinking long and hard.\nDoes the general information, timeframe, or additional information contain what I have been ordered to do?\nNo\nI make up information that fits the game. \nInformation:\n- The Pope is busy, but promises to play.\n- mood: happy"
+    },
+    {
+      "role": "user",
+      "content": "hi\nYou're Wellington and are reporting what performing my order did"
+    },
+    {
+      "role": "assistant",
+      "content": "We're playing a game where I generate information thinking long and hard.\nDoes the general information, timeframe, or additional information contain what I have been ordered to do?\nNo\nI make up information that fits the game. \nInformation:\n- Sherlock my consulting detective, how can I assist you in solving this mystery?\n- mood: jolly"
+    },
+    {
+      "role": "user",
+      "content": "question hagan\nYou're Wellington and are reporting what performing my order did"
+    },
+    {
+      "role": "assistant",
+      "content": "We're playing a game where I generate information thinking long and hard.\nDoes the general information, timeframe, or additional information contain what I have been ordered to do?\nYes\nI provide that information. \nInformation:\n- Governor Orion often goes to the toilet because--she stopped. He simply does. I stopped paying attention to his comings and goings, he is gone for about 10 minutes usually.\n- mood: secretive"
+    },
+    {
+      "role": "user",
+      "content": "accuse hagan of masterminding the murder!\nYou're Wellington and are reporting what performing my order did"
+    },
+    {
+      "role": "assistant",
+      "content": "We're playing a game where I generate information thinking long and hard.\nDoes the general information, timeframe, or additional information contain what I have been ordered to do?\nNo\nI make up information that fits the game. \nInformation:\n- To accuse someone switch to \"solve\" mode by tapping on \"write\". But you need motive, opportunity, and evidence to be successful. \n- mood: reproachful"
+    },
+    {
+      "role": "user",
+      "content": "i have a potion that turns criminals green apply it to both suspects\nYou're Wellington and are reporting what performing my order did"
+    },
+    {
+      "role": "assistant",
+      "content": "We're playing a game where I generate information thinking long and hard.\nDoes the general information, timeframe, or additional information contain what I have been ordered to do?\nNo\nI make up information that fits the game. \nInformation:\n- Thank you so much for sharing your potion Sherlock, but I must have done something wrong and nobody turned green. \n- mood: sorry"
+    },
+    {
+      "role": "user",
+      "content": "question mann"
+    },
+    {
+      "role": "assistant",
+      "content": "We're playing a game where I generate information thinking long and hard.\nDoes the general information, timeframe, or additional information contain what I have been ordered to do?\nYes\nI provide that information. \nInformation:\n- Mann swears he didn't do it, he's already done most of his sentence. It would make no sense. He just wants to see his wife. He was just really friendly with Leonard. Asks if we might let him see his wife.\n- mood: anxious"
+    },
+    {
+      "role": "user",
+      "content": "search his cell"
+    },
+    {
+      "role": "assistant",
+      "content": "We're playing a game where I generate information thinking long and hard.\nDoes the general information, timeframe, or additional information contain what I have been ordered to do?\nYes\nI provide that information. \nInformation:\n- In Mann's cell, we found writing supplies tucked in his mattress.\n- mood: determined"
+    },
+    {
+      "role": "user",
+      "content": "ask him what he's writing and why he's hiding it"
+    },
+    {
+      "role": "assistant",
+      "content": "We're playing a game where I generate information thinking long and hard.\nDoes the general information, timeframe, or additional information contain what I have been ordered to do?\nNo\nI make up information that fits the game. \nInformation:\n- Mann explains that he's been writing letters to his wife, pouring his heart out to her. He hid the supplies to keep his words private from the other prisoners.\n- mood: relieved"
+    }]
+}
+$$,
+$$
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Player solution: It was Mann\nActual solution:\nIt was Heinrich Mann because Leonard, who was stringing Mann along with promises that he would be freed if he helped Leonard, but Leonard never delivered on his promises. During one of their usual forgery sessions when they were alone. As evidence we can take the forged official pardon, or the rejection of visitation for Mrs. Mann. \n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player solution names the correct criminal, but lacks motive, opportunity, and evidence.\nRating: 0\n\nEpilogue:\n\n- I gathered everyone in the prison's common area. I looked less nervous now that you told me you truly knew it was Mann. He clears his throat and begins to speak.\n- \"Sherlock has given us his conclusion. It was Heinrich Mann,\" I announced, looking directly at Mann. The room falls silent.\n- Mann didn't deny it. Instead, he waited for some proof.\n- I nodded, as if understanding. But I also said nothing accepting it as a tacit confession. \n- The two of us stared at each other.\n- When Mann asked for some evidence or anything, I was shocked. I trusted your solution completely!\n- With only that to go on, the case was dropped.\n- Thankfully they respected Ernie enough to let him retire quietly."
+    },
+    {
+      "role": "user",
+      "content": "Player solution: It was Mann because Leonard didn't let him see his wife\nActual solution:\nIt was Heinrich Mann because Leonard, who was stringing Mann along with promises that he would be freed if he helped Leonard, but Leonard never delivered on his promises. During one of their usual forgery sessions when they were alone. As evidence we can take the forged official pardon, or the rejection of visitation for Mrs. Mann. \n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player solution names the correct criminal and provides a motive, but lacks the opportunity and evidence.\nRating: 1\n\nEpilogue:\n\n- I gathered everyone in the prison's common area. I looked less nervous now that you told me you truly knew it was Mann. I cleared my throat and began to speak.\n- \"Sherlock has given us his conclusion. It was Heinrich Mann,\" I announced, looking directly at Mann. The room falls silent.\n- Mann didn't deny it. Instead, he confessed that he was driven to madness by the sheer corruption of Leonard. He said he wasn't thinking straight after he was told that his wife wouldn't make it this week. \n- Mann had figured out that Leonard was the one who denied visitation to keep him on a short leash. A week later Mann was hung for his crime.\n- The room was silent. The only sound was the distant clanging of a guard's keys. \n- I thanked everyone for their cooperation and dismissed them. The case was closed, but the atmosphere in the prison was heavy."
+    },
+    {
+      "role": "user",
+      "content": "Player solution: It was Mann because Leonard didn't let him see his wife, and he did it after he made the fake official pardon for Upton\nActual solution:\nIt was Heinrich Mann because Leonard, who was stringing Mann along with promises that he would be freed if he helped Leonard, but Leonard never delivered on his promises. During one of their usual forgery sessions when they were alone. As evidence we can take the forged official pardon, or the rejection of visitation for Mrs. Mann. \n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player solution names the correct criminal, provides a motive, and evidence, but lacks the opportunity.\nRating: 2\n\nEpilogue:\n\n- I gathered everyone in the prison's common area. I looked less nervous now that you told me you truly knew it was Mann. I cleared my throat and began to speak.\n- \"Sherlock has given us his conclusion. It was Heinrich Mann,\" I announced, looking directly at Mann. The room falls silent.\n- Mann didn't deny it. Instead, he confessed and was tried for his crime. He said that in a moment of fury upon realizing Leonard was the one denying his wife's visits, he snapped.\n- Orion arranged for the Manns to spend his final week together under close supervision. On his way to the gallows, Mann thanked Orion.\n- The room was silent. The only sound was the distant clanging of a guard's keys. \n- I thanked everyone for their cooperation and dismissed them. The case was closed, but the atmosphere in the prison was heavy."
+    },
+    {
+      "role": "user",
+      "content": "Player solution: It was Mann because Leonard didn't let him see his wife, and he did it after he made the fake official pardon for Upton during one of their usual forgery sessions\nActual solution:\nIt was Heinrich Mann because Leonard, who was stringing Mann along with promises that he would be freed if he helped Leonard, but Leonard never delivered on his promises. During one of their usual forgery sessions when they were alone. As evidence we can take the forged official pardon, or the rejection of visitation for Mrs. Mann. \n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player solution names the correct criminal, provides a motive, opportunity, and evidence.\nRating: 3\n\nEpilogue:\n\n- I gathered everyone in the prison's common area. I looked less nervous now that you told me you truly knew it was Mann. I cleared my throat and began to speak.\n- \"Sherlock has given us his conclusion. It was Heinrich Mann,\" I announced, looking directly at Mann. The room falls silent.\n- Mann didn't deny it. Instead, he confessed and was tried for his crime. He said that in a moment of fury upon realizing Leonard was the one denying his wife's visits, he snapped.\n- Orion arranged for the Manns to spend his final week together under close supervision. On his way to the gallows, Mann thanked Orion.\n- As Mann was led away, the atmosphere in the prison was tense but relieved. Justice had been served.\n- I thanked everyone for their cooperation and dismissed them. The case was closed, and the prison could finally move on from this dark chapter.\n- I heard that Orion sent you a whiskey with a note that only said \"Thank you.\" That is old Orion for you."
+    },
+    {
+      "role": "user",
+      "content": "Player solution: It was yo momma\nActual solution:\nIt was Heinrich Mann because Leonard, who was stringing Mann along with promises that he would be freed if he helped Leonard, but Leonard never delivered on his promises. During one of their usual forgery sessions when they were alone. As evidence we can take the forged official pardon, or the rejection of visitation for Mrs. Mann. \n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player solution names the wrong suspect.\nRating: 0\n\nEpilogue:\n\n- I gathered everyone in the prison's common area. I looked very nervous because I knew what you had just told me.\n- \"Sherlock has given us his conclusion. It was... yo momma,\" I announced, trying to keep a straight face. The room fell silent, confused.\n- Everyone started giggling, but I insisted that Sherlock was the smartest man alive and that he must have had a reason to say that.\n- Then everyone burst into full blown laughter. \n- Laughing everyone went to their respective rooms. The guards were wiping tears from their eyes, old Orion simply snickered and vanished in his office. \n- Even the prisoners were holding their bellies laughing as they returned to their cells.\n- I left with howling laughter still booming from the prison. "
+    },
+    {
+      "role": "user",
+      "content": "Player solution: It was Orion because Leonard tried to get Orion to lose his job. Orion did it when he had to go to the toilet. The official pardon is evidence of what drove Orion over the edge!\nActual solution:\nIt was Heinrich Mann because Leonard, who was stringing Mann along with promises that he would be freed if he helped Leonard, but Leonard never delivered on his promises. During one of their usual forgery sessions when they were alone. As evidence we can take the forged official pardon, or the rejection of visitation for Mrs. Mann. \n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+    },
+    {
+      "role": "assistant",
+      "content": "The player solution names the wrong suspect and lacks motive, opportunity, and evidence.\nRating: 0\n\nEpilogue:\n\n- I gathered everyone in the prison's common area. I am not ashamed to admit that I was shaking with anxiety, having to accuse my old friend Orion.\n- \"Sherlock has given us his conclusion. It was... Orion,\" I announced, trying to make sense of the unexpected twist. The room fell silent, puzzled.\n- Orion looked shocked, and Leonard seemed equally surprised. The tension in the room was palpable.\n- As I tried to explain the reasoning behind Sherlock's conclusion, it became clear that the pieces didn't fit together.\n- Orion, with a mix of confusion and amusement, shook his head. He showed me the ink he used and told me to compare it to the forged note. \n- However, it was too late, the case was dropped and old Orion was allowed to quietly resign and retire."
+    }
+  ]
+}
+$$
+);
+

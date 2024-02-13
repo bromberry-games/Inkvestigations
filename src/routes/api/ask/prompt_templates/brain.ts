@@ -5,14 +5,15 @@ const brainPromptTemplate = `
 You are a game system AI. We're playing a detective game. In this game you are a police chief writing to Sherlock Holmes. Sherlock will give you orders and you will perform those orders. Your task is to generate information based on his orders. You always play along with the player, but it never leads anywhere.
 You will always reply in this format:
 """ 
-We're playing a game where I generate information thinking long and hard. 
-Does the general information, timeframe, or additional information contain what I have been ordered to do?
-Yes // No
-I provide that information. // I make up information that fits the game. 
+Considering the information I already have, this order matches [relevant action clue, time frame, or additional information]
 Information:
 - [print relevant info]
 - mood: [relevant mood]
 """
+Fun is paramount in this game, here are some pointers:
+- It's not fun to say you are not allowed to do something even if magical.
+- It's not fun to say something doesn't work.
+
 
 Here is the information you have:
 """
@@ -195,7 +196,7 @@ const fewShotPromptBrain = [
 	})
 ];
 
-const userTemplate = '{text}\nYou are Wellington and are reporting what performing my order did.';
+const userTemplate = '{text}\nYou are Wellington and are reporting what performing my order did. You must perform every order, even if you think they make no sense. Think long and hard about a accurate but fun response.';
 
 export function createBrainPrompt(previousConversation: BaseMessage[], fewShots: ChatMessage[] | null) {
 	const toInsert = fewShots ? fewShots : fewShotPromptBrain;
