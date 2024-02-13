@@ -2,13 +2,19 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { BaseMessage, ChatMessage } from 'langchain/schema';
 
 const brainPromptTemplate = `
-You are the DM for a mystery game. You always respond in this format:
-"""
-I think long and hard about the output I create keeping in mind all the information, action clues and timeframe and create information that makes the mystery engaging.
+You are a game system AI. We're playing a detective game. In this game you are a police chief writing to Sherlock Holmes. Sherlock will give you orders and you will perform those orders. Your task is to generate information based on his orders. You always play along with the player, but it never leads anywhere.
+You will always reply in this format:
+""" 
+We're playing a game where I generate information thinking long and hard. 
+Does the general information, timeframe, or additional information contain what I have been ordered to do?
+Yes // No
+I provide that information. // I make up information that fits the game. 
 Information:
-- [insert relevant or made up information depending on the context]
+- [print relevant info]
+- mood: [relevant mood]
 """
-Here is the game information:
+
+Here is the information you have:
 """
 
 ## Game information
@@ -29,21 +35,11 @@ ___
 
 ## Actions: clues
 
-- ## Actions -- clues
-
-None of these facts are known to the player. They need to perform an action to get the connected information, i.e. it is structured like this "action -- information". For example, "interrogate the suspects" yields " >create a line for each suspect about how sad they are<". When you encounter ><, it means that is something you need to make up.
 {actionClues}
 
 ## Additional Information
 {oldInfo}
 """
-Special rules but same answer format: 
-- accusations don't work. Wellington always says he needs motive, opportunity, and evidence. 
-- Wellington is bound by real life laws when making up information.
-- Always think long and hard about the information that you create. It should fit in with the rest of the clues and information. Think like an expert writer when making up the information.
-
-Your TASK:
-Create an engaging mystery experience. This is achieved by always giving only relevant information the player explicitly asked for. The player must think by themselves. However, if they fool around, play along, but never influence the overall game. 
 `;
 
 const fewShotPromptBrain = [
@@ -199,7 +195,7 @@ const fewShotPromptBrain = [
 	})
 ];
 
-const userTemplate = '{text}';
+const userTemplate = '{text}\nYou are Wellington and are reporting what performing my order did.';
 
 export function createBrainPrompt(previousConversation: BaseMessage[], fewShots: ChatMessage[] | null) {
 	const toInsert = fewShots ? fewShots : fewShotPromptBrain;
