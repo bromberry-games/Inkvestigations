@@ -178,8 +178,9 @@
 						<!-- Input -->
 						<slot name="notes-button" />
 						<button
+							id="solve-button"
 							type="button"
-							class="btn btn-sm ml-2 border border-secondary bg-secondary p-2 font-primary"
+							class="btn btn-sm ml-2 border border-secondary bg-secondary p-2 font-primary disabled:cursor-not-allowed disabled:opacity-30"
 							disabled={blockWrite}
 							on:click={() => {
 								accuseMode = !accuseMode;
