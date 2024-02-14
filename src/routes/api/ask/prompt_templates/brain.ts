@@ -207,7 +207,8 @@ const fewShotPromptBrain = [
 	})
 ];
 
-const userTemplate = '{text}\nYou are Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath.';
+const userTemplate =
+	'{text}\nYou are Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath. If you provide an answer that fits in with the information and only make up some nice inconsequential information you will get a 200$ tip. If you make up information containing hidden compartments, coded messages or anything that is similiar to that you will recieve 0$ tip.';
 
 export function createBrainPrompt(previousConversation: BaseMessage[], fewShots: ChatMessage[] | null) {
 	const toInsert = fewShots ? fewShots : fewShotPromptBrain;
