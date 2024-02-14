@@ -112,7 +112,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "The player has ordered me to search the house.\nWas I provided some kind of information about this?\nYes\nInformation:\n- the house has a library with a wide array of books, on writing, encyclopedias, fiction, etc. \n- a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry's desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;"
+  "content": "Sherlock has ordered me to search the house.\nWas I provided some kind of information about this?\nYes\nInformation:\n- the house has a library with a wide array of books, on writing, encyclopedias, fiction, etc. \n- a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry's desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;"
 },
 {
   "role": "user",
@@ -120,7 +120,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "The player has ordered me to interrogate the suspects.\nWas I provided some kind of information about this?\nYes\nInformation:\n- Maria Payton is deeply distraught by the sight and it's hard for her to talk\n- Angela Videl is sad of course but knows Terry had alienated a lot of people\n- Dexter Tin says he didn't need to see that to be honest\n- Bianca White is crying heavily and saying he didn't deserve that\n- Oliver is teary eyed and sad because Terry had so much more to give\n- O'Ranner is not surprised because he knew Terry had an edge to his style"
+  "content": "Sherlock has ordered me to interrogate the suspects.\nWas I provided some kind of information about this?\nYes\nInformation:\n- Maria Payton is deeply distraught by the sight and it's hard for her to talk\n- Angela Videl is sad of course but knows Terry had alienated a lot of people\n- Dexter Tin says he didn't need to see that to be honest\n- Bianca White is crying heavily and saying he didn't deserve that\n- Oliver is teary eyed and sad because Terry had so much more to give\n- O'Ranner is not surprised because he knew Terry had an edge to his style"
 },
 {
   "role": "user",
@@ -128,7 +128,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "The player has ordered me to ask the pope for help.\nWas I provided some kind of information about this?\nNo\nInformation:\n- I tried contacting the pope, but he was busy exorcising evil spirits."
+  "content": "Sherlock has ordered me to ask the pope for help.\nWas I provided some kind of information about this?\nNo\nInformation:\n- I tried contacting the pope, but he was busy exorcising evil spirits."
 },
 {
   "role": "user",
@@ -136,7 +136,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "The player has ordered me to say \"hi\".\nWas I provided some kind of information about this?\nNo\nInformation:\n- I greeted everyone with a friendly \"hi\" as part of my investigation."
+  "content": "Sherlock has ordered greeted.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Hello to you, too Sherlock."
 },
 {
   "role": "user",
@@ -144,7 +144,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "The player has ordered me to identify the mafia boss.\nWas I provided some kind of information about this?\nNo\nInformation:\n- There is no specific mention of the name of the mafia boss in Terry's half-written piece. It seems that he was in the early stages of investigation and hadn't yet uncovered the boss's identity."
+  "content": "Sherlock has ordered me to identify the mafia boss.\nWas I provided some kind of information about this?\nNo\nInformation:\n- There is no specific mention of the name of the mafia boss in Terry's half-written piece. It seems that he was in the early stages of investigation and hadn't yet uncovered the boss's identity."
 },
 {
   "role": "user",
@@ -152,7 +152,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "The player has ordered me search our database for known mafia bosses.\nWas I provided some kind of information about this?\nNo\nInformation:\n- There is one small time mobster in prison not far from here, Antonio Bellucci.\n- I wouldn't call him a mafia boss necessarily"
+  "content": "Sherlock has ordered me search our database for known mafia bosses.\nWas I provided some kind of information about this?\nNo\nInformation:\n- There is one small time mobster in prison not far from here, Antonio Bellucci.\n- I wouldn't call him a mafia boss necessarily"
 },
 {
   "role": "user",
@@ -160,7 +160,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "The player has ordered me to visit Belluci and ask about Terry.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Bellucci says Terry visited him because he was writing a fiction piece on mafia bosses, inspired by the godfather, and Bellucci was the closest thing he had for reference"
+  "content": "Sherlock has ordered me to visit Belluci and ask about Terry.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Bellucci says Terry visited him because he was writing a fiction piece on mafia bosses, inspired by the godfather, and Bellucci was the closest thing he had for reference"
 },
 {
   "role": "user",
@@ -168,7 +168,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "The player has ordered me to inspect the pen.\nWas I provided some kind of information about this?\nYes\nInformation:\n-The inkwell of the pen is filled with gelatin, which is a common way to encase pills for consumption. Upon further analysis, traces of cyanide are found in the inkwell."
+  "content": "Sherlock has ordered me to inspect the pen.\nWas I provided some kind of information about this?\nYes\nInformation:\n-The inkwell of the pen is filled with gelatin, which is a common way to encase pills for consumption. Upon further analysis, traces of cyanide are found in the inkwell."
 },
 {
   "role": "user",
@@ -176,7 +176,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "The player has ordered me to interrogate Oliver.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Oliver appears nervous but cooperative. He insists that he had nothing to do with Terry's death and was at home working on a piece during the time of the incident.\n- Oliver admits that he is a huge fan of Terry and had sent him fan letters in the past. He even showed me the letters he had written to Terry"
+  "content": "Sherlock has ordered me to interrogate Oliver.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Oliver appears nervous but cooperative. He insists that he had nothing to do with Terry's death and was at home working on a piece during the time of the incident.\n- Oliver admits that he is a huge fan of Terry and had sent him fan letters in the past. He even showed me the letters he had written to Terry"
 }
   ]}
 $$
@@ -186,7 +186,7 @@ $$
     
     {
       "role": "user",
-      "content": "Player solution: It was angela videl because she was jealous of Terry's success\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Sherlock's solution: It was angela videl because she was jealous of Terry's success\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
@@ -194,43 +194,43 @@ $$
     },
     {
       "role": "user",
-      "content": "Player solution: It was Oliver Smith because he was disappointed Terry's dramatics won over the truth!\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Player solution: It was Oliver Smith because he was disappointed Terry's dramatics won over the truth!\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
-      "content": "The player's solution correctly identifies the murderer but falls doesn't provide a good motive and no opportunity and evidence at all. \n\n# Rating: 0 stars\n\n## Epilogue\n- As the Police Chief, I gathered everyone involved in the drawing room, their faces a mix of fear, curiosity, and anticipation.\n- I slowly summarized the chain of events, thinking I saw the realization slowly dawn on their faces.\n- I revealed the evidence, or I would have, but you didn't provide it. They sat in shocked silence.\n- I then turned my attention to Oliver Smith, the ambitious apprentice, who was visibly uncomfortable.\n- His surprise switched to defiance as I detailed out his anger at Terry's dramatics.\n- Then the others joined in asking how it was done and when and what the evidence was.\n- I didn't have any of that, but I assured them our very own detective consultant had concluded it thus.\n- We tried to apprehend Oliver but he said he would sue the city into poverty, so we had to let him go.\n- Angela Videl published a paper commemorating her colleague and suggested the murderer was at large due to the incompetence of the police"
+      "content": "Sherlock's solution correctly identifies the murderer but falls doesn't provide a good motive and no opportunity and evidence at all. \n\n# Rating: 0 stars\n\n## Epilogue\n- As the Police Chief, I gathered everyone involved in the drawing room, their faces a mix of fear, curiosity, and anticipation.\n- I slowly summarized the chain of events, thinking I saw the realization slowly dawn on their faces.\n- I revealed the evidence, or I would have, but you didn't provide it. They sat in shocked silence.\n- I then turned my attention to Oliver Smith, the ambitious apprentice, who was visibly uncomfortable.\n- His surprise switched to defiance as I detailed out his anger at Terry's dramatics.\n- Then the others joined in asking how it was done and when and what the evidence was.\n- I didn't have any of that, but I assured them our very own detective consultant had concluded it thus.\n- We tried to apprehend Oliver but he said he would sue the city into poverty, so we had to let him go.\n- Angela Videl published a paper commemorating her colleague and suggested the murderer was at large due to the incompetence of the police"
     },
     {
       "role": "user",
-      "content": "Player solution: it was your momma\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Player solution: it was your momma\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
-      "content": "The player's solution misidentifies the murderer and doesn't include the motive, opportunity, and evidence correctly.\n\n# Rating: 0 stars\n\n## Epilogue\n- After gathering everyone in Terry's study, I presented the investigation in detail, pointing out the various clues we had discovered.\n- But as I reached the part of the solution, the room grew tense and anxious.\n- When I finally revealed that Sherlock suspected someone's mother\n- Everyone stared at me their faces a mix of shock and disbelief.\n- They burst out laughing\n- I explained that our investigation was thorough and that Sherlock was never wrong.\n- They wiped their teary eyes and marched out of the rooms holding their bellies\n- With no evidence against anyone's mother, I had to let them go.\n- I swear they must have all been in it together. \n- Angela Videl, sensing the discord, published an article expressing her frustration with the investigation and pointing fingers at the incompetence of the police force.\n- The case remained open, with neither the true murderer nor their motives discovered."
+      "content": "Sherlock's solution misidentifies the murderer and doesn't include the motive, opportunity, and evidence correctly.\n\n# Rating: 0 stars\n\n## Epilogue\n- After gathering everyone in Terry's study, I presented the investigation in detail, pointing out the various clues we had discovered.\n- But as I reached the part of the solution, the room grew tense and anxious.\n- When I finally revealed that Sherlock suspected someone's mother\n- Everyone stared at me their faces a mix of shock and disbelief.\n- They burst out laughing\n- I explained that our investigation was thorough and that Sherlock was never wrong.\n- They wiped their teary eyes and marched out of the rooms holding their bellies\n- With no evidence against anyone's mother, I had to let them go.\n- I swear they must have all been in it together. \n- Angela Videl, sensing the discord, published an article expressing her frustration with the investigation and pointing fingers at the incompetence of the police force.\n- The case remained open, with neither the true murderer nor their motives discovered."
     },
     {
       "role": "user",
-      "content": "Player solution: It was Oliver Smith because he was angry that Terry didn't have any morals. After the party, he slipped into the study and planted the cyanide capsule. The second pen in his home confirms it\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Player solution: It was Oliver Smith because he was angry that Terry didn't have any morals. After the party, he slipped into the study and planted the cyanide capsule. The second pen in his home confirms it\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
-      "content": "The player's solution correctly identifies Oliver Smith as the murderer and provides a motive, opportunity, and evidence that aligns with the actual solution.\n\n# Rating: 3 stars\n\n## Epilogue\n- As the Police Chief, I gather everyone involved in the grand parlor, their eyes fixed on me, expectant and anxious.\n- I begin by summarizing the investigation, detailing the various clues and evidence we uncovered.\n- As I reach the climax, the room falls into a heavy silence, anticipation hanging in the air.\n- I reveal that the perpetrator is none other than Oliver Smith, the ambitious apprentice.\n- Gasps of shock and disbelief fill the room as Oliver's face drains of color, his hand trembling.\n- Oliver breaks down under the accusation, falling to the ground, admitting his crime.\n- The room erupts into a mix of shock, anger, and confusion.\n- Oliver shouts, his voice filled with a mix of anguish and betrayal, expressing his disappointment in Terry's lack of morals.\n- He admits to slipping into the study after the party and planting the cyanide capsule in the inkwell.\n- As Oliver's words hang in the air, Terry's former colleagues exchange glances of both disbelief and understanding.\n- Angela Videl publishes a sincere and heartfelt farewell to her colleague, expressing gratitude for the  investigators."
+      "content": "Sherlock's solution correctly identifies Oliver Smith as the murderer and provides a motive, opportunity, and evidence that aligns with the actual solution.\n\n# Rating: 3 stars\n\n## Epilogue\n- As the Police Chief, I gather everyone involved in the grand parlor, their eyes fixed on me, expectant and anxious.\n- I begin by summarizing the investigation, detailing the various clues and evidence we uncovered.\n- As I reach the climax, the room falls into a heavy silence, anticipation hanging in the air.\n- I reveal that the perpetrator is none other than Oliver Smith, the ambitious apprentice.\n- Gasps of shock and disbelief fill the room as Oliver's face drains of color, his hand trembling.\n- Oliver breaks down under the accusation, falling to the ground, admitting his crime.\n- The room erupts into a mix of shock, anger, and confusion.\n- Oliver shouts, his voice filled with a mix of anguish and betrayal, expressing his disappointment in Terry's lack of morals.\n- He admits to slipping into the study after the party and planting the cyanide capsule in the inkwell.\n- As Oliver's words hang in the air, Terry's former colleagues exchange glances of both disbelief and understanding.\n- Angela Videl publishes a sincere and heartfelt farewell to her colleague, expressing gratitude for the  investigators."
     },
     {
       "role": "user",
-      "content": "Player solution: It was oliver who was angry at terry for his twisted morals, the second pen in his home shows it\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Player solution: It was oliver who was angry at terry for his twisted morals, the second pen in his home shows it\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
-      "content": "The player's solution correctly identifies Oliver Smith as the murderer and includes a reasonable motive and evidence that aligns with the actual solution.\n\n# Rating: 2 stars\n\n## Epilogue\n- With a mix of anticipation and curiosity, I gather everyone in Terry's study, prepared to reveal the conclusion of the investigation.\n- I carefully summarize the facts, highlighting the various clues and evidence that led us to the perpetrator.\n- As I reveal that Oliver Smith is the culprit, the room erupts into a chorus of gasps and murmurs.\n- Oliver's face contorts with a mixture of shock and guilt as all eyes turn towards him.\n- The tension builds as I produce the second pen found in Oliver's home, with traces of cyanide.\n- The room falls into a heavy silence as the weight of the evidence sinks in for everyone present.\n- Oliver breaks down under the weight of the accusation, his voice trembling as he admits his crime.\n- Although his motive is not explicitly mentioned, the pieces of the puzzle start to come together for the assembled group.\n- The shocked reactions and whispers of disbelief fill the room, while Oliver's actions leave some questioning their own judgment.\n- Angela Videl, lamenting the tragic end of her colleague, praises the determination of the police."
+      "content": "Sherlock's solution correctly identifies Oliver Smith as the murderer and includes a reasonable motive and evidence that aligns with the actual solution.\n\n# Rating: 2 stars\n\n## Epilogue\n- With a mix of anticipation and curiosity, I gather everyone in Terry's study, prepared to reveal the conclusion of the investigation.\n- I carefully summarize the facts, highlighting the various clues and evidence that led us to the perpetrator.\n- As I reveal that Oliver Smith is the culprit, the room erupts into a chorus of gasps and murmurs.\n- Oliver's face contorts with a mixture of shock and guilt as all eyes turn towards him.\n- The tension builds as I produce the second pen found in Oliver's home, with traces of cyanide.\n- The room falls into a heavy silence as the weight of the evidence sinks in for everyone present.\n- Oliver breaks down under the weight of the accusation, his voice trembling as he admits his crime.\n- Although his motive is not explicitly mentioned, the pieces of the puzzle start to come together for the assembled group.\n- The shocked reactions and whispers of disbelief fill the room, while Oliver's actions leave some questioning their own judgment.\n- Angela Videl, lamenting the tragic end of her colleague, praises the determination of the police."
     },
     {
       "role": "user",
-      "content": "Player solution: It was oliver who murdered terry with cyanide after the party\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate the players solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Player solution: It was oliver who murdered terry with cyanide after the party\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
-      "content": "The player's solution correctly identifies Oliver Smith as the murderer and provides a method of how the murder was committed.\n\n# Rating: 1 star\n\n## Epilogue\n- As the Police Chief, I gather everyone involved in the study, a mix of anticipation and unease filling the air.\n- I summarize the investigation, highlighting the various pieces of evidence we collected.\n- As I reveal that Oliver Smith is the culprit, a wave of disbelief washes over the room.\n- Oliver protests his innocence, denying any involvement in Terry's murder.\n- Without concrete evidence to support the claim, doubts and suspicion linger among the gathered individuals.\n- However, we detain Oliver for further questioning, and he cracks under the weight.\n- The case is closed, leaving the true nature of Terry's resolved."
+      "content": "Sherlock's solution correctly identifies Oliver Smith as the murderer and provides a method of how the murder was committed.\n\n# Rating: 1 star\n\n## Epilogue\n- As the Police Chief, I gather everyone involved in the study, a mix of anticipation and unease filling the air.\n- I summarize the investigation, highlighting the various pieces of evidence we collected.\n- As I reveal that Oliver Smith is the culprit, a wave of disbelief washes over the room.\n- Oliver protests his innocence, denying any involvement in Terry's murder.\n- Without concrete evidence to support the claim, doubts and suspicion linger among the gathered individuals.\n- However, we detain Oliver for further questioning, and he cracks under the weight.\n- The case is closed, leaving the true nature of Terry's resolved."
   }
   ]}
   $$
@@ -592,7 +592,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The player has ordered me to search the mansion.\nWas I provided some kind of information about this?\nYes\nInformation:\n- there is shattered glass at a garden door; John's room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; the ransom note;"
+      "content": "Sherlock has ordered me to search the mansion.\nWas I provided some kind of information about this?\nYes\nInformation:\n- there is shattered glass at a garden door; John's room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; the ransom note;"
     },
     {
       "role": "user",
@@ -600,7 +600,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The player has ordered me to search John's room.\nWas I provided some kind of information about this?\nYes\nInformation:\n- all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science"
+      "content": "Sherlock has ordered me to search John's room.\nWas I provided some kind of information about this?\nYes\nInformation:\n- all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science"
     },
     {
       "role": "user",
@@ -608,7 +608,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The player has ordered me to find out what the newspaper articles were about.\nWas I provided some kind of information about this?\nNo\nInformation:\n- The newspaper articles in John's scrapbook are a mix of topics, including: An article about the latest inventions and advancements in electricity in America. A story about a group of explorers uncovering a lost civilization in the Amazon rainforest."
+      "content": "Sherlock has ordered me to find out what the newspaper articles were about.\nWas I provided some kind of information about this?\nNo\nInformation:\n- The newspaper articles in John's scrapbook are a mix of topics, including: An article about the latest inventions and advancements in electricity in America. A story about a group of explorers uncovering a lost civilization in the Amazon rainforest."
     },
     {
       "role": "user",
@@ -616,7 +616,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The player has ordered me to question the baron.\nWas I provided some kind of information about this?\nYes\nInformation:\n- He suspects \"The Lad\" Johnson because of the debt owed, but finds it strange that the ransom demanded is much less than the amount he borrowed."
+      "content": "Sherlock has ordered me to question the baron.\nWas I provided some kind of information about this?\nYes\nInformation:\n- He suspects \"The Lad\" Johnson because of the debt owed, but finds it strange that the ransom demanded is much less than the amount he borrowed."
     },
     {
       "role": "user",
@@ -624,7 +624,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The player has ordered me to ask the pope for help.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Here in Romsey we are Anglicans and do not like His Holiness to interfere in our business. On your request however, I have reached out and was told that he would pray for young John Toillard. He may not be so bad after all."
+      "content": "Sherlock has ordered me to ask the pope for help.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Here in Romsey we are Anglicans and do not like His Holiness to interfere in our business. On your request however, I have reached out and was told that he would pray for young John Toillard. He may not be so bad after all."
     },
     {
       "role": "user",
@@ -632,7 +632,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The player has ordered me to say hi\nWas I provided some kind of information about this?\nNo\nInformation:\n- I greeted the Toillards with a friendly \"hi\" as part of my investigation."
+      "content": "Sherlock has ordered greeted.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Hello to you, too Sherlock"
     },
     {
       "role": "user",
@@ -640,7 +640,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The player has ordered me to search the butler's room.\nWas I provided some kind of information about this?\nNo\nInformation:\n- The butler's room is tidy and well-organized, with no signs of disturbance, a shelf is filled with books about etiquette, household management, and history. There is also a small photo album with pictures of the butler with the Toillard family on various occasions."
+      "content": "Sherlock has ordered me to search the butler's room.\nWas I provided some kind of information about this?\nNo\nInformation:\n- The butler's room is tidy and well-organized, with no signs of disturbance, a shelf is filled with books about etiquette, household management, and history. There is also a small photo album with pictures of the butler with the Toillard family on various occasions."
     },
     {
       "role": "assistant",
@@ -648,7 +648,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The player has ordered me to accuse baron Toillard.\nWas I provided some kind of information about this?\nNo\nInformation:\n- While Lord Toillard has shown impulsive behavior in the past, there is no concrete evidence to directly accuse him of the kidnapping. I need motive, opportunity and evidence before I can accuse someone."
+      "content": "Sherlock has ordered me to accuse baron Toillard.\nWas I provided some kind of information about this?\nNo\nInformation:\n- While Lord Toillard has shown impulsive behavior in the past, there is no concrete evidence to directly accuse him of the kidnapping. I need motive, opportunity and evidence before I can accuse someone."
     }
   ]
 }
@@ -661,7 +661,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The players solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" could not be more wrong. \n\nRating: 0 stars \n\nEpilogue: \n- Despite their best efforts, the officers of the law couldn't find a single lead. \n- A storm of rumours and panic enveloped Romsey. \n- The whispers reached the local taverns, from the lowly market square to the manicured lawns of the Toillard estate. \n- The shadows kept their stains of concealed terror as young John Toillard remained missing and the ransom money, a stark reminder of his disappearance, lay untouched and uncashed"
+      "content": "Sherlock's solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" could not be more wrong. \n\nRating: 0 stars \n\nEpilogue: \n- Despite their best efforts, the officers of the law couldn't find a single lead. \n- A storm of rumours and panic enveloped Romsey. \n- The whispers reached the local taverns, from the lowly market square to the manicured lawns of the Toillard estate. \n- The shadows kept their stains of concealed terror as young John Toillard remained missing and the ransom money, a stark reminder of his disappearance, lay untouched and uncashed"
     },
     {
       "role": "user",
@@ -669,7 +669,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The players solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is essentially correct, but lacking in details.\n\nRating: 2 stars\n\nEpilogue:\n- After receiving the theory, we were quick to act.\n- A surprise inspection at the Southampton port retched the truth from its depths.\n- We found young John, his clothes stained with grime and his eyes rooted in fear.\n- Despite the heart-pounding chase, the constables managed to capture him.\n- A heavy curtain of dread lifted off Romsey as news of John's safe return spread.\n- The Toillards send their deepest thanks and asked me to tell you that more tangible thanks are soon in your mail"
+      "content": "Sherlock's solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is essentially correct, but lacking in details.\n\nRating: 2 stars\n\nEpilogue:\n- After receiving the theory, we were quick to act.\n- A surprise inspection at the Southampton port retched the truth from its depths.\n- We found young John, his clothes stained with grime and his eyes rooted in fear.\n- Despite the heart-pounding chase, the constables managed to capture him.\n- A heavy curtain of dread lifted off Romsey as news of John's safe return spread.\n- The Toillards send their deepest thanks and asked me to tell you that more tangible thanks are soon in your mail"
     },
     {
       "role": "user",
@@ -677,7 +677,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The players solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is far from accurate. \n\nRating: 0 stars \n\nEpilogue: \n- No matter how much we dug into the matter, the answers we sought remained beyond our reach. \n- The once calm and vibrant New Forest echoed with grim silence that hung heavily over Romsey. \n- John Toillard's absence left a gaping void as unfamiliar as it was painful. \n- As weeks turned into months, the untouched ransom money became a grim reminder of our failure.\n- Our search for truth laid barren, and the mystery of young John's disappearance continued to hang like an albatross over our necks."
+      "content": "Sherlock's solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is far from accurate. \n\nRating: 0 stars \n\nEpilogue: \n- No matter how much we dug into the matter, the answers we sought remained beyond our reach. \n- The once calm and vibrant New Forest echoed with grim silence that hung heavily over Romsey. \n- John Toillard's absence left a gaping void as unfamiliar as it was painful. \n- As weeks turned into months, the untouched ransom money became a grim reminder of our failure.\n- Our search for truth laid barren, and the mystery of young John's disappearance continued to hang like an albatross over our necks."
     },
     {
       "role": "user",
@@ -685,7 +685,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The players solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is incorrect, as John acted alone. \n\nRating: 0 stars \n\nEpilogue: \n- Despite the countless hours of investigation and a sea of theories, we remained entangled in this webs of perplexity. \n- The peaceful woodland of New Forest now bore the silent screams of a mystery unsolved. \n- The smiles around Romsey were marred with unuttered questions. \n- The ransom money sat untouched, a testament to a case that gnawed at us with every passing day. \n- Young John was never found again and his mercurial fate kept the town locked in a perpetual somber air."
+      "content": "Sherlock's solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is incorrect, as John acted alone. \n\nRating: 0 stars \n\nEpilogue: \n- Despite the countless hours of investigation and a sea of theories, we remained entangled in this webs of perplexity. \n- The peaceful woodland of New Forest now bore the silent screams of a mystery unsolved. \n- The smiles around Romsey were marred with unuttered questions. \n- The ransom money sat untouched, a testament to a case that gnawed at us with every passing day. \n- Young John was never found again and his mercurial fate kept the town locked in a perpetual somber air."
     },
     {
       "role": "user",
@@ -693,7 +693,7 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
     },
     {
       "role": "assistant",
-      "content": "The players solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is incorrect.\n\nRating: 0 stars\n\nEpilogue:\n- The enigmatic disappearance of young John Toillard managed to elude us at every turn. \n- The woods of New Forest held tight to their secrets, leaving us with only questions and fleeting hopes.\n- The ransom money lay forgotten and untouched, a haunting echo of the unresolved mystery.\n- Romsey remained shrouded in disquiet, the absence of John casting a lingering shadow over the community."
+      "content": "Sherlock's solution compared to the real one \"It was John Toillard himself. He ran away from home hoping to get to America with a steam ship. His home environment was abusive and his futures bleak. He believed that America would offer everything he needed to succeed with only a little money. He ran away when the butler left to get the doctor. We can see he had newspaper cutouts on his desk which he used for the note. Also, one of the letters is in his handwriting and has been left in the police mailbox without address or anything which means it was placed by hand. Also, in his diary the amount he believes he needs to get to and succeed in America is 13.2 pounds which is exactly the same as the ransom note.\" is incorrect.\n\nRating: 0 stars\n\nEpilogue:\n- The enigmatic disappearance of young John Toillard managed to elude us at every turn. \n- The woods of New Forest held tight to their secrets, leaving us with only questions and fleeting hopes.\n- The ransom money lay forgotten and untouched, a haunting echo of the unresolved mystery.\n- Romsey remained shrouded in disquiet, the absence of John casting a lingering shadow over the community."
     }
     ]}
     $$
