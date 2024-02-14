@@ -18,6 +18,7 @@
 	import { textIsTooLong } from '$lib/message-conversation-lengths';
 	import { isMobile } from '$lib/generic-helpers';
 	import { invalidateAll } from '$app/navigation';
+	import type { AskPayload } from '../../routes/api/ask/+server';
 
 	const dispatch = createEventDispatcher();
 
@@ -26,6 +27,7 @@
 	export let authStatus: AuthStatus;
 	export let metered: boolean;
 	export let blockWrite: boolean;
+	export let gameOver = false;
 
 	let accuseMode = false;
 	let debounceTimer: number | undefined;
@@ -34,7 +36,7 @@
 	let textarea: HTMLTextAreaElement;
 	let messageTokens = 0;
 	let lastUserMessage: string | null = null;
-	let gameOver = false;
+	// let gameOver = false;
 
 	$: message = input.trim();
 	$: if (blockWrite) {
@@ -53,15 +55,10 @@
 	}
 
 	function handleRegenerate() {
-		if (lastUserMessage != null) {
-			submitMessage(lastUserMessage);
-		} else if(){
-			console.log('last user message is null, have to reload the page');
-			invalidateAll();
-		}
+		submitMessage(lastUserMessage ? lastUserMessage : '', true);
 	}
 
-	function submitMessage(messageToSubmit: string) {
+	function submitMessage(messageToSubmit: string, regenerate = false) {
 		if (accuseMode) {
 			gameOver = true;
 		}
@@ -70,13 +67,14 @@
 
 		lastUserMessage = messageToSubmit;
 
-		const payload = {
-			game_config: {
+		const payload: AskPayload = {
+			gameConfig: {
 				accuse: accuseMode,
 				mysteryName: slug.replace(/_/g, ' ')
 			},
 			message: messageToSubmit,
-			openAiToken: $tokenStore
+			requestToken: $tokenStore,
+			regenerate
 		};
 
 		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort, handleEnd);
@@ -121,9 +119,13 @@
 		if (data.message.includes('API key')) {
 			console.error('API key not found');
 		}
+		reloadPageAndSetInput();
+	}
 
-		// restore last user prompt
-		input = inputCopy;
+	async function reloadPageAndSetInput() {
+		let tmp = inputCopy;
+		await invalidateAll();
+		input = tmp;
 	}
 
 	function addCompletionToChat(isAborted = false) {

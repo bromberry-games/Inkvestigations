@@ -31,7 +31,7 @@ export async function loadVictim(mysterName: string) {
 	return data;
 }
 
-export async function loadGameInfo(mystery: string, messageLength: number) {
+export async function loadGameInfo(mystery: string) {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('mysteries')
 		.select(
@@ -44,7 +44,7 @@ export async function loadGameInfo(mystery: string, messageLength: number) {
 			`
 		)
 		.eq('name', mystery)
-		.lte('events.show_at_message', messageLength)
+		// .lte('events.show_at_message', messageLength)
 		.limit(1)
 		.single();
 

@@ -19,11 +19,11 @@ export interface Victim {
 	description: string;
 }
 
-interface LLMCallback {
+export interface LLMCallback {
 	onResponseGenerated: (input: string) => Promise<void>;
 }
 
-interface SuspectAndVictim {
+export interface SuspectAndVictim {
 	suspects: string;
 	victim: Victim;
 }

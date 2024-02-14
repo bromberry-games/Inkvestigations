@@ -1,6 +1,6 @@
 import { addInfoModelMessage, addMessageForUser } from '$lib/supabase/conversations.server';
 import { error } from '@sveltejs/kit';
-import { brainModelRequest, letterModelRequest, type BrainModelRequestParams, type BrainOutput } from './llangchain_ask';
+import { brainModelRequest, letterModelRequest, type BrainModelRequestParams, type BrainOutput, type LLMCallback } from './llangchain_ask';
 import { throwIfFalse } from '$misc/error';
 import type { ChatMessage as ChatMessageType } from '$misc/shared';
 import { HumanMessage, type BaseMessage, AIMessage } from 'langchain/schema';
@@ -12,7 +12,8 @@ export async function standardInvestigationAnswer(
 	letter_info: string,
 	letterMessages: ChatMessageType[],
 	brainMessages: BrainOutput[],
-	genNum: number
+	genNum: number,
+	{ onResponseGenerated }: LLMCallback
 ) {
 	let brainResponse: BrainOutput | undefined = undefined;
 	if (genNum >= 0) {
@@ -58,11 +59,6 @@ ${item.info}
 		messages.push(new AIMessage({ content: assistantLetterAnswers[i].content }));
 	}
 
-	async function addResult(message: string) {
-		const addedMessage = await addMessageForUser(userId, message, mysteryName);
-		throwIfFalse(addedMessage, 'Could not add message to chat');
-	}
-
 	return letterModelRequest({
 		gameInfo: letter_info,
 		previousConversation: messages,
@@ -70,7 +66,7 @@ ${item.info}
 		brainAnswer: brainResponse,
 		suspects: brainParams.suspects,
 		victim: brainParams.victim,
-		onResponseGenerated: addResult,
+		onResponseGenerated,
 		openAiToken: brainParams.openAiToken
 	});
 }
