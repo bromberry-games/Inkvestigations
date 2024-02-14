@@ -51,7 +51,6 @@ const userTemplate = `Order:
 		{question}
 		Information: 
 		{brainInfo}
-		mood: {mood}
 	`;
 
 export function createLetterPrompt(previousConversation: BaseMessage[]) {

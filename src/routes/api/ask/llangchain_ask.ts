@@ -98,7 +98,6 @@ export async function letterModelRequest({
 			information: gameInfo,
 			suspects,
 			question,
-			mood: brainAnswer.mood,
 			brainInfo: brainAnswer.info,
 			victimName: victim.name,
 			victimDescription: victim.description
@@ -137,10 +136,9 @@ function createLetterModel(onResponseGenerated: (input: string) => Promise<any>,
 export interface BrainOutput {
 	chainOfThought: string;
 	info: string;
-	mood: string;
 }
 
-const INFO_REGEX = /([\s\S]*)Information:\s?([\s\S]*)(?:\s-)*\smood:\s?(\w+)/i;
+const INFO_REGEX = /([\s\S]*)Information:\s?([\s\S]*)(?:\s-)*/i;
 
 class BrainParser extends BaseOutputParser<BrainOutput> {
 	async parse(text: string): Promise<BrainOutput> {
@@ -148,14 +146,12 @@ class BrainParser extends BaseOutputParser<BrainOutput> {
 		if (!infoMatch) {
 			return {
 				chainOfThought: CHAIN_OF_THOUGHT_TEXT,
-				info: text,
-				mood: 'neutral'
+				info: text
 			};
 		}
 		return {
 			chainOfThought: infoMatch[1],
-			info: infoMatch[2],
-			mood: infoMatch[3]
+			info: infoMatch[2]
 		};
 	}
 }
