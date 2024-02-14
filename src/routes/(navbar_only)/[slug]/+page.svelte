@@ -10,6 +10,7 @@
 	import { getAuthStatus } from '$lib/auth-helper';
 	import SuspectModal from '$lib/gpt/SuspectModal.svelte';
 	import { MAX_CONVERSATION_LENGTH } from '$lib/message-conversation-lengths';
+	import { error } from '@sveltejs/kit';
 	import Tutorial from './tutorial.svelte';
 
 	export let data: PageData;
@@ -52,6 +53,11 @@
 			}
 			if (j + 1 >= chat.length) break;
 			tmpMessages[j + i + 1] = chat[j + 1];
+		}
+		for (let i = 0; i < tmpMessages.length; i++) {
+			if (tmpMessages[i] == undefined) {
+				error(500, `Array contains an empty element at index ${i}.`);
+			}
 		}
 		return tmpMessages;
 	}

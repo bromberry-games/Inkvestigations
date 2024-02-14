@@ -98,7 +98,6 @@ export async function letterModelRequest({
 			information: gameInfo,
 			suspects,
 			question,
-			mood: brainAnswer.mood,
 			brainInfo: brainAnswer.info,
 			victimName: victim.name,
 			victimDescription: victim.description
@@ -126,7 +125,8 @@ function createLetterModel(onResponseGenerated: (input: string) => Promise<any>,
 		}
 	];
 	return new ChatOpenAI({
-		modelName: OpenAiModel.Gpt35Turbo1106,
+		temperature: 0.6,
+		modelName: OpenAiModel.Gpt35Turbo0125,
 		openAIApiKey: openAiToken,
 		maxTokens: 500,
 		callbacks
@@ -136,10 +136,9 @@ function createLetterModel(onResponseGenerated: (input: string) => Promise<any>,
 export interface BrainOutput {
 	chainOfThought: string;
 	info: string;
-	mood: string;
 }
 
-const INFO_REGEX = /([\s\S]*)Information:\s?([\s\S]*)(?:\s-)*\smood:\s?(\w+)/i;
+const INFO_REGEX = /([\s\S]*)Information:\s?([\s\S]*)(?:\s-)*/i;
 
 class BrainParser extends BaseOutputParser<BrainOutput> {
 	async parse(text: string): Promise<BrainOutput> {
@@ -147,14 +146,12 @@ class BrainParser extends BaseOutputParser<BrainOutput> {
 		if (!infoMatch) {
 			return {
 				chainOfThought: CHAIN_OF_THOUGHT_TEXT,
-				info: text,
-				mood: 'neutral'
+				info: text
 			};
 		}
 		return {
 			chainOfThought: infoMatch[1],
-			info: infoMatch[2],
-			mood: infoMatch[3]
+			info: infoMatch[2]
 		};
 	}
 }
@@ -200,7 +197,7 @@ export async function brainModelRequest(
 			: new ChatOpenAI({
 					temperature: 0.85,
 					openAIApiKey: brainParams.openAiToken,
-					modelName: OpenAiModel.Gpt35Turbo1106,
+					modelName: OpenAiModel.Gpt35Turbo0125,
 					maxTokens: 350
 				});
 
@@ -262,7 +259,7 @@ export async function accuseBrainRequest({
 	const llm = new ChatOpenAI({
 		temperature: 0.9,
 		openAIApiKey: openAiToken,
-		modelName: OpenAiModel.Gpt35Turbo1106,
+		modelName: OpenAiModel.Gpt35Turbo0125,
 		maxTokens: 500
 	});
 
