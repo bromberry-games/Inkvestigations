@@ -61,10 +61,6 @@ refresh_token_reuse_interval = 10
 enable_signup = true
 
 
-SECURITY_CAPTCHA_ENABLED = "true"
-SECURITY_CAPTCHA_PROVIDER = "turnstile"
-SECURITY_CAPTCHA_SECRET = "your_captcha_secret_key"
-SECURITY_CAPTCHA_TIMEOUT = "30"
 #SECURITY_CAPTCHA_TURNSTILE_SITEKEY = "env(SUPABASE_SECURITY_CAPTCHA_TURNSTILE_SITEKEY)"
 #SECURITY_CAPTCHA_TURNSTILE_SECRET = "env(SUPABASE_SECURITY_CAPTCHA_TURNSTILE_SECRET)"
 
@@ -76,6 +72,9 @@ enable_signup = true
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
 enable_confirmations = true
+[auth.email.template.invite]
+subject = "You are invited to inkvestigations.com"
+content_path = "./supabase/templates/invite.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.
@@ -106,7 +105,7 @@ redirect_uri = ""
 url = ""
 
 [analytics]
-enabled = true
+enabled = false
 port = 54327
 vector_port = 54328
 # Configure one of the supported backends: `postgres`, `bigquery`

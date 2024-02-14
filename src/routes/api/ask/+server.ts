@@ -1,121 +1,205 @@
 import type { RequestHandler } from './$types';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { getErrorMessage, throwIfFalse, throwIfUnset } from '$misc/error';
 import type { Session } from '@supabase/supabase-js';
-import { accuseLetterModelRequest, accuseModelRequest, brainModelRequest as brainModelRequest, letterModelRequest } from './llangchain_ask';
-import { AIMessage, BaseMessage, HumanMessage } from 'langchain/schema';
+import {
+	accuseLetterModelRequest,
+	accuseBrainRequest,
+	type AccuseModelRequestParams,
+	type Victim,
+	type SuspectAndVictim,
+	type LLMCallback
+} from './llangchain_ask';
 import { loadGameInfo } from '$lib/supabase/mystery_data.server';
 import {
-	addInfoModelMessage,
 	addMessageForUser,
 	archiveLastConversation,
-	getInfoModelMessages,
-	loadDisplayMessages,
+	loadBrainMessages,
+	loadLetterMessages,
 	setRating
 } from '$lib/supabase/conversations.server';
-import { getMessageAmountForUser, decreaseMessageForUser } from '$lib/supabase/message_amounts.server';
-import { countTokens } from '$misc/openai';
-import { MAX_TOKENS } from '../../../constants';
+import { getMessageAmountForUser, decreaseMessageForUser, increaseMessageForUser } from '$lib/supabase/message_amounts.server';
+import { approximateTokenCount } from '$misc/openai';
+import { shuffleArray } from '$lib/generic-helpers';
+import { standardInvestigationAnswer } from './conversation';
+import { isPostgresError, isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
+import { OPEN_AI_KEY } from '$env/static/private';
+import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
+import { stripeClient } from '$lib/stripe';
+import { MAX_CONVERSATION_LENGTH, textIsTooLong } from '$lib/message-conversation-lengths';
+import type { Json } from '../../../schema';
+import { on } from 'events';
 
-async function standardInvestigationAnswer(
-	mysteryName: string,
-	promptMessage: string,
-	userId: string,
-	brainInfo: string,
-	letter_info: string
-) {
-	const infoModelMessages = await getInfoModelMessages(userId, mysteryName);
-	if (!infoModelMessages) {
-		throw error(500, 'Could not get info model messages');
-	}
-	const brainResponse = await brainModelRequest(brainInfo, infoModelMessages, promptMessage);
-
-	const addedInfoModelMessage = await addInfoModelMessage(userId, mysteryName, brainResponse);
-	throwIfFalse(addedInfoModelMessage, 'Could not add info model message to chat');
-
-	const assistantLetterAnswers = (await loadDisplayMessages(userId, mysteryName))?.filter((m) => m.role === 'assistant');
-	if (!assistantLetterAnswers) {
-		throw error(500, 'Could not load backend messages');
-	}
-
-	const messages: BaseMessage[] = [];
-	for (let i = 0; i < infoModelMessages.length; i += 2) {
-		messages.push(
-			new HumanMessage({
-				content: 'Order:\n' + infoModelMessages[i].content + '\nInformation:\n' + infoModelMessages[i + 1].content
-			})
-		);
-		messages.push(new AIMessage({ content: assistantLetterAnswers[i / 2].content }));
-	}
-
-	async function addResult(message: string) {
-		const addedMessage = await addMessageForUser(userId, message, mysteryName);
-		throwIfFalse(addedMessage, 'Could not add message to chat');
-	}
-
-	return letterModelRequest(letter_info, messages, promptMessage, brainResponse, addResult);
+interface AccuseModelAnswerParams extends LLMCallback {
+	mysteryName: string;
+	userId: string;
+	accuseLetterInfo: string;
+	accuseBrainRequestParams: AccuseModelRequestParams;
 }
 
-async function accuseModelAnswer(
-	mysteryName: string,
-	promptMessage: string,
-	userId: string,
-	suspectToAccuse: string,
-	accuseInfo: string,
-	accuseLetterInfo: string
-) {
-	const response = await accuseModelRequest(suspectToAccuse, promptMessage, accuseInfo);
+export interface AskPayload {
+	gameConfig: { accuse: boolean; mysteryName: string };
+	regenerate: boolean;
+	message: string;
+	requestToken: string;
+}
+
+async function accuseModelAnswer({
+	mysteryName,
+	userId,
+	accuseBrainRequestParams,
+	accuseLetterInfo,
+	onResponseGenerated
+}: AccuseModelAnswerParams) {
+	const response = await accuseBrainRequest(accuseBrainRequestParams);
 	const ratingSet = await setRating(mysteryName, userId, response.rating);
 	throwIfFalse(ratingSet, 'Could not set rating');
-	const addResult = async (message: string) => {
-		const addedMessage = await addMessageForUser(userId, message, mysteryName);
-		throwIfFalse(addedMessage, 'Could not add message to chat');
-		await archiveLastConversation(userId, mysteryName);
-	};
-
-	return accuseLetterModelRequest(accuseLetterInfo, promptMessage, response.epilogue, addResult);
+	return accuseLetterModelRequest({
+		accusation: accuseBrainRequestParams.promptMessage,
+		epilogue: response.epilogue,
+		accuseLetterInfo: accuseLetterInfo,
+		suspects: accuseBrainRequestParams.suspects,
+		victim: accuseBrainRequestParams.victim,
+		onResponseGenerated,
+		openAiToken: accuseBrainRequestParams.openAiToken
+	});
 }
 
 export const POST: RequestHandler = async ({ request, locals: { getSession } }) => {
 	const session: Session = await getSession();
 	if (!session) {
-		throw error(500, 'You are not logged in.');
+		error(500, 'You are not logged in.');
 	}
-	if ((await getMessageAmountForUser(session.user.id)) <= 0) {
-		throw error(500, 'You have no messages.');
+	const {
+		gameConfig: { accuse, mysteryName },
+		message,
+		requestToken,
+		regenerate
+	}: AskPayload = await request.json();
+	throwIfUnset('Mystery name', mysteryName);
+	if ((textIsTooLong(accuse, approximateTokenCount(message)) || message.length == 0) && !regenerate) {
+		error(400, 'Message is too long or empty');
 	}
-	try {
-		const requestData = await request.json();
-		throwIfUnset('request data', requestData);
-		const message: string = requestData.message;
-		throwIfUnset('messages', message);
-		if (countTokens(message) > MAX_TOKENS) {
-			throw error(400, 'Message is too long.');
-		}
-		const game_config = requestData.game_config;
-		throwIfUnset('game_config', game_config);
-		const suspectToAccuse = game_config.suspectToAccuse ? game_config.suspectToAccuse : '';
-		throwIfUnset('Mystery name', game_config.mysteryName);
-		const messageAdded = await addMessageForUser(session.user.id, message, game_config.mysteryName);
-		throwIfFalse(messageAdded, 'Could not add message to chat');
-		const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
-		throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
-		const gameInfo = await loadGameInfo(game_config.mysteryName);
-		if (!gameInfo) {
-			throw error(500, 'Could not get game info');
-		}
 
-		return suspectToAccuse
-			? await accuseModelAnswer(
-					game_config.mysteryName,
-					message,
+	const [letterMessages, brainMessages, messagesAmount, currentSub, gameInfo] = await Promise.all([
+		loadLetterMessages(session.user.id, mysteryName),
+		loadBrainMessages(session.user.id, mysteryName),
+		getMessageAmountForUser(session.user.id),
+		loadActiveAndUncancelledSubscription(session.user.id),
+		loadGameInfo(mysteryName)
+	]);
+	isTAndThrowPostgresErrorIfNot(letterMessages);
+	isTAndThrowPostgresErrorIfNot(brainMessages);
+	isTAndThrowPostgresErrorIfNot(currentSub);
+	isTAndThrowPostgresErrorIfNot(messagesAmount);
+	isTAndThrowPostgresErrorIfNot(gameInfo);
+	const genNum = letterMessages.length - brainMessages.length * 2;
+	const useBackendToken = requestToken == undefined || requestToken == '';
+	const openAiToken = useBackendToken ? OPEN_AI_KEY : requestToken;
+	const hasNoMessages = messagesAmount.amount <= 0 && messagesAmount.non_refillable_amount <= 0;
+
+	if (brainMessages.length > MAX_CONVERSATION_LENGTH && !accuse) {
+		error(500, 'Too many messages. You have to accuse');
+	}
+	let messageToSend = message;
+	if (genNum == 0 && regenerate && messageToSend == '') {
+		error(500, 'nothing to regenerate');
+	}
+
+	if (hasNoMessages && genNum >= 0 && useBackendToken) {
+		const meteredProd = currentSub.length == 1 ? currentSub[0].products.find((x) => x.metered_si != null) : undefined;
+		if (meteredProd) {
+			const prod = await stripeClient.products.retrieve(meteredProd.product_id);
+			const usageRecord = await stripeClient.subscriptionItems.createUsageRecord(meteredProd.metered_si, {
+				quantity: 1
+			});
+			const incMessages = await increaseMessageForUser(session.user.id, Number.parseInt(prod.metadata.metered_message_refill) - 1);
+			if (isPostgresError(incMessages)) {
+				//TODO reset usage record
+				error(500, 'Could not increase messages Please contact us.');
+			}
+		} else {
+			error(500, 'You have no messages.');
+		}
+	} else if ((!hasNoMessages || !useBackendToken) && genNum == 0) {
+		const messageAdded = await addMessageForUser(session.user.id, message, mysteryName);
+		throwIfFalse(messageAdded, 'Could not add message to chat');
+		if (useBackendToken) {
+			const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
+			throwIfFalse(decreasedMessageForUser, 'Could not decrease message for user');
+		}
+	} else if (genNum == 1) {
+		messageToSend = letterMessages[letterMessages.length - 1].content;
+	}
+
+	try {
+		const eventClues = gameInfo.events
+			.filter((event) => event.show_at_message <= brainMessages.length)
+			.reduce((acc: string, event) => {
+				return acc + event.info + '\n';
+			}, '');
+		const eventTimeframes = gameInfo.events.reduce((acc: string, event) => {
+			return acc + event.timeframe + '\n';
+		}, '');
+
+		//Shuffle array so the murderer is not always the first suspect
+		const suspectsString = shuffleArray([...gameInfo.suspects]).reduce((acc: string, suspect) => {
+			return acc + suspect.name + ': ' + suspect.description + '\n';
+		}, '');
+		const suspectAndVictim: SuspectAndVictim = {
+			suspects: suspectsString,
+			victim: {
+				name: gameInfo.victim_name,
+				description: gameInfo.victim_description
+			}
+		};
+		const themeAndSetting = {
+			theme: gameInfo.theme,
+			setting: gameInfo.setting
+		};
+		const userId = session.user.id;
+		const addResult = async (message: string) => {
+			const addedMessage = await addMessageForUser(userId, message, mysteryName);
+			throwIfFalse(addedMessage, 'Could not add message to chat');
+		};
+
+		return accuse
+			? await accuseModelAnswer({
+					mysteryName,
+					accuseBrainRequestParams: {
+						...suspectAndVictim,
+						...themeAndSetting,
+						promptMessage: messageToSend,
+						fewShots: gameInfo?.few_shots?.accuse_brain as Json,
+						openAiToken,
+						starRatings: gameInfo?.star_ratings as { star0: string; star1: string; star2: string; star3: string },
+						solution: gameInfo.solution as string
+					},
+					userId,
+					accuseLetterInfo: gameInfo.accuse_letter_prompt,
+					onResponseGenerated: addResult
+				})
+			: await standardInvestigationAnswer(
+					{
+						...suspectAndVictim,
+						...themeAndSetting,
+						question: messageToSend,
+						timeframe: gameInfo.timeframes,
+						actionClues: gameInfo.action_clues,
+						fewShots: gameInfo?.few_shots?.brain as Json,
+						eventClues: eventClues,
+						eventTimeframe: eventTimeframes,
+						openAiToken
+					},
+					mysteryName,
 					session.user.id,
-					suspectToAccuse,
-					gameInfo.accuse_prompt,
-					gameInfo.accuse_letter_prompt
-			  )
-			: await standardInvestigationAnswer(game_config.mysteryName, message, session.user.id, gameInfo.brain_prompt, gameInfo.letter_prompt);
+					gameInfo.letter_prompt,
+					letterMessages,
+					brainMessages,
+					genNum,
+					{ onResponseGenerated: addResult }
+				);
 	} catch (err) {
-		throw error(500, getErrorMessage(err));
+		error(500, getErrorMessage(err));
 	}
 };

@@ -1,38 +1,36 @@
-# create-svelte
+# Inkvestigations
+<p align="center">
+  <a href="https://discord.gg/ReHNSbCHpB">
+    <img src="https://img.shields.io/discord/1176909898651549756?style=for-the-badge&logo=discord&label=%20Discord&color=%20%237289da" alt="Discord">
+  </a>
+</p>
+<p align="center">
+  <img src="/assets/logo.png" width="50%" height="auto">
+</p>
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
 
-## Creating a project
+Inkvestigations is a webgame using LLM technology (currently GPT) to create interactive mystery games. 
 
-If you're seeing this, you've probably already done this step. Congrats!
+If you are a fan of the detective or mystery genre, interactive fiction games, or an LLM game enthusiast, this game is for you. It uses authored mysteries and combines it with the imagination of LLMs to create stories without invisible walls but with concrete solutions.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+<p align="center">
+  <img src="/assets/showcase.gif" width="50%" height="auto">
+</p>
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
 
-## Developing
+Inkvestigations is a website that offers crafted mysteries. You are Sherlock Holmes, corresponding with police chief Wellington through letters to help him solve cases that are too tough for him.  
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+It's not as simple as pasting a prompt into GPT-4. We're using langchain, chain-of-thought and other prompt gymnastics to achieve a great experience that works with GPT-3.5, which also makes it affordable to play. Inkvestigations started by us wanting to make a mystery game and thinking up cases while we were using ChatGPT. It simply never did exactly what we wanted it to do, so building solutions to problems we faced during play led made it into what it is today. Soon you will be able to add your own mysteries when we add the mystery creator, an interface that makes it easy to create cases for other Sherlocks to solve.
 
-```bash
-npm run dev
+## Roadmap
+If you have any opinions or ideas for where this project might go, please share your thought on our discord! We are excited to make this a community focused project and would be happy to have your input.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
 
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+- [ ] Mystery creator (current focus)
+- [ ] GPT-4 mysteries
+- [ ] Langchain example selector
+- [ ] Persistent universe mysteries with langchain
+- [x] Runs well on GPT-3.5
+- [x] use own API token
+- [x] Consistent accusations
+- [x] Characters and notes

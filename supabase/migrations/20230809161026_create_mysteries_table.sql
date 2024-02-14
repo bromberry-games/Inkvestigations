@@ -1,44 +1,47 @@
 -- extensions
 create extension pg_cron with schema extensions;
 
+CREATE TYPE suspect_type AS (
+    name TEXT,
+    imagepath TEXT,
+    description TEXT
+);
+Create Type murderer_type AS (
+    name TEXT,
+    description TEXT,
+    imagepath TEXT,
+    motive TEXT,
+    opportunity TEXT,
+    evidence TEXT
+);
+Create Type action_clue_type AS (
+    action TEXT,
+    clue TEXT
+);
+Create Type timeframe_type AS (
+  timeframe TEXT,
+  event_happened TEXT
+);
+
 -- Create tables
 CREATE TABLE mysteries (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     description TEXT Not NULL,
-    brain_prompt TEXT NOT NULL,
+    theme TEXT NOT NULL,
+    setting TEXT NOT NULL,
     letter_info TEXT NOT NULL,
     letter_prompt TEXT NOT NULL,
-    accuse_prompt TEXT NOT NULL,
     accuse_letter_prompt TEXT NOT NULL,
+    suspects suspect_type[] NOT NULL,
+    action_clues action_clue_type[] NOT NULL,
+    timeframe timeframe_type[] NOT NULL,
+    murderer murderer_type NOT NULL,
+    victim_name TEXT NOT NULL,
+    victim_description TEXT NOT NULL,
     filepath TEXT NOT NULL
 );
 
-CREATE TABLE user_mysteries (
-    id uuid UNIQUE NOT NULL,
-    user_id uuid REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    name TEXT NOT NULL,
-    published BOOLEAN NOT NULL DEFAULT FALSE,
-    info JSON NOT NULL,
-    UNIQUE (user_id, name)
-);
-
-ALTER TABLE user_mysteries
-  ENABLE ROW LEVEL SECURITY;
-
-CREATE TABLE suspects (
-    id SERIAL PRIMARY KEY,
-    mystery_name TEXT NOT NULL REFERENCES mysteries(name) ON UPDATE CASCADE ON DELETE CASCADE,
-    name TEXT NOT NULL,
-    imagepath TEXT NOT NULL,
-    description TEXT NOT NULL
-);
-
-CREATE TABLE murderers (
-  id SERIAL PRIMARY KEY, 
-  suspect_id INT NOT NULL UNIQUE REFERENCES suspects(id) ON UPDATE CASCADE ON DELETE CASCADE,
-  murder_reasons TEXT NOT NULL
-);
 
 CREATE TABLE solved (
     id SERIAL PRIMARY KEY,
@@ -67,10 +70,12 @@ CREATE TABLE user_mystery_messages (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
-CREATE TABLE user_mystery_info_messages (
+CREATE TABLE user_mystery_brain_messages (
   id SERIAL PRIMARY KEY,
   conversation_id INT REFERENCES user_mystery_conversations(id) ON UPDATE CASCADE,
-  content TEXT NOT NULL, 
+  chain_of_thought TEXT NOT NULL,
+  info TEXT NOT NULL, 
+  mood TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -103,16 +108,19 @@ CREATE TABLE stripe_events (
   event_id TEXT NOT NULL UNIQUE
 );
 
+CREATE TABLE terms_and_conditions_privacy_policy_consent (
+  user_id uuid PRIMARY KEY REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+  accepted BOOLEAN NOT NULL DEFAULT FALSE,
+  accepted_on DATE NOT NULL DEFAULT CURRENT_DATE
+);
+
+ALTER TABLE terms_and_conditions_privacy_policy_consent
+  ENABLE ROW LEVEL SECURITY;
+
 -- policies
 ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC;
 
 ALTER TABLE mysteries 
-  ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE suspects
-  ENABLE ROW LEVEL SECURITY;
-
-ALTER TABLE murderers
   ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE user_messages 
@@ -124,7 +132,7 @@ ALTER TABLE user_mystery_conversations
 ALTER TABLE user_mystery_messages 
   ENABLE ROW LEVEL SECURITY;
 
-ALTER TABLE user_mystery_info_messages 
+ALTER TABLE user_mystery_brain_messages 
   ENABLE ROW LEVEL SECURITY;
 
 ALTER TABLE user_subscriptions 
@@ -176,11 +184,29 @@ BEGIN
 END;
 $$;
 
-
 CREATE OR REPLACE TRIGGER tr_insert_user_messages
 AFTER INSERT ON auth.users
 FOR EACH ROW
 EXECUTE FUNCTION add_user_to_user_messages();
+
+CREATE OR REPLACE FUNCTION add_to_consent()
+RETURNS TRIGGER
+language plpgsql
+security definer set search_path = public
+AS $$
+BEGIN
+    INSERT INTO terms_and_conditions_privacy_policy_consent(user_id, accepted) VALUES (NEW.id, true);
+    RETURN NEW;
+END;
+$$;
+
+-- This is possible because users can't sign up with consenting
+CREATE OR REPLACE TRIGGER tr_consent
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION add_to_consent();
+
+
 
 CREATE OR REPLACE FUNCTION migrate_anonymous_user_to_new_user()
 RETURNS TRIGGER 
@@ -228,6 +254,29 @@ CREATE TRIGGER trigger_migrate_anonymous_user
 AFTER INSERT ON auth.users
 FOR EACH ROW
 EXECUTE FUNCTION migrate_anonymous_user_to_new_user();
+
+CREATE OR REPLACE FUNCTION set_test_subscription()
+RETURNS TRIGGER
+language plpgsql
+security definer set search_path = public
+AS $$
+BEGIN
+    INSERT INTO user_subscriptions(user_id, tier_id, start_date, end_date, active)
+    VALUES (
+        NEW.id, 
+        (SELECT tier_id FROM subscription_tiers WHERE stripe_price_id = 'test_1'LIMIT 1), 
+        CURRENT_DATE, 
+        NULL,  
+        TRUE
+    );
+    RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE TRIGGER tr_set_test_subscription
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION set_test_subscription();
 
 
 -- functions

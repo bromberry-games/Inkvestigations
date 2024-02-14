@@ -34,64 +34,194 @@ export interface Database {
   }
   public: {
     Tables: {
-      murderers: {
+      action_clues: {
         Row: {
+          action: string
+          clue: string
           id: number
-          murder_reasons: string
-          suspect_id: number
+          mystery_id: number
         }
         Insert: {
+          action: string
+          clue: string
           id?: number
-          murder_reasons: string
-          suspect_id: number
+          mystery_id: number
         }
         Update: {
+          action?: string
+          clue?: string
           id?: number
-          murder_reasons?: string
-          suspect_id?: number
+          mystery_id?: number
         }
         Relationships: [
           {
-            foreignKeyName: "murderers_suspect_id_fkey"
-            columns: ["suspect_id"]
-            referencedRelation: "suspects"
+            foreignKeyName: "action_clues_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: false
+            referencedRelation: "mysteries"
             referencedColumns: ["id"]
           }
         ]
       }
+      conversation_notes: {
+        Row: {
+          conversation_id: number
+          notes: Json | null
+        }
+        Insert: {
+          conversation_id: number
+          notes?: Json | null
+        }
+        Update: {
+          conversation_id?: number
+          notes?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_notes_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: true
+            referencedRelation: "user_mystery_conversations"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      events: {
+        Row: {
+          id: number
+          info: string
+          letter: string
+          mystery_id: number | null
+          show_at_message: number
+          timeframe: string
+        }
+        Insert: {
+          id?: number
+          info: string
+          letter: string
+          mystery_id?: number | null
+          show_at_message: number
+          timeframe: string
+        }
+        Update: {
+          id?: number
+          info?: string
+          letter?: string
+          mystery_id?: number | null
+          show_at_message?: number
+          timeframe?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: false
+            referencedRelation: "mysteries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      few_shots: {
+        Row: {
+          accuse_brain: Json | null
+          brain: Json
+          mystery_id: number
+        }
+        Insert: {
+          accuse_brain?: Json | null
+          brain: Json
+          mystery_id: number
+        }
+        Update: {
+          accuse_brain?: Json | null
+          brain?: Json
+          mystery_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "few_shots_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: true
+            referencedRelation: "mysteries"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      for_free_users: {
+        Row: {
+          amount: number
+          daily_limit: number
+          id: number
+        }
+        Insert: {
+          amount: number
+          daily_limit: number
+          id?: number
+        }
+        Update: {
+          amount?: number
+          daily_limit?: number
+          id?: number
+        }
+        Relationships: []
+      }
       mysteries: {
         Row: {
+          access_code: string
           accuse_letter_prompt: string
-          accuse_prompt: string
-          brain_prompt: string
           description: string
           filepath: string
           id: number
           letter_info: string
           letter_prompt: string
           name: string
+          order_int: number
+          setting: string
+          solution: string | null
+          star_ratings:
+            | Database["public"]["CompositeTypes"]["star_ratings"]
+            | null
+          theme: string
+          victim_description: string
+          victim_name: string
         }
         Insert: {
+          access_code?: string
           accuse_letter_prompt: string
-          accuse_prompt: string
-          brain_prompt: string
           description: string
           filepath: string
           id?: number
           letter_info: string
           letter_prompt: string
           name: string
+          order_int?: number
+          setting: string
+          solution?: string | null
+          star_ratings?:
+            | Database["public"]["CompositeTypes"]["star_ratings"]
+            | null
+          theme: string
+          victim_description: string
+          victim_name: string
         }
         Update: {
+          access_code?: string
           accuse_letter_prompt?: string
-          accuse_prompt?: string
-          brain_prompt?: string
           description?: string
           filepath?: string
           id?: number
           letter_info?: string
           letter_prompt?: string
           name?: string
+          order_int?: number
+          setting?: string
+          solution?: string | null
+          star_ratings?:
+            | Database["public"]["CompositeTypes"]["star_ratings"]
+            | null
+          theme?: string
+          victim_description?: string
+          victim_name?: string
         }
         Relationships: []
       }
@@ -118,41 +248,54 @@ export interface Database {
           {
             foreignKeyName: "solved_mystery_name_fkey"
             columns: ["mystery_name"]
+            isOneToOne: false
             referencedRelation: "mysteries"
             referencedColumns: ["name"]
           },
           {
             foreignKeyName: "solved_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
         ]
       }
-      subscription_tiers: {
+      stripe_customers: {
         Row: {
-          active: boolean
-          daily_message_limit: number
-          description: string
-          name: string
-          stripe_price_id: string
-          tier_id: number
+          customer_id: string
+          user_id: string
         }
         Insert: {
-          active?: boolean
-          daily_message_limit: number
-          description: string
-          name: string
-          stripe_price_id: string
-          tier_id?: number
+          customer_id: string
+          user_id: string
         }
         Update: {
-          active?: boolean
-          daily_message_limit?: number
-          description?: string
-          name?: string
-          stripe_price_id?: string
-          tier_id?: number
+          customer_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stripe_customers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      stripe_events: {
+        Row: {
+          event_id: string
+          id: number
+        }
+        Insert: {
+          event_id: string
+          id?: number
+        }
+        Update: {
+          event_id?: string
+          id?: number
         }
         Relationships: []
       }
@@ -160,51 +303,143 @@ export interface Database {
         Row: {
           description: string
           id: number
-          imagepath: string
-          mystery_name: string
+          mystery_id: number
           name: string
         }
         Insert: {
           description: string
           id?: number
-          imagepath: string
-          mystery_name: string
+          mystery_id: number
           name: string
         }
         Update: {
           description?: string
           id?: number
-          imagepath?: string
-          mystery_name?: string
+          mystery_id?: number
           name?: string
         }
         Relationships: [
           {
-            foreignKeyName: "suspects_mystery_name_fkey"
-            columns: ["mystery_name"]
+            foreignKeyName: "suspects_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: false
             referencedRelation: "mysteries"
-            referencedColumns: ["name"]
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      terms_and_conditions_privacy_policy_consent: {
+        Row: {
+          accepted: boolean
+          accepted_on: string
+          user_id: string
+        }
+        Insert: {
+          accepted?: boolean
+          accepted_on?: string
+          user_id: string
+        }
+        Update: {
+          accepted?: boolean
+          accepted_on?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "terms_and_conditions_privacy_policy_consent_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      timeframes: {
+        Row: {
+          event_happened: string
+          id: number
+          mystery_id: number
+          timeframe: string
+        }
+        Insert: {
+          event_happened: string
+          id?: number
+          mystery_id: number
+          timeframe: string
+        }
+        Update: {
+          event_happened?: string
+          id?: number
+          mystery_id?: number
+          timeframe?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "timeframes_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: false
+            referencedRelation: "mysteries"
+            referencedColumns: ["id"]
           }
         ]
       }
       user_messages: {
         Row: {
           amount: number
+          non_refillable_amount: number
           user_id: string
         }
         Insert: {
           amount: number
+          non_refillable_amount?: number
           user_id: string
         }
         Update: {
           amount?: number
+          non_refillable_amount?: number
           user_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "user_messages_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      user_mystery_brain_messages: {
+        Row: {
+          chain_of_thought: string
+          conversation_id: number | null
+          created_at: string
+          id: number
+          info: string
+          mood: string
+        }
+        Insert: {
+          chain_of_thought: string
+          conversation_id?: number | null
+          created_at?: string
+          id?: number
+          info: string
+          mood: string
+        }
+        Update: {
+          chain_of_thought?: string
+          conversation_id?: number | null
+          created_at?: string
+          id?: number
+          info?: string
+          mood?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_mystery_brain_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "user_mystery_conversations"
             referencedColumns: ["id"]
           }
         ]
@@ -235,41 +470,15 @@ export interface Database {
           {
             foreignKeyName: "user_mystery_conversations_mystery_name_fkey"
             columns: ["mystery_name"]
+            isOneToOne: false
             referencedRelation: "mysteries"
             referencedColumns: ["name"]
           },
           {
             foreignKeyName: "user_mystery_conversations_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      user_mystery_info_messages: {
-        Row: {
-          content: string
-          conversation_id: number | null
-          created_at: string
-          id: number
-        }
-        Insert: {
-          content: string
-          conversation_id?: number | null
-          created_at?: string
-          id?: number
-        }
-        Update: {
-          content?: string
-          conversation_id?: number | null
-          created_at?: string
-          id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_mystery_info_messages_conversation_id_fkey"
-            columns: ["conversation_id"]
-            referencedRelation: "user_mystery_conversations"
             referencedColumns: ["id"]
           }
         ]
@@ -297,46 +506,39 @@ export interface Database {
           {
             foreignKeyName: "user_mystery_messages_conversation_id_fkey"
             columns: ["conversation_id"]
+            isOneToOne: false
             referencedRelation: "user_mystery_conversations"
             referencedColumns: ["id"]
           }
         ]
       }
-      user_subscriptions: {
+      user_subs: {
         Row: {
-          active: boolean
+          access_codes: string | null
           end_date: string | null
-          start_date: string
-          subscription_id: number
-          tier_id: number | null
-          user_id: string | null
+          products: Database["public"]["CompositeTypes"]["product_type"][]
+          sub_id: string
+          user_id: string
         }
         Insert: {
-          active?: boolean
+          access_codes?: string | null
           end_date?: string | null
-          start_date: string
-          subscription_id?: number
-          tier_id?: number | null
-          user_id?: string | null
+          products: Database["public"]["CompositeTypes"]["product_type"][]
+          sub_id: string
+          user_id: string
         }
         Update: {
-          active?: boolean
+          access_codes?: string | null
           end_date?: string | null
-          start_date?: string
-          subscription_id?: number
-          tier_id?: number | null
-          user_id?: string | null
+          products?: Database["public"]["CompositeTypes"]["product_type"][]
+          sub_id?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "user_subscriptions_tier_id_fkey"
-            columns: ["tier_id"]
-            referencedRelation: "subscription_tiers"
-            referencedColumns: ["tier_id"]
-          },
-          {
-            foreignKeyName: "user_subscriptions_user_id_fkey"
+            foreignKeyName: "user_subs_user_id_fkey"
             columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           }
@@ -347,11 +549,8 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      create_subscription: {
-        Args: {
-          the_user_id: string
-          price_id: string
-        }
+      decrement_for_free_users: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       decrement_message_for_user: {
@@ -367,7 +566,14 @@ export interface Database {
         }
         Returns: undefined
       }
-      update_daily_messages: {
+      set_daily_messages_for_user: {
+        Args: {
+          the_user_id: string
+          daily_amount: number
+        }
+        Returns: undefined
+      }
+      update_user_messages: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
@@ -376,7 +582,16 @@ export interface Database {
       [_ in never]: never
     }
     CompositeTypes: {
-      [_ in never]: never
+      product_type: {
+        product_id: string
+        metered_si: string
+      }
+      star_ratings: {
+        star0: string
+        star1: string
+        star2: string
+        star3: string
+      }
     }
   }
   storage: {
@@ -390,6 +605,7 @@ export interface Database {
           id: string
           name: string
           owner: string | null
+          owner_id: string | null
           public: boolean | null
           updated_at: string | null
         }
@@ -401,6 +617,7 @@ export interface Database {
           id: string
           name: string
           owner?: string | null
+          owner_id?: string | null
           public?: boolean | null
           updated_at?: string | null
         }
@@ -412,17 +629,11 @@ export interface Database {
           id?: string
           name?: string
           owner?: string | null
+          owner_id?: string | null
           public?: boolean | null
           updated_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "buckets_owner_fkey"
-            columns: ["owner"]
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          }
-        ]
+        Relationships: []
       }
       migrations: {
         Row: {
@@ -454,6 +665,7 @@ export interface Database {
           metadata: Json | null
           name: string | null
           owner: string | null
+          owner_id: string | null
           path_tokens: string[] | null
           updated_at: string | null
           version: string | null
@@ -466,6 +678,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
@@ -478,6 +691,7 @@ export interface Database {
           metadata?: Json | null
           name?: string | null
           owner?: string | null
+          owner_id?: string | null
           path_tokens?: string[] | null
           updated_at?: string | null
           version?: string | null
@@ -486,6 +700,7 @@ export interface Database {
           {
             foreignKeyName: "objects_bucketId_fkey"
             columns: ["bucket_id"]
+            isOneToOne: false
             referencedRelation: "buckets"
             referencedColumns: ["id"]
           }
@@ -559,4 +774,84 @@ export interface Database {
     }
   }
 }
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
+      Database["public"]["Views"])
+  ? (Database["public"]["Tables"] &
+      Database["public"]["Views"])[PublicTableNameOrOptions] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : never
+
+export type TablesInsert<
+  PublicTableNameOrOptions extends
+    | keyof Database["public"]["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
+  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : never
+
+export type TablesUpdate<
+  PublicTableNameOrOptions extends
+    | keyof Database["public"]["Tables"]
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+    : never = never
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : PublicTableNameOrOptions extends keyof Database["public"]["Tables"]
+  ? Database["public"]["Tables"][PublicTableNameOrOptions] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : never
+
+export type Enums<
+  PublicEnumNameOrOptions extends
+    | keyof Database["public"]["Enums"]
+    | { schema: keyof Database },
+  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
+    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+    : never = never
+> = PublicEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : PublicEnumNameOrOptions extends keyof Database["public"]["Enums"]
+  ? Database["public"]["Enums"][PublicEnumNameOrOptions]
+  : never
 

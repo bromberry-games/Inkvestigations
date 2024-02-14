@@ -1,6 +1,5 @@
-import type { UserResponse } from '@supabase/supabase-js';
+import type { PostgrestError } from '@supabase/supabase-js';
 import { supabase_full_access } from './supabase_full_access.server';
-import { supabase } from '@supabase/auth-ui-shared';
 
 function generateRandomString(length: number) {
 	const array = new Uint8Array(length);
@@ -10,11 +9,22 @@ function generateRandomString(length: number) {
 		.substring(0, length);
 }
 
+export async function checkIfCanCreateTempUser() {
+	const { data, error } = await supabase_full_access.from('for_free_users').select('amount').limit(1).single();
+	if (error) {
+		console.error(error);
+		return error;
+	}
+	console.log(data);
+	return data.amount > 0;
+}
+
 export async function createTemporaryUser() {
 	const mail = generateRandomString(32) + '@bromberry.xyz';
 	const password = generateRandomString(64);
 
-	const user = await supabase_full_access.auth.admin.createUser({
+	const decrementPromise = supabase_full_access.rpc('decrement_for_free_users');
+	const createUserPromise = supabase_full_access.auth.admin.createUser({
 		email: mail,
 		password: password,
 		email_confirm: true,
@@ -22,6 +32,17 @@ export async function createTemporaryUser() {
 			anonymous: true
 		}
 	});
+
+	const [decrementResult, createUserResult] = await Promise.all([decrementPromise, createUserPromise]);
+
+	if (decrementResult.error) {
+		console.error('decrement error', decrementResult.error);
+		return decrementResult.error;
+	}
+	if (createUserResult.error) {
+		console.error(createUserResult.error);
+		return createUserResult.error;
+	}
 
 	return {
 		mail,
@@ -48,6 +69,15 @@ export async function migrateAnoynmousUserToNewUser(newUserId: string, oldUserId
 		}
 	} else {
 		return false;
+	}
+	return true;
+}
+
+export async function decreaseForFreeUsers(): Promise<boolean | PostgrestError> {
+	const { error } = await supabase_full_access.rpc('decrement_for_free_users');
+	if (error) {
+		console.error(error);
+		return error;
 	}
 	return true;
 }

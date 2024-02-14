@@ -1,4 +1,4 @@
-import { ChatPromptTemplate } from 'langchain/prompts';
+import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { ChatMessage, type BaseMessage } from 'langchain/schema';
 
 const systemTemplate = `
@@ -8,6 +8,10 @@ const systemTemplate = `
 
 		"""
 		{information}
+
+		### Characters
+        {victimName}: Victim. {victimDescription}
+		{suspects}
 		"""
 
 		Your letters will be conversational, your tone for writing them is set by the mood attached at the end of the information. However, they will have **no preamble or suggestions of your own**.
@@ -37,7 +41,8 @@ const fewShotPromptLetter: BaseMessage[] = [
 const userTemplate = `Order: 
 		{question}
 		Information: 
-		{brainAnswer}
+		{brainInfo}
+		mood: {mood}
 	`;
 
 export function createLetterPrompt(previousConversation: BaseMessage[]) {

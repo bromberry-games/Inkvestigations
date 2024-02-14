@@ -1,17 +1,15 @@
 <script lang="ts">
+	import typewriter from '$lib/transitions';
 	import type { ChatMessage } from '$misc/shared';
 	import snarkdown from 'snarkdown';
-	import { chatStore } from '$misc/stores';
 
-	export let slug: string;
 	export let message: ChatMessage;
+	export let animate: boolean = false;
+	export let i: string;
 </script>
 
-	
 <div
-	class="grid px-5 w-full py-2 {message.role === 'assistant'
-		? 'md:place-self-start'
-		: 'md:place-self-end bg-secondary border-secondary'}"
+	class="grid w-full px-5 py-2 {message.role === 'assistant' ? 'md:place-self-start' : 'border-secondary bg-secondary md:place-self-end'}"
 	class:variant-ghost-surface={message.role === 'user'}
 	class:variant-ghost-secondary={message.role === 'assistant'}
 	class:variant-ghost-warning={message.isAborted}
@@ -19,20 +17,19 @@
 	class:rounded-tr-none={message.role === 'user'}
 >
 	<!-- Header -->
-	<div class="flex justify-between space-x-12 mb-1 items-center">
+	<div class="mb-1 flex items-center justify-between space-x-12">
 		<!-- Author -->
 		<span class="font-bold">{message.role === 'user' ? 'You' : 'Police chief'}:</span>
-
-		<div class="flex space-x-4">
-			{#if $chatStore[slug] && message.id}
-				<div class="flex space-x-0">
-				</div>
-			{/if}
-		</div>
 	</div>
 
 	<!-- Message Content -->
-	<div class="font-secondary text-lg">
-		{@html snarkdown(message.content.replace(/\n/g, "<br>"))}
-	</div>
+	{#if animate}
+		<div class="font-secondary text-lg" in:typewriter|global={{ delay: 0, speed: 7 }}>
+			{@html snarkdown(message.content.replace(/\n/g, '<br>'))}
+		</div>
+	{:else}
+		<div class="font-secondary text-lg" id={'message-' + i + '-content'}>
+			{@html snarkdown(message.content.replace(/\n/g, '<br>'))}
+		</div>
+	{/if}
 </div>

@@ -5,6 +5,7 @@
 	import { Button, Input } from 'flowbite-svelte';
 	import { Turnstile } from 'svelte-turnstile';
 	import { PUBLIC_TURNSTILE_SITE_KEY } from '$env/static/public';
+	import Auth from '../Auth.svelte';
 
 	export let authView: ViewType = 'sign_in';
 	export let email = '';
@@ -15,6 +16,7 @@
 	export let magicLink = true;
 	export let i18n: I18nVariables;
 	export let oldUserId: string | undefined = undefined;
+	let aggreedToConditions: boolean = false;
 
 	let captchaToken = '';
 	let message = '';
@@ -44,7 +46,10 @@
 				if (oldUserId) {
 					await supabaseClient.auth.signOut();
 				}
-				//let options: { emailRedirectTo: RedirectTo; data?: object; captchaToken?: string } = {
+				if (!aggreedToConditions) {
+					error = 'You must agree to the terms and conditions and privacy policy to use the service.';
+					break;
+				}
 				let options = {
 					emailRedirectTo: redirectTo,
 					captchaToken,
@@ -98,8 +103,17 @@
 		</div>
 		<slot />
 		<Turnstile on:turnstile-callback={(e) => (captchaToken = e.detail.token)} siteKey={PUBLIC_TURNSTILE_SITE_KEY} />
+		{#if authView === VIEWS.SIGN_UP}
+			<div class="flex items-center">
+				<input type="checkbox" name="consent" class="mr-2" bind:checked={aggreedToConditions} />
+				<p>
+					I have read and agree to the <a href="/legal/terms-and-conditions" class="text-blue-700">Terms and Conditions</a> and
+					<a href="/legal/privacy-policy" class="text-blue-700">Privacy Policy</a>.
+				</p>
+			</div>
+		{/if}
 		<div class="flex justify-center">
-			<Button type="submit" btnClass="bg-tertiary text-2xl w-2/5 py-4 rounded text-center font-primary">
+			<Button type="submit" class="w-2/5 rounded bg-tertiary py-4 text-center font-primary text-2xl text-quaternary">
 				{i18n?.[lngKey]?.button_label}
 			</Button>
 		</div>
@@ -128,7 +142,7 @@
 					{i18n?.forgotten_password?.link_text}</a
 				>
 				<Button
-					btnClass="bg-tertiary text-2xl py-4 rounded text-center font-primary"
+					class="rounded bg-tertiary py-4 text-center font-primary text-2xl text-quaternary"
 					on:click={(e) => {
 						e.preventDefault();
 						authView = VIEWS.SIGN_UP;

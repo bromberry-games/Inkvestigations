@@ -1,74 +1,97 @@
 <script lang="ts">
-	import type { ChatCompletionRequestMessage } from 'openai';
-	import { createEventDispatcher, onDestroy, onMount, tick } from 'svelte';
+	import { createEventDispatcher } from 'svelte';
 	import { textareaAutosizeAction } from 'svelte-legos';
 	import { PaperAirplane } from '@inqling/svelte-icons/heroicon-24-solid';
 	import type { ChatMessage } from '$misc/shared';
-	import { eventSourceStore, isLoadingAnswerStore, liveAnswerStore, enhancedLiveAnswerStore } from '$misc/stores';
-	import { countTokens } from '$misc/openai';
-	import { Toast, Button } from 'flowbite-svelte';
-	import SuspectModal from './SuspectModal.svelte';
-	import { MAX_TOKENS } from '../../constants';
+	import {
+		eventSourceStore,
+		isLoadingAnswerStore,
+		liveAnswerStore,
+		enhancedLiveAnswerStore,
+		tokenStore,
+		messageAmountStore
+	} from '$misc/stores';
+	import { approximateTokenCount } from '$misc/openai';
+	import { Button } from 'flowbite-svelte';
+	import Timer from '../../routes/(navbar_only)/[slug]/timer.svelte';
+	import { AuthStatus } from '$lib/auth-helper';
+	import { textIsTooLong } from '$lib/message-conversation-lengths';
+	import { isMobile } from '$lib/generic-helpers';
+	import { invalidateAll } from '$app/navigation';
+	import type { AskPayload } from '../../routes/api/ask/+server';
 
 	const dispatch = createEventDispatcher();
 
 	export let slug: string;
-	export let messagesAmount: number;
-	export let suspectToAccuse = '';
-	export let suspects;
+	export let chatUnbalanced: boolean;
+	export let authStatus: AuthStatus;
+	export let metered: boolean;
+	export let blockWrite: boolean;
+	export let gameOver = false;
 
+	let accuseMode = false;
 	let debounceTimer: number | undefined;
 	let input = '';
 	let inputCopy = '';
 	let textarea: HTMLTextAreaElement;
 	let messageTokens = 0;
 	let lastUserMessage: string | null = null;
-	let gameOver = false;
+	// let gameOver = false;
 
 	$: message = input.trim();
+	$: if (blockWrite) {
+		accuseMode = true;
+	}
 
 	function handleSubmit() {
-		messageTokens = countTokens(message);
-		if (messageTokens > MAX_TOKENS || message.length === 0) return;
+		const messageTokens = approximateTokenCount(message);
+		if (textIsTooLong(accuseMode, messageTokens) || message.length === 0) {
+			console.log('input too long or empty ');
+			return;
+		}
+		submitMessage(message);
+		dispatch('chatInput', { role: 'user', content: message });
+		input = '';
+	}
 
-		if (suspectToAccuse) {
+	function handleRegenerate() {
+		submitMessage(lastUserMessage ? lastUserMessage : '', true);
+	}
+
+	function submitMessage(messageToSubmit: string, regenerate = false) {
+		if (accuseMode) {
 			gameOver = true;
 		}
 		isLoadingAnswerStore.set(true);
 		inputCopy = input;
 
-		lastUserMessage = message;
+		lastUserMessage = messageToSubmit;
 
-		const payload = {
-			game_config: {
-				suspectToAccuse: suspectToAccuse,
+		const payload: AskPayload = {
+			gameConfig: {
+				accuse: accuseMode,
 				mysteryName: slug.replace(/_/g, ' ')
 			},
-			message: message
+			message: messageToSubmit,
+			requestToken: $tokenStore,
+			regenerate
 		};
 
-		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort);
-		dispatch('chatInput', { role: 'user', content: message });
-		input = '';
+		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort, handleEnd);
+	}
+
+	function handleEnd(event: MessageEvent<any>) {
+		addCompletionToChat();
 	}
 
 	function handleAnswer(event: MessageEvent<any>) {
 		try {
-			// streaming...
-			if (event.data !== '[DONE]') {
-				//const completionResponse: any = JSON.parse(event.data);
-				//const delta = completionResponse.token;
-				const delta = JSON.parse(event.data);
-				liveAnswerStore.update((store) => {
-					const answer = { ...store };
-					answer.content += delta;
-					return answer;
-				});
-			}
-			// streaming completed
-			else {
-				addCompletionToChat();
-			}
+			const delta = JSON.parse(event.data);
+			liveAnswerStore.update((store) => {
+				const answer = { ...store };
+				answer.content += delta;
+				return answer;
+			});
 		} catch (err) {
 			handleError(err);
 		}
@@ -85,6 +108,7 @@
 
 		// always true, check just for TypeScript
 
+		console.error('could not parse stream');
 		console.error(event);
 		console.error(event.data);
 
@@ -93,10 +117,15 @@
 		//TODO Show error toast
 
 		if (data.message.includes('API key')) {
+			console.error('API key not found');
 		}
+		reloadPageAndSetInput();
+	}
 
-		// restore last user prompt
-		input = inputCopy;
+	async function reloadPageAndSetInput() {
+		let tmp = inputCopy;
+		await invalidateAll();
+		input = tmp;
 	}
 
 	function addCompletionToChat(isAborted = false) {
@@ -104,7 +133,6 @@
 		$isLoadingAnswerStore = false;
 		$eventSourceStore.reset();
 		resetLiveAnswer();
-		lastUserMessage = null;
 		dispatch('messageReceived', messageToAdd);
 	}
 
@@ -118,87 +146,100 @@
 
 	function handleKeyDown(event: KeyboardEvent) {
 		clearTimeout(debounceTimer);
-		debounceTimer = window.setTimeout(calculateMessageTokens, 750);
+		debounceTimer = window.setTimeout(calculateMessageTokens, 150);
 
 		if ($isLoadingAnswerStore) {
 			return;
 		}
 
-		if (event.key === 'Enter' && !event.shiftKey) {
+		if (!isMobile(navigator) && event.key === 'Enter' && !event.shiftKey) {
 			handleSubmit();
 		}
 	}
 
 	function calculateMessageTokens() {
-		messageTokens = countTokens(message);
+		messageTokens = approximateTokenCount(message);
 		clearTimeout(debounceTimer);
 		debounceTimer = undefined;
 	}
 
-	let clickOutsideModal = false;
-	let toastOpen = true;
-	$: if (!toastOpen) {
-		suspectToAccuse = '';
-		toastOpen = true;
-	}
-
-	let placeholderText = 'Enter to send, Shift+Enter for newline';
+	let placeholderText = '';
 	$: {
 		if (gameOver) {
 			placeholderText = 'Game Over';
-		} else if (messagesAmount <= 0) {
-			placeholderText = 'No messages';
-		} else if (messagesAmount > 0) {
-			placeholderText = 'Enter to send, Shift+Enter for newline';
+		} else if (!accuseMode) {
+			placeholderText = 'Give instructions to the chief';
+		} else {
+			placeholderText = 'Input clues to solve the case';
 		}
 	}
 </script>
 
-<SuspectModal bind:clickOutsideModal bind:suspectToAccuse {suspects} {slug}></SuspectModal>
-<footer class="fixed bottom-0 z-10 md:w-11/12 md:rounded-xl md:px-8 md:py-4">
-	{#if $isLoadingAnswerStore}
-		<div></div>
-	{:else}
-		<div class="flex flex-col space-y-2 px-2 md:mx-auto md:w-3/4 md:px-8 xl:w-1/2">
-			<form on:submit|preventDefault={handleSubmit}>
-				<div class="flex flex-wrap items-center">
-					<!-- Input -->
-					{#if suspectToAccuse}
-						<Toast class="!md:p-3 w-full !max-w-md grow-0 md:mx-2 md:w-auto" bind:open={toastOpen}>Accuse: {suspectToAccuse}</Toast>
-					{:else}
-						<Button
-							disabled={gameOver}
-							class="mr-1 bg-secondary !p-2 font-primary text-xl text-quaternary md:mx-2 md:px-5"
-							on:click={() => (clickOutsideModal = true)}>ACCUSE</Button
+<footer class="fixed bottom-0 z-10 w-full md:rounded-xl md:px-8 md:py-4">
+	{#if $messageAmountStore > 0 || $tokenStore != '' || metered}
+		{#if $isLoadingAnswerStore}
+			<div></div>
+		{:else if !chatUnbalanced}
+			<div class="flex flex-col space-y-2 px-2 md:mx-auto md:w-3/4 md:px-8 xl:w-1/2">
+				<form on:submit|preventDefault={handleSubmit}>
+					<div class="flex flex-wrap items-center">
+						<!-- Input -->
+						<slot name="notes-button" />
+						<button
+							id="solve-button"
+							type="button"
+							class="btn btn-sm ml-2 border border-secondary bg-secondary p-2 font-primary disabled:cursor-not-allowed disabled:opacity-30"
+							disabled={blockWrite}
+							on:click={() => {
+								accuseMode = !accuseMode;
+								messageTokens = 0;
+								calculateMessageTokens();
+							}}
 						>
-					{/if}
-					<textarea
-						class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary"
-						rows="1"
-						placeholder={placeholderText}
-						use:textareaAutosizeAction
-						on:keydown={handleKeyDown}
-						bind:value={input}
-						bind:this={textarea}
-						disabled={gameOver || messagesAmount <= 0}
-					/>
-					<div
-						data-testid="message-counter"
-						aria-label="messages left counter"
-						class="ml-1 h-full bg-[url('/images/message_counter.svg')] bg-cover bg-center bg-no-repeat px-4 py-6 font-tertiary text-xl md:ml-2"
-					>
-						{messagesAmount}
-					</div>
-					<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
-						<button type="submit" class="btn btn-sm ml-2">
-							<PaperAirplane class="h-6 w-6" />
+							{#if accuseMode}
+								SOLVE
+							{:else}
+								WRITE
+							{/if}
 						</button>
+						<textarea
+							id="chat-input"
+							data-testid="chat-input"
+							class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary {accuseMode ? 'shadow-xl shadow-red-500' : ''}"
+							rows="1"
+							placeholder={placeholderText}
+							use:textareaAutosizeAction
+							on:keydown={handleKeyDown}
+							bind:value={input}
+							bind:this={textarea}
+							disabled={gameOver}
+						/>
+						<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
+							<button type="submit" class="btn btn-sm ml-2" id="chat-submit">
+								<PaperAirplane class="h-6 w-6" />
+							</button>
+						</div>
 					</div>
-				</div>
-			</form>
-			{#if messageTokens > 50}
-				<div class="text-center text-red-700">Input text too long</div>
-			{/if}
+				</form>
+				{#if textIsTooLong(accuseMode, messageTokens)}
+					<div class="text-center text-red-700">Input text too long</div>
+				{/if}
+			</div>
+		{:else}
+			<div class="flex justify-center">
+				<Button class="bg-secondary !p-2 font-primary text-xl text-quaternary" on:click={handleRegenerate}>Regenerate</Button>
+			</div>
+		{/if}
+	{:else if authStatus == AuthStatus.LoggedIn}
+		<div class="flex justify-center">
+			<Timer></Timer>
+		</div>
+	{:else}
+		<div class="flex justify-center">
+			<div>
+				<p>No more free messages left.</p>
+				<Button href="/login" class="bg-quaternary font-secondary text-2xl">Signup to continue</Button>
+			</div>
 		</div>
 	{/if}
 </footer>
