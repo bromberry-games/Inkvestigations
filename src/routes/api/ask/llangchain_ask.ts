@@ -19,11 +19,11 @@ export interface Victim {
 	description: string;
 }
 
-interface LLMCallback {
+export interface LLMCallback {
 	onResponseGenerated: (input: string) => Promise<void>;
 }
 
-interface SuspectAndVictim {
+export interface SuspectAndVictim {
 	suspects: string;
 	victim: Victim;
 }
@@ -149,7 +149,7 @@ class BrainParser extends BaseOutputParser<BrainOutput> {
 			return {
 				chainOfThought: CHAIN_OF_THOUGHT_TEXT,
 				info: text,
-				mood: 'apathetic'
+				mood: 'neutral'
 			};
 		}
 		return {

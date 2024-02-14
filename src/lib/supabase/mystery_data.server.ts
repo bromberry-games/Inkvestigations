@@ -2,7 +2,6 @@ import { supabase_full_access } from './supabase_full_access.server';
 
 export interface suspect {
 	name: string;
-	imagepath: string;
 	description: string;
 }
 export async function loadSuspects(mysterName: string) {
@@ -32,7 +31,7 @@ export async function loadVictim(mysterName: string) {
 	return data;
 }
 
-export async function loadGameInfo(mystery: string, messageLength: number) {
+export async function loadGameInfo(mystery: string) {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('mysteries')
 		.select(
@@ -45,7 +44,7 @@ export async function loadGameInfo(mystery: string, messageLength: number) {
 			`
 		)
 		.eq('name', mystery)
-		.lte('events.show_at_message', messageLength)
+		// .lte('events.show_at_message', messageLength)
 		.limit(1)
 		.single();
 
@@ -57,10 +56,10 @@ export async function loadGameInfo(mystery: string, messageLength: number) {
 	return conversationData;
 }
 
-export async function loadMysteryLetterInfo(userid: string, mystery: string) {
+export async function loadMysteryLetterInfo(mystery: string) {
 	const { data: mysteryData, error: mysteryError } = await supabase_full_access
 		.from('mysteries')
-		.select('letter_info, access_code')
+		.select('letter_info, access_code, order_int')
 		.eq('name', mystery)
 		.single();
 

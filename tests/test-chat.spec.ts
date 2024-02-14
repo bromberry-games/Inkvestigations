@@ -98,9 +98,8 @@ test('delete message, message and brain message and then regenerate. Message cou
 	await deleteLastMessageForUser(account.userId);
 	await page.getByRole('button', { name: 'REGENERATE' }).first().click();
 
-	const messageCount2 = await waitForCheckMessageAndReturnMessageCount(page, 'Police chief:', 1);
-
-	expect(messageCount2 + 2).toBe(messageCount);
+	await expect(page.getByText('Police chief:').nth(0)).toBeVisible();
+	await expect(page.getByText('Police chief:').nth(1)).not.toBeVisible();
 });
 
 test('test accuse works ', async ({ page }) => {

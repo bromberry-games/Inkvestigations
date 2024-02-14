@@ -17,6 +17,8 @@
 	import { AuthStatus } from '$lib/auth-helper';
 	import { textIsTooLong } from '$lib/message-conversation-lengths';
 	import { isMobile } from '$lib/generic-helpers';
+	import { invalidateAll } from '$app/navigation';
+	import type { AskPayload } from '../../routes/api/ask/+server';
 
 	const dispatch = createEventDispatcher();
 
@@ -25,6 +27,7 @@
 	export let authStatus: AuthStatus;
 	export let metered: boolean;
 	export let blockWrite: boolean;
+	export let gameOver = false;
 
 	let accuseMode = false;
 	let debounceTimer: number | undefined;
@@ -33,7 +36,7 @@
 	let textarea: HTMLTextAreaElement;
 	let messageTokens = 0;
 	let lastUserMessage: string | null = null;
-	let gameOver = false;
+	// let gameOver = false;
 
 	$: message = input.trim();
 	$: if (blockWrite) {
@@ -52,10 +55,10 @@
 	}
 
 	function handleRegenerate() {
-		submitMessage(lastUserMessage || 'tmp');
+		submitMessage(lastUserMessage ? lastUserMessage : '', true);
 	}
 
-	function submitMessage(messageToSubmit: string) {
+	function submitMessage(messageToSubmit: string, regenerate = false) {
 		if (accuseMode) {
 			gameOver = true;
 		}
@@ -64,13 +67,14 @@
 
 		lastUserMessage = messageToSubmit;
 
-		const payload = {
-			game_config: {
+		const payload: AskPayload = {
+			gameConfig: {
 				accuse: accuseMode,
 				mysteryName: slug.replace(/_/g, ' ')
 			},
 			message: messageToSubmit,
-			openAiToken: $tokenStore
+			requestToken: $tokenStore,
+			regenerate
 		};
 
 		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort, handleEnd);
@@ -115,9 +119,13 @@
 		if (data.message.includes('API key')) {
 			console.error('API key not found');
 		}
+		reloadPageAndSetInput();
+	}
 
-		// restore last user prompt
-		input = inputCopy;
+	async function reloadPageAndSetInput() {
+		let tmp = inputCopy;
+		await invalidateAll();
+		input = tmp;
 	}
 
 	function addCompletionToChat(isAborted = false) {
@@ -178,8 +186,9 @@
 						<!-- Input -->
 						<slot name="notes-button" />
 						<button
+							id="solve-button"
 							type="button"
-							class="btn btn-sm ml-2 border border-secondary bg-secondary p-2 font-primary"
+							class="btn btn-sm ml-2 border border-secondary bg-secondary p-2 font-primary disabled:cursor-not-allowed disabled:opacity-30"
 							disabled={blockWrite}
 							on:click={() => {
 								accuseMode = !accuseMode;
@@ -194,6 +203,7 @@
 							{/if}
 						</button>
 						<textarea
+							id="chat-input"
 							data-testid="chat-input"
 							class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary {accuseMode ? 'shadow-xl shadow-red-500' : ''}"
 							rows="1"
@@ -205,7 +215,7 @@
 							disabled={gameOver}
 						/>
 						<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
-							<button type="submit" class="btn btn-sm ml-2">
+							<button type="submit" class="btn btn-sm ml-2" id="chat-submit">
 								<PaperAirplane class="h-6 w-6" />
 							</button>
 						</div>
