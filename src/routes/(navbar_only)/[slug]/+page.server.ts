@@ -75,7 +75,8 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		metered: activeSub.length == 1 && activeSub[0].products.some((p) => p.metered_si != null),
 		notes: messagesAndNotes.notes?.[0]?.notes || {},
 		convId: messagesAndNotes.conversationId,
-		orderInt: letterInfo.order_int
+		orderInt: letterInfo.order_int,
+		session
 	};
 };
 

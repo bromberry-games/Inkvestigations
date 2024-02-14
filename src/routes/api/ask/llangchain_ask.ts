@@ -263,7 +263,6 @@ export async function accuseBrainRequest({
 		maxTokens: 500
 	});
 
-	console.log(solution);
 	const parser = new RatingParser();
 	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
 	const res = await chain.call({
