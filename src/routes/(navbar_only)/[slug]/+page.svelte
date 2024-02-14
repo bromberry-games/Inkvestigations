@@ -15,7 +15,6 @@
 
 	export let data: PageData;
 
-	let userMessages = { amount: 0, non_refillable_amount: 0 };
 	let tokenModal = data.session?.user.user_metadata.useMyOwnToken && $tokenStore == '';
 	let suspectModal = false;
 
@@ -23,6 +22,7 @@
 	$: messages = buildMessagesList(data.messages);
 	$: openAiToken = $tokenStore;
 	$: ({ slug } = data);
+	$: session = data.session;
 	let notes = data.notes;
 	$: if (suspectModal == false) {
 		saveNotes();
@@ -64,20 +64,11 @@
 
 	async function updateUserMessageAmountAndAddMessage(event: CustomEvent<ChatMessage>) {
 		addMessage(event);
-		updateMessageCounter(data.supabase, data.session?.user.id);
-	}
-
-	async function updateUserMessagesAmount() {
-		const { data } = await supabase.from('user_messages').select('amount, non_refillable_amount').limit(1).single();
-		if (!data) {
-			console.error('Could not get messages amount');
-			return;
-		}
-		userMessages = data;
+		updateMessageCounter(supabase, session?.user.id);
 	}
 
 	onMount(async () => {
-		updateUserMessagesAmount();
+		// updateMessageCounter(data.supabase, data.session?.user.id);
 		//I do not really like having to do this here. Is there a better way?
 		tokenStore.useLocalStorage();
 		tokenModal = data.session?.user.user_metadata.useMyOwnToken && $tokenStore == '';
