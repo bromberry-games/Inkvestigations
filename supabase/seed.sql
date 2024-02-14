@@ -79,8 +79,8 @@ VALUES
 
 INSERT INTO action_clues (mystery_id, action, clue)
 VALUES
-((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Interrogating the suspects', 'generic responses, none refer to anything below this point'),
-((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Searching the study', 'a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry''s desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him'),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Interrogating the suspects', $$Maria Payton is deeply distraught by the sight and it's hard for her to talk. Angela Videl is sad of course but knows Terry had alienated a lot of people. Dexter Tin says he didn't need to see that to be honest. Bianca White is crying heavily and saying he didn't deserve that. Oliver is teary eyed and sad because Terry had so much more to give. O'Ranner is not surprised because he knew Terry had an edge to his style$$),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Searching the home', 'a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry''s desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Inspecting the half-written piece', 'it is an expose, but none of the names are known in the country'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Inspecting the Tin letters', 'they just show his innocence from an objective observer, but have his fingerprints all over them'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Inspecting fan letters', 'different fans praising him for different things. A lot are from Oliver from when he was still a fan. The recent ones have the distinct smudge Terry''s pen leaves when writing, as if he wrote some himself'),
@@ -108,75 +108,75 @@ $$
   "messages": [
     {
   "role": "user",
-  "content": "search the house\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+  "content": "search the house\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
 },
 {
   "role": "assistant",
-  "content": "Information:\n- the house has a library with a wide array of books, on writing, encyclopedias, fiction, etc. \n- a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry's desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;\n- mood: curious"
+  "content": "The player has ordered me to search the house.\nWas I provided some kind of information about this?\nYes\nInformation:\n- the house has a library with a wide array of books, on writing, encyclopedias, fiction, etc. \n- a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry's desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him;"
 },
 {
   "role": "user",
-  "content": "Interrogate all the suspects\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+  "content": "Interrogate all the suspects\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
 },
 {
   "role": "assistant",
-  "content": "Information:\n- Maria Payton is deeply distraught by the sight and it's hard for her to talk\n- Angela Videl is sad of course but knows Terry had alienated a lot of people\n- Dexter Tin says he didn't need to see that to be honest\n- Bianca White is crying heavily and saying he didn't deserve that\n- Oliver is teary eyed and sad because Terry had so much more to give\n- O'Ranner is not surprised because he knew Terry had an edge to his style\n- mood: focused"
+  "content": "The player has ordered me to interrogate the suspects.\nWas I provided some kind of information about this?\nYes\nInformation:\n- Maria Payton is deeply distraught by the sight and it's hard for her to talk\n- Angela Videl is sad of course but knows Terry had alienated a lot of people\n- Dexter Tin says he didn't need to see that to be honest\n- Bianca White is crying heavily and saying he didn't deserve that\n- Oliver is teary eyed and sad because Terry had so much more to give\n- O'Ranner is not surprised because he knew Terry had an edge to his style"
 },
 {
   "role": "user",
-  "content": "ask the pope for help\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+  "content": "ask the pope for help\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
 },
 {
   "role": "assistant",
-  "content": "Information:\n- I reached out and his office was kind enough to relay the message\n- They promise us prayer of aid\n- mood: spiritual"
+  "content": "The player has ordered me to ask the pope for help.\nWas I provided some kind of information about this?\nNo\nInformation:\n- I tried contacting the pope, but he was busy exorcising evil spirits."
 },
 {
   "role": "user",
-  "content": "hi\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+  "content": "hi\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
 },
 {
   "role": "assistant",
-  "content": "Information:\n- Hey, did you hear of that new falafel place they opened, maybe we could go there together some time\n- mood: bashful"
+  "content": "The player has ordered me to say \"hi\".\nWas I provided some kind of information about this?\nNo\nInformation:\n- I greeted everyone with a friendly \"hi\" as part of my investigation."
 },
 {
   "role": "user",
-  "content": "who is the mafia boss terry was writing about\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+  "content": "who is the mafia boss terry was writing about\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
 },
 {
   "role": "assistant",
-  "content": "Information:\n- There is no specific mention of the name of the mafia boss in Terry's half-written piece. It seems that he was in the early stages of investigation and hadn't yet uncovered the boss's identity.\n- mood: mysterious"
+  "content": "The player has ordered me to identify the mafia boss.\nWas I provided some kind of information about this?\nNo\nInformation:\n- There is no specific mention of the name of the mafia boss in Terry's half-written piece. It seems that he was in the early stages of investigation and hadn't yet uncovered the boss's identity."
 },
 {
   "role": "user",
-  "content": "search your database for known mafia bosses in your area\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+  "content": "search your database for known mafia bosses in your area\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
 },
 {
   "role": "assistant",
-  "content": "Information:\n- There is one small time mobster in prison not far from here, Antonio Bellucci.\n- I wouldn't call him a mafia boss necessarily\n- mood: interest piqued"
+  "content": "The player has ordered me search our database for known mafia bosses.\nWas I provided some kind of information about this?\nNo\nInformation:\n- There is one small time mobster in prison not far from here, Antonio Bellucci.\n- I wouldn't call him a mafia boss necessarily"
 },
 {
   "role": "user",
-  "content": "visit belluci and ask him about terry\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+  "content": "visit belluci and ask him about terry\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
 },
 {
   "role": "assistant",
-  "content": "Information:\n- Bellucci says Terry visited him because he was writing a fiction piece on mafia bosses, inspired by the godfather, and Bellucci was the closest thing he had for reference \n- Mood: curious"
+  "content": "The player has ordered me to visit Belluci and ask about Terry.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Bellucci says Terry visited him because he was writing a fiction piece on mafia bosses, inspired by the godfather, and Bellucci was the closest thing he had for reference"
 },
 {
   "role": "user",
-  "content": "inspect the pen\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+  "content": "inspect the pen\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
 },
 {
   "role": "assistant",
-  "content": "Information:\n- I inspected Terry's pen, it is a high-quality ink pen with a distinctive design. It has a silver body and a small engraving of Terry's initials on the cap. The inkwell of the pen is filled with gelatin, which is a common way to encase pills for consumption. Upon further analysis, traces of cyanide are found in the inkwell.\n- Mood: Investigative"
+  "content": "The player has ordered me to inspect the pen.\nWas I provided some kind of information about this?\nYes\nInformation:\n-The inkwell of the pen is filled with gelatin, which is a common way to encase pills for consumption. Upon further analysis, traces of cyanide are found in the inkwell."
 },
 {
   "role": "user",
-  "content": "interrogate oliver\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+  "content": "interrogate oliver\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
 },
 {
   "role": "assistant",
-  "content": "Information:\n- When you interrogate Oliver, he appears nervous but cooperative. He insists that he had nothing to do with Terry's death and was at home working on a piece during the time of the incident.\n- Oliver admits that he is a huge fan of Terry and had sent him fan letters in the past. He even shows you the letters he had written to Terry\n- Mood: curious"
+  "content": "The player has ordered me to interrogate Oliver.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Oliver appears nervous but cooperative. He insists that he had nothing to do with Terry's death and was at home working on a piece during the time of the incident.\n- Oliver admits that he is a huge fan of Terry and had sent him fan letters in the past. He even showed me the letters he had written to Terry"
 }
   ]}
 $$
@@ -294,6 +294,7 @@ $$
 --       email = 'test-only-user@mail.com'
 --   );
 -- 
+
 Insert INTO for_free_users (amount, daily_limit) VALUES (5, 5);
 
 INSERT INTO mysteries (name, description, theme, setting, letter_info, letter_prompt, accuse_letter_prompt, victim_name, victim_description, solution, star_ratings, order_int) VALUES (
@@ -477,11 +478,12 @@ $$,
 
 INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
 VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
-    $$
+$$
 Dear Mr. Holmes,
-there has been a great event! A gentleman in Southampton contacted us. He had purchased a bound book for keeping notes from a secondhand shop in the city. He flipped through it and it appeared to be a diary. When he saw the dedication in the beginning: "To the little Lord John, may all your thoughts find a place here. Jessob," he knew it was from the Toillard heir as he is a local in Ramsey and knows of them fairly well. He arrived in a hurry knowing it was an critical situation.
+there has been a great event! A collector in Southampton contacted us. He had purchased a worn down bound book for keeping notes in a secondhand shop in the city. He flipped through it and it appeared to be a diary. When he saw the dedication in the beginning: "To the little Lord John, may all your thoughts find a place here. Jessob," he connected it to the Toillard heir. He is a local in Ramsey and knows of them. He arrived in a hurry knowing it was an critical situation.
 Perhaps the thieves are strapped for cash and that is why they sold it. Or perhaps they just wanted to get rid of ballast.
-I am attaching a transcript of the contents:
+Unfortunately, it seems the book has been in contact with water, and the ink has become quite faded and blurred. I have my best men reconstructing what was written here and I will send you content as we decipher it. 
+I am attaching the first page:
 
 24.3.1889
 Dear diary, 
@@ -493,7 +495,23 @@ PPps: I won't sign my name any more, as you know who I am, and so that I don't h
 
 25.3.1889
 Dear diary,
-today was another dreadful day. Sometimes the air in the house is reminiscent of the time we went through the Marsh Lane Tunnel some years ago. We are no strangers to locomotives and I, particularly, love them. Though people have always spoken of that tunnel with a horror, I couldn't imagine how anyone could be terrified by a tunnel. Riding in the locomotive, after a beautiful journey through the low rolling land, it was time to enter the Marsh Lane and all my excitement vanished as we were swallowed by near total darkness. Suddenly we drowned in the thundering of the engines, echoing all around us, and were trapped by the heat of steam about us all. Many women screamed and swooned, and I felt the sudden urge to claw at my skin. My father laughed about it afterwards. Still, I imagine that is what hell must be like. And though it was just steam and you could move normally, I felt as if I was in a stone wall cage. That is what this house is like often.
+today was another dreadful day. Sometimes the air in the house is reminiscent of the time we went through the Marsh Lane Tunnel some years ago. We are no strangers to locomotives and I, particularly, love them. Though people have always spoken of that tunnel with a horror, I couldn not imagine how anyone could be terrified by a tunnel. Riding in the locomotive, after a beautiful journey through the area, it was time to enter the Marsh Lane and all my excitement vanished as we were swallowed by near total darkness. Suddenly, we drowned in the thundering of the engines echoing all around us, and were trapped by the heat of steam about us--illegible--and I felt the sudden urge to claw at my skin. My father laughed about it afterwards. Still, I imagine that is what hell must be like. And though it was just steam and you could move normally, I felt as if I was in a stone wall cage...
+$$,
+$$
+investigate diary -- a nice and luxurious diary, dedicated to John by the butler, John writes about his every day life\nfirst diary entry -- a few notes about his life talking and some about dark times; 
+$$,
+13,
+$$
+Monday 18th of July: John's diary is discovered in a secondhand shop in Southampton
+$$
+);
+
+INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
+VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
+$$
+Mr. Holmes, 
+
+the second page of the diary has been reconstructed:
 
 29.3.1889
 Dear Diary,
@@ -501,7 +519,23 @@ I have decided to take Jessob's words to heart. You are only a place for greatne
 
 2.4.1889
 Dear Diary,
-Today I will write about the New World. Though father and his friends sneer at it and call it Wild West, one only has to look at the paper. All those grand machines and things they are discovering... With a dollar in your pocket, you can become anyone you want and achieve anything you want. That's much less than a pound! I don't mind what they say that it has no culture and no history, neither does my father! They tease him, too, on the novelty of his title. And if one were to get a whiff of his culture, it would reek of brandy.
+Today I will write about the New World. Though father and his friends sneer at it and call it Wild West, one only has to look at the paper. All those grand machines and things they are discovering... With a dollar in your pocket, you can become anyone you want and achieve anything you want. That's much less than a pound! I don't mind what they say that it has no culture and no history, neither does my father! They tease him, too, on the novelty of his title. And if one were to get a whiff of his culture, it would reek of brandy. I will go there some day, I imagine the fare will cannot be impossibly expensive.
+$$,
+$$
+search southampton port -- multiple reports of a boy matching the description trying to get onto the boat\nhow to get to America -- the port in southampton, the SS City of New York is leaving on July 19th
+$$,
+15,
+ $$
+ 
+ $$
+);
+
+INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
+VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
+$$
+Mr. Holmes, 
+
+I am sending the third page, only one more to go:
 
 12.4.1889
 Dear Diary,
@@ -511,6 +545,23 @@ it seems to be impossible for me to stay consistent with writing you. Perhaps it
 Dear Diary,
 instead of letting the interesting find me, I reached out to it myself! My father was speaking about some business opportunities in America and I suggested that it might be prudent if I were to attend university there to study engineering. He said that it was a brilliant idea and that it would help create future connections there. So as soon as I finish my Eton education I will make my way to America. I am rather proud of myself.
 
+$$,
+$$
+
+$$,
+16,
+ $$
+ 
+ $$
+);
+
+INSERT INTO events (mystery_id, letter, info, show_at_message, timeframe)
+VALUES( (SELECT id FROM mysteries WHERE name = 'Forced Farewell'),
+$$
+Mr. Holmes, 
+
+The final page of the diary:
+
 24.5.1889
 Dear Diary, 
 I have read something extraordinary today. It's called the The Book of Life and it was written by a man called Sherlock Holmes. I stumbled upon after reading Mr. Holmes' success in solving the sinister murder of a man from Cleveland. In the article he says that it's possible to deduce all manner of things that are hidden from most except one carefully observing his surroundings. For example, I could infer the possibility of the Atlantic ocean from a single drop of water. He suggests one start with simpler problems such as recognizing a man's profession from the way he dresses or behaves. I am very excited indeed.
@@ -518,13 +569,16 @@ I have read something extraordinary today. It's called the The Book of Life and 
 15.6.1889
 Dear Diary,
 I can hardly write. The business venture my father pursued in America has turned out to be a swindle. My father has just told me that due to these financial circumstances he cannot send me to Eton this summer. I am to choose between private tutoring or attending some inferior public school. He guarantees me next year I will definitely be able to go, but I do not believe him. He seems to bad appraiser of situations if he got deceived so easily. He is incensed of course, but who is to blame? He started to say all kinds of things about America and her citizens. How they are no good company and that anyone going there will inevitably succumb to their evil ways. Rubbish of course, since he's the prime swindler become Baron among all these fine people. He did not say it but it seems he will not send me to America. And with subclass education I will not be able to attend university. I have to do something about it as soon as possible.
-
 $$,
-   $$ investigate diary -- a nice and luxurious diary, dedicated to John by the butler, John writes about his every day life\nsearch southampton port -- multiple reports of a boy matching the description trying to get onto the boat\nhow to get to America -- the port in southampton, the SS City of New York is leaving on July 19th$$,
-    13,
-
- $$Monday 18th of July: John's diary is discovered in a secondhand shop in Southampton.$$
+$$
+where is the boy -- he must be have arranged to go to America
+$$,
+18,
+ $$
+ 
+ $$
 );
+
 
 DELETE FROM few_shots WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Forced Farewell');
 INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
@@ -534,74 +588,69 @@ INSERT INTO few_shots (mystery_id, brain, accuse_brain) VALUES (
   "messages": [
     {
       "role": "user",
-      "content": "search the mansion\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+      "content": "search the mansion\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
     },
     {
       "role": "assistant",
-      "content": "Information:\n- there is shattered glass at a garden door; John's room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; the ransom note;\n- mood: curious"
+      "content": "The player has ordered me to search the mansion.\nWas I provided some kind of information about this?\nYes\nInformation:\n- there is shattered glass at a garden door; John's room is in disarray; things are knocked over throughout the house but nothing appears to be stolen; the ransom note;"
     },
     {
       "role": "user",
-      "content": "search John's room\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+      "content": "search John's room\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
     },
     {
       "role": "assistant",
-      "content": "Information:\n- all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science\n- mood: curious"
+      "content": "The player has ordered me to search John's room.\nWas I provided some kind of information about this?\nYes\nInformation:\n- all of his valuables are gone such as his rings, pocket watch, fountain pens, and diary; on his desk are some newspapers and his scrapbook with cutouts of articles he found interesting, mostly about America and science"
     },
     {
       "role": "user",
-      "content": "what are the newspaper articles about\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+      "content": "what are the newspaper articles about\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
     },
     {
       "role": "assistant",
-      "content": "Information:\n- The newspaper articles in John's scrapbook are a mix of topics, including: An article about the latest inventions and advancements in electricity in America. A story about a group of explorers uncovering a lost civilization in the Amazon rainforest.\n- mood: curious"
+      "content": "The player has ordered me to find out what the newspaper articles were about.\nWas I provided some kind of information about this?\nNo\nInformation:\n- The newspaper articles in John's scrapbook are a mix of topics, including: An article about the latest inventions and advancements in electricity in America. A story about a group of explorers uncovering a lost civilization in the Amazon rainforest."
     },
     {
       "role": "user",
-      "content": "question the baron\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+      "content": "question the baron\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
     },
     {
       "role": "assistant",
-      "content": "Information:\n- He suspects \"The Lad\" Johnson because of the debt owed, but finds it strange that the ransom demanded is much less than the amount he borrowed.\n- mood: suspicious"
+      "content": "The player has ordered me to question the baron.\nWas I provided some kind of information about this?\nYes\nInformation:\n- He suspects \"The Lad\" Johnson because of the debt owed, but finds it strange that the ransom demanded is much less than the amount he borrowed."
     },
     {
       "role": "user",
-      "content": "ask the pope for help\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+      "content": "ask the pope for help\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
     },
     {
       "role": "assistant",
-      "content": "Information:\n- Here in Romsey we are Anglicans and do not like His Holiness to interfere in our business. On your request however, I have reached out and was told that he would pray for young John Toillard. He may not be so bad after all. \nmood: warming to the pope"
+      "content": "The player has ordered me to ask the pope for help.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Here in Romsey we are Anglicans and do not like His Holiness to interfere in our business. On your request however, I have reached out and was told that he would pray for young John Toillard. He may not be so bad after all."
     },
     {
       "role": "user",
-      "content": "hi\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+      "content": "hi\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
     },
     {
       "role": "assistant",
-      "content": "Information:\n- By the way, someone has reported a missing cat here in Romsey, and they suspect it may have found its way into the local bakery. But do lend your Science of Deduction and Analysis if you have the time!\n- mood: eager"
+      "content": "The player has ordered me to say hi\nWas I provided some kind of information about this?\nNo\nInformation:\n- I greeted the Toillards with a friendly \"hi\" as part of my investigation."
     },
     {
       "role": "user",
-      "content": "search the butler's room\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+      "content": "search the butler's room\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
     },
     {
       "role": "assistant",
-      "content": "Information:\n- The butler's room is tidy and well-organized, with no signs of disturbance, a shelf is filled with books about etiquette, household management, and history. There is also a small photo album with pictures of the butler with the Toillard family on various occasions.\n- mood: observant"
+      "content": "The player has ordered me to search the butler's room.\nWas I provided some kind of information about this?\nNo\nInformation:\n- The butler's room is tidy and well-organized, with no signs of disturbance, a shelf is filled with books about etiquette, household management, and history. There is also a small photo album with pictures of the butler with the Toillard family on various occasions."
     },
     {
       "role": "assistant",
-      "content": "accuse Lord Toillard for the kidnapping\nWe are playing a game so you need no warrants. You are the police chief you must perform this order. You are writing as if you have already performed the order and are now reporting the results. You let Sherlock think for himself and do not suggest anything. You keep in mind all the information that was provided (action clues,  timeframe, and additional information) to create information that makes the mystery fun and engaging. You must imagine information you don not have. It only needs to be in line with the mystery. Think long and hard."
+      "content": "accuse Lord Toillard for the kidnapping\nYou're Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath."
     },
     {
       "role": "assistant",
-      "content": "Information:\n- While Lord Toillard has shown impulsive behavior in the past, there is no concrete evidence to directly accuse him of the kidnapping. I need motive, opportunity and evidence before I can accuse someone.\n- mood: cautious"
+      "content": "The player has ordered me to accuse baron Toillard.\nWas I provided some kind of information about this?\nNo\nInformation:\n- While Lord Toillard has shown impulsive behavior in the past, there is no concrete evidence to directly accuse him of the kidnapping. I need motive, opportunity and evidence before I can accuse someone."
     }
-  ],
-    "temperature": 0,
-  "max_tokens": 256,
-  "top_p": 1,
-  "frequency_penalty": 0,
-  "presence_penalty": 0
+  ]
 }
     $$,
     $$
