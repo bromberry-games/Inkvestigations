@@ -41,7 +41,7 @@
 				<!-- Message history -->
 				<!-- Do not display the 1. message-->
 				{#each animMessages as message, i}
-					<ChatMessageUI {message} animate={animMessages.length == 1 || (animMessages.length - 1 == i && message.extra == true)} />
+					<ChatMessageUI {message} animate={animMessages.length == 1 || (animMessages.length - 1 == i && message.extra == true)} {i} />
 				{/each}
 
 				<!-- Live Message -->
