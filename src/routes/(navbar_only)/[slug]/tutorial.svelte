@@ -34,7 +34,6 @@
 					{
 						element: '#chat-input',
 						popover: {
-							// title: 'Title',
 							description: `<p><strong>Talk to the Police Chief:</strong> Ask anything to uncover clues.</p>
   <ul>
     <li><strong>Example:</strong> "Hello Chief, Please interrogate the victims father."</li>
@@ -47,16 +46,6 @@
 				];
 
 				setupDriveOnTextArea(driverSteps);
-				// const textarea = document.querySelector('#chat-input');
-				// if (textarea) {
-				// const drive = () => {
-				// driverObj.drive();
-				// const textarea = document.querySelector('#chat-input');
-				// textarea?.removeEventListener('click', drive);
-				// };
-				//
-				// textarea.addEventListener('click', drive);
-				// }
 			}
 			if (messages.length == 3) {
 				notesButton.disabled = false;
