@@ -126,7 +126,7 @@ function createLetterModel(onResponseGenerated: (input: string) => Promise<any>,
 		}
 	];
 	return new ChatOpenAI({
-		temperature: 0.1,
+		temperature: 0.6,
 		modelName: OpenAiModel.Gpt35Turbo0125,
 		openAIApiKey: openAiToken,
 		maxTokens: 500,
@@ -201,7 +201,7 @@ export async function brainModelRequest(
 			: new ChatOpenAI({
 					temperature: 0.85,
 					openAIApiKey: brainParams.openAiToken,
-					modelName: OpenAiModel.Gpt35Turbo1106,
+					modelName: OpenAiModel.Gpt35Turbo0125,
 					maxTokens: 350
 				});
 
@@ -263,7 +263,7 @@ export async function accuseBrainRequest({
 	const llm = new ChatOpenAI({
 		temperature: 0.9,
 		openAIApiKey: openAiToken,
-		modelName: OpenAiModel.Gpt35Turbo1106,
+		modelName: OpenAiModel.Gpt35Turbo0125,
 		maxTokens: 500
 	});
 
