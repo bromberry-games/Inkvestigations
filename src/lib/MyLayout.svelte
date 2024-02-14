@@ -26,7 +26,7 @@
 		'!text-white bg-green-700 md:bg-transparent md:text-green-700 md:dark:text-white dark:bg-green-600 md:dark:bg-transparent';
 
 	onMount(() => {
-		if (authStatus != AuthStatus.LoggedOut) {
+		if (authStatus != AuthStatus.LoggedOut && session?.user.id != undefined) {
 			updateMessageCounter(supabase, session?.user.id);
 		}
 	});

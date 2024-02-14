@@ -18,6 +18,7 @@ export async function getMessageAmountForUser(userid: string) {
 		.single();
 	if (error) {
 		console.error(error);
+		return error;
 	}
 	return data == null ? { amount: 0, non_refillable_amount: 0 } : data;
 }
