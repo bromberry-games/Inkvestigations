@@ -37,8 +37,8 @@
 							description: `<p><strong>Talk to the Police Chief:</strong> Ask anything to uncover clues.</p>
   <ul>
     <li><strong>Example:</strong> "Hello Chief, Please interrogate the victims father."</li>
-    <li><strong>Send Message:</strong> Press <strong>Enter</strong> to send.</li>
-    <li><strong>New Line:</strong> Use <strong>Shift + Enter</strong> for line breaks.</li>
+    <li><strong>Send Message:</strong> Press <strong>Enter</strong> or <strong>tap the arrow</strong> to send.</li>
+    <li><strong>New Line:</strong> Use <strong>Shift + Enter</strong> or <strong>press return</strong> for line breaks.</li>
   </ul>
                     `
 						}
