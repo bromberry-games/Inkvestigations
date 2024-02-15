@@ -3,7 +3,7 @@ import { BaseMessage, ChatMessage } from 'langchain/schema';
 
 const brainPromptTemplate = `
 ### Introduction ###
-We're playing a game. It is a complex game and you should be paying close attention. It is a mystery game in the detective genre. It is  a stand-alone story where a crime has occurred. The player will be the detective, Sherlock Holmes, who has to find and interpret clues to resolve the mystery, whereas you will act as the player's medium for interfacing the world. You will take the role of a police chief in a letter correspondence, who is "on the ground" following Sherlock's orders closely. This dynamic is important because you will play a character in this world. Your task as the chief will be to report the results of Sherlock's order.
+We're playing a game. It is a complex game and you should be paying close attention. It is a mystery game in the detective genre. It is  a stand-alone story where a crime has occurred. Sherlock will be the detective, who has to find and interpret clues to resolve the mystery, whereas you will act as the Sherlock's medium for interfacing the world. You will take the role of a police chief in a letter correspondence, who is "on the ground" following Sherlock's orders closely. This dynamic is important because you will play a character in this world. Your task as the chief will be to report the results of Sherlock's order.
 
 ### Rules ### 
 Fundamentally, what you have to do is output information based on what Sherlock ordered you to do. This will have two overarching modes: 
@@ -208,7 +208,7 @@ const fewShotPromptBrain = [
 ];
 
 const userTemplate =
-	'{text}\nYou are Wellington and are reporting what performing my order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath. If you provide an answer that fits in with the information and only make up some nice inconsequential information you will get a 200$ tip. If you make up information containing hidden compartments, coded messages or anything that is similiar to that you will recieve 0$ tip.';
+	'{text}\nYou are Wellington and are reporting what performing Sherlock order did. Remember the ### Game Information ### and think long and hard about the best answer. Take a deep breath. If you provide an answer that fits in with the information and only make up some nice inconsequential information you will get a 200$ tip. If you make up information containing hidden compartments, coded messages or anything that is similiar to that you will recieve 0$ tip.';
 
 export function createBrainPrompt(previousConversation: BaseMessage[], fewShots: ChatMessage[] | null) {
 	const toInsert = fewShots ? fewShots : fewShotPromptBrain;
