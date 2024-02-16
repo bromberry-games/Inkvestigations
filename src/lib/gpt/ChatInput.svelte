@@ -86,6 +86,7 @@
 
 	function handleAnswer(event: MessageEvent<any>) {
 		try {
+			console.log('answer: ', event);
 			const delta = JSON.parse(event.data);
 			liveAnswerStore.update((store) => {
 				const answer = { ...store };

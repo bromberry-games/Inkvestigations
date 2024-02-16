@@ -10,6 +10,8 @@
 		"sourceMap": true,
 		"strict": true,
 		"moduleResolution": "Bundler",
+		"module": "ES6",
+		"target": "ES6"
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//

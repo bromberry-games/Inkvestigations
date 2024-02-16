@@ -56,6 +56,9 @@ export class EventSource {
 		if (this.handleAbort) {
 			this.eventSource?.removeEventListener('abort', this.handleAbort);
 		}
+		if (this.handleEnd) {
+			this.eventSource?.removeEventListener('end', this.handleEnd);
+		}
 
 		this.eventSource?.close();
 
