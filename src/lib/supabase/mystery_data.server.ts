@@ -137,6 +137,18 @@ export async function deleteMystery(mystery: string, userid: string): Promise<bo
 	return true;
 }
 
+export async function loadMysteryWithOrder1() {
+	const { data, error } = await supabase_full_access.from('mysteries').select('slug').eq('order_int', 1);
+	if (error) {
+		console.error(error);
+		return error;
+	}
+	if (data && data.length > 0) {
+		return data[0].slug;
+	}
+	throw new Error('no mystery found with order_int 1');
+}
+
 export async function publishMysteryForAll(mysteryData: MysterySubmitSchema) {
 	const { data, error } = await supabase_full_access
 		.from('mysteries')

@@ -35,7 +35,7 @@ test('test create new mystery and save it then change name', async ({ page }) =>
 test('test create new mystery and publish it', async ({ page }) => {
 	await page.goto('/user/mysteries');
 	await page.getByRole('button', { name: 'New' }).click();
-	await page.locator('input[name="mystery.name"]').fill('Mirror Mirror');
+	await page.locator('input[name="mystery.name"]').fill('Test mystery');
 	await page.locator('input[name="mystery.setting"]').fill('England in the 1890s, a small town called Romey');
 	await page.locator('input[name="mystery.description"]').fill('test description');
 	await page.locator('input[name="mystery.theme"]').fill('Mystery Theme');
