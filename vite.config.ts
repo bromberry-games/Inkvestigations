@@ -23,6 +23,6 @@ export default defineConfig({
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},
 	build: {
-		target: 'es6'
+		target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14']
 	}
 });
