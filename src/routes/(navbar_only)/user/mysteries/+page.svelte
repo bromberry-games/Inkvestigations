@@ -4,7 +4,7 @@
 	export let data;
 </script>
 
-<div class="flex justify-center">
+<div class="flex justify-center bg-tertiary">
 	<div class="w-1/2">
 		<div class="flex">
 			<Input type="text" placeholder="search"></Input>

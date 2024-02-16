@@ -4,7 +4,7 @@ import fs from 'fs';
 
 test('test create new mystery and save it', async ({ page }) => {
 	await page.goto('/user/mysteries');
-	await page.getByRole('link', { name: 'New' }).click();
+	await page.getByRole('button', { name: 'New' }).click();
 	await page.getByPlaceholder('Mirror Mirror').click();
 	await page.getByPlaceholder('Mirror Mirror').fill('test mystery');
 	await page.getByRole('button', { name: 'save' }).click();
@@ -17,7 +17,7 @@ test('test create new mystery and save it', async ({ page }) => {
 
 test('test create new mystery and save it then change name', async ({ page }) => {
 	await page.goto('/user/mysteries');
-	await page.getByRole('link', { name: 'New' }).click();
+	await page.getByRole('button', { name: 'New' }).click();
 	await page.getByPlaceholder('Mirror Mirror').click();
 	await page.getByPlaceholder('Mirror Mirror').fill('new mystery');
 	await page.getByRole('button', { name: 'save' }).click();
@@ -34,12 +34,30 @@ test('test create new mystery and save it then change name', async ({ page }) =>
 	await expect((await page.getByLabel('mystery').nth(0).allInnerTexts())[0]).toContain('even newer mystery');
 });
 
-test.afterAll(async () => {
-	const id = test.info().parallelIndex;
-	const fileName = path.resolve(test.info().project.outputDir, `.auth/${id}.json`);
-	fs.unlink(fileName, (err) => {
-		if (err) {
-			console.error(err);
-		}
-	});
+test('test create new mystery and publish it', async ({ page }) => {
+	await page.goto('/user/mysteries');
+	await page.getByRole('button', { name: 'New' }).click();
+	await page.locator('input[name="mystery.name"]').fill('Test mystery name');
+	await page.locator('input[name="mystery.setting"]').fill('England in the 1890s, a small town called Romey');
+	await page.locator('input[name="mystery.description"]').fill('test description');
+	await page.locator('input[name="mystery.theme"]').fill('Mystery Theme');
+	await page.locator('input[name="mystery.victim_name"]').fill('John Toilard');
+	await page
+		.locator('input[name="mystery.letter_info"]')
+		.fill('Hello Sherlock. I made this mystery myself! It is what I believe they call a custom user created one!');
+	await page
+		.locator('input[name="mystery.victim_description"]')
+		.fill('kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives.');
+	await page.locator('input[name="mystery.solution"]').fill('Solve the mystery');
+
+	await page.locator('input[name="suspects[0].name"]').fill('Butler Jesob');
+	await page.locator('input[name="suspects[0].description"]').fill('A long-time butler and good friend of the family, loves the children.');
+
+	await page.locator('input[name="timeframes[0].timeframe"]').fill('The time frame');
+	await page.locator('input[name="timeframes[0].event_happened"]').fill('What happened');
+
+	await page.locator('input[name="action_clues[0].action"]').fill('Inspect the garden');
+	await page.locator('input[name="action_clues[0].clue"]').fill('Found a hidden key');
+
+	await page.getByRole('button', { name: 'Submit' }).click();
 });

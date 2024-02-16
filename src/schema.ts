@@ -170,7 +170,6 @@ export interface Database {
           access_code: string
           accuse_letter_prompt: string
           description: string
-          filepath: string
           id: number
           letter_info: string
           letter_prompt: string
@@ -189,7 +188,6 @@ export interface Database {
           access_code?: string
           accuse_letter_prompt: string
           description: string
-          filepath: string
           id?: number
           letter_info: string
           letter_prompt: string
@@ -208,7 +206,6 @@ export interface Database {
           access_code?: string
           accuse_letter_prompt?: string
           description?: string
-          filepath?: string
           id?: number
           letter_info?: string
           letter_prompt?: string
@@ -409,6 +406,38 @@ export interface Database {
           }
         ]
       }
+      user_mysteries: {
+        Row: {
+          id: string
+          info: Json
+          name: string
+          published: boolean
+          user_id: string | null
+        }
+        Insert: {
+          id: string
+          info: Json
+          name: string
+          published?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          info?: Json
+          name?: string
+          published?: boolean
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_mysteries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       user_mystery_brain_messages: {
         Row: {
           chain_of_thought: string
@@ -571,6 +600,10 @@ export interface Database {
           the_user_id: string
           daily_amount: number
         }
+        Returns: undefined
+      }
+      update_for_free_users: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       update_user_messages: {
