@@ -11,7 +11,7 @@
 	img={'/images/mysteries/' + mystery.name.replace(/ /g, '_').toLowerCase() + '.webp'}
 	class="rounded border-8 border-quaternary !bg-quaternary"
 	padding="none"
-	href={unlocked ? mystery.name.replace(/\s+/g, '_') : undefined}
+	href={unlocked ? mystery.slug : undefined}
 >
 	<div class="m-4 flex justify-center">
 		<div class="flex flex-col justify-between font-primary text-2xl text-tertiary">

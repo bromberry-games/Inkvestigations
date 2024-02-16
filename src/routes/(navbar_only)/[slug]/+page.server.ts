@@ -22,16 +22,16 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		redirect(303, '/');
 	}
 	const { slug } = params;
-	const mysteryName = slug.replace(/_/g, ' ');
+	// const mysteryName = slug.replace(/_/g, ' ');
 
 	//TODO: Function or view?
 	const [letterInfo, messagesAndNotes, suspects, eventMessages, activeSub, victim] = await Promise.all([
-		loadMysteryLetterInfo(mysteryName),
-		loadLetterMessagesNotesAndConversationId(session.user.id, mysteryName),
-		loadSuspects(mysteryName),
-		loadEventMessages(mysteryName),
+		loadMysteryLetterInfo(slug),
+		loadLetterMessagesNotesAndConversationId(session.user.id, slug),
+		loadSuspects(slug),
+		loadEventMessages(slug),
 		loadActiveAndUncancelledSubscription(session.user.id),
-		loadVictim(mysteryName)
+		loadVictim(slug)
 	]);
 	isTAndThrowPostgresErrorIfNot(letterInfo);
 	isTAndThrowPostgresErrorIfNot(messagesAndNotes);
@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 	isTAndThrowPostgresErrorIfNot(activeSub);
 	isTAndThrowPostgresErrorIfNot(victim);
 	isTAndThrowPostgresErrorIfNot(suspects);
-	if (letterInfo.access_code != 'free') {
+	if (letterInfo.access_code != 'free' && letterInfo.access_code != 'user') {
 		if (activeSub[0]?.access_codes == null || activeSub.length == 0) {
 			redirect(303, '/mysteries');
 		} else if (!activeSub[0].access_codes.split(',').includes(letterInfo.access_code)) {
@@ -57,7 +57,7 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		`,
 		show_at_message: MAX_CONVERSATION_LENGTH,
 		mysteries: {
-			name: mysteryName
+			slug: slug
 		}
 	});
 

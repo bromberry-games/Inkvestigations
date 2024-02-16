@@ -1,6 +1,5 @@
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper.js';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
 import { loadyMystery, publishMysteryForAll, saveMystery } from '$lib/supabase/mystery_data.server.js';
 import { randomUUID } from 'crypto';

@@ -17,7 +17,7 @@ export const load = async ({ locals: { getSession, supabase } }) => {
 			userAccessCodes: subStatus?.[0]?.access_codes ?? ''
 		};
 	} else {
-		const { data } = await supabase.from('mysteries').select();
+		const { data } = await supabase.from('mysteries').select('*');
 		return {
 			mysteries: data
 		};

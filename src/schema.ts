@@ -176,6 +176,7 @@ export interface Database {
           name: string
           order_int: number
           setting: string
+          slug: string
           solution: string | null
           star_ratings:
             | Database["public"]["CompositeTypes"]["star_ratings"]
@@ -194,6 +195,7 @@ export interface Database {
           name: string
           order_int?: number
           setting: string
+          slug?: string
           solution?: string | null
           star_ratings?:
             | Database["public"]["CompositeTypes"]["star_ratings"]
@@ -212,6 +214,7 @@ export interface Database {
           name?: string
           order_int?: number
           setting?: string
+          slug?: string
           solution?: string | null
           star_ratings?:
             | Database["public"]["CompositeTypes"]["star_ratings"]
@@ -225,29 +228,29 @@ export interface Database {
       solved: {
         Row: {
           id: number
-          mystery_name: string
+          mystery_slug: string
           rating: number | null
           user_id: string
         }
         Insert: {
           id?: number
-          mystery_name: string
+          mystery_slug: string
           rating?: number | null
           user_id: string
         }
         Update: {
           id?: number
-          mystery_name?: string
+          mystery_slug?: string
           rating?: number | null
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "solved_mystery_name_fkey"
-            columns: ["mystery_name"]
+            foreignKeyName: "solved_mystery_slug_fkey"
+            columns: ["mystery_slug"]
             isOneToOne: false
             referencedRelation: "mysteries"
-            referencedColumns: ["name"]
+            referencedColumns: ["slug"]
           },
           {
             foreignKeyName: "solved_user_id_fkey"
@@ -478,30 +481,30 @@ export interface Database {
           archived: boolean
           created_at: string
           id: number
-          mystery_name: string
+          mystery_slug: string
           user_id: string | null
         }
         Insert: {
           archived?: boolean
           created_at?: string
           id?: number
-          mystery_name: string
+          mystery_slug: string
           user_id?: string | null
         }
         Update: {
           archived?: boolean
           created_at?: string
           id?: number
-          mystery_name?: string
+          mystery_slug?: string
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "user_mystery_conversations_mystery_name_fkey"
-            columns: ["mystery_name"]
+            foreignKeyName: "user_mystery_conversations_mystery_slug_fkey"
+            columns: ["mystery_slug"]
             isOneToOne: false
             referencedRelation: "mysteries"
-            referencedColumns: ["name"]
+            referencedColumns: ["slug"]
           },
           {
             foreignKeyName: "user_mystery_conversations_user_id_fkey"
