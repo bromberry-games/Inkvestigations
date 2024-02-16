@@ -10,10 +10,6 @@
 		"sourceMap": true,
 		"strict": true,
 		"moduleResolution": "Bundler",
-		"target": "ES2020", // or higher
-    	//"module": "nodenext"
-		"module": "ES2020" // Changed to ES2022
-
 	}
 	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
 	//

@@ -23,6 +23,6 @@ export default defineConfig({
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},
 	build: {
-		target: 'es2020'
+		target: 'es6'
 	}
 });
