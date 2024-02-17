@@ -20,19 +20,19 @@
 	color="!bg-secondary"
 >
 	<div class="flex w-full flex-col">
-		<textarea placeholder="Enter notes..." use:textareaAutosizeAction bind:value={notes.general} class="mb-4"></textarea>
+		<textarea  placeholder="Enter notes..." use:textareaAutosizeAction bind:value={notes.general} class="rounded bg-amber-50  border-primary focus:ring-tertiary focus:border-primary"></textarea>
 		{#each suspects as suspect}
-			<hr class="my-1 h-0.5 border-0 bg-gray-900 dark:bg-gray-700" />
+			<hr class="rmy-1 h-0.5 border-0 bg-gray-800 dark:bg-gray-800" />
 			<div class="mt-2 flex">
 				<div class="mr-4 flex flex-col items-center justify-between">
 					<img
-						src={'/images/mysteries/' + slug.toLowerCase() + '/suspects/' + convertToSnakeCaseEnhanced(suspect.name) + '.webp'}
+						src={'/images/mysteries/' + slug.toLowerCase() + '/suspects/' + convertToSnakeCaseEnhanced(suspect.name) + '.webp'} class="rounded-sm mb-2"
 						alt={suspect.name}
 					/>
 				</div>
 				<div class="flex h-full w-full flex-col">
-					<p class="sm:text-md font-secondary md:text-xl">{suspect.name}</p>
-					<textarea class="h-full w-full" placeholder="Enter notes..." bind:value={notes[suspect.name]} rows="2" use:textareaAutosizeAction
+					<p class="uppercase sm:text-md font-primary md:text-xl text-gray-800">{suspect.name}</p>
+					<textarea class="rounded h-full w-full bg-amber-50 border-primary focus:ring-tertiary focus:border-primary" placeholder="Enter notes..." use:textareaAutosizeAction bind:value={notes[suspect.name]} rows="2" 
 					></textarea>
 				</div>
 			</div>
