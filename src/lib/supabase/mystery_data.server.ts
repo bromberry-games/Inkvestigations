@@ -59,7 +59,7 @@ export async function loadGameInfo(slug: string) {
 export async function loadMysteryLetterInfo(slug: string) {
 	const { data: mysteryData, error: mysteryError } = await supabase_full_access
 		.from('mysteries')
-		.select('letter_info, access_code, order_int')
+		.select('letter_info, access_code, order_int, name')
 		.eq('slug', slug)
 		.single();
 

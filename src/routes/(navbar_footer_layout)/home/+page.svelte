@@ -8,9 +8,9 @@
 		data.lastPlayed != undefined
 			? {
 					slug: data.lastPlayed.user_mystery_conversations?.mystery_slug,
-					image: data.lastPlayed.user_mystery_conversations?.mystery_name.replace(/ /g, '_').toLowerCase(),
+					image: data.lastPlayed.user_mystery_conversations?.mysteries?.name.replace(/ /g, '_').toLowerCase(),
 					message: data.lastPlayed.content,
-					name: data.lastPlayed.user_mystery_conversations?.mystery_name
+					name: data.lastPlayed.user_mystery_conversations?.mysteries?.name
 				}
 			: {
 					slug: data.first.slug,

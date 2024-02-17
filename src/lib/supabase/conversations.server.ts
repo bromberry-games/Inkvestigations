@@ -183,10 +183,26 @@ export async function loadEventMessages(slug: string) {
 export async function loadLastPlayedMysteryOrNextPlayableOne(userid: string) {
 	const { data, error } = await supabase_full_access
 		.from('user_mystery_messages')
-		.select('content, user_mystery_conversations!inner(mystery_slug)')
+		.select(
+			`
+    content, 
+    user_mystery_conversations!inner(
+      mystery_slug,
+      mysteries (
+        name
+      )
+    )
+  `
+		)
 		.eq('user_mystery_conversations.user_id', userid)
 		.order('created_at', { ascending: false })
 		.limit(1);
+	// const { data, error } = await supabase_full_access
+	// .from('user_mystery_messages')
+	// .select('content, user_mystery_conversations!inner(mystery_slug), mysteries(name)')
+	// .eq('user_mystery_conversations.user_id', userid)
+	// .order('created_at', { ascending: false })
+	// .limit(1);
 	if (error) {
 		return error;
 	}

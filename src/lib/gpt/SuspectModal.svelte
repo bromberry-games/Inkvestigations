@@ -7,7 +7,7 @@
 
 	export let clickOutsideModal = false;
 	export let suspects: suspect[];
-	export let slug = '';
+	export let nameParsed = '';
 	export let notes;
 </script>
 
@@ -26,7 +26,7 @@
 			<div class="mt-2 flex">
 				<div class="mr-4 flex flex-col items-center justify-between">
 					<img
-						src={'/images/mysteries/' + slug.toLowerCase() + '/suspects/' + convertToSnakeCaseEnhanced(suspect.name) + '.webp'}
+						src={'/images/mysteries/' + nameParsed.toLowerCase() + '/suspects/' + convertToSnakeCaseEnhanced(suspect.name) + '.webp'}
 						alt={suspect.name}
 					/>
 				</div>
