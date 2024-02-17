@@ -20,7 +20,7 @@
 	color="!bg-secondary"
 >
 	<div class="flex w-full flex-col">
-		<textarea  placeholder="Enter notes..." use:textareaAutosizeAction bind:value={notes.general} class="rounded bg-amber-50  border-primary focus:ring-tertiary focus:border-primary"></textarea>
+		<textarea  placeholder="Enter notes..." use:textareaAutosizeAction bind:value={notes.general} class="mb-2 rounded bg-amber-50 border-primary focus:ring-tertiary focus:border-primary"></textarea>
 		{#each suspects as suspect}
 			<hr class="rmy-1 h-0.5 border-0 bg-gray-800 dark:bg-gray-800" />
 			<div class="mt-2 flex">
