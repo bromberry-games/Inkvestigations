@@ -1,5 +1,5 @@
 import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers.js';
-import { loadMysteriesWithSolved } from '$lib/supabase/mystery_data.server';
+import { loadMysteries, loadMysteriesWithSolved } from '$lib/supabase/mystery_data.server';
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
 
 export const load = async ({ locals: { getSession, supabase } }) => {
@@ -17,9 +17,10 @@ export const load = async ({ locals: { getSession, supabase } }) => {
 			userAccessCodes: subStatus?.[0]?.access_codes ?? ''
 		};
 	} else {
-		const { data } = await supabase.from('mysteries').select();
+		const result = await loadMysteries();
+		isTAndThrowPostgresErrorIfNot(result);
 		return {
-			mysteries: data
+			mysteries: result
 		};
 	}
 };
