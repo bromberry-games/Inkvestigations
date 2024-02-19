@@ -413,28 +413,28 @@ export interface Database {
         Row: {
           id: string
           info: Json
-          mysteryid: number | null
+          mystery_id: number | null
           published: boolean
           user_id: string | null
         }
         Insert: {
-          id: string
+          id?: string
           info: Json
-          mysteryid?: number | null
+          mystery_id?: number | null
           published?: boolean
           user_id?: string | null
         }
         Update: {
           id?: string
           info?: Json
-          mysteryid?: number | null
+          mystery_id?: number | null
           published?: boolean
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "user_mysteries_mysteryid_fkey"
-            columns: ["mysteryid"]
+            foreignKeyName: "user_mysteries_mystery_id_fkey"
+            columns: ["mystery_id"]
             isOneToOne: false
             referencedRelation: "mysteries"
             referencedColumns: ["id"]

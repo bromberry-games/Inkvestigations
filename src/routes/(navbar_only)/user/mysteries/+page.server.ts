@@ -1,5 +1,6 @@
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
-import { deleteMystery, loadMysteries } from '$lib/supabase/mystery_data.server';
+import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers.js';
+import { createNewUserMystery, deleteMystery, loadMysteries } from '$lib/supabase/mystery_data.server';
 import { error, redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals: { getSession } }) => {
@@ -9,10 +10,8 @@ export const load = async ({ locals: { getSession } }) => {
 	}
 
 	const mysteries = await loadMysteries(session.user.id);
-	if (mysteries === null) {
-		throw error(500, 'Error loading mysteries');
-	}
-	return { mysteries: mysteries ? mysteries : [] };
+	isTAndThrowPostgresErrorIfNot(mysteries);
+	return { mysteries };
 };
 
 export const actions = {
@@ -22,13 +21,20 @@ export const actions = {
 			throw redirect(303, '/');
 		}
 		const formData = await request.formData();
-		const mysteryName = formData.get('mystery-name')?.toString();
-		if (!mysteryName) {
+		const id = formData.get('mystery-id')?.toString();
+		if (!id) {
 			throw error(500, 'Could not find mystery name');
 		}
-		const deleted = await deleteMystery(mysteryName, session.user.id);
-		if (!deleted) {
-			throw error(500, 'Error deleting mystery');
+		const deleted = await deleteMystery(id, session.user.id);
+		isTAndThrowPostgresErrorIfNot(deleted);
+	},
+	create: async ({ request, locals: { getSession } }) => {
+		const session = await getSession();
+		if (getAuthStatus(session) != AuthStatus.LoggedIn) {
+			throw redirect(303, '/');
 		}
+		const created = await createNewUserMystery(session.user.id);
+		isTAndThrowPostgresErrorIfNot(created);
+		redirect(303, '/user/mysteries/' + created.id);
 	}
 };

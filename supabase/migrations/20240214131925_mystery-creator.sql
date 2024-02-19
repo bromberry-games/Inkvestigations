@@ -1,9 +1,9 @@
 CREATE TABLE user_mysteries (
-    id uuid UNIQUE NOT NULL PRIMARY KEY,
+    id uuid UNIQUE NOT NULL PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id uuid REFERENCES auth.users(id) ON UPDATE CASCADE ON DELETE CASCADE,
     published BOOLEAN NOT NULL DEFAULT FALSE,
     info JSON NOT NULL,
-    mysteryId Integer REFERENCES mysteries(id) ON UPDATE CASCADE 
+    mystery_id Integer REFERENCES mysteries(id) ON UPDATE CASCADE 
 );
 
 ALTER TABLE user_mysteries

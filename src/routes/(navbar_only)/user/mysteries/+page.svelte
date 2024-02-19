@@ -8,7 +8,9 @@
 	<div class="w-1/2">
 		<div class="flex">
 			<Input type="text" placeholder="search"></Input>
-			<Button class="bg-green-500" href="/user/mysteries/create">New</Button>
+			<form action="?/create" method="post" class="inline">
+				<Button class="bg-green-500" type="submit">New</Button>
+			</form>
 		</div>
 		<div>
 			{#each data.mysteries as mystery}
@@ -16,10 +18,10 @@
 					{mystery.name}
 					<Badge rounded color="dark">{mystery.published ? 'Published' : 'Draft'}</Badge>
 					<form action="?/delete" method="post" class="inline">
-						<input type="hidden" name="mystery-name" value={mystery.name} />
+						<input type="hidden" name="mystery-id" value={mystery.id} />
 						<Button type="submit" class="bg-red-500">Delete</Button>
 					</form>
-					<Button class="bg-blue-500" href="/user/mysteries/{mystery.name.replace(/\s+/g, '_')}">Edit</Button>
+					<Button class="bg-blue-500" href="/user/mysteries/{mystery.id}">Edit</Button>
 				</div>
 			{/each}
 		</div>
