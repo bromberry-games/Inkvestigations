@@ -8,6 +8,7 @@ async function setOwnToken(page: Page, val = true) {
 	if ((await checkbox.isChecked()) == val) return;
 	await checkbox.click();
 	await page.getByRole('button', { name: 'Save' }).click();
+	await page.waitForTimeout(300);
 }
 
 async function fillOutTokenForm(page: Page, token: string) {

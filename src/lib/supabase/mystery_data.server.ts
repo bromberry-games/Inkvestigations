@@ -83,3 +83,12 @@ export async function loadMysteriesWithSolved(userId: string) {
 	}
 	return data;
 }
+
+export async function loadMysteries() {
+	const { error, data } = await supabase_full_access.from('mysteries').select('*').order('order_int', { ascending: true });
+	if (error) {
+		console.error(error);
+		return error;
+	}
+	return data;
+}
