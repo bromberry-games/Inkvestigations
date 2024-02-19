@@ -380,7 +380,7 @@ ROW(
         'John is caught in the Southampton port dirty and frantically trying to get away. He is returned to the parents.',
         'John is caught without problems and confesses everything in an emotional scene.'
     )::star_ratings,
-    1
+    5
 ) ON CONFLICT (name)
 DO UPDATE SET 
     description = EXCLUDED.description,

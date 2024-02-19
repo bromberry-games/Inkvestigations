@@ -36,7 +36,7 @@
 						popover: {
 							description: `<p><strong>Talk to the Police Chief:</strong> Ask anything to uncover clues.</p>
   <ul>
-    <li><strong>Example:</strong> "Hello Chief, Please interrogate the victims father."</li>
+    <li><strong>Example:</strong> "Please ask Boris if anybody recently complained about the storage rooms."</li>
     <li><strong>Send Message:</strong> Press <strong>Enter</strong> to send.</li>
     <li><strong>New Line:</strong> Use <strong>Shift + Enter</strong> for line breaks.</li>
   </ul>
@@ -55,9 +55,7 @@
 						popover: {
 							description: `<p><strong>Talk to the Police Chief:</strong> You can also ask him do to actions in the world</p>
   <ul>
-    <li><strong>Example:</strong> "Hello Chief, Please search the victims room."</li>
-    <li><strong>Or:</strong> "Hello Chief, conduct a search of the toilards estate."
-    <li><strong>Or:</strong> "Analyse the ransom note".</li>
+    <li><strong>Example:</strong> "Look on which floor each of the suspects lives."</li>
   </ul>
                     `
 						}
@@ -108,7 +106,7 @@
 							element: '#solve-button',
 							popover: {
 								title: 'Solve',
-								description: `Once you have enough information you can click here to solve the mystery. Be careful since you can only solve once.
+								description: `You can now solve the mystery by clicking here. Enter the motive, opportunity, and evidence to solve this case! Be careful since you can only solve once.
                     `
 							}
 						}
