@@ -88,19 +88,16 @@ export async function loadMysteries(userId: string) {
 	const { data, error } = await supabase_full_access.from('user_mysteries').select('name, published').eq('user_id', userId);
 	if (error) {
 		console.error(error);
-		return null;
+		return error;
 	}
 	return data ? data : [];
 }
 
-export async function saveMystery(uuid: string, mysteryName: string, userid: string, json: string): Promise<boolean> {
-	const { error } = await supabase_full_access
-		.from('user_mysteries')
-		.upsert({ id: uuid, user_id: userid, name: mysteryName, info: json }, { onConflict: 'id' })
-		.eq('user_id', userid);
+export async function saveMystery(uuid: string, userid: string, json: string) {
+	const { error } = await supabase_full_access.from('user_mysteries').update({ id: uuid, user_id: userid, info: json }).eq('id', uuid);
 	if (error) {
 		console.error('error saving mystery', error);
-		return false;
+		return error;
 	}
 	return true;
 }
@@ -114,9 +111,9 @@ export async function loadyMystery(name: string, userid: string) {
 		.limit(1);
 	if (error) {
 		console.error(error);
-		return null;
+		return error;
 	}
-	return data && data.length > 0 ? data[0] : { name: '', info: '' };
+	return data && data.length > 0 ? data[0] : null;
 }
 
 export async function publishMystery(mystery: string, userid: string): Promise<boolean> {
@@ -149,7 +146,16 @@ export async function loadMysteryWithOrder1() {
 	throw new Error('no mystery found with order_int 1');
 }
 
-export async function publishMysteryForAll(mysteryData: MysterySubmitSchema) {
+export async function publishMysteryForAll(mysteryData: MysterySubmitSchema, userId: string) {
+	const { data: userData, error: userError } = await supabase_full_access
+		.from('user_mysteries')
+		.select('id')
+		.eq('id', mysteryData.id)
+		.eq('user_id', userId)
+		.single();
+	if (userError) return userError;
+	if (!userData) return false;
+
 	const { data, error } = await supabase_full_access
 		.from('mysteries')
 		.upsert(
@@ -174,9 +180,10 @@ export async function publishMysteryForAll(mysteryData: MysterySubmitSchema) {
 						'Oliver breaks down under the accusation. He falls to the ground admitting his crime. But he shouts that if Terry had shown any kind of regret he would have forgiven him.',
 					star3:
 						'All heads shoot to Oliver. Blanched and shaking he tries to move backwards but his back is against the wall. He slides down and admits it, head in his hands. Terry misused his influence, showing no regard for the people that were affected. Since becoming his apprentice, he had witnessed how Terry literally made up articles out of thin air, and the results always somehow helped Terry. Oliver looked Wellington in the eyes and says that he would do it again.'
-				}
+				},
+				slug: mysteryData.id
 			},
-			{ onConflict: 'name' }
+			{ onConflict: 'slug' }
 		)
 		.eq('access_code', 'user')
 		.select('id')

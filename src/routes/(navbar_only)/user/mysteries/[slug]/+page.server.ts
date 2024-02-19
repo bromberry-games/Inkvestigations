@@ -14,11 +14,8 @@ export const load = async ({ locals: { getSession, supabase }, params }) => {
 	}
 	const mysteyrName = params.slug.replace(/_/g, ' ');
 	const mystery = await loadyMystery(mysteyrName, session.user.id);
-	if (mystery === null) {
-		throw error(500, 'Error loading mystery');
-	}
-	console.log(mystery);
-	if (mystery.info != '') {
+	isTAndThrowPostgresErrorIfNot(mystery);
+	if (mystery) {
 		const form = await superValidate({ ...JSON.parse(mystery.info), id: mystery.id }, zod(mainSchema));
 		return { form };
 	}
@@ -36,7 +33,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 		const { slug } = params;
-		await saveMystery(form.data.id, form.data.name, session.user.id, JSON.stringify(form.data));
+		await saveMystery(form.data.id, session.user.id, JSON.stringify(form.data));
 		if (form.data.name.replace(/ /g, '_') != slug) {
 			throw redirect(303, `/user/mysteries/${form.data.name.replace(/ /g, '_')}`);
 		}
@@ -52,8 +49,9 @@ export const actions = {
 			console.log('invalid');
 			return fail(400, { form });
 		}
-		// const saved = await saveMystery(form.data.id, form.data.mystery.name, session.user.id, JSON.stringify(form.data));
-		const result = await publishMysteryForAll(form.data);
+		const saved = await saveMystery(form.data.id, session.user.id, JSON.stringify(form.data));
+		isTAndThrowPostgresErrorIfNot(saved);
+		const result = await publishMysteryForAll(form.data, session.user.id);
 		isTAndThrowPostgresErrorIfNot(result);
 		console.log('posted succesfully');
 		return { form };
