@@ -7,29 +7,36 @@
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { mainSchema, submitSchema } from './schema';
 	import SuperInput from '$lib/superforms/SuperInput.svelte';
+	import { onMount } from 'svelte';
 
 	export let data: PageData;
 
 	let save: boolean = true;
 
-	// const { form, errors, constraints, enhance } = superForm(data.form, {
-	// dataType: 'json'
-	// });
 	const formAll = superForm(data.form, {
 		validators: zodClient(mainSchema),
-		dataType: 'json'
+		dataType: 'json',
+		resetForm: false
 	});
-	const { form, errors, enhance, options, constraints } = formAll;
+	$: form = formAll.form;
+	$: errors = formAll.errors;
+	$: enhance = formAll.enhance;
+	// let { form, errors, enhance, options, constraints } = formAll;
+	// $: if (formAll) {
+	// ({ form, errors, enhance, options, constraints } = formAll);
+	// }
 
-	if ($form.suspects == undefined || $form.suspects.length === 0) {
-		$form.suspects = [{ name: '', description: '' }];
-	}
-	if ($form.timeframes == undefined || $form.timeframes.length === 0) {
-		$form.timeframes = [{ timeframe: '', event_happened: '' }];
-	}
-	if ($form.action_clues == undefined || $form.action_clues.length === 0) {
-		$form.action_clues = [{ action: '', clue: '' }];
-	}
+	onMount(() => {
+		if ($form.suspects == undefined || $form.suspects.length === 0) {
+			$form.suspects = [{ name: '', description: '' }];
+		}
+		if ($form.timeframes == undefined || $form.timeframes.length === 0) {
+			$form.timeframes = [{ timeframe: '', event_happened: '' }];
+		}
+		if ($form.action_clues == undefined || $form.action_clues.length === 0) {
+			$form.action_clues = [{ action: '', clue: '' }];
+		}
+	});
 
 	function addSuspect() {
 		if ($form.suspects == undefined) {
@@ -56,10 +63,24 @@
 <!-- <SuperDebug data={$form} /> -->
 
 <div class="mt-16 flex justify-center bg-tertiary">
-	<form method="POST" action={save ? '?/save' : '?/submit'} class="grid grid-cols-[1fr_10fr] gap-4 lg:w-1/2" use:enhance>
+	<form
+		enctype="multipart/form-data"
+		method="POST"
+		action={save ? '?/save' : '?/submit'}
+		class="grid grid-cols-[1fr_10fr] gap-4 lg:w-1/2"
+		use:formAll.enhance
+	>
 		<input type="hidden" name="id" bind:value={$form.id} />
 		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.name" form={formAll} placeholder="Forced Farewell" />
 		<hr class="col-span-2 border-slate-900" />
+		<input
+			class="col-span-2"
+			type="file"
+			name="image"
+			accept="image/png, image/jpeg, image/webp"
+			on:input={(e) => ($form.mystery.image = e.currentTarget.files?.item(0) ?? null)}
+		/>
+		{#if $errors.mystery?.image}<span>{$errors.mystery.image}</span>{/if}
 		<SuperInput
 			inputClass={inputClassFull}
 			errorClass="col-span-2"

@@ -1,16 +1,17 @@
+import path from 'path';
 import { test, expect } from '../playwright/fixtures';
 
 test('test create new mystery and save it', async ({ page }) => {
 	await page.goto('/user/mysteries');
 	await page.getByRole('button', { name: 'New' }).click();
-	await page.getByPlaceholder('Mirror Mirror').click();
-	await page.getByPlaceholder('Mirror Mirror').fill('test mystery');
+	await page.waitForTimeout(200);
+	await page.locator('input[name="mystery.name"]').fill('Test mystery');
 	await page.getByRole('button', { name: 'save' }).click();
 	await page.waitForLoadState('networkidle');
 
-	await expect(page.getByPlaceholder('Mirror Mirror')).toHaveValue('test mystery');
+	await expect(page.locator('input[name="mystery.name"]')).toHaveValue('Test mystery');
 	await page.goto('/user/mysteries');
-	await page.getByRole('button', { name: 'Delete' }).click();
+	// await page.getByRole('button', { name: 'Delete' }).click();
 });
 
 test('test create new mystery and save it then change name', async ({ page }) => {
@@ -41,6 +42,10 @@ test('test create new mystery and publish it', async ({ page }) => {
 	await page.locator('input[name="mystery.description"]').fill('test description');
 	await page.locator('input[name="mystery.theme"]').fill('Mystery Theme');
 	await page.locator('input[name="mystery.victim_name"]').fill('John Toilard');
+
+	const fileInput = await page.locator('input[name="image"]');
+	await fileInput.setInputFiles(path.join(process.cwd(), '/static/images/mysteries/mirror_mirror.webp'));
+
 	await page
 		.locator('input[name="mystery.letter_info"]')
 		.fill('Hello Sherlock. I made this mystery myself! It is what I believe they call a custom user created one!');

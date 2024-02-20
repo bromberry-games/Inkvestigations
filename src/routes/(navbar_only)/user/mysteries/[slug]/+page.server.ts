@@ -1,6 +1,6 @@
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper.js';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { superValidate } from 'sveltekit-superforms/server';
+import { superValidate, withFiles } from 'sveltekit-superforms/server';
 import { loadyMystery, publishMysteryForAll, saveMystery } from '$lib/supabase/mystery_data.server.js';
 import { randomUUID } from 'crypto';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -12,15 +12,15 @@ export const load = async ({ locals: { getSession, supabase }, params }) => {
 	if (getAuthStatus(session) != AuthStatus.LoggedIn) {
 		throw redirect(303, '/');
 	}
-	const mysteyrName = params.slug.replace(/_/g, ' ');
-	const mystery = await loadyMystery(mysteyrName, session.user.id);
+	const slug = params.slug;
+	const mystery = await loadyMystery(slug, session.user.id);
 	isTAndThrowPostgresErrorIfNot(mystery);
 	if (mystery) {
 		const form = await superValidate({ ...JSON.parse(mystery.info), id: mystery.id }, zod(mainSchema));
 		return { form };
+	} else {
+		error(404, 'Mystery not found');
 	}
-	const form = await superValidate({ id: randomUUID() }, zod(mainSchema));
-	return { form };
 };
 
 export const actions = {
@@ -33,11 +33,10 @@ export const actions = {
 			return fail(400, { form });
 		}
 		const { slug } = params;
-		await saveMystery(form.data.id, session.user.id, JSON.stringify(form.data));
-		if (form.data.name.replace(/ /g, '_') != slug) {
-			throw redirect(303, `/user/mysteries/${form.data.name.replace(/ /g, '_')}`);
-		}
-		return { form };
+		const saved = await saveMystery(form.data.id, session.user.id, JSON.stringify(form.data));
+		isTAndThrowPostgresErrorIfNot(saved);
+		console.log(form.data);
+		return withFiles({ form });
 	},
 	submit: async ({ request, locals: { getSession } }) => {
 		const [session, form] = await Promise.all([getSession(), superValidate(request, zod(submitSchema))]);
@@ -54,6 +53,6 @@ export const actions = {
 		const result = await publishMysteryForAll(form.data, session.user.id);
 		isTAndThrowPostgresErrorIfNot(result);
 		console.log('posted succesfully');
-		return { form };
+		return withFiles({ form });
 	}
 };

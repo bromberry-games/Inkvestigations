@@ -2,6 +2,10 @@ import { z } from 'zod';
 
 const MysterySchema = z.object({
 	name: z.string().min(1).max(100),
+	image: z
+		.custom<File>((f) => f instanceof File, 'Please upload a file.')
+		.refine((f) => f.size < 100_000, 'Max 100 kB upload size.')
+		.nullable(),
 	description: z.string().max(300).optional(),
 	setting: z.string().max(300).optional(),
 	theme: z.string().max(300).optional(),
@@ -64,6 +68,7 @@ const GameFewShotsSchema = z.object({
 
 const GameMysterySchema = z.object({
 	name: z.string().min(1).max(100),
+	image: z.custom<File>((f) => f instanceof File, 'Please upload a file.').refine((f) => f.size < 300_000, 'Max 100 kB upload size.'),
 	description: z.string().max(300),
 	setting: z.string().max(300),
 	theme: z.string().max(300),

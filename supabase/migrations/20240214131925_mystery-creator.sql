@@ -28,4 +28,7 @@ SET mystery_slug = (
 );
 ALTER TABLE solved DROP COLUMN mystery_name;
 
--- ALTER TABLE mysteries DROP CONSTRAINT mysteries_name_key;
+insert into storage.buckets
+  (id, name)
+values
+  ('user_mysteries', 'user_mysteries');

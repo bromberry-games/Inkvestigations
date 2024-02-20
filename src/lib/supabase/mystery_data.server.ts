@@ -242,6 +242,13 @@ export async function publishMysteryForAll(mysteryData: MysterySubmitSchema, use
 	}
 
 	const results = await Promise.all(insertOperations);
+	const { data, error } = await supabase_full_access.storage.from('user_mysteries').upload(mysteryData.id, mysteryData.mystery.image);
+	if (error) {
+		console.error(error);
+		return error;
+	}
+	console.log(data);
+	console.log('uploaded mystery');
 
 	// Extract errors from the results if necessary
 	if (results.some((result) => result.error != null)) {
