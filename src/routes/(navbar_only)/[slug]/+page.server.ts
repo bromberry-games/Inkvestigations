@@ -76,7 +76,11 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		notes: messagesAndNotes.notes?.[0]?.notes || {},
 		convId: messagesAndNotes.conversationId,
 		orderInt: letterInfo.order_int,
+<<<<<<< HEAD
 		name: letterInfo.name
+=======
+		session
+>>>>>>> dev
 	};
 };
 

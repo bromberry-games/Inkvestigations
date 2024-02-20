@@ -188,7 +188,7 @@
 						<button
 							id="solve-button"
 							type="button"
-							class="btn btn-sm ml-2 border border-secondary bg-secondary p-2 font-primary disabled:cursor-not-allowed disabled:opacity-30"
+							class="btn btn-sm ml-2 border border-secondary bg-secondary p-2 font-primary text-gray-800 disabled:cursor-not-allowed disabled:opacity-30"
 							disabled={blockWrite}
 							on:click={() => {
 								accuseMode = !accuseMode;
@@ -205,7 +205,7 @@
 						<textarea
 							id="chat-input"
 							data-testid="chat-input"
-							class="textarea min-h-[42px] flex-1 overflow-hidden font-secondary {accuseMode ? 'shadow-xl shadow-red-500' : ''}"
+							class="textarea min-h-[42px] bg-amber-50 flex-1 overflow-hidden font-secondary border-primary focus:ring-primary focus:border-primary  {accuseMode ? 'shadow-inner shadow-red-500' : ''}"
 							rows="1"
 							placeholder={placeholderText}
 							use:textareaAutosizeAction
@@ -215,7 +215,7 @@
 							disabled={gameOver}
 						/>
 						<div class="flex flex-col items-center justify-end md:flex-row md:items-end">
-							<button type="submit" class="btn btn-sm ml-2" id="chat-submit">
+							<button type="submit" class="btn btn-sm ml-2 text-quaternary" id="chat-submit">
 								<PaperAirplane class="h-6 w-6" />
 							</button>
 						</div>

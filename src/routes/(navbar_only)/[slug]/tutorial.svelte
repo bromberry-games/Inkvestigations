@@ -34,12 +34,11 @@
 					{
 						element: '#chat-input',
 						popover: {
-							// title: 'Title',
 							description: `<p><strong>Talk to the Police Chief:</strong> Ask anything to uncover clues.</p>
   <ul>
     <li><strong>Example:</strong> "Hello Chief, Please interrogate the victims father."</li>
-    <li><strong>Send Message:</strong> Press <strong>Enter</strong> to send.</li>
-    <li><strong>New Line:</strong> Use <strong>Shift + Enter</strong> for line breaks.</li>
+    <li><strong>Send Message:</strong> Press <strong>Enter</strong> or <strong>tap the arrow</strong> to send.</li>
+    <li><strong>New Line:</strong> Use <strong>Shift + Enter</strong> or <strong>press return</strong> for line breaks.</li>
   </ul>
                     `
 						}
@@ -47,16 +46,6 @@
 				];
 
 				setupDriveOnTextArea(driverSteps);
-				// const textarea = document.querySelector('#chat-input');
-				// if (textarea) {
-				// const drive = () => {
-				// driverObj.drive();
-				// const textarea = document.querySelector('#chat-input');
-				// textarea?.removeEventListener('click', drive);
-				// };
-				//
-				// textarea.addEventListener('click', drive);
-				// }
 			}
 			if (messages.length == 3) {
 				notesButton.disabled = false;

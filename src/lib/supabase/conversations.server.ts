@@ -13,7 +13,7 @@ export async function loadBrainMessages(userId: string, slug: string): Promise<B
 	}
 	const { data, error } = await supabase_full_access
 		.from('user_mystery_brain_messages')
-		.select('mood, info, chainOfThought:chain_of_thought')
+		.select('info, chainOfThought:chain_of_thought')
 		.eq('conversation_id', conversationId)
 		.order('created_at', { ascending: true });
 	if (error) {
@@ -32,7 +32,7 @@ export async function addInfoModelMessage(userId: string, mystery: string, messa
 
 	const { error } = await supabase_full_access
 		.from('user_mystery_brain_messages')
-		.insert({ chain_of_thought: message.chainOfThought, info: message.info, mood: message.mood, conversation_id: conversationId });
+		.insert({ chain_of_thought: message.chainOfThought, info: message.info, conversation_id: conversationId });
 
 	if (error) {
 		console.error(error);

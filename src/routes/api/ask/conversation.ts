@@ -28,8 +28,7 @@ export async function standardInvestigationAnswer(
 				new AIMessage({
 					content: `${item.chainOfThought}
 Information:
-${item.info}
-- mood: ${item.mood}`
+${item.info}`
 				})
 			);
 		});
@@ -53,7 +52,7 @@ ${item.info}
 	for (let i = 0; i < assistantLetterAnswers.length; i++) {
 		messages.push(
 			new HumanMessage({
-				content: 'Order:\n' + letterMessages[i].content + '\nInformation:\n' + brainMessages[i].info + '\n- mood: ' + brainMessages[i].mood
+				content: 'Order:\n' + letterMessages[i].content + '\nInformation:\n' + brainMessages[i].info
 			})
 		);
 		messages.push(new AIMessage({ content: assistantLetterAnswers[i].content }));
