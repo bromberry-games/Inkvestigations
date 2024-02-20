@@ -12,8 +12,8 @@
 	<MyLayout {supabase} {session} />
 </div>
 
-<div class="flex h-full flex-1 justify-center">
-	<div class="h-full flex-auto bg-tertiary md:w-11/12">
-		<slot />
-	</div>
-</div>
+<!-- <div class="flex h-full flex-1 justify-center"> -->
+<!-- <div class="h-full flex-auto bg-tertiary md:w-11/12"> -->
+<slot />
+<!-- </div> -->
+<!-- </div> -->

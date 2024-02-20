@@ -1,6 +1,6 @@
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
 import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers.js';
-import { createNewUserMystery, deleteMystery, loadMysteries } from '$lib/supabase/mystery_data.server';
+import { createNewUserMystery, deleteMystery, loadUserMysteries } from '$lib/supabase/mystery_data.server';
 import { error, redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals: { getSession } }) => {
@@ -9,7 +9,7 @@ export const load = async ({ locals: { getSession } }) => {
 		throw redirect(303, '/');
 	}
 
-	const mysteries = await loadMysteries(session.user.id);
+	const mysteries = await loadUserMysteries(session.user.id);
 	isTAndThrowPostgresErrorIfNot(mysteries);
 	return { mysteries };
 };

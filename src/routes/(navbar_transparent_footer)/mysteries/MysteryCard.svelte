@@ -5,10 +5,20 @@
 	export let mystery: unknown;
 	export let rating: number;
 	export let unlocked: boolean;
+	let bucketPath: string = 'http://localhost:54321/storage/v1/object/public/user_mysteries/';
+
+	function mysteryPath(mystery: unknown) {
+		if (mystery.access_code != 'user') {
+			return '/images/mysteries/' + mystery.name.replace(/ /g, '_').toLowerCase() + '.webp';
+		}
+		const path = bucketPath + mystery.slug;
+		console.log(path);
+		return path;
+	}
 </script>
 
 <Card
-	img={'/images/mysteries/' + mystery.name.replace(/ /g, '_').toLowerCase() + '.webp'}
+	img={mysteryPath(mystery)}
 	class="rounded border-8 border-quaternary !bg-quaternary"
 	padding="none"
 	href={unlocked ? mystery.slug : undefined}

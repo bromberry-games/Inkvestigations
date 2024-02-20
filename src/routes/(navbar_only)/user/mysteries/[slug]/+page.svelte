@@ -2,8 +2,6 @@
 	import { textareaAutosizeAction } from 'svelte-legos';
 	import type { PageData } from './$types';
 	import { superForm } from 'sveltekit-superforms/client';
-	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
-	import FormError from '../FormError.svelte';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { mainSchema, submitSchema } from './schema';
 	import SuperInput from '$lib/superforms/SuperInput.svelte';
@@ -20,11 +18,6 @@
 	});
 	$: form = formAll.form;
 	$: errors = formAll.errors;
-	$: enhance = formAll.enhance;
-	// let { form, errors, enhance, options, constraints } = formAll;
-	// $: if (formAll) {
-	// ({ form, errors, enhance, options, constraints } = formAll);
-	// }
 
 	onMount(() => {
 		if ($form.suspects == undefined || $form.suspects.length === 0) {
@@ -58,27 +51,52 @@
 	}
 	const inputClassHalf = 'col-span-1 rounded border border-gray-300 px-2 py-1';
 	const inputClassFull = 'col-span-2 rounded border border-gray-300 px-2 py-1';
+
+	let imageUrl = '';
+
+	function handleFileChange(event) {
+		console.log('handleFileChange');
+		console.log(event);
+		const file = event.target.files[0];
+		if (file) {
+			imageUrl = URL.createObjectURL(file);
+		}
+	}
 </script>
 
 <!-- <SuperDebug data={$form} /> -->
 
-<div class="mt-16 flex justify-center bg-tertiary">
+<div class="flex w-full justify-center bg-tertiary pt-16">
 	<form
 		enctype="multipart/form-data"
 		method="POST"
 		action={save ? '?/save' : '?/submit'}
-		class="grid grid-cols-[1fr_10fr] gap-4 lg:w-1/2"
+		class="mx-4 grid grid-cols-[1fr_4fr] lg:w-1/2 lg:grid-cols-[1fr_10fr] lg:gap-4"
 		use:formAll.enhance
 	>
 		<input type="hidden" name="id" bind:value={$form.id} />
-		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.name" form={formAll} placeholder="Forced Farewell" />
+		<SuperInput
+			inputClass={inputClassFull}
+			errorClass="col-span-2"
+			field="mystery.name"
+			form={formAll}
+			placeholder="Forced Farewell"
+			labelName="Name"
+		/>
 		<hr class="col-span-2 border-slate-900" />
+		{#if imageUrl}
+			<img src={imageUrl} alt="mystery" />
+		{:else}
+			<div id="imagePreview">No image selected</div>
+		{/if}
+		<img src={'http://localhost:54321/storage/v1/object/public/user_mysteries/' + $form.id} alt="mystery" />
 		<input
 			class="col-span-2"
 			type="file"
 			name="image"
 			accept="image/png, image/jpeg, image/webp"
 			on:input={(e) => ($form.mystery.image = e.currentTarget.files?.item(0) ?? null)}
+			on:change={handleFileChange}
 		/>
 		{#if $errors.mystery?.image}<span>{$errors.mystery.image}</span>{/if}
 		<SuperInput
@@ -87,13 +105,14 @@
 			field="mystery.setting"
 			form={formAll}
 			placeholder="England in the 1890s, a small town called Romey"
+			labelName="Setting"
 		/>
 		<hr class="col-span-2 border-slate-900" />
-		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.description" form={formAll} />
+		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.description" form={formAll} labelName="Description" />
 		<hr class="col-span-2 border-slate-900" />
-		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.theme" form={formAll} />
+		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.theme" form={formAll} labelName="Theme" />
 		<hr class="col-span-2 border-slate-900" />
-		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.letter_info" form={formAll} />
+		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.letter_info" form={formAll} labelName="Letter" />
 		<hr class="col-span-2 border-slate-900" />
 		<h2 class="col-span-2 text-lg font-bold">Victim</h2>
 		<SuperInput
@@ -119,6 +138,7 @@
 			field="mystery.solution"
 			form={formAll}
 			placeholder="Solve the mystery"
+			labelName="Solution"
 		/>
 
 		<h2 class="col-span-2 text-lg font-bold">Suspects</h2>

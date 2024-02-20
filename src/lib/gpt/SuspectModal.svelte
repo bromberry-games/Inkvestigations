@@ -31,12 +31,8 @@
 			<div class="mt-2 flex">
 				<div class="mr-4 flex flex-col items-center justify-between">
 					<img
-<<<<<<< HEAD
 						src={'/images/mysteries/' + nameParsed.toLowerCase() + '/suspects/' + convertToSnakeCaseEnhanced(suspect.name) + '.webp'}
-=======
-						src={'/images/mysteries/' + slug.toLowerCase() + '/suspects/' + convertToSnakeCaseEnhanced(suspect.name) + '.webp'}
 						class="mb-2 rounded-sm"
->>>>>>> dev
 						alt={suspect.name}
 					/>
 				</div>

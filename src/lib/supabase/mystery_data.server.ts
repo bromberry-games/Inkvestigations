@@ -84,7 +84,16 @@ export async function loadMysteriesWithSolved(userId: string) {
 	return data;
 }
 
-export async function loadMysteries(userId: string) {
+export async function loadMysteries() {
+	const { data, error } = await supabase_full_access.from('mysteries').select('*').order('order_int', { ascending: true });
+	if (error) {
+		console.error(error);
+		return error;
+	}
+	return data;
+}
+
+export async function loadUserMysteries(userId: string) {
 	const { data, error } = await supabase_full_access.from('user_mysteries').select('id, published').eq('user_id', userId);
 	if (error) {
 		console.error('error loading user mysteries', error);
@@ -125,15 +134,6 @@ export async function loadyMystery(name: string, userid: string) {
 		throw new Error('No mystery found');
 	}
 	return data[0];
-}
-
-export async function publishMystery(mystery: string, userid: string): Promise<boolean> {
-	const { error } = await supabase_full_access.from('user_mysteries').update({ published: true }).eq('user_id', userid).eq('name', mystery);
-	if (error) {
-		console.error(error);
-		return false;
-	}
-	return true;
 }
 
 export async function deleteMystery(id: string, userid: string) {
@@ -187,7 +187,8 @@ export async function publishMysteryForAll(mysteryData: MysterySubmitSchema, use
 				'Oliver breaks down under the accusation. He falls to the ground admitting his crime. But he shouts that if Terry had shown any kind of regret he would have forgiven him.',
 			star3:
 				'All heads shoot to Oliver. Blanched and shaking he tries to move backwards but his back is against the wall. He slides down and admits it, head in his hands. Terry misused his influence, showing no regard for the people that were affected. Since becoming his apprentice, he had witnessed how Terry literally made up articles out of thin air, and the results always somehow helped Terry. Oliver looked Wellington in the eyes and says that he would do it again.'
-		}
+		},
+		slug: mysteryData.id
 	};
 
 	let mysteryId: number;

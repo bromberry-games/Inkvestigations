@@ -1,6 +1,7 @@
 import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers.js';
-import { loadMysteries, loadMysteriesWithSolved } from '$lib/supabase/mystery_data.server';
+import { loadUserMysteries, loadMysteriesWithSolved, loadMysteries } from '$lib/supabase/mystery_data.server';
 import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.server';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export const load = async ({ locals: { getSession, supabase } }) => {
 	const session = await getSession();
