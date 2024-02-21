@@ -6,10 +6,15 @@
 	import { mainSchema, submitSchema } from './schema';
 	import SuperInput from '$lib/superforms/SuperInput.svelte';
 	import { onMount } from 'svelte';
+	import { CloseSolid } from 'flowbite-svelte-icons';
+	import SuperTextarea from '$lib/superforms/SuperTextarea.svelte';
+	import { Spinner } from 'flowbite-svelte';
+	import SuperImage from '$lib/superforms/SuperImage.svelte';
 
 	export let data: PageData;
 
 	let save: boolean = true;
+	let showTimeframe: boolean = false;
 
 	const formAll = superForm(data.form, {
 		validators: zodClient(mainSchema),
@@ -18,13 +23,15 @@
 	});
 	$: form = formAll.form;
 	$: errors = formAll.errors;
+	$: delayed = formAll.delayed;
+	$: message = formAll.message;
 
 	onMount(() => {
 		if ($form.suspects == undefined || $form.suspects.length === 0) {
 			$form.suspects = [{ name: '', description: '' }];
 		}
 		if ($form.timeframes == undefined || $form.timeframes.length === 0) {
-			$form.timeframes = [{ timeframe: '', event_happened: '' }];
+			$form.timeframes = [];
 		}
 		if ($form.action_clues == undefined || $form.action_clues.length === 0) {
 			$form.action_clues = [{ action: '', clue: '' }];
@@ -37,7 +44,7 @@
 		}
 		$form.suspects = [...$form.suspects, { name: '', description: '' }];
 	}
-	function addEvent() {
+	function addTimeFrame() {
 		$form.timeframes = [...$form.timeframes, { timeframe: '', event_happened: '' }];
 	}
 	function addAction() {
@@ -71,7 +78,7 @@
 		enctype="multipart/form-data"
 		method="POST"
 		action={save ? '?/save' : '?/submit'}
-		class="mx-4 grid grid-cols-[1fr_4fr] lg:w-1/2 lg:grid-cols-[1fr_10fr] lg:gap-4"
+		class="mx-4 grid grid-cols-[1fr_4fr] rounded bg-blue-200 p-4 lg:w-1/2 lg:grid-cols-[1fr_10fr] lg:gap-4"
 		use:formAll.enhance
 	>
 		<input type="hidden" name="id" bind:value={$form.id} />
@@ -83,23 +90,26 @@
 			placeholder="Forced Farewell"
 			labelName="Name"
 		/>
-		<hr class="col-span-2 border-slate-900" />
-		{#if imageUrl}
-			<img src={imageUrl} alt="mystery" />
-		{:else}
-			<div id="imagePreview">No image selected</div>
-		{/if}
-		<img src={'http://localhost:54321/storage/v1/object/public/user_mysteries/' + $form.id} alt="mystery" />
+		<!-- <SuperImage inputClass={inputClassFull} errorClass="col-span-2" field="mystery.image" {formAll} labelName="Thumbnail"></SuperImage> -->
+		<div class="col-span-1">
+			{#if imageUrl}
+				<img src={imageUrl} alt="mystery" />
+			{:else if $form.mystery?.image}
+				<img src={'http://localhost:54321/storage/v1/object/public/user_mysteries/' + $form.id + '?' + Math.random()} alt="mystery" />
+			{:else}
+				<div id="imagePreview">Select thumbnail</div>
+			{/if}
+		</div>
 		<input
-			class="col-span-2"
+			class="col-span-1"
 			type="file"
 			name="image"
 			accept="image/png, image/jpeg, image/webp"
 			on:input={(e) => ($form.mystery.image = e.currentTarget.files?.item(0) ?? null)}
 			on:change={handleFileChange}
 		/>
-		{#if $errors.mystery?.image}<span>{$errors.mystery.image}</span>{/if}
-		<SuperInput
+		{#if $errors.mystery?.image}<span class="col-span-2 text-red-500">{$errors.mystery.image}</span>{/if}
+		<SuperTextarea
 			inputClass={inputClassFull}
 			errorClass="col-span-2"
 			field="mystery.setting"
@@ -107,12 +117,8 @@
 			placeholder="England in the 1890s, a small town called Romey"
 			labelName="Setting"
 		/>
-		<hr class="col-span-2 border-slate-900" />
 		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.description" form={formAll} labelName="Description" />
-		<hr class="col-span-2 border-slate-900" />
 		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.theme" form={formAll} labelName="Theme" />
-		<hr class="col-span-2 border-slate-900" />
-		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.letter_info" form={formAll} labelName="Letter" />
 		<hr class="col-span-2 border-slate-900" />
 		<h2 class="col-span-2 text-lg font-bold">Victim</h2>
 		<SuperInput
@@ -132,7 +138,7 @@
 			placeholder="kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives."
 		/>
 		<hr class="col-span-2 border-slate-900" />
-		<SuperInput
+		<SuperTextarea
 			inputClass={inputClassFull}
 			errorClass="col-span-2"
 			field="mystery.solution"
@@ -141,52 +147,69 @@
 			labelName="Solution"
 		/>
 
+		<SuperTextarea inputClass={inputClassFull} errorClass="col-span-2" field="mystery.letter_info" form={formAll} labelName="Letter" />
 		<h2 class="col-span-2 text-lg font-bold">Suspects</h2>
 		{#each $form.suspects || [] as suspect, index (index)}
-			<SuperInput
-				inputClass="rounded border border-gray-300 px-2 py-1"
-				errorClass="col-span-2"
-				field="suspects[{index}].name"
-				form={formAll}
-				labelName="Suspect"
-				placeholder="Butler Jesob"
-			/>
-			<SuperInput
-				inputClass="rounded border border-gray-300 px-2 py-1"
-				errorClass="col-span-2"
-				field="suspects[{index}].description"
-				form={formAll}
-				labelName="Description"
-				placeholder="A long-time butler and good friend of the family, loves the children."
-			/>
-			<button type="button" class="col-span-2 bg-red-500" on:click={() => removeItem('suspects', index)}>Remove Suspect</button>
+			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 p-4">
+				<div class="col-span-2 flex justify-end">
+					<button type="button" class="" on:click={() => removeItem('suspects', index)}><CloseSolid></CloseSolid></button>
+				</div>
+				<SuperInput
+					inputClass="rounded border border-gray-300 px-2 py-1"
+					errorClass="col-span-2"
+					field="suspects[{index}].name"
+					form={formAll}
+					labelName="Suspect"
+					placeholder="Butler Jesob"
+				/>
+				<SuperInput
+					inputClass="rounded border border-gray-300 px-2 py-1"
+					errorClass="col-span-2"
+					field="suspects[{index}].description"
+					form={formAll}
+					labelName="Description"
+					placeholder="A long-time butler and good friend of the family, loves the children."
+				/>
+			</div>
 		{/each}
-		<button type="button" class="col-span-2 bg-green-500" on:click={addSuspect}>Add Suspect</button>
+		{#if $errors.suspects}
+			<span class="col-span-2">{$errors.suspects}</span>
+		{/if}
+		<button type="button" class="col-span-2 bg-green-500" on:click={addSuspect} data-testid="add-suspect">Add Suspect</button>
 		<hr class="col-span-2 border-slate-900" />
 
-		<h2 class="col-span-2 text-lg font-bold">Timeframe</h2>
-		{#each $form?.timeframes || [] as timeframe, index (index)}
-			<SuperInput
-				inputClass="rounded border border-gray-300 px-2 py-1"
-				errorClass="col-span-2"
-				field="timeframes[{index}].timeframe"
-				form={formAll}
-				labelName="Time"
-			/>
-			<SuperInput
-				inputClass="rounded border border-gray-300 px-2 py-1"
-				errorClass="col-span-2"
-				field="timeframes[{index}].event_happened"
-				form={formAll}
-				labelName="event"
-			/>
-			<button type="button" class="col-span-2 bg-red-500" on:click={() => removeItem('timeframes', index)}>Remove Event</button>
-		{/each}
-		<button type="button" on:click={addEvent} class="4 col-span-2 bg-green-500">Add Event</button>
+		<input type="checkbox" class="col-span-1" name="show-timeframe" bind:checked={showTimeframe} />
+		<h2 class="col-span-1 text-lg font-bold">Timeframe</h2>
+		{#if showTimeframe}
+			{#each $form?.timeframes || [] as timeframe, index (index)}
+				<div class="col-span-2 flex justify-end">
+					<button type="button" class="" on:click={() => removeItem('timeframes', index)}><CloseSolid></CloseSolid></button>
+				</div>
+				<SuperInput
+					inputClass="rounded border border-gray-300 px-2 py-1"
+					errorClass="col-span-2"
+					field="timeframes[{index}].timeframe"
+					form={formAll}
+					labelName="Time"
+				/>
+				<SuperInput
+					inputClass="rounded border border-gray-300 px-2 py-1"
+					errorClass="col-span-2"
+					field="timeframes[{index}].event_happened"
+					form={formAll}
+					labelName="event"
+				/>
+				<hr class="col-span-2 border-slate-900" />
+			{/each}
+			<button type="button" on:click={addTimeFrame} class="4 col-span-2 bg-green-500">Add Event</button>
+		{/if}
 
 		<hr class="col-span-2 border-slate-900" />
 		<h2 class="col-span-2 text-lg font-bold">Inspector Actions</h2>
 		{#each $form.action_clues || [] as action, index (index)}
+			<div class="col-span-2 flex justify-end">
+				<button type="button" class="" on:click={() => removeItem('action_clues', index)}><CloseSolid></CloseSolid></button>
+			</div>
 			<SuperInput
 				inputClass="rounded border border-gray-300 px-2 py-1"
 				errorClass="col-span-2"
@@ -201,12 +224,18 @@
 				form={formAll}
 				labelName="Clue"
 			/>
-
-			<button type="button" class="col-span-2 bg-red-500" on:click={() => removeItem('action_clues', index)}>Remove Event</button>
+			<hr class="col-span-2 border-slate-900" />
 		{/each}
-		<button type="button" on:click={addAction} class="col-span-2 bg-green-500">Add Action</button>
+		<button type="button" on:click={addAction} class="col-span-2 bg-green-500" data-testid="add-action">Add Action</button>
 
 		<hr class="col-span-2 border-slate-900" />
+		{#if $message}
+			<p class="col-span-2 text-green-500">
+				{$message}
+			</p>
+		{/if}
+		{#if $delayed}
+			<Spinner color="gray"></Spinner>{/if}
 		<button
 			type="submit"
 			on:click={() => (save = true)}

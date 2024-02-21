@@ -102,11 +102,17 @@ export async function loadUserMysteries(userId: string) {
 	return data ? data : [];
 }
 
-export async function saveMystery(uuid: string, userid: string, json: string) {
+export async function saveMystery(uuid: string, userid: string, json: string, image: File | null) {
 	const { error } = await supabase_full_access.from('user_mysteries').update({ id: uuid, user_id: userid, info: json }).eq('id', uuid);
 	if (error) {
 		console.error('error saving mystery', error);
 		return error;
+	}
+	if (!image) return true;
+	const { error: uploadError } = await supabase_full_access.storage.from('user_mysteries').upload(uuid, image, {upsert: true});
+	if (uploadError) {
+		console.error(uploadError);
+		return uploadError;
 	}
 	return true;
 }
@@ -243,13 +249,6 @@ export async function publishMysteryForAll(mysteryData: MysterySubmitSchema, use
 	}
 
 	const results = await Promise.all(insertOperations);
-	const { data, error } = await supabase_full_access.storage.from('user_mysteries').upload(mysteryData.id, mysteryData.mystery.image);
-	if (error) {
-		console.error(error);
-		return error;
-	}
-	console.log(data);
-	console.log('uploaded mystery');
 
 	// Extract errors from the results if necessary
 	if (results.some((result) => result.error != null)) {

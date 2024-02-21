@@ -3,6 +3,8 @@
 </script>
 
 <script lang="ts" generics="T extends Record<string, unknown>">
+	import { textareaAutosizeAction } from 'svelte-legos';
+
 	import { formFieldProxy, type SuperForm, type FormPathLeaves } from 'sveltekit-superforms';
 
 	export let form: SuperForm<T, any>;
@@ -18,14 +20,14 @@
 <label for={field} class="text-md font-bold capitalize">
 	{labelName || field}
 </label>
-<input
+<textarea
 	name={field}
-	type="text"
 	aria-invalid={$errors ? 'true' : undefined}
 	bind:value={$value}
 	{...$constraints}
 	{...$$restProps}
 	class={inputClass}
 	{placeholder}
+	use:textareaAutosizeAction
 />
 {#if $errors}<span class={'invalid text-red-500 ' + errorClass}>{$errors}</span>{/if}

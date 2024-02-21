@@ -1,6 +1,6 @@
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper.js';
 import { error, fail, redirect } from '@sveltejs/kit';
-import { superValidate, withFiles } from 'sveltekit-superforms/server';
+import { message, superValidate, withFiles } from 'sveltekit-superforms/server';
 import { loadyMystery, publishMysteryForAll, saveMystery } from '$lib/supabase/mystery_data.server.js';
 import { randomUUID } from 'crypto';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -33,26 +33,27 @@ export const actions = {
 			return fail(400, { form });
 		}
 		const { slug } = params;
-		const saved = await saveMystery(form.data.id, session.user.id, JSON.stringify(form.data));
+		const saved = await saveMystery(form.data.id, session.user.id, JSON.stringify(form.data), form.data.mystery.image);
 		isTAndThrowPostgresErrorIfNot(saved);
 		console.log(form.data);
-		return withFiles({ form });
+		return message(form, 'Mystery saved');
 	},
 	submit: async ({ request, locals: { getSession } }) => {
 		const [session, form] = await Promise.all([getSession(), superValidate(request, zod(submitSchema))]);
 		if (getAuthStatus(session) != AuthStatus.LoggedIn) {
 			redirect(303, '/');
 		}
-		console.log('posted');
 		if (!form.valid) {
 			console.log('invalid');
-			return fail(400, { form });
+			console.log(form.data);
+			return fail(400, withFiles({ form }));
 		}
-		const saved = await saveMystery(form.data.id, session.user.id, JSON.stringify(form.data));
+		const saved = await saveMystery(form.data.id, session.user.id, JSON.stringify(form.data), form.data.mystery.image);
 		isTAndThrowPostgresErrorIfNot(saved);
 		const result = await publishMysteryForAll(form.data, session.user.id);
 		isTAndThrowPostgresErrorIfNot(result);
 		console.log('posted succesfully');
-		return withFiles({ form });
+		//create 5000ms delay
+		return message(form, 'Mystery submitted');
 	}
 };
