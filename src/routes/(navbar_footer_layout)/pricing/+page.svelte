@@ -54,6 +54,26 @@
 		<div class="my-8 flex flex-wrap justify-center gap-16">
 			<Card class="flex w-full flex-col justify-between">
 				<div>
+					<h5 class="mb-4 text-xl font-medium text-gray-500">for free</h5>
+					<div class="flex items-baseline text-gray-900">
+						<span class="text-3xl font-semibold">$</span>
+						<span class="text-5xl font-extrabold tracking-tight">0</span>
+						<span class="ms-1 text-xl font-normal text-gray-500">/month +</span>
+					</div>
+					<span class="text-xl font-normal text-gray-500"
+						><span class="text-3xl font-bold text-gray-900">${data.freeTier.unit_amount / 100}</span> per
+						<span class="text-3xl font-bold text-gray-700">{data.freeTier.product.metadata.metered_message_refill}</span> messages billed every
+						3 months</span
+					>
+					<ul class="my-7 space-y-4">
+						<CheckWithText><span>5 daily messages for free!</span></CheckWithText>
+						<CheckWithText><span>Play as many mysteries as you can</span></CheckWithText>
+					</ul>
+				</div>
+				<div class="w-full self-end"></div>
+			</Card>
+			<Card class="flex w-full flex-col justify-between">
+				<div>
 					<h5 class="mb-4 text-xl font-medium text-gray-500">Pay as you go</h5>
 					<div class="flex items-baseline text-gray-900">
 						<span class="text-3xl font-semibold">$</span>
