@@ -11,7 +11,7 @@
 		if (mystery.access_code != 'user') {
 			return '/images/mysteries/' + mystery.name.replace(/ /g, '_').toLowerCase() + '.webp';
 		}
-		const path = bucketPath + mystery.slug;
+		const path = bucketPath + mystery.slug + '/mystery.image';
 		console.log(path);
 		return path;
 	}

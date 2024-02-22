@@ -6,6 +6,7 @@ import { randomUUID } from 'crypto';
 import { zod } from 'sveltekit-superforms/adapters';
 import { mainSchema, submitSchema } from './schema';
 import { isTAndThrowPostgresErrorIfNot } from '$lib/supabase/helpers';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export const load = async ({ locals: { getSession, supabase }, params }) => {
 	const session = await getSession();
@@ -17,11 +18,28 @@ export const load = async ({ locals: { getSession, supabase }, params }) => {
 	isTAndThrowPostgresErrorIfNot(mystery);
 	if (mystery) {
 		const form = await superValidate({ ...JSON.parse(mystery.info), id: mystery.id }, zod(mainSchema));
-		return { form };
+		return withFiles({ form });
 	} else {
 		error(404, 'Mystery not found');
 	}
 };
+
+async function saveForm(form, userId: string) {
+	const images: { image: File; path: string }[] = [];
+	if (form.data.mystery.image && form.data.mystery.image !== 'image') {
+		images.push({ image: form.data.mystery.image, path: 'mystery.image' });
+		form.data.mystery.image = 'image';
+	}
+	for (let i = 0; i < form.data.suspects.length; i++) {
+		const suspect = form.data.suspects[i];
+		if (suspect.image && suspect.image !== 'image') {
+			images.push({ image: suspect.image, path: `suspects${i}.image` });
+			suspect.image = 'image';
+		}
+	}
+	const saved = await saveMystery(form.data.id, userId, JSON.stringify(form.data), images);
+	isTAndThrowPostgresErrorIfNot(saved);
+}
 
 export const actions = {
 	save: async ({ params, request, locals: { getSession } }) => {
@@ -33,9 +51,7 @@ export const actions = {
 			return fail(400, { form });
 		}
 		const { slug } = params;
-		const saved = await saveMystery(form.data.id, session.user.id, JSON.stringify(form.data), form.data.mystery.image);
-		isTAndThrowPostgresErrorIfNot(saved);
-		console.log(form.data);
+		await saveForm(form, session.user.id);
 		return message(form, 'Mystery saved');
 	},
 	submit: async ({ request, locals: { getSession } }) => {
@@ -45,15 +61,11 @@ export const actions = {
 		}
 		if (!form.valid) {
 			console.log('invalid');
-			console.log(form.data);
 			return fail(400, withFiles({ form }));
 		}
-		const saved = await saveMystery(form.data.id, session.user.id, JSON.stringify(form.data), form.data.mystery.image);
-		isTAndThrowPostgresErrorIfNot(saved);
+		await saveForm(form, session.user.id);
 		const result = await publishMysteryForAll(form.data, session.user.id);
 		isTAndThrowPostgresErrorIfNot(result);
-		console.log('posted succesfully');
-		//create 5000ms delay
 		return message(form, 'Mystery submitted');
 	}
 };

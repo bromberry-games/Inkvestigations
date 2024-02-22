@@ -42,7 +42,7 @@
 		if ($form.suspects == undefined) {
 			throw new Error('suspects is undefined');
 		}
-		$form.suspects = [...$form.suspects, { name: '', description: '' }];
+		$form.suspects = [...$form.suspects, { name: '', description: '', image: undefined }];
 	}
 	function addTimeFrame() {
 		$form.timeframes = [...$form.timeframes, { timeframe: '', event_happened: '' }];
@@ -58,17 +58,6 @@
 	}
 	const inputClassHalf = 'col-span-1 rounded border border-gray-300 px-2 py-1';
 	const inputClassFull = 'col-span-2 rounded border border-gray-300 px-2 py-1';
-
-	let imageUrl = '';
-
-	function handleFileChange(event) {
-		console.log('handleFileChange');
-		console.log(event);
-		const file = event.target.files[0];
-		if (file) {
-			imageUrl = URL.createObjectURL(file);
-		}
-	}
 </script>
 
 <!-- <SuperDebug data={$form} /> -->
@@ -90,25 +79,7 @@
 			placeholder="Forced Farewell"
 			labelName="Name"
 		/>
-		<!-- <SuperImage inputClass={inputClassFull} errorClass="col-span-2" field="mystery.image" {formAll} labelName="Thumbnail"></SuperImage> -->
-		<div class="col-span-1">
-			{#if imageUrl}
-				<img src={imageUrl} alt="mystery" />
-			{:else if $form.mystery?.image}
-				<img src={'http://localhost:54321/storage/v1/object/public/user_mysteries/' + $form.id + '?' + Math.random()} alt="mystery" />
-			{:else}
-				<div id="imagePreview">Select thumbnail</div>
-			{/if}
-		</div>
-		<input
-			class="col-span-1"
-			type="file"
-			name="image"
-			accept="image/png, image/jpeg, image/webp"
-			on:input={(e) => ($form.mystery.image = e.currentTarget.files?.item(0) ?? null)}
-			on:change={handleFileChange}
-		/>
-		{#if $errors.mystery?.image}<span class="col-span-2 text-red-500">{$errors.mystery.image}</span>{/if}
+		<SuperImage inputClass={inputClassFull} errorClass="col-span-2" field="mystery.image" {formAll} labelName="Thumbnail"></SuperImage>
 		<SuperTextarea
 			inputClass={inputClassFull}
 			errorClass="col-span-2"
@@ -154,6 +125,8 @@
 				<div class="col-span-2 flex justify-end">
 					<button type="button" class="" on:click={() => removeItem('suspects', index)}><CloseSolid></CloseSolid></button>
 				</div>
+				<SuperImage inputClass={inputClassFull} errorClass="col-span-2" field="suspects[{index}].image" {formAll} labelName="Thumbnail"
+				></SuperImage>
 				<SuperInput
 					inputClass="rounded border border-gray-300 px-2 py-1"
 					errorClass="col-span-2"

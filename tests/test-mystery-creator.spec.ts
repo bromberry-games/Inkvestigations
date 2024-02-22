@@ -1,5 +1,5 @@
 import path from 'path';
-import { test, expect } from '../playwright/fixtures';
+import { test, expect, type Page } from '../playwright/fixtures';
 import { letter } from './data/death_on_the_dancefloor';
 
 test('test create new mystery and save it', async ({ page }) => {
@@ -37,15 +37,15 @@ test('test create new mystery and save it then change name', async ({ page }) =>
 test('save and load image', async ({ page }) => {
 	await page.goto('/user/mysteries');
 	await page.getByRole('button', { name: 'New' }).click();
-	await page.waitForTimeout(300);
+	await page.waitForTimeout(400);
 	await page.locator('input[name="mystery.name"]').fill('Test Images');
-	const fileInput = await page.locator('input[name="image"]');
+	const fileInput = await page.locator('input[name="mystery.image"]');
 	await fileInput.setInputFiles(path.join(process.cwd(), '/static/images/mysteries/mirror_mirror.webp'));
 
 	await page.getByRole('button', { name: 'save' }).click();
 	await page.waitForTimeout(300);
 	await page.reload({ waitUntil: 'networkidle' });
-	const fileInput2 = await page.locator('input[name="image"]');
+	const fileInput2 = await page.locator('input[name="mystery.image"]');
 	await fileInput2.setInputFiles(path.join(process.cwd(), '/static/images/mysteries/prison.webp'));
 	await page.getByRole('button', { name: 'save' }).click();
 	// await page.waitForTimeout(300);
@@ -85,14 +85,32 @@ test('test create new mystery and publish it', async ({ page }) => {
 	await page.getByRole('button', { name: 'Submit' }).click();
 });
 
+async function setSuspect(page: Page, index: number, name: string, description: string) {
+	await page.locator(`input[name="suspects[${index}].name"]`).fill(name);
+	await page.locator(`input[name="suspects[${index}].description"]`).fill(description);
+	const susp1 = await page.locator(`input[name="suspects[${index}].image"]`);
+	await susp1.setInputFiles(
+		path.join(
+			process.cwd(),
+			'/static/images/mysteries/prison/suspects/' +
+				name
+					.replace(/'|"/g, '')
+					.split(/(?=[A-Z])|\s+/)
+					.join('_')
+					.toLowerCase() +
+				'.webp'
+		)
+	);
+}
+
 test('Create prison and publish it', async ({ page }) => {
 	await page.goto('/user/mysteries');
 	await page.getByRole('button', { name: 'New' }).click();
-	await page.waitForTimeout(300);
+	await page.waitForTimeout(400);
 
 	// Filling out the main mystery details
 	await page.locator('input[name="mystery.name"]').fill('Prison');
-	const fileInput2 = await page.locator('input[name="image"]');
+	const fileInput2 = await page.locator('input[name="mystery.image"]');
 	await fileInput2.setInputFiles(path.join(process.cwd(), '/static/images/mysteries/prison.webp'));
 	await page.locator('input[name="mystery.description"]').fill('A prison guard meets his end halfway between freedom and chains.');
 	await page.locator('input[name="mystery.theme"]').fill('Corruption and integrity');
@@ -112,31 +130,25 @@ test('Create prison and publish it', async ({ page }) => {
 			`It was Heinrich Mann because Leonard, who was stringing Mann along with promises that he would be freed if he helped Leonard, but Leonard never delivered on his promises. [...]`
 		);
 
-	await page.locator('input[name="suspects[0].name"]').fill('Ernest "The Hunter" Orion');
-	await page
-		.locator('input[name="suspects[0].description"]')
-		.fill(
-			'A 65 year old prison governor. Used to be the best detective for Scotland Yard and got the nickname "The Hunter". Close to retirement. Sticks up for his own.'
-		);
-	await page.getByTestId('add-suspect').click();
-	await page.locator('input[name="suspects[1].name"]').fill('Heinrich Mann');
-	await page
-		.locator('input[name="suspects[1].description"]')
-		.fill('A 28 year old imprisoned forger. Is obsessed with his wife. A weasel who does what it takes.');
+	await setSuspect(
+		page,
+		0,
+		'Ernest "The Hunter" Orion',
+		'A 65 year old prison governor. Used to be the best detective for Scotland Yard and got the nickname "The Hunter". Close to retirement. Sticks up for his own.'
+	);
 	await page.getByTestId('add-suspect').click();
 
-	await page.locator('input[name="suspects[2].name"]').fill('Millicent Hagan');
-	await page
-		.locator('input[name="suspects[2].description"]')
-		.fill('A 35 year old secretary of Ernie Orion in Pentonville. Pedantic and anxious personality.');
+	await setSuspect(page, 1, 'Heinrich Mann', 'A 28 year old prisoner forger. Is obsessed with his wife. A weasel who does what it takes.');
 	await page.getByTestId('add-suspect').click();
 
-	await page.locator('input[name="suspects[3].name"]').fill('Joe Tovy');
-	await page
-		.locator('input[name="suspects[3].description"]')
-		.fill(
-			'A 30 year old doctor in Pentonville. A bit of a quack always experimenting with "cutting edge" medicine. Doesn\'t take anything too seriously.'
-		);
+	await setSuspect(
+		page,
+		2,
+		'Joe Tovy',
+		'A 30 year old doctor in Pentonville. A bit of a quack always experimenting with "cutting edge" medicine. Doesn\'t take anything too seriously.'
+	);
+	await page.getByTestId('add-suspect').click();
+	await setSuspect(page, 3, 'Millicent Hagan', 'A 35 year old secretary of Ernie Orion in Pentonville. Pedantic and porous personality.');
 
 	await page.locator('input[name="action_clues[0].action"]').fill('question Heinrich Mann');
 	await page
@@ -283,4 +295,5 @@ test('Create prison and publish it', async ({ page }) => {
 
 	// Submitting the form
 	await page.getByRole('button', { name: 'Submit' }).click();
+	await page.waitForTimeout(5000);
 });
