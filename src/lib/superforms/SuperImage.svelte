@@ -21,36 +21,15 @@
 	}
 
 	const { form } = formAll;
-	$: [first, second] = field.split('.');
 	const { value, errors, constraints } = formFieldProxy(formAll, field);
-	// $: console.log($form['suspects']?.[0]['image']);
-	// function setImage(e) {
-	// const file = e.target.files[0];
-	// if (array) {
-	// const matches = field.match(/(\w+)(\[\d+\]).(\w+)/);
-	// if (matches?.length != 3) {
-	// throw new Error('Field is not an image field');
-	// }
-	// const [first, second, third] = matches;
-	// $form[first][second][third] = file ?? null;
-	// }
-	// }
-	console.log($value);
+	const path = 'http://localhost:54321/storage/v1/object/public/user_mysteries/' + $form.id + '/' + $value + '?' + Math.random();
 </script>
 
 <div class="col-span-1">
 	{#if imageUrl}
 		<img src={imageUrl} alt="mystery" />
-	{:else if $value == 'image'}
-		<img
-			src={'http://localhost:54321/storage/v1/object/public/user_mysteries/' +
-				$form.id +
-				'/' +
-				field.replace('[', '').replace(']', '') +
-				'?' +
-				Math.random()}
-			alt="mystery"
-		/>
+	{:else if $value?.includes('.')}
+		<img src={path} alt="mystery" />
 	{:else}
 		<div id="imagePreview">Select thumbnail</div>
 	{/if}

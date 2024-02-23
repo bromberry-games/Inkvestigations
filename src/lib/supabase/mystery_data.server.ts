@@ -104,25 +104,17 @@ export async function loadUserMysteries(userId: string) {
 
 export async function saveMystery(uuid: string, userid: string, json: string, images: { image: File; path: string }[]) {
 	console.log('mystery json: ', json);
-	const { error } = await supabase_full_access.from('user_mysteries').update({ id: uuid, user_id: userid, info: json }).eq('id', uuid);
+	const { error } = await supabase_full_access
+		.from('user_mysteries')
+		.update({ id: uuid, user_id: userid, info: json })
+		.eq('id', uuid)
+		.select('id')
+		.single();
 	if (error) {
 		console.error('error saving mystery', error);
 		return error;
 	}
 
-	// for (const imageAndFile of images) {
-	// const path = uuid + '/' + imageAndFile.path;
-	// console.log('inserting image at: ', path);
-	// console.log('image: ', imageAndFile.image);
-	// const buff = await imageAndFile.image.arrayBuffer();
-	// console.log('buffer: ', buff);
-	// const { data: uploadData, error: uploadError } = await supabase_full_access.storage.from('user_mysteries').upload(path, buff);
-	// if (uploadError) {
-	// console.log('upload error: ', uploadError);
-	// return uploadError;
-	// }
-	// console.log('upload data: ', uploadData);
-	// }
 	const inserts = images.map(async (imageAndFile) =>
 		supabase_full_access.storage
 			.from('user_mysteries')
@@ -260,8 +252,10 @@ export async function publishMysteryForAll(mysteryData: MysterySubmitSchema, use
 	const insertOperations = [
 		supabase_full_access.from('timeframes').insert(mysteryData.timeframes.map((event) => ({ ...event, mystery_id: mysteryId }))),
 		supabase_full_access.from('suspects').insert(
-			mysteryData.suspects.map((suspect) => ({
-				...suspect,
+			mysteryData.suspects.map((suspect, i) => ({
+				name: suspect.name,
+				description: suspect.description,
+				// path:
 				mystery_id: mysteryId
 			}))
 		),

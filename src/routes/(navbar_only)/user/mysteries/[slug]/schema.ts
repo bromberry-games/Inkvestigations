@@ -80,8 +80,8 @@ const GameFewShotsSchema = z.object({
 const GameMysterySchema = z.object({
 	name: z.string().min(1).max(100),
 	image: z
-		.custom<File | 'image' | null>((f) => f instanceof File || f === 'image', 'Please upload a file.')
-		.refine((f) => (f instanceof File && f.size < 100_000) || f === 'image', 'Max 100 kB upload size.')
+		.custom<File | string | null>((f) => f instanceof File || f instanceof String, 'Please upload a file.')
+		.refine((f) => (f instanceof File && f.size < 100_000) || f instanceof String, 'Max 100 kB upload size.')
 		.nullable(),
 	description: z.string().max(300).min(3),
 	setting: z.string().max(300).min(3),

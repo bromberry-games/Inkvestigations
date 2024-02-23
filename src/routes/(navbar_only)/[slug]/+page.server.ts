@@ -22,7 +22,6 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		redirect(303, '/');
 	}
 	const { slug } = params;
-	// const mysteryName = slug.replace(/_/g, ' ');
 
 	//TODO: Function or view?
 	const [letterInfo, messagesAndNotes, suspects, eventMessages, activeSub, victim] = await Promise.all([

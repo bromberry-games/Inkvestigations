@@ -28,6 +28,7 @@ SET mystery_slug = (
 );
 ALTER TABLE solved DROP COLUMN mystery_name;
 ALTER TABLE mysteries DROP CONSTRAINT mysteries_name_key;
+ALTER TABLE suspects ADD COLUMN path text;
 
 insert into storage.buckets
   (id, name, public)

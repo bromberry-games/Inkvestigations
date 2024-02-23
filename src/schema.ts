@@ -305,18 +305,21 @@ export interface Database {
           id: number
           mystery_id: number
           name: string
+          path: string | null
         }
         Insert: {
           description: string
           id?: number
           mystery_id: number
           name: string
+          path?: string | null
         }
         Update: {
           description?: string
           id?: number
           mystery_id?: number
           name?: string
+          path?: string | null
         }
         Relationships: [
           {
@@ -455,7 +458,6 @@ export interface Database {
           created_at: string
           id: number
           info: string
-          mood: string
         }
         Insert: {
           chain_of_thought: string
@@ -463,7 +465,6 @@ export interface Database {
           created_at?: string
           id?: number
           info: string
-          mood: string
         }
         Update: {
           chain_of_thought?: string
@@ -471,7 +472,6 @@ export interface Database {
           created_at?: string
           id?: number
           info?: string
-          mood?: string
         }
         Relationships: [
           {
