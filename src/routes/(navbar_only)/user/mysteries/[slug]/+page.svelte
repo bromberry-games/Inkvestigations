@@ -58,6 +58,9 @@
 	}
 	const inputClassHalf = 'col-span-1 rounded border border-gray-300 px-2 py-1';
 	const inputClassFull = 'col-span-2 rounded border border-gray-300 px-2 py-1';
+	$: if ($errors.suspects) {
+		console.log($errors.suspects);
+	}
 </script>
 
 <!-- <SuperDebug data={$form} /> -->

@@ -3,8 +3,8 @@ import { z } from 'zod';
 const MysterySchema = z.object({
 	name: z.string().min(1).max(100),
 	image: z
-		.custom<File | 'image' | null>((f) => f instanceof File || f === 'image', 'Please upload a file.')
-		.refine((f) => (f instanceof File && f.size < 100_000) || f === 'image', 'Max 100 kB upload size.')
+		.custom<File | string | null>((f) => f instanceof File || typeof f === 'string', 'Please upload a file.')
+		.refine((f) => (f instanceof File && f.size < 100_000) || typeof f === 'string', 'Max 100 kB upload size.')
 		.optional()
 		.nullable(),
 	description: z.string().max(300).optional(),
@@ -22,8 +22,8 @@ const suspectSchema = z.object({
 	name: z.string().max(60).optional(),
 	description: z.string().max(300).optional(),
 	image: z
-		.custom<File | 'image' | null>((f) => f instanceof File || f === 'image', 'Please upload a file.')
-		.refine((f) => (f instanceof File && f.size < 100_000) || f === 'image', 'Max 100 kB upload size.')
+		.custom<File | string | null>((f) => f instanceof File || typeof f === 'string', 'Please upload a file.')
+		.refine((f) => (f instanceof File && f.size < 100_000) || typeof f === 'string', 'Max 100 kB upload size.')
 		.optional()
 		.nullable()
 });
@@ -56,8 +56,8 @@ const GameSuspectSchema = z.object({
 	name: z.string().max(60).min(3),
 	description: z.string().max(300).min(3),
 	image: z
-		.custom<File | 'image' | null>((f) => f instanceof File || f === 'image', 'Please upload a file.')
-		.refine((f) => (f instanceof File && f.size < 100_000) || f === 'image', 'Max 100 kB upload size.')
+		.custom<File | string | null>((f) => f instanceof File || typeof f === 'string', 'Please upload a file.')
+		.refine((f) => (f instanceof File && f.size < 100_000) || typeof f === 'string', 'Max 100 kB upload size.')
 		.optional()
 		.nullable()
 });
@@ -80,8 +80,8 @@ const GameFewShotsSchema = z.object({
 const GameMysterySchema = z.object({
 	name: z.string().min(1).max(100),
 	image: z
-		.custom<File | string | null>((f) => f instanceof File || f instanceof String, 'Please upload a file.')
-		.refine((f) => (f instanceof File && f.size < 100_000) || f instanceof String, 'Max 100 kB upload size.')
+		.custom<File | string | null>((f) => f instanceof File || typeof f === 'string', 'Please upload a file.')
+		.refine((f) => (f instanceof File && f.size < 100_000) || typeof f === 'string', 'Max 100 kB upload size.')
 		.nullable(),
 	description: z.string().max(300).min(3),
 	setting: z.string().max(300).min(3),

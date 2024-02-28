@@ -22,13 +22,14 @@
 
 	const { form } = formAll;
 	const { value, errors, constraints } = formFieldProxy(formAll, field);
-	const path = 'http://localhost:54321/storage/v1/object/public/user_mysteries/' + $form.id + '/' + $value + '?' + Math.random();
+	$: path = 'http://localhost:54321/storage/v1/object/public/user_mysteries/' + $form.id + '/' + $value + '?' + Math.random();
+	const imageFromBackend = $value && $value.includes('.') ? true : false;
 </script>
 
 <div class="col-span-1">
 	{#if imageUrl}
 		<img src={imageUrl} alt="mystery" />
-	{:else if $value?.includes('.')}
+	{:else if imageFromBackend}
 		<img src={path} alt="mystery" />
 	{:else}
 		<div id="imagePreview">Select thumbnail</div>

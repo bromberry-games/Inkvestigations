@@ -26,14 +26,14 @@ export const load = async ({ locals: { getSession, supabase }, params }) => {
 
 async function saveForm(form, userId: string) {
 	const images: { image: File; path: string }[] = [];
-	if (form.data.mystery.image && form.data.mystery.image !== 'image') {
+	if (form.data.mystery.image && typeof form.data.mystery.image !== 'string') {
 		const path = 'mystery.image';
 		images.push({ image: form.data.mystery.image, path });
 		form.data.mystery.image = path;
 	}
 	for (let i = 0; i < form.data.suspects.length; i++) {
 		const suspect = form.data.suspects[i];
-		if (suspect.image && suspect.image !== 'image') {
+		if (suspect.image && typeof suspect.image !== 'string') {
 			const path = `suspects${i}.image`;
 			images.push({ image: suspect.image, path });
 			suspect.image = path;
