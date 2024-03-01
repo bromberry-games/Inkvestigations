@@ -1,5 +1,13 @@
 import { z } from 'zod';
 
+function imageType() {
+	return z
+		.custom<File | string | null>((f) => f instanceof File || typeof f === 'string', 'Please upload a file.')
+		.refine((f) => (f instanceof File && f.size < 100_000) || typeof f === 'string', 'Max 100 kB upload size.')
+		.optional()
+		.nullable();
+}
+
 const MysterySchema = z.object({
 	name: z.string().min(1).max(100),
 	image: z
@@ -13,6 +21,7 @@ const MysterySchema = z.object({
 	letter_info: z.string().max(3000).optional(),
 	letter_prompt: z.string().max(300).optional(),
 	accuse_letter_prompt: z.string().max(300).optional(),
+	victim_image: imageType(),
 	victim_name: z.string().max(100).optional(),
 	victim_description: z.string().max(300).optional(),
 	solution: z.string().max(300).optional()
@@ -89,6 +98,7 @@ const GameMysterySchema = z.object({
 	letter_info: z.string().max(3000).min(3),
 	letter_prompt: z.string().max(300).optional(),
 	accuse_letter_prompt: z.string().max(300).optional(),
+	victim_image: imageType(),
 	victim_name: z.string().max(100).min(3),
 	victim_description: z.string().max(300).min(3),
 	solution: z.string().max(300).min(3)

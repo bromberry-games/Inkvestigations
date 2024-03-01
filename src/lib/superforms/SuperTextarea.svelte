@@ -22,6 +22,7 @@
 </label>
 <textarea
 	name={field}
+	id={field}
 	aria-invalid={$errors ? 'true' : undefined}
 	bind:value={$value}
 	{...$constraints}

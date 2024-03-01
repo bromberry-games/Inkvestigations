@@ -76,6 +76,7 @@ export const load: PageServerLoad = async ({ params, locals: { getSession } }) =
 		convId: messagesAndNotes.conversationId,
 		orderInt: letterInfo.order_int,
 		name: letterInfo.name,
+		accessCode: letterInfo.access_code,
 		session
 	};
 };

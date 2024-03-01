@@ -93,25 +93,27 @@
 		/>
 		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.description" form={formAll} labelName="Description" />
 		<SuperInput inputClass={inputClassFull} errorClass="col-span-2" field="mystery.theme" form={formAll} labelName="Theme" />
-		<hr class="col-span-2 border-slate-900" />
-		<h2 class="col-span-2 text-lg font-bold">Victim</h2>
-		<SuperInput
-			inputClass={inputClassHalf}
-			field="mystery.victim_name"
-			form={formAll}
-			labelName="Name"
-			errorClass="col-span-2"
-			placeholder="John Toilard"
-		/>
-		<SuperInput
-			inputClass={inputClassHalf}
-			field="mystery.victim_description"
-			form={formAll}
-			labelName="Description"
-			errorClass="col-span-2"
-			placeholder="kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives."
-		/>
-		<hr class="col-span-2 border-slate-900" />
+		<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 p-4">
+			<h2 class="col-span-2 text-lg font-bold">Victim</h2>
+			<SuperImage inputClass={inputClassFull} errorClass="col-span-2" field="mystery.victim_image" {formAll} labelName="Thumbnail"
+			></SuperImage>
+			<SuperInput
+				inputClass={inputClassHalf}
+				field="mystery.victim_name"
+				form={formAll}
+				labelName="Name"
+				errorClass="col-span-2"
+				placeholder="John Toilard"
+			/>
+			<SuperInput
+				inputClass={inputClassHalf}
+				field="mystery.victim_description"
+				form={formAll}
+				labelName="Description"
+				errorClass="col-span-2"
+				placeholder="kidnapped. A 13 year old boy with his head in the clouds, often fantasizing about different lives."
+			/>
+		</div>
 		<SuperTextarea
 			inputClass={inputClassFull}
 			errorClass="col-span-2"

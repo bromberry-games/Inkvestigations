@@ -88,7 +88,13 @@
 	}
 </script>
 
-<SuspectModal bind:clickOutsideModal={suspectModal} suspects={data.suspects} nameParsed={data.name.replace(/ /g, '_')} bind:notes
+<SuspectModal
+	bind:clickOutsideModal={suspectModal}
+	suspects={data.suspects}
+	nameParsed={data.name.replace(/ /g, '_')}
+	bind:notes
+	{slug}
+	accessCode={data.accessCode}
 ></SuspectModal>
 {#if data.session?.user.user_metadata.useMyOwnToken}
 	<Modal title="Use own openai token" bind:open={tokenModal} autoclose>

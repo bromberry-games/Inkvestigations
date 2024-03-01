@@ -1,3 +1,4 @@
+import { convertToSnakeCaseEnhanced } from '$lib/generic-helpers';
 import type { MysterySubmitSchema } from '../../routes/(navbar_only)/user/mysteries/[slug]/schema';
 import { supabase_full_access } from './supabase_full_access.server';
 
@@ -103,7 +104,6 @@ export async function loadUserMysteries(userId: string) {
 }
 
 export async function saveMystery(uuid: string, userid: string, json: string, images: { image: File; path: string }[]) {
-	console.log('mystery json: ', json);
 	const { error } = await supabase_full_access
 		.from('user_mysteries')
 		.update({ id: uuid, user_id: userid, info: json })
@@ -274,5 +274,28 @@ export async function publishMysteryForAll(mysteryData: MysterySubmitSchema, use
 	if (results.some((result) => result.error != null)) {
 		return results.find((result) => result.error != null);
 	}
-	return true;
+
+	const insertImages = [
+		supabase_full_access.storage
+			.from('user_mysteries')
+			.copy(
+				mysteryData.id + '/' + mysteryData.mystery.image,
+				mysteryData.id + '/published/' + convertToSnakeCaseEnhanced(mysteryData.mystery.name)
+			),
+		supabase_full_access.storage
+			.from('user_mysteries')
+			.copy(
+				mysteryData.id + '/' + mysteryData.mystery.victim_image,
+				mysteryData.id + '/published/' + convertToSnakeCaseEnhanced(mysteryData.mystery.victim_name)
+			)
+	];
+	insertImages.concat(
+		mysteryData.suspects.map((s) =>
+			supabase_full_access.storage
+				.from('user_mysteries')
+				.copy(mysteryData.id + '/' + s.image, mysteryData.id + '/published/' + convertToSnakeCaseEnhanced(s.name))
+		)
+	);
+	const imageeInsertResults = await Promise.all(insertImages);
+	return imageeInsertResults.find((r) => r.error != null) || true;
 }

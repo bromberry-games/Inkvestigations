@@ -27,5 +27,6 @@
 	{...$$restProps}
 	class={inputClass}
 	{placeholder}
+	id={field}
 />
 {#if $errors}<span class={'invalid text-red-500 ' + errorClass}>{$errors}</span>{/if}

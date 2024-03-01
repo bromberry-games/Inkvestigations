@@ -120,6 +120,8 @@ test('Create prison and publish it', async ({ page }) => {
 			'This story is set in 1889 in England. Ernest Orion is a good friend of Wellington, and thus Wellington is hesitant to suspect him.'
 		);
 	await page.locator('textarea[name="mystery.letter_info"]').fill(letter);
+	const fileInput3 = await page.locator('input[name="mystery.victim_image"]');
+	await fileInput3.setInputFiles(path.join(process.cwd(), '/static/images/mysteries/prison/suspects/leonard_corcoran.webp'));
 	await page.locator('input[name="mystery.victim_name"]').fill('Leonard Corcoran');
 	await page
 		.locator('input[name="mystery.victim_description"]')
@@ -228,7 +230,6 @@ test('Create prison and publish it', async ({ page }) => {
 		);
 	await page.getByTestId('add-action').click();
 
-	// Clue 11: search Leonard's clothes
 	await page.locator('input[name="action_clues[10].action"]').fill("search Leonard's clothes");
 	await page
 		.locator('input[name="action_clues[10].clue"]')
@@ -237,7 +238,6 @@ test('Create prison and publish it', async ({ page }) => {
 		);
 	await page.getByTestId('add-action').click();
 
-	// Clue 12: Frederick Upton
 	await page.locator('input[name="action_clues[11].action"]').fill('Frederick Upton');
 	await page
 		.locator('input[name="action_clues[11].clue"]')
@@ -246,7 +246,6 @@ test('Create prison and publish it', async ({ page }) => {
 		);
 	await page.getByTestId('add-action').click();
 
-	// Clue 13: official pardon
 	await page.locator('input[name="action_clues[12].action"]').fill('official pardon');
 	await page
 		.locator('input[name="action_clues[12].clue"]')
@@ -255,7 +254,6 @@ test('Create prison and publish it', async ({ page }) => {
 		);
 	await page.getByTestId('add-action').click();
 
-	// Clue 14: wife of Mann
 	await page.locator('input[name="action_clues[13].action"]').fill('wife of Mann');
 	await page
 		.locator('input[name="action_clues[13].clue"]')
@@ -264,19 +262,16 @@ test('Create prison and publish it', async ({ page }) => {
 		);
 	await page.getByTestId('add-action').click();
 
-	// Clue 15: search Mann's cell
 	await page.locator('input[name="action_clues[14].action"]').fill("search Mann's cell");
 	await page.locator('input[name="action_clues[14].clue"]').fill('writing supplies tucked in mattress');
 	await page.getByTestId('add-action').click();
 
-	// Clue 16: visitation rights denied
 	await page.locator('input[name="action_clues[15].action"]').fill('visitation rights denied');
 	await page
 		.locator('input[name="action_clues[15].clue"]')
 		.fill('Orion has never denied anything to Mrs. Mann. She is free to see him of course. Leonard was in charge of visitation.');
 	await page.getByTestId('add-action').click();
 
-	// Clue 17: question other guards
 	await page.locator('input[name="action_clues[16].action"]').fill('question other guards');
 	await page
 		.locator('input[name="action_clues[16].clue"]')
@@ -285,7 +280,6 @@ test('Create prison and publish it', async ({ page }) => {
 		);
 	await page.getByTestId('add-action').click();
 
-	// Clue 18: analyze the official pardon
 	await page.locator('input[name="action_clues[17].action"]').fill('analyze the official pardon');
 	await page
 		.locator('input[name="action_clues[17].clue"]')
@@ -293,7 +287,6 @@ test('Create prison and publish it', async ({ page }) => {
 			'it appears the genuine article under scrutiny at first, but actually the give-away is that Orion uses a different kind of ink. It is a fake!'
 		);
 
-	// Submitting the form
 	await page.getByRole('button', { name: 'Submit' }).click();
 	await page.waitForTimeout(5000);
 });
