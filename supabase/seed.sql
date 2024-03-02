@@ -11,7 +11,7 @@ Dear Mr. Holmes,
 your reputation for an interest in curious cases reaches far and wide. I have a case on my hands that might pique your interest.
 
 Michael Terry, a prominent resident, met a bizarre and gruesome end, thrown through the mirror in his own study. The timing of this macabre incident is uncanny. On monday he was found before a meeting with the politician he disgraced in one of his articles, Dexter Tin. However, he had been alone the whole weekend. No signs of forced entry, no struggle, and a method that defies logic. It's a locked, remote house mystery! 
-In addition to Tin, our prime suspect, we have a web of connections, including Terry's closest: his best friend Bianca White and his devoted fan turned apprentice Oliver Smith. Also His long-time maid Maria Payton, who discovered him. On top of that, there's the rivalry with columnist Angela Videl and the retired detective, Peter O'Ranner, who occasionally assisted Terry. I've sent their pictures to your notes.
+In addition to Tin, our prime suspect, we have a web of connections, including Terry's closest: his best friend Bianca White and his devoted fan turned apprentice Oliver Smith. Also His long-time maid Maria Payton, who discovered him. On top of that, there's the rivalry with columnist Angela Videl. I've sent their pictures to your notes.
 
 We have been stumped, I must admit, so I will do anything you demand. 
 
@@ -68,18 +68,19 @@ DO UPDATE SET
     star_ratings = EXCLUDED.star_ratings,
     order_int = EXCLUDED.order_int;
 
+DELETE FROM suspects WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Mirror Mirror');
 INSERT INTO suspects (mystery_id, name, description)
 VALUES
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Bianca White', 'Best friend of Michael Terry. Once wanted to be a journalist but now works in marketing.'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Dexter Tin', 'Politician who was disgraced by Michael Terry.'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Maria Payton', 'Long-time maid of Michael Terry.'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Angela Videl', 'Rival columnist to Michael Terry.'),
-((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Peter O''Ranner', 'Retired detective who occasionally assisted Michael Terry with his articles.'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Oliver Smith', 'Biggest fan before becoming his apprentice');
 
+DELETE FROM action_clues WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Mirror Mirror');
 INSERT INTO action_clues (mystery_id, action, clue)
 VALUES
-((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Interrogating the suspects', $$Maria Payton is deeply distraught by the sight and it's hard for her to talk. Angela Videl is sad of course but knows Terry had alienated a lot of people. Dexter Tin says he didn't need to see that to be honest. Bianca White is crying heavily and saying he didn't deserve that. Oliver is teary eyed and sad because Terry had so much more to give. O'Ranner is not surprised because he knew Terry had an edge to his style$$),
+((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Interrogating the suspects', $$Maria Payton is deeply distraught by the sight and it's hard for her to talk. Angela Videl is sad of course but knows Terry had alienated a lot of people. Dexter Tin says he didn't need to see that to be honest. Bianca White is crying heavily and saying he didn't deserve that. Oliver is teary eyed and sad because Terry had so much more to give.$$),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Searching the home', 'a bottle of medication for hair-regrowth; a trash can full of discarded drafts; a half-written piece on uncovering the dealings of a mafia boss; letters shaping that Tin was not involved in the conspiracy Terry published; Terry''s desk with everything he needs to write and his favorite ink pen; a drawer full of fan letters; fingerprints of all people close to him'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Inspecting the half-written piece', 'it is an expose, but none of the names are known in the country'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Inspecting the Tin letters', 'they just show his innocence from an objective observer, but have his fingerprints all over them'),
@@ -93,6 +94,7 @@ VALUES
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Ask for alibis', 'Bianca was on a trip, but talked to Terry over the phone; Tin was busy with his political obligations; Oliver was at home writing a piece'),
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Searching Oliver''s apartment', 'a normal apartment, but for the fact that he has the same pen as Terry twice');
 
+DELETE FROM timeframes WHERE mystery_id = (SELECT id FROM mysteries WHERE name = 'Mirror Mirror');
 INSERT INTO timeframes (mystery_id, timeframe, event_happened)
 VALUES
 ((SELECT id FROM mysteries WHERE name = 'Mirror Mirror'), 'Friday evening', 'party with his friends'),
@@ -120,7 +122,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "Sherlock has ordered me to interrogate the suspects.\nWas I provided some kind of information about this?\nYes\nInformation:\n- Maria Payton is deeply distraught by the sight and it's hard for her to talk\n- Angela Videl is sad of course but knows Terry had alienated a lot of people\n- Dexter Tin says he didn't need to see that to be honest\n- Bianca White is crying heavily and saying he didn't deserve that\n- Oliver is teary eyed and sad because Terry had so much more to give\n- O'Ranner is not surprised because he knew Terry had an edge to his style"
+  "content": "Sherlock has ordered me to interrogate the suspects.\nWas I provided some kind of information about this?\nYes\nInformation:\n- Maria Payton is deeply distraught by the sight and it's hard for her to talk\n- Angela Videl is sad of course but knows Terry had alienated a lot of people\n- Dexter Tin says he didn't need to see that to be honest\n- Bianca White is crying heavily and saying he didn't deserve that\n- Oliver is teary eyed and sad because Terry had so much more to give"
 },
 {
   "role": "user",
@@ -136,7 +138,7 @@ $$
 },
 {
   "role": "assistant",
-  "content": "Sherlock has ordered greeted.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Hello to you, too Sherlock."
+  "content": "Sherlock has ordered greeted.\nWas I provided some kind of information about this?\nNo\nInformation:\n- Hello to you, too Sherlock"
 },
 {
   "role": "user",
@@ -186,7 +188,7 @@ $$
     
     {
       "role": "user",
-      "content": "Sherlock's solution: It was angela videl because she was jealous of Terry's success\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Sherlock solution: It was angela videl because she was jealous of Terry's success\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
@@ -194,7 +196,7 @@ $$
     },
     {
       "role": "user",
-      "content": "Player solution: It was Oliver Smith because he was disappointed Terry's dramatics won over the truth!\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Sherlock solution: It was Oliver Smith because he was disappointed Terry's dramatics won over the truth!\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
@@ -202,7 +204,7 @@ $$
     },
     {
       "role": "user",
-      "content": "Player solution: it was your momma\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Sherlock solution: it was your momma\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\n\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
@@ -210,7 +212,7 @@ $$
     },
     {
       "role": "user",
-      "content": "Player solution: It was Oliver Smith because he was angry that Terry didn't have any morals. After the party, he slipped into the study and planted the cyanide capsule. The second pen in his home confirms it\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Sherlock solution: It was Oliver Smith because he was angry that Terry didn't have any morals. After the party, he slipped into the study and planted the cyanide capsule. The second pen in his home confirms it\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
@@ -218,7 +220,7 @@ $$
     },
     {
       "role": "user",
-      "content": "Player solution: It was oliver who was angry at terry for his twisted morals, the second pen in his home shows it\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Sherlock solution: It was oliver who was angry at terry for his twisted morals, the second pen in his home shows it\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
@@ -226,7 +228,7 @@ $$
     },
     {
       "role": "user",
-      "content": "Player solution: It was oliver who murdered terry with cyanide after the party\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
+      "content": "Sherlock solution: It was oliver who murdered terry with cyanide after the party\nActual solution:\n**Perpetrator**: Oliver Smith\n**Motive**: Fanaticism for journalism and its ethics that was deeply hurt when he realized his hero and mentor, Michael Terry was in it more for the drama than the truth.\n**Opportunity**: After sleeping over after the party, he had time to slip into the study and place the poison in the inkwell and because he was the assistant, nobody bat an eye.\n**Evidence**: The second pen in his home with traces of cyanide.\nYou think long and hard about how to evaluate Sherlock's solution. You take into account all the details as well as the rating events when writing your epilogue. "
     },
     {
       "role": "assistant",
