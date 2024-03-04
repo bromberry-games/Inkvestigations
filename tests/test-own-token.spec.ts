@@ -18,6 +18,7 @@ async function fillOutTokenForm(page: Page, token: string) {
 
 test('activate own token setting', async ({ page, account }) => {
 	await setOwnToken(page);
+	await page.waitForTimeout(200);
 
 	await page.goto('/mysteries');
 	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
@@ -26,6 +27,7 @@ test('activate own token setting', async ({ page, account }) => {
 
 test('insert token, modal should not pop up again', async ({ page, account }) => {
 	await setOwnToken(page);
+	await page.waitForTimeout(200);
 
 	await page.goto('/mysteries');
 	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
@@ -42,6 +44,7 @@ test('activate own token setting, then deactivate it modal should not pop up', a
 	await setOwnToken(page, false);
 	await page.goto('/mysteries');
 	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
+
 
 	await expect(await page.getByRole('heading', { name: 'Use own openai token' })).not.toBeVisible();
 });

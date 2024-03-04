@@ -4,12 +4,14 @@
 	import { CheckCircleSolid } from 'flowbite-svelte-icons';
 	import { SubscriptionBundles } from './bundles';
 	import CheckWithText from './CheckWithText.svelte';
+	import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
 
 	export let data;
 	enum PayMode {
 		ONE_TIME = 'one_time',
 		SUBSCRIPTION = 'subscription'
 	}
+	$: authStatus = getAuthStatus(data.session);
 
 	let currentView = PayMode.SUBSCRIPTION;
 	const highlightedClass = 'bg-quaternary ';
@@ -52,6 +54,23 @@
 		</div>
 	{:else}
 		<div class="my-8 flex flex-wrap justify-center gap-16">
+			{#if authStatus != AuthStatus.LoggedIn}
+				<Card class="flex w-full flex-col justify-between">
+					<div>
+						<h5 class="mb-4 text-xl font-medium text-gray-500">for free</h5>
+						<div class="flex items-baseline text-gray-900">
+							<span class="text-3xl font-semibold">Signup and play for free!</span>
+						</div>
+						<ul class="my-7 space-y-4">
+							<CheckWithText><span>5 daily messages for free!</span></CheckWithText>
+							<CheckWithText><span>Play as many mysteries as you can</span></CheckWithText>
+						</ul>
+					</div>
+					<div class="w-full self-end">
+						<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" href="/login">SIGNUP</Button>
+					</div>
+				</Card>
+			{/if}
 			<Card class="flex w-full flex-col justify-between">
 				<div>
 					<h5 class="mb-4 text-xl font-medium text-gray-500">Pay as you go</h5>
@@ -152,13 +171,13 @@
 			For every message you send we have to pay OpenAi. We think pay to go is the fairest pricing since you only pay for what you use. This
 			also allows you to use your own key if you want to and still be able to profit from our subscription.
 		</p>
-		<h4 class="mt-2 text-xl font-bold">- Why is the free tier only billed every 3 months?</h4>
+		<h4 class="mt-2 text-xl font-bold">- Why is the 0$ tier only billed every 3 months?</h4>
 		<p class="text-lg">
 			We pay a flat fee for every transaction. Only charging every 3 months keeps costs for lower and allows us to offer at a cheaper price
 		</p>
 		<h4 class="mt-2 text-xl font-bold">- Do you offer any discounts?</h4>
 		<p class="text-xl">
-			Talk to us on our <a href="https://discord.gg/t3zTYNhNzp" class="text-blue-700">discord </a> and we can see what we can do.
+			Talk to us on our <a href="https://discord.gg/t3zTYNhNzp" class="text-blue-700">discord </a> and we will have something for you.
 		</p>
 	</div>
 </div>
