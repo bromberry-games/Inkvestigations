@@ -1,5 +1,6 @@
 import { convertToSnakeCaseEnhanced } from '$lib/generic-helpers';
 import type { MysterySubmitSchema } from '../../routes/(navbar_only)/user/mysteries/[slug]/schema';
+import { USER_APPEND_TEXT } from '../../routes/api/ask/consts';
 import { supabase_full_access } from './supabase_full_access.server';
 
 export interface suspect {
@@ -95,15 +96,19 @@ export async function loadMysteries() {
 }
 
 export async function loadUserMysteries(userId: string) {
-	const { data, error } = await supabase_full_access.from('user_mysteries').select('id, published').eq('user_id', userId);
+	const { data, error } = await supabase_full_access
+		.from('user_mysteries')
+		.select('id, info->mystery->>name, mystery_id')
+		.eq('user_id', userId);
 	if (error) {
 		console.error('error loading user mysteries', error);
 		return error;
 	}
+	console.log('data: ', data);
 	return data ? data : [];
 }
 
-export async function saveMystery(uuid: string, userid: string, json: string, images: { image: File; path: string }[]) {
+export async function saveMystery(uuid: string, userid: string, json: any, images: { image: File; path: string }[]) {
 	const { error } = await supabase_full_access
 		.from('user_mysteries')
 		.update({ id: uuid, user_id: userid, info: json })
@@ -196,8 +201,8 @@ export async function publishMysteryForAll(mysteryData: MysterySubmitSchema, use
 		setting: mysteryData.mystery.setting,
 		theme: mysteryData.mystery.theme,
 		letter_info: mysteryData.mystery.letter_info,
-		letter_prompt: '',
-		accuse_letter_prompt: '',
+		letter_prompt: mysteryData.mystery.letter_info,
+		accuse_letter_prompt: mysteryData.mystery.letter_info,
 		victim_name: mysteryData.mystery.victim_name,
 		victim_description: mysteryData.mystery.victim_description,
 		solution: mysteryData.mystery.solution,
@@ -262,10 +267,40 @@ export async function publishMysteryForAll(mysteryData: MysterySubmitSchema, use
 		supabase_full_access.from('action_clues').insert(mysteryData.action_clues.map((clue) => ({ ...clue, mystery_id: mysteryId })))
 	];
 
-	if (mysteryData.few_shots) {
-		insertOperations.push(
-			supabase_full_access.from('few_shots').insert(mysteryData.few_shots.map((shot) => ({ ...shot, mystery_id: mysteryId })))
+	const few_shots = mysteryData.few_shots_known_answers
+		.flatMap((shot) => [
+			{
+				role: 'user',
+				content: shot.question + '\n' + USER_APPEND_TEXT
+			},
+			{
+				role: 'assistant',
+				content:
+					'Sherlock has ordered me to ' +
+					shot.question +
+					'Was I provided some kind of information about this?\nYes\nInformation:\n- ' +
+					shot.answer
+			}
+		])
+		.concat(
+			mysteryData.few_shots_unknown_answers.flatMap((shot) => [
+				{
+					role: 'user',
+					content: shot.question + '\n' + USER_APPEND_TEXT
+				},
+				{
+					role: 'assistant',
+					content:
+						'Sherlock has ordered me to ' +
+						shot.question +
+						'Was I provided some kind of information about this?\nNo\nInformation:\n- ' +
+						shot.answer
+				}
+			])
 		);
+
+	if (mysteryData.few_shots_known_answers) {
+		insertOperations.push(supabase_full_access.from('few_shots').insert({ mystery_id: mysteryId, brain: { messages: few_shots } }));
 	}
 
 	const results = await Promise.all(insertOperations);

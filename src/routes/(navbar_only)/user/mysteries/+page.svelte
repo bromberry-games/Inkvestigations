@@ -4,9 +4,9 @@
 	export let data;
 </script>
 
-<div class="flex justify-center bg-tertiary">
+<div class="flex h-dvh justify-center bg-tertiary">
 	<div class="w-1/2">
-		<div class="flex">
+		<div class="mt-4 flex">
 			<Input type="text" placeholder="search"></Input>
 			<form action="?/create" method="post" class="inline">
 				<Button class="bg-green-500" type="submit">New</Button>
@@ -16,7 +16,7 @@
 			{#each data.mysteries as mystery}
 				<div aria-label="mystery">
 					{mystery.name}
-					<Badge rounded color="dark">{mystery.published ? 'Published' : 'Draft'}</Badge>
+					<Badge rounded color="dark">{mystery.mystery_id != undefined ? 'Published' : 'Draft'}</Badge>
 					<form action="?/delete" method="post" class="inline">
 						<input type="hidden" name="mystery-id" value={mystery.id} />
 						<Button type="submit" class="bg-red-500">Delete</Button>

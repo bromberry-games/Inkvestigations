@@ -19,7 +19,8 @@
 	const formAll = superForm(data.form, {
 		validators: zodClient(mainSchema),
 		dataType: 'json',
-		resetForm: false
+		resetForm: false,
+		taintedMessage: true
 	});
 	$: form = formAll.form;
 	$: errors = formAll.errors;
@@ -35,6 +36,18 @@
 		}
 		if ($form.action_clues == undefined || $form.action_clues.length === 0) {
 			$form.action_clues = [{ action: '', clue: '' }];
+		}
+		if ($form.few_shots_known_answers == undefined || $form.few_shots_known_answers.length === 0) {
+			$form.few_shots_known_answers = [
+				{ question: '', answer: '' },
+				{ question: '', answer: '' }
+			];
+		}
+		if ($form.few_shots_unknown_answers == undefined || $form.few_shots_unknown_answers.length === 0) {
+			$form.few_shots_unknown_answers = [
+				{ question: '', answer: '' },
+				{ question: '', answer: '' }
+			];
 		}
 	});
 
@@ -160,24 +173,25 @@
 		<h2 class="col-span-1 text-lg font-bold">Timeframe</h2>
 		{#if showTimeframe}
 			{#each $form?.timeframes || [] as timeframe, index (index)}
-				<div class="col-span-2 flex justify-end">
-					<button type="button" class="" on:click={() => removeItem('timeframes', index)}><CloseSolid></CloseSolid></button>
+				<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 p-4">
+					<div class="col-span-2 flex justify-end">
+						<button type="button" class="" on:click={() => removeItem('timeframes', index)}><CloseSolid></CloseSolid></button>
+					</div>
+					<SuperInput
+						inputClass="rounded border border-gray-300 px-2 py-1"
+						errorClass="col-span-2"
+						field="timeframes[{index}].timeframe"
+						form={formAll}
+						labelName="Time"
+					/>
+					<SuperInput
+						inputClass="rounded border border-gray-300 px-2 py-1"
+						errorClass="col-span-2"
+						field="timeframes[{index}].event_happened"
+						form={formAll}
+						labelName="event"
+					/>
 				</div>
-				<SuperInput
-					inputClass="rounded border border-gray-300 px-2 py-1"
-					errorClass="col-span-2"
-					field="timeframes[{index}].timeframe"
-					form={formAll}
-					labelName="Time"
-				/>
-				<SuperInput
-					inputClass="rounded border border-gray-300 px-2 py-1"
-					errorClass="col-span-2"
-					field="timeframes[{index}].event_happened"
-					form={formAll}
-					labelName="event"
-				/>
-				<hr class="col-span-2 border-slate-900" />
 			{/each}
 			<button type="button" on:click={addTimeFrame} class="4 col-span-2 bg-green-500">Add Event</button>
 		{/if}
@@ -185,28 +199,71 @@
 		<hr class="col-span-2 border-slate-900" />
 		<h2 class="col-span-2 text-lg font-bold">Inspector Actions</h2>
 		{#each $form.action_clues || [] as action, index (index)}
-			<div class="col-span-2 flex justify-end">
-				<button type="button" class="" on:click={() => removeItem('action_clues', index)}><CloseSolid></CloseSolid></button>
+			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 p-4">
+				<div class="col-span-2 flex justify-end">
+					<button type="button" class="" on:click={() => removeItem('action_clues', index)}><CloseSolid></CloseSolid></button>
+				</div>
+				<SuperInput
+					inputClass="rounded border border-gray-300 px-2 py-1"
+					errorClass="col-span-2"
+					field="action_clues[{index}].action"
+					form={formAll}
+					labelName="Action"
+				/>
+				<SuperInput
+					inputClass="rounded border border-gray-300 px-2 py-1"
+					errorClass="col-span-2"
+					field="action_clues[{index}].clue"
+					form={formAll}
+					labelName="Clue"
+				/>
 			</div>
-			<SuperInput
-				inputClass="rounded border border-gray-300 px-2 py-1"
-				errorClass="col-span-2"
-				field="action_clues[{index}].action"
-				form={formAll}
-				labelName="Action"
-			/>
-			<SuperInput
-				inputClass="rounded border border-gray-300 px-2 py-1"
-				errorClass="col-span-2"
-				field="action_clues[{index}].clue"
-				form={formAll}
-				labelName="Clue"
-			/>
-			<hr class="col-span-2 border-slate-900" />
 		{/each}
 		<button type="button" on:click={addAction} class="col-span-2 bg-green-500" data-testid="add-action">Add Action</button>
 
-		<hr class="col-span-2 border-slate-900" />
+		<h2 class="col-span-2 text-lg font-bold">Examples with known information</h2>
+		{#each $form.few_shots_known_answers || [] as fewShot, index (index)}
+			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 p-4">
+				<SuperInput
+					inputClass="rounded border border-gray-300 px-2 py-1"
+					errorClass="col-span-2"
+					field="few_shots_known_answers[{index}].question"
+					form={formAll}
+					labelName="Question"
+					placeholder="Search the crime scene"
+				/>
+				<SuperInput
+					inputClass="rounded border border-gray-300 px-2 py-1"
+					errorClass="col-span-2"
+					field="few_shots_known_answers[{index}].answer"
+					form={formAll}
+					labelName="Answer"
+					placeholder="We found a knife, ..."
+				/>
+			</div>
+		{/each}
+		<h2 class="col-span-2 text-lg font-bold">Examples with madeup information</h2>
+		{#each $form.few_shots_unknown_answers || [] as fewShot, index (index)}
+			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 p-4">
+				<SuperInput
+					inputClass="rounded border border-gray-300 px-2 py-1"
+					errorClass="col-span-2"
+					field="few_shots_unknown_answers[{index}].question"
+					form={formAll}
+					labelName="Question"
+					placeholder="Interrogate the victims colleagues"
+				/>
+				<SuperInput
+					inputClass="rounded border border-gray-300 px-2 py-1"
+					errorClass="col-span-2"
+					field="few_shots_unknown_answers[{index}].answer"
+					form={formAll}
+					labelName="Answer"
+					placeholder="They say that he..."
+				/>
+			</div>
+		{/each}
+
 		{#if $message}
 			<p class="col-span-2 text-green-500">
 				{$message}
@@ -217,12 +274,12 @@
 		<button
 			type="submit"
 			on:click={() => (save = true)}
-			class="col-span-2 rounded border border-gray-300 bg-blue-200 px-4 py-2 hover:bg-blue-100">save</button
+			class="col-span-2 rounded border border-gray-300 bg-blue-200 px-4 py-2 hover:bg-blue-100">SAVE</button
 		>
 		<button
 			type="submit"
 			on:click={() => (save = false)}
-			class="col-span-2 rounded border border-gray-300 bg-blue-200 px-4 py-2 hover:bg-blue-100">Submit</button
+			class="col-span-2 rounded border border-gray-300 bg-blue-200 px-4 py-2 hover:bg-blue-100">SUBMIT</button
 		>
 	</form>
 </div>

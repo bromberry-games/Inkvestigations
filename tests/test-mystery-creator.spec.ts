@@ -5,7 +5,7 @@ import { letter } from './data/death_on_the_dancefloor';
 test('test create new mystery and save it', async ({ page }) => {
 	await page.goto('/user/mysteries');
 	await page.getByRole('button', { name: 'New' }).click();
-	await page.waitForTimeout(200);
+	await page.waitForTimeout(500);
 	await page.locator('input[name="mystery.name"]').fill('Test mystery');
 	await page.getByRole('button', { name: 'save' }).click();
 	await page.waitForLoadState('networkidle');
@@ -286,6 +286,31 @@ test('Create prison and publish it', async ({ page }) => {
 		.fill(
 			'it appears the genuine article under scrutiny at first, but actually the give-away is that Orion uses a different kind of ink. It is a fake!'
 		);
+
+	await page.locator('input[name="few_shots_known_answers[0].question"]').fill('Search the crime scene');
+	await page
+		.locator('input[name="few_shots_known_answers[0].answer"]')
+		.fill(
+			`The crime scene is in the visitor's center, closer to the prisoners wing. Leonard Corcoran's body was found with his feet facing toward the open door, and the keys were at his feet.`
+		);
+	await page.locator('input[name="few_shots_known_answers[1].question"]').fill('Interrogate the suspects');
+	await page
+		.locator('input[name="few_shots_known_answers[1].answer"]')
+		.fill(
+			`Heinrich Mann denies involvement in the crime and expresses his desire to see his wife. Governor Orion confidently denies any wrongdoing, but his demeanor makes others uncomfortable.`
+		);
+
+	await page.locator('input[name="few_shots_unknown_answers[0].question"]').fill(`Search leonard's house`);
+	await page
+		.locator('input[name="few_shots_unknown_answers[0].answer"]')
+		.fill(
+			`I searched Leonard's house and found a letter addressed to his sister, a pair of spectacles on his bedside table, and a newspaper from the day before his death.`
+		);
+
+	await page.locator('input[name="few_shots_unknown_answers[1].question"]').fill(`search the moon`);
+	await page
+		.locator('input[name="few_shots_unknown_answers[1].answer"]')
+		.fill(`I attempted to search the moon using the prison's telescope, but unfortunately, the moon was not visible at that time of day.`);
 
 	await page.getByRole('button', { name: 'Submit' }).click();
 	await page.waitForTimeout(5000);

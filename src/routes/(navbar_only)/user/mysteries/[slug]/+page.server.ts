@@ -17,7 +17,7 @@ export const load = async ({ locals: { getSession, supabase }, params }) => {
 	const mystery = await loadyMystery(slug, session.user.id);
 	isTAndThrowPostgresErrorIfNot(mystery);
 	if (mystery) {
-		const form = await superValidate({ ...JSON.parse(mystery.info), id: mystery.id }, zod(mainSchema));
+		const form = await superValidate({ ...mystery.info, id: mystery.id }, zod(mainSchema));
 		return withFiles({ form });
 	} else {
 		error(404, 'Mystery not found');
@@ -45,7 +45,7 @@ async function saveForm(form, userId: string) {
 			suspect.image = path;
 		}
 	}
-	const saved = await saveMystery(form.data.id, userId, JSON.stringify(form.data), images);
+	const saved = await saveMystery(form.data.id, userId, form.data, images);
 	isTAndThrowPostgresErrorIfNot(saved);
 }
 

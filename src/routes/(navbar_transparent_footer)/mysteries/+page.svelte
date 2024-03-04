@@ -51,10 +51,10 @@
 		</Radio>
 		<Radio name="custom" custom value="user" bind:group={subscription}>
 			<div
-				class="w-full cursor-pointer items-center justify-between rounded-lg border-4 bg-white p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-600 peer-checked:border-quaternary peer-checked:text-gray-900"
+				class="w-full cursor-pointer items-center justify-between rounded-lg border-4 border-quaternary bg-quaternary p-2 text-gray-500 hover:text-gray-600 peer-checked:border-tertiary peer-checked:text-gray-900"
 			>
 				<div class="block">
-					<div class="text-md w-full font-semibold md:text-lg">USER</div>
+					<div class="text-md w-full font-semibold text-tertiary md:text-lg">USER</div>
 				</div>
 			</div>
 		</Radio>

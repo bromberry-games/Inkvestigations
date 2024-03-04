@@ -48,17 +48,8 @@ const timeframeSchema = z.object({
 });
 
 const fewShotsSchema = z.object({
-	brain: z.string().max(300).optional(),
-	accuse_brain: z.string().max(300).optional()
-});
-
-export const mainSchema = z.object({
-	id: z.string().min(3).max(100),
-	mystery: MysterySchema,
-	suspects: z.array(suspectSchema).max(7).optional(),
-	action_clues: z.array(actionClueSchema).max(30).optional(),
-	timeframes: z.array(timeframeSchema).optional(),
-	few_shots: z.array(fewShotsSchema).optional()
+	question: z.string().max(300).optional(),
+	answer: z.string().max(300).optional()
 });
 
 const GameSuspectSchema = z.object({
@@ -82,8 +73,8 @@ const GameTimeframeSchema = z.object({
 });
 
 const GameFewShotsSchema = z.object({
-	brain: z.string().max(300).min(3),
-	accuse_brain: z.string().max(300).min(3)
+	question: z.string().max(300).min(3),
+	answer: z.string().max(300).min(3)
 });
 
 const GameMysterySchema = z.object({
@@ -109,10 +100,22 @@ export const submitSchema = z.object({
 	mystery: GameMysterySchema,
 	suspects: z.array(GameSuspectSchema).max(7).min(1),
 	action_clues: z.array(GameActionClueSchema).max(30).min(1),
-	timeframes: z.array(GameTimeframeSchema).optional(),
-	few_shots: z.array(GameFewShotsSchema).optional()
+	timeframes: z.array(GameTimeframeSchema).max(10).optional(),
+	few_shots_known_answers: z.array(GameFewShotsSchema).max(2).min(2),
+	few_shots_unknown_answers: z
+		.array(z.object({ question: z.string().min(3).max(300), answer: z.string().min(3).max(300) }))
+		.max(2)
+		.min(2)
 });
 
 export type MysterySchema = z.infer<typeof MysterySchema>;
 export type MysterySubmitSchema = z.infer<typeof submitSchema>;
 // export type MysterySubmitSchema = typeof submitSchema;
+
+export const mainSchema = submitSchema.deepPartial().extend({
+	suspects: z.array(suspectSchema).max(7).optional(),
+	action_clues: z.array(actionClueSchema).max(30).optional(),
+	timeframes: z.array(timeframeSchema).max(10).optional(),
+	few_shots_known_answers: z.array(fewShotsSchema).max(2),
+	few_shots_unknown_answers: z.array(fewShotsSchema).max(2)
+});
