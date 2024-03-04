@@ -170,13 +170,13 @@ export interface Database {
           access_code: string
           accuse_letter_prompt: string
           description: string
-          filepath: string
           id: number
           letter_info: string
           letter_prompt: string
           name: string
           order_int: number
           setting: string
+          slug: string
           solution: string | null
           star_ratings:
             | Database["public"]["CompositeTypes"]["star_ratings"]
@@ -189,13 +189,13 @@ export interface Database {
           access_code?: string
           accuse_letter_prompt: string
           description: string
-          filepath: string
           id?: number
           letter_info: string
           letter_prompt: string
           name: string
           order_int?: number
           setting: string
+          slug?: string
           solution?: string | null
           star_ratings?:
             | Database["public"]["CompositeTypes"]["star_ratings"]
@@ -208,13 +208,13 @@ export interface Database {
           access_code?: string
           accuse_letter_prompt?: string
           description?: string
-          filepath?: string
           id?: number
           letter_info?: string
           letter_prompt?: string
           name?: string
           order_int?: number
           setting?: string
+          slug?: string
           solution?: string | null
           star_ratings?:
             | Database["public"]["CompositeTypes"]["star_ratings"]
@@ -228,29 +228,29 @@ export interface Database {
       solved: {
         Row: {
           id: number
-          mystery_name: string
+          mystery_slug: string
           rating: number | null
           user_id: string
         }
         Insert: {
           id?: number
-          mystery_name: string
+          mystery_slug: string
           rating?: number | null
           user_id: string
         }
         Update: {
           id?: number
-          mystery_name?: string
+          mystery_slug?: string
           rating?: number | null
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "solved_mystery_name_fkey"
-            columns: ["mystery_name"]
+            foreignKeyName: "solved_mystery_slug_fkey"
+            columns: ["mystery_slug"]
             isOneToOne: false
             referencedRelation: "mysteries"
-            referencedColumns: ["name"]
+            referencedColumns: ["slug"]
           },
           {
             foreignKeyName: "solved_user_id_fkey"
@@ -305,18 +305,21 @@ export interface Database {
           id: number
           mystery_id: number
           name: string
+          path: string | null
         }
         Insert: {
           description: string
           id?: number
           mystery_id: number
           name: string
+          path?: string | null
         }
         Update: {
           description?: string
           id?: number
           mystery_id?: number
           name?: string
+          path?: string | null
         }
         Relationships: [
           {
@@ -409,6 +412,45 @@ export interface Database {
           }
         ]
       }
+      user_mysteries: {
+        Row: {
+          id: string
+          info: Json
+          mystery_id: number | null
+          published: boolean
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          info: Json
+          mystery_id?: number | null
+          published?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          info?: Json
+          mystery_id?: number | null
+          published?: boolean
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_mysteries_mystery_id_fkey"
+            columns: ["mystery_id"]
+            isOneToOne: false
+            referencedRelation: "mysteries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_mysteries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       user_mystery_brain_messages: {
         Row: {
           chain_of_thought: string
@@ -416,7 +458,6 @@ export interface Database {
           created_at: string
           id: number
           info: string
-          mood: string
         }
         Insert: {
           chain_of_thought: string
@@ -424,7 +465,6 @@ export interface Database {
           created_at?: string
           id?: number
           info: string
-          mood: string
         }
         Update: {
           chain_of_thought?: string
@@ -432,7 +472,6 @@ export interface Database {
           created_at?: string
           id?: number
           info?: string
-          mood?: string
         }
         Relationships: [
           {
@@ -449,30 +488,30 @@ export interface Database {
           archived: boolean
           created_at: string
           id: number
-          mystery_name: string
+          mystery_slug: string
           user_id: string | null
         }
         Insert: {
           archived?: boolean
           created_at?: string
           id?: number
-          mystery_name: string
+          mystery_slug: string
           user_id?: string | null
         }
         Update: {
           archived?: boolean
           created_at?: string
           id?: number
-          mystery_name?: string
+          mystery_slug?: string
           user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "user_mystery_conversations_mystery_name_fkey"
-            columns: ["mystery_name"]
+            foreignKeyName: "user_mystery_conversations_mystery_slug_fkey"
+            columns: ["mystery_slug"]
             isOneToOne: false
             referencedRelation: "mysteries"
-            referencedColumns: ["name"]
+            referencedColumns: ["slug"]
           },
           {
             foreignKeyName: "user_mystery_conversations_user_id_fkey"
@@ -571,6 +610,10 @@ export interface Database {
           the_user_id: string
           daily_amount: number
         }
+        Returns: undefined
+      }
+      update_for_free_users: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       update_user_messages: {

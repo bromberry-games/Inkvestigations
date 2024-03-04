@@ -1,6 +1,7 @@
 import { AuthStatus, getAuthStatus } from '$lib/auth-helper.js';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { z } from 'zod';
+import { zod } from 'sveltekit-superforms/adapters';
 import { message, superValidate } from 'sveltekit-superforms/server';
 import type { Session, SupabaseClient } from '@supabase/supabase-js';
 import { supabase_full_access } from '$lib/supabase/supabase_full_access.server.js';
@@ -18,7 +19,7 @@ export const load = async ({ locals: { getSession, supabase } }) => {
 		redirect(303, '/');
 	}
 	const [form, activeSub] = await Promise.all([
-		superValidate({ email: session.user.email, useMyOwnToken: session.user.user_metadata.useMyOwnToken ?? false }, mainSchema),
+		superValidate({ email: session.user.email, useMyOwnToken: session.user.user_metadata.useMyOwnToken ?? false }, zod(mainSchema)),
 		loadActiveAndUncancelledSubscription(session.user.id)
 	]);
 	isTAndThrowPostgresErrorIfNot(activeSub);
@@ -27,7 +28,7 @@ export const load = async ({ locals: { getSession, supabase } }) => {
 
 export const actions = {
 	save: async ({ request, locals: { getSession, supabase } }) => {
-		const [session, form] = await Promise.all([getSession(), superValidate(request, mainSchema)]);
+		const [session, form] = await Promise.all([getSession(), superValidate(request, zod(mainSchema))]);
 		if (getAuthStatus(session) != AuthStatus.LoggedIn) {
 			redirect(303, '/');
 		}

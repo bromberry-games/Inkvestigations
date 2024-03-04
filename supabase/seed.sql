@@ -54,7 +54,7 @@ ROW(
     )::star_ratings,
     2
 )
-ON CONFLICT (name)
+ON CONFLICT (slug)
 DO UPDATE SET 
     description = EXCLUDED.description,
     theme = EXCLUDED.theme,
@@ -370,7 +370,7 @@ ROW(
         'John is caught without problems and confesses everything in an emotional scene.'
     )::star_ratings,
     1
-) ON CONFLICT (name)
+) ON CONFLICT (slug)
 DO UPDATE SET 
     description = EXCLUDED.description,
     theme = EXCLUDED.theme,

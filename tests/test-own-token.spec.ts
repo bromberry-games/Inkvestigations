@@ -20,7 +20,8 @@ test('activate own token setting', async ({ page, account }) => {
 	await setOwnToken(page);
 	await page.waitForTimeout(200);
 
-	await page.goto('/Mirror_Mirror');
+	await page.goto('/mysteries');
+	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
 	await expect(await page.getByRole('heading', { name: 'Use own openai token' })).toBeVisible();
 });
 
@@ -28,7 +29,8 @@ test('insert token, modal should not pop up again', async ({ page, account }) =>
 	await setOwnToken(page);
 	await page.waitForTimeout(200);
 
-	await page.goto('/Mirror_Mirror', { waitUntil: 'networkidle' });
+	await page.goto('/mysteries');
+	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
 	await fillOutTokenForm(page, 'test');
 	await page.reload();
 	await expect(await page.getByRole('heading', { name: 'Use own openai token' })).not.toBeVisible();
@@ -36,12 +38,13 @@ test('insert token, modal should not pop up again', async ({ page, account }) =>
 
 test('activate own token setting, then deactivate it modal should not pop up', async ({ page, account }) => {
 	await setOwnToken(page);
-	await page.waitForTimeout(200);
-	await page.goto('/Mirror_Mirror');
+	await page.goto('/mysteries');
+	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
 	await expect(await page.getByRole('heading', { name: 'Use own openai token' })).toBeVisible();
 	await setOwnToken(page, false);
-	await page.waitForTimeout(200);
-	await page.goto('/Mirror_Mirror');
+	await page.goto('/mysteries');
+	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
+
 
 	await expect(await page.getByRole('heading', { name: 'Use own openai token' })).not.toBeVisible();
 });

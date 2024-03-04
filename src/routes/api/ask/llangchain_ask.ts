@@ -188,7 +188,7 @@ export async function brainModelRequest(
 		}, '');
 	}
 	const parsedFewShots = parseFewShots(brainParams.fewShots);
-	const prompt = createBrainPrompt(conversation, parsedFewShots);
+	const prompt = createBrainPrompt(conversation, parsedFewShots || []);
 	const parser = new BrainParser();
 
 	const llm =

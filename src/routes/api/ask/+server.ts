@@ -31,28 +31,28 @@ import type { Json } from '../../../schema';
 import { on } from 'events';
 
 interface AccuseModelAnswerParams extends LLMCallback {
-	mysteryName: string;
+	slug: string;
 	userId: string;
 	accuseLetterInfo: string;
 	accuseBrainRequestParams: AccuseModelRequestParams;
 }
 
 export interface AskPayload {
-	gameConfig: { accuse: boolean; mysteryName: string };
+	gameConfig: { accuse: boolean; slug: string };
 	regenerate: boolean;
 	message: string;
 	requestToken: string;
 }
 
 async function accuseModelAnswer({
-	mysteryName,
+	slug,
 	userId,
 	accuseBrainRequestParams,
 	accuseLetterInfo,
 	onResponseGenerated
 }: AccuseModelAnswerParams) {
 	const response = await accuseBrainRequest(accuseBrainRequestParams);
-	const ratingSet = await setRating(mysteryName, userId, response.rating);
+	const ratingSet = await setRating(slug, userId, response.rating);
 	throwIfFalse(ratingSet, 'Could not set rating');
 	return accuseLetterModelRequest({
 		accusation: accuseBrainRequestParams.promptMessage,
@@ -71,22 +71,22 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		error(500, 'You are not logged in.');
 	}
 	const {
-		gameConfig: { accuse, mysteryName },
+		gameConfig: { accuse, slug },
 		message,
 		requestToken,
 		regenerate
 	}: AskPayload = await request.json();
-	throwIfUnset('Mystery name', mysteryName);
+	throwIfUnset('Mystery name', slug);
 	if ((textIsTooLong(accuse, approximateTokenCount(message)) || message.length == 0) && !regenerate) {
 		error(400, 'Message is too long or empty');
 	}
 
 	const [letterMessages, brainMessages, messagesAmount, currentSub, gameInfo] = await Promise.all([
-		loadLetterMessages(session.user.id, mysteryName),
-		loadBrainMessages(session.user.id, mysteryName),
+		loadLetterMessages(session.user.id, slug),
+		loadBrainMessages(session.user.id, slug),
 		getMessageAmountForUser(session.user.id),
 		loadActiveAndUncancelledSubscription(session.user.id),
-		loadGameInfo(mysteryName)
+		loadGameInfo(slug)
 	]);
 	isTAndThrowPostgresErrorIfNot(letterMessages);
 	isTAndThrowPostgresErrorIfNot(brainMessages);
@@ -122,7 +122,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 			error(500, 'You have no messages.');
 		}
 	} else if ((!hasNoMessages || !useBackendToken) && genNum == 0) {
-		const messageAdded = await addMessageForUser(session.user.id, message, mysteryName);
+		const messageAdded = await addMessageForUser(session.user.id, message, slug);
 		throwIfFalse(messageAdded, 'Could not add message to chat');
 		if (useBackendToken) {
 			const decreasedMessageForUser = await decreaseMessageForUser(session.user.id);
@@ -159,13 +159,13 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 		};
 		const userId = session.user.id;
 		const addResult = async (message: string) => {
-			const addedMessage = await addMessageForUser(userId, message, mysteryName);
+			const addedMessage = await addMessageForUser(userId, message, slug);
 			throwIfFalse(addedMessage, 'Could not add message to chat');
 		};
 
 		return accuse
 			? await accuseModelAnswer({
-					mysteryName,
+					slug,
 					accuseBrainRequestParams: {
 						...suspectAndVictim,
 						...themeAndSetting,
@@ -191,7 +191,7 @@ export const POST: RequestHandler = async ({ request, locals: { getSession } }) 
 						eventTimeframe: eventTimeframes,
 						openAiToken
 					},
-					mysteryName,
+					slug,
 					session.user.id,
 					gameInfo.letter_prompt,
 					letterMessages,

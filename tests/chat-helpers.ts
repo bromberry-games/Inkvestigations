@@ -7,10 +7,10 @@ export async function sendMessage(page: Page, message: string) {
 
 export async function navigateRestart(page: Page): Promise<void> {
 	await page.goto('/mysteries', { waitUntil: 'networkidle' });
-	const navigationPromise = page.waitForURL('/Mirror_Mirror', { waitUntil: 'networkidle' });
+	// const navigationPromise = page.waitForURL('/Mirror_Mirror', { waitUntil: 'networkidle' });
 	await page.getByRole('link', { name: 'Mirror Mirror ☆ ☆ ☆' }).click();
 	await page.getByRole('button', { name: 'rotate outline RESET CHAT' }).click();
-	await navigationPromise;
+	// await navigationPromise;
 }
 
 export async function navigateRestartAndReturnMessageCounter(page: Page): Promise<number> {
