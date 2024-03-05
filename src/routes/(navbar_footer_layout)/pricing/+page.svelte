@@ -8,69 +8,36 @@
 
 	export let data;
 	enum PayMode {
-		ONE_TIME = 'one_time',
-		SUBSCRIPTION = 'subscription'
+		MESSAGES = 'one_time',
+		MYSTERIES = 'subscription'
 	}
 	$: authStatus = getAuthStatus(data.session);
 
-	let currentView = PayMode.SUBSCRIPTION;
+	let currentView = PayMode.MYSTERIES;
 	const highlightedClass = 'bg-quaternary ';
 	const unhighlightedClass = 'bg-gray-500 ';
 	const sharedClass = 'font-primary text-xl w-full rounded-none';
 	function toggleView() {
-		currentView = currentView === PayMode.SUBSCRIPTION ? PayMode.ONE_TIME : PayMode.SUBSCRIPTION;
+		currentView = currentView === PayMode.MYSTERIES ? PayMode.MESSAGES : PayMode.MYSTERIES;
 	}
 </script>
 
 <div class="mt-4 flex justify-center">
 	<div class="flex w-1/3 justify-center gap-2">
 		<Button
-			class={sharedClass + ' ' + (currentView === PayMode.SUBSCRIPTION ? highlightedClass : unhighlightedClass)}
+			class={sharedClass + ' ' + (currentView === PayMode.MYSTERIES ? highlightedClass : unhighlightedClass)}
 			type="button"
-			on:click={toggleView}>Subscriptions</Button
+			on:click={toggleView}>Mysteries</Button
 		>
-		<Button class={sharedClass + ' ' + (currentView === PayMode.ONE_TIME ? highlightedClass : unhighlightedClass)} on:click={toggleView}
-			>One time</Button
+		<Button class={sharedClass + ' ' + (currentView === PayMode.MESSAGES ? highlightedClass : unhighlightedClass)} on:click={toggleView}
+			>Messages</Button
 		>
 	</div>
 </div>
 
-<div class="lg:h-[66vh]">
-	{#if currentView === PayMode.ONE_TIME}
-		<div class="my-8 mb-96 flex flex-wrap justify-center gap-8 md:gap-16">
-			{#each data.oneTimeItems as price}
-				<Card>
-					<p class="font-primary text-4xl font-bold text-gray-900">{convertIsoStringToIcon(price.currency)}{price.unit_amount / 100}</p>
-					<p class="font-primary">
-						<span class="inline font-primary text-xl font-bold">{price.product.metadata.messages_amount}</span>
-						messages
-					</p>
-					<form action="?/buy" method="POST" class="mt-4">
-						<input type="hidden" name="price_id" value={price.id} />
-						<Button class="w-full bg-quaternary font-primary text-xl" type="submit">Buy now</Button>
-					</form>
-				</Card>
-			{/each}
-		</div>
-	{:else}
+<div class="lg:h-[70vh]">
+	{#if currentView === PayMode.MESSAGES}
 		<div class="my-8 flex flex-wrap justify-center gap-16">
-			{#if authStatus != AuthStatus.LoggedIn}
-				<Card class="flex w-full flex-col justify-between">
-					<div>
-						<h5 class="mb-4 text-xl font-medium text-gray-500">for free</h5>
-						<div class="flex items-baseline text-gray-900">
-							<span class="text-3xl font-semibold">Signup and play for free!</span>
-						</div>
-						<ul class="my-7 space-y-4">
-							<CheckWithText><span>5 daily messages for free!</span></CheckWithText>
-							<CheckWithText><span>Play as many mysteries as you can</span></CheckWithText>
-						</ul>
-					</div>
-					<div class="w-full self-end">
-						<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" href="/login">SIGNUP</Button>
-					</div>
-				</Card>
-			{/if}
 			<Card class="flex w-full flex-col justify-between">
 				<div>
 					<h5 class="mb-4 text-xl font-medium text-gray-500">Pay as you go</h5>
@@ -95,7 +62,7 @@
 						<form action="?/subscribe" method="POST">
 							<input type="hidden" name="paymode" value={SubscriptionBundles.ZeroDollar} />
 							<input type="hidden" name="price-id" value={data.freeTier.id} />
-							<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">CHOOSE PLAN</Button>
+							<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" type="submit">Subscribe</Button>
 						</form>
 					{:else}
 						<form action="?/cancel" method="POST">
@@ -110,6 +77,44 @@
 					{/if}
 				</div>
 			</Card>
+			<div class="flex flex-col flex-wrap justify-center gap-8">
+				{#each data.oneTimeItems as price}
+					<Card>
+						<p class="font-primary text-4xl font-bold text-gray-900">{convertIsoStringToIcon(price.currency)}{price.unit_amount / 100}</p>
+						<p class="font-primary">
+							<span class="inline font-primary text-xl font-bold">{price.product.metadata.messages_amount}</span>
+							messages
+						</p>
+						<form action="?/buy" method="POST" class="mt-4">
+							<input type="hidden" name="price_id" value={price.id} />
+							<Button class="w-full bg-tertiary font-primary text-xl text-quaternary" type="submit">Buy now</Button>
+						</form>
+					</Card>
+				{/each}
+			</div>
+		</div>
+		<p class="text-center text-xl">
+			You can also use your own <a href="/user/edit" class="text-blue-700">OpenAI</a> Key and use the website for free.
+		</p>
+	{:else}
+		<div class="my-8 flex flex-wrap justify-center gap-16">
+			{#if authStatus != AuthStatus.LoggedIn}
+				<Card class="flex w-full flex-col justify-between">
+					<div>
+						<h5 class="mb-4 text-xl font-medium text-gray-500">for free</h5>
+						<div class="flex items-baseline text-gray-900">
+							<span class="text-3xl font-semibold">Signup and play for free!</span>
+						</div>
+						<ul class="my-7 space-y-4">
+							<CheckWithText><span>5 daily messages for free!</span></CheckWithText>
+							<CheckWithText><span>Play as many mysteries as you can</span></CheckWithText>
+						</ul>
+					</div>
+					<div class="w-full self-end">
+						<Button class="w-full bg-tertiary font-primary font-primary text-xl text-quaternary" href="/login">SIGNUP</Button>
+					</div>
+				</Card>
+			{/if}
 
 			<Card>
 				<h5 class="mb-4 text-xl font-medium text-gray-500 dark:text-gray-400">Premium Mysteries</h5>
@@ -151,9 +156,6 @@
 				{/if}
 			</Card>
 		</div>
-		<p class="text-center">
-			You can use your own <a href="/user/edit" class="text-blue-700">OpenAI</a> Key if you are aware of the risks.
-		</p>
 	{/if}
 </div>
 <div class="mb-8 flex justify-center">
@@ -178,6 +180,11 @@
 		<h4 class="mt-2 text-xl font-bold">- Do you offer any discounts?</h4>
 		<p class="text-xl">
 			Talk to us on our <a href="https://discord.gg/t3zTYNhNzp" class="text-blue-700">discord </a> and we will have something for you.
+		</p>
+		<h4 class="mt-2 text-xl font-bold">- OpenAi Token?</h4>
+		<p class="text-xl">
+			You can use your own OpenAi token if you want. This allows you to use this website for free. However you have to be aware of the risks
+			associated with it.
 		</p>
 	</div>
 </div>
