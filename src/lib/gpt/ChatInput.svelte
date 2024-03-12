@@ -70,7 +70,7 @@
 		const payload: AskPayload = {
 			gameConfig: {
 				accuse: accuseMode,
-				mysteryName: slug.replace(/_/g, ' ')
+				slug
 			},
 			message: messageToSubmit,
 			requestToken: $tokenStore,

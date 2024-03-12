@@ -88,7 +88,14 @@
 	}
 </script>
 
-<SuspectModal bind:clickOutsideModal={suspectModal} suspects={data.suspects} {slug} bind:notes></SuspectModal>
+<SuspectModal
+	bind:clickOutsideModal={suspectModal}
+	suspects={data.suspects}
+	nameParsed={data.name.replace(/ /g, '_')}
+	bind:notes
+	{slug}
+	accessCode={data.accessCode}
+></SuspectModal>
 {#if data.session?.user.user_metadata.useMyOwnToken}
 	<Modal title="Use own openai token" bind:open={tokenModal} autoclose>
 		<p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
@@ -105,7 +112,7 @@
 	</Modal>
 
 	<div class="flex w-full justify-center bg-quaternary">
-		<Button on:click={() => (tokenModal = true)} class="!font-2xl my-2 bg-tertiary font-primary !text-quaternary">Change Token</Button>
+		<Button on:click={() => (tokenModal = true)} class="!font-2xl my-2 bg-tertiary-500 font-primary !text-quaternary">Change Token</Button>
 	</div>
 {/if}
 <!-- <Button class="sticky top-24 bg-red-500">RESET CHAT</Button> -->

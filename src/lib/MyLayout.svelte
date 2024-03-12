@@ -41,7 +41,7 @@
 			{#if authStatus == AuthStatus.LoggedIn}
 				<div class="flex items-center rounded-full bg-quaternary" id="message-counter">
 					<Avatar id="avatar-menu" src="/images/mysteries/police_captain.webp" class="cursor-pointer" />
-					<div data-testid="message-counter" class="mx-3 font-primary text-2xl text-tertiary">
+					<div data-testid="message-counter" class="mx-3 font-primary text-2xl text-tertiary-500">
 						{$messageAmountStore}
 					</div>
 				</div>
@@ -65,10 +65,15 @@
 			class="ml-0 justify-end border-none !bg-transparent text-end font-primary lg:ml-8 2xl:ml-24"
 			on:click={toggle}
 		>
-			<NavLi href="/mysteries" class="ml-8 text-4xl !text-quaternary" active={activeUrl === '/mysteries'}>MYSTERIES</NavLi>
-			<NavLi href="/pricing" class="ml-8 text-4xl !text-quaternary" active={activeUrl === '/pricing'}>PRICING</NavLi>
+			<NavLi href="/mysteries" class="ml-2 text-2xl !text-quaternary lg:text-4xl" active={activeUrl === '/mysteries'}>MYSTERIES</NavLi>
+			{#if authStatus == AuthStatus.LoggedIn}
+				<NavLi href="/user/mysteries" class="ml-2 text-2xl !text-quaternary lg:text-4xl" active={activeUrl === '/user/mysteries'}
+					>CREATE</NavLi
+				>
+			{/if}
+			<NavLi href="/pricing" class="ml-2 text-2xl !text-quaternary lg:text-4xl" active={activeUrl === '/pricing'}>PRICING</NavLi>
 			{#if authStatus != AuthStatus.LoggedIn}
-				<NavLi href="/login" class="ml-8 text-4xl !text-quaternary" active={activeUrl === '/login'}>LOGIN</NavLi>
+				<NavLi href="/login" class="ml-2 text-2xl !text-quaternary lg:text-4xl" active={activeUrl === '/login'}>LOGIN</NavLi>
 			{/if}
 		</NavUl>
 	</NavContainer>

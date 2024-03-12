@@ -37,16 +37,25 @@
 	<div class="mx-1 grid w-full grid-cols-2 md:mx-4 md:gap-6 lg:w-1/2">
 		<Radio name="custom" custom value="free" bind:group={subscription}>
 			<div
-				class="w-full cursor-pointer items-center justify-between rounded-lg border-4 border-quaternary bg-quaternary p-2 text-gray-500 hover:text-gray-600 peer-checked:border-tertiary peer-checked:text-gray-900"
+				class="peer-checked:border-tertiary w-full cursor-pointer items-center justify-between rounded-lg border-4 border-quaternary bg-quaternary p-2 text-gray-500 hover:text-gray-600 peer-checked:text-gray-900"
 			>
-				<div class="text-md w-full font-primary text-tertiary md:text-lg">FREE</div>
+				<div class="text-md w-full font-semibold text-tertiary-500 md:text-lg">DEFAULT</div>
 			</div>
 		</Radio>
-		<Radio name="custom" custom value="basic" bind:group={subscription}>
+		<!-- <Radio name="custom" custom value="basic" bind:group={subscription}> -->
+		<!-- <div -->
+		<!-- class="w-full cursor-pointer items-center justify-between rounded-lg border-4 border-quaternary bg-quaternary p-2 text-gray-500 hover:text-gray-600 peer-checked:border-tertiary peer-checked:text-gray-900" -->
+		<!-- > -->
+		<!-- <div class="text-md w-full font-semibold text-tertiary-500 md:text-lg">SUBSCRIPTION</div> -->
+		<!-- </div> -->
+		<!-- </Radio> -->
+		<Radio name="custom" custom value="user" bind:group={subscription}>
 			<div
-				class="w-full cursor-pointer items-center justify-between rounded-lg border-4 border-quaternary bg-quaternary p-2 text-gray-500 hover:text-gray-600 peer-checked:border-tertiary peer-checked:text-gray-900"
+				class="peer-checked:border-tertiary w-full cursor-pointer items-center justify-between rounded-lg border-4 border-quaternary bg-quaternary p-2 text-gray-500 hover:text-gray-600 peer-checked:text-gray-900"
 			>
-				<div class="text-md w-full font-semibold text-tertiary md:text-lg">SUBSCRIPTION</div>
+				<div class="block">
+					<div class="text-md w-full font-semibold text-tertiary-500 md:text-lg">USER</div>
+				</div>
 			</div>
 		</Radio>
 	</div>
@@ -58,7 +67,7 @@
 		<MysteryCard
 			{mystery}
 			rating={data.mysteries?.[i]?.solved?.length > 0 ? data.mysteries[i].solved[0].rating : 0}
-			unlocked={data?.userAccessCodes?.includes(mystery.access_code) || mystery.access_code == 'free'}
+			unlocked={data?.userAccessCodes?.includes(mystery.access_code) || mystery.access_code == 'free' || mystery.access_code == 'user'}
 		/>
 	{/each}
 </div>

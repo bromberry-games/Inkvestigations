@@ -7,13 +7,13 @@
 	$: mysterData =
 		data.lastPlayed != undefined
 			? {
-					slug: data.lastPlayed.user_mystery_conversations?.mystery_name.replace(/ /g, '_'),
-					image: data.lastPlayed.user_mystery_conversations?.mystery_name.replace(/ /g, '_').toLowerCase(),
+					slug: data.lastPlayed.user_mystery_conversations?.mystery_slug,
+					image: data.lastPlayed.user_mystery_conversations?.mysteries?.name.replace(/ /g, '_').toLowerCase(),
 					message: data.lastPlayed.content,
-					name: data.lastPlayed.user_mystery_conversations?.mystery_name
+					name: data.lastPlayed.user_mystery_conversations?.mysteries?.name
 				}
 			: {
-					slug: data.first.name.replace(/ /g, '_'),
+					slug: data.first.slug,
 					image: data.first.name.replace(/ /g, '_').toLowerCase(),
 					message: data.first.description,
 					name: data.first.name
@@ -29,7 +29,7 @@
 				href={mysterData.slug}
 			>
 				<div class="">
-					<h1 class="text-2xl text-tertiary">{data.lastPlayed != undefined ? 'Continue playing' : 'Start playing'}</h1>
+					<h1 class="text-2xl text-tertiary-500">{data.lastPlayed != undefined ? 'Continue playing' : 'Start playing'}</h1>
 					<p>{mysterData.name}</p>
 				</div>
 				<div class="">
@@ -44,7 +44,7 @@
 				</div>
 				<!-- <Button -->
 				<!-- href={data.lastPlayed.user_mystery_conversations?.mystery_name.replace(/ /, '_')} -->
-				<!-- class="mt-4 w-full rounded bg-tertiary font-primary text-2xl text-quaternary">CONTINUE</Button -->
+				<!-- class="mt-4 w-full rounded bg-tertiary-500 font-primary text-2xl text-quaternary">CONTINUE</Button -->
 				<!-- > -->
 			</Card>
 			<iframe

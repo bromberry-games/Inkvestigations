@@ -5,8 +5,8 @@ import type { BrainOutput } from '../../routes/api/ask/llangchain_ask';
 import type { PostgrestError } from '@supabase/supabase-js';
 import { isPostgresError } from './helpers';
 
-export async function loadBrainMessages(userId: string, mystery: string): Promise<BrainOutput[] | PostgrestError> {
-	const conversationId = await getOrCreateConversationId(userId, mystery);
+export async function loadBrainMessages(userId: string, slug: string): Promise<BrainOutput[] | PostgrestError> {
+	const conversationId = await getOrCreateConversationId(userId, slug);
 	if (isPostgresError(conversationId)) {
 		console.error(conversationId);
 		return conversationId;
@@ -41,8 +41,8 @@ export async function addInfoModelMessage(userId: string, mystery: string, messa
 	return true;
 }
 
-export async function setRating(mystery: string, user_id: string, rating: number): Promise<boolean> {
-	const { error } = await supabase_full_access.from('solved').insert({ mystery_name: mystery, user_id: user_id, rating: rating });
+export async function setRating(slug: string, user_id: string, rating: number): Promise<boolean> {
+	const { error } = await supabase_full_access.from('solved').insert({ mystery_slug: slug, user_id: user_id, rating: rating });
 	if (error) {
 		console.error(error);
 		return false;
@@ -50,12 +50,12 @@ export async function setRating(mystery: string, user_id: string, rating: number
 	return true;
 }
 
-async function getOrCreateConversationId(userid: string, mystery: string): Promise<number | PostgrestError> {
+async function getOrCreateConversationId(userid: string, slug: string): Promise<number | PostgrestError> {
 	const { data: conversationData, error: conversationError } = await supabase_full_access
 		.from('user_mystery_conversations')
 		.select('id, archived')
 		.eq('user_id', userid)
-		.eq('mystery_name', mystery)
+		.eq('mystery_slug', slug)
 		.order('created_at', { ascending: false })
 		.limit(1);
 
@@ -71,7 +71,7 @@ async function getOrCreateConversationId(userid: string, mystery: string): Promi
 
 	const { data: conversationInsertData, error: conversationInsertError } = await supabase_full_access
 		.from('user_mystery_conversations')
-		.insert({ user_id: userid, mystery_name: mystery })
+		.insert({ user_id: userid, mystery_slug: slug })
 		.select('id, created_at')
 		.single();
 
@@ -105,16 +105,16 @@ async function loadLetterMessagesFromConvId(conversationId: number): Promise<Cha
 	return messages;
 }
 
-export async function loadLetterMessages(userId: string, mystery: string): Promise<ChatMessage[] | PostgrestError> {
-	const conversationId = await getOrCreateConversationId(userId, mystery);
+export async function loadLetterMessages(userId: string, slug: string): Promise<ChatMessage[] | PostgrestError> {
+	const conversationId = await getOrCreateConversationId(userId, slug);
 	if (isPostgresError(conversationId)) {
 		return conversationId;
 	}
 	return await loadLetterMessagesFromConvId(conversationId);
 }
 
-export async function loadLetterMessagesNotesAndConversationId(userId: string, mystery: string) {
-	const conversationId = await getOrCreateConversationId(userId, mystery);
+export async function loadLetterMessagesNotesAndConversationId(userId: string, slug: string) {
+	const conversationId = await getOrCreateConversationId(userId, slug);
 	if (isPostgresError(conversationId)) {
 		return conversationId;
 	}
@@ -133,12 +133,12 @@ export async function loadNotesFromConvId(convId: number) {
 	return data;
 }
 
-export async function archiveLastConversation(userid: string, mystery: string): Promise<boolean> {
+export async function archiveLastConversation(userid: string, slug: string): Promise<boolean> {
 	const { error: archiveError } = await supabase_full_access
 		.from('user_mystery_conversations')
 		.update({ archived: true })
 		.eq('user_id', userid)
-		.eq('mystery_name', mystery)
+		.eq('mystery_slug', slug)
 		.eq('archived', false)
 		.order('created_at', { ascending: false })
 		.limit(1);
@@ -151,8 +151,8 @@ export async function archiveLastConversation(userid: string, mystery: string): 
 	return true;
 }
 
-export async function addMessageForUser(userid: string, message: string, mystery: string): Promise<boolean> {
-	const conversationId = await getOrCreateConversationId(userid, mystery);
+export async function addMessageForUser(userid: string, message: string, slug: string): Promise<boolean> {
+	const conversationId = await getOrCreateConversationId(userid, slug);
 	if (isPostgresError(conversationId)) {
 		console.error(conversationId);
 		return false;
@@ -169,11 +169,11 @@ export async function addMessageForUser(userid: string, message: string, mystery
 	return true;
 }
 
-export async function loadEventMessages(mystery: string) {
+export async function loadEventMessages(slug: string) {
 	const { data, error } = await supabase_full_access
 		.from('events')
 		.select(`letter, show_at_message, mysteries!inner(name)`)
-		.eq('mysteries.name', mystery);
+		.eq('mysteries.slug', slug);
 	if (error) {
 		return error;
 	}
@@ -183,10 +183,26 @@ export async function loadEventMessages(mystery: string) {
 export async function loadLastPlayedMysteryOrNextPlayableOne(userid: string) {
 	const { data, error } = await supabase_full_access
 		.from('user_mystery_messages')
-		.select('content, user_mystery_conversations!inner(mystery_name)')
+		.select(
+			`
+    content, 
+    user_mystery_conversations!inner(
+      mystery_slug,
+      mysteries (
+        name
+      )
+    )
+  `
+		)
 		.eq('user_mystery_conversations.user_id', userid)
 		.order('created_at', { ascending: false })
 		.limit(1);
+	// const { data, error } = await supabase_full_access
+	// .from('user_mystery_messages')
+	// .select('content, user_mystery_conversations!inner(mystery_slug), mysteries(name)')
+	// .eq('user_mystery_conversations.user_id', userid)
+	// .order('created_at', { ascending: false })
+	// .limit(1);
 	if (error) {
 		return error;
 	}
