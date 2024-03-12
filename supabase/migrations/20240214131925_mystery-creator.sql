@@ -29,7 +29,11 @@ ALTER TABLE solved DROP COLUMN mystery_name;
 ALTER TABLE mysteries DROP CONSTRAINT mysteries_name_key;
 ALTER TABLE suspects ADD COLUMN path text;
 
-insert into storage.buckets
-  (id, name, public)
-values
-  ('user_mysteries', 'user_mysteries', true);
+-- for some reason supabase does not reset this.
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM storage.buckets WHERE id = 'user_mysteries' OR name = 'user_mysteries') THEN
+        INSERT INTO storage.buckets (id, name, public)
+        VALUES ('user_mysteries', 'user_mysteries', true);
+    END IF;
+END$$;
