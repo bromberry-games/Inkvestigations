@@ -13,7 +13,7 @@
 </div>
 
 <!-- <div class="flex h-full flex-1 justify-center"> -->
-<!-- <div class="h-full flex-auto bg-tertiary md:w-11/12"> -->
+<!-- <div class="h-full flex-auto bg-tertiary-500 md:w-11/12"> -->
 <slot />
 <!-- </div> -->
 <!-- </div> -->

@@ -51,7 +51,7 @@
 				/>
 			</div>
 			<Turnstile on:turnstile-callback={(e) => (captchaToken = e.detail.token)} siteKey={PUBLIC_TURNSTILE_SITE_KEY} />
-			<Button type="submit" class="rounded bg-tertiary py-4 font-primary text-xl text-quaternary">
+			<Button type="submit" class="rounded bg-tertiary-500 py-4 font-primary text-xl text-quaternary">
 				{i18n?.forgotten_password?.button_label}
 			</Button>
 		</Container>

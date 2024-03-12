@@ -14,7 +14,7 @@
 	};
 </script>
 
-<Pagination large on:previous={previous} on:next={next} icon normalClass="bg-quaternary text-tertiary border-quaternary">
+<Pagination large on:previous={previous} on:next={next} icon normalClass="bg-quaternary text-tertiary-500 border-quaternary">
 	<svelte:fragment slot="prev">
 		<span class="sr-only">Previous</span>
 		<ChevronLeftOutline class="h-3 w-3" />

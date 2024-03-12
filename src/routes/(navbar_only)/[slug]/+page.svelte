@@ -112,7 +112,7 @@
 	</Modal>
 
 	<div class="flex w-full justify-center bg-quaternary">
-		<Button on:click={() => (tokenModal = true)} class="!font-2xl my-2 bg-tertiary font-primary !text-quaternary">Change Token</Button>
+		<Button on:click={() => (tokenModal = true)} class="!font-2xl my-2 bg-tertiary-500 font-primary !text-quaternary">Change Token</Button>
 	</div>
 {/if}
 <!-- <Button class="sticky top-24 bg-red-500">RESET CHAT</Button> -->
