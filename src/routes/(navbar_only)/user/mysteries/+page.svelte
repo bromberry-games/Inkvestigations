@@ -32,7 +32,7 @@
 				{#each data.mysteries as mystery}
 					<div aria-label="mystery" class="w-full rounded bg-tertiary-100 px-4 py-2">
 						<Badge rounded color="dark">{mystery.mystery_id != undefined ? 'Published' : 'Draft'}</Badge>
-						{mystery.name}
+						{mystery.name || 'Untitled mystery'}
 						<Button
 							type="submit"
 							class="bg-tertiary-300 text-gray-700"
