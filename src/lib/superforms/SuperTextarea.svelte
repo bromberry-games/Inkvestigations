@@ -17,7 +17,7 @@
 	const { value, errors, constraints } = formFieldProxy(form, field);
 </script>
 
-<label for={field} class="text-md font-bold capitalize">
+<label for={field} class="text-md mt-2 font-bold capitalize">
 	{labelName || field}
 </label>
 <textarea
