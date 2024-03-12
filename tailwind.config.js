@@ -18,7 +18,11 @@ const config = {
       		colors: {
         		'primary': '#a05e2a',
         		'secondary': '#99785e',
-        		'tertiary': '#efdfbb',
+        		'tertiary': {
+					500: '#efdfbb',
+					// 300: '#ffe5a8',
+					100: '#fff1d1'
+				},
 				'quaternary': '#3c3c3c',
 				'chief': '#dcb98c',
       		},

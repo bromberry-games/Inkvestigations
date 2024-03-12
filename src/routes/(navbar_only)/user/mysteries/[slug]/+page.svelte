@@ -78,7 +78,7 @@
 
 <!-- <SuperDebug data={$form} /> -->
 
-<div class="flex w-full justify-center bg-tertiary pt-16">
+<div class="flex w-full justify-center bg-tertiary-500 pt-16">
 	<form
 		enctype="multipart/form-data"
 		method="POST"
