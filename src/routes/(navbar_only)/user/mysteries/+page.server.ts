@@ -6,7 +6,8 @@ import { error, redirect } from '@sveltejs/kit';
 export const load = async ({ locals: { getSession } }) => {
 	const session = await getSession();
 	if (getAuthStatus(session) != AuthStatus.LoggedIn) {
-		throw redirect(303, '/');
+		// throw redirect(303, '/');
+		return { mysteries: [] };
 	}
 
 	const mysteries = await loadUserMysteries(session.user.id);

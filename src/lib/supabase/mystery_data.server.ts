@@ -260,7 +260,6 @@ export async function publishMysteryForAll(mysteryData: MysterySubmitSchema, use
 			mysteryData.suspects.map((suspect, i) => ({
 				name: suspect.name,
 				description: suspect.description,
-				// path:
 				mystery_id: mysteryId
 			}))
 		),
@@ -309,6 +308,13 @@ export async function publishMysteryForAll(mysteryData: MysterySubmitSchema, use
 	if (results.some((result) => result.error != null)) {
 		return results.find((result) => result.error != null);
 	}
+
+	const { data: list, error: listError } = await supabase_full_access.storage.from('user_mysteries').list(`${mysteryData.id}/published`);
+	const filesToRemove = list.map((x) => `${mysteryData.id}/published/${x.name}`);
+	console.log('filesToRemove: ', filesToRemove);
+	const { data: deleteData, error: deleteError } = await supabase_full_access.storage.from('user_mysteries').remove(filesToRemove);
+	console.log('deleteData: ', deleteData);
+	console.log('deleteError: ', deleteError);
 
 	const insertImages = [
 		supabase_full_access.storage
