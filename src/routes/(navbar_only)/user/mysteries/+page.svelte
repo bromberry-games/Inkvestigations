@@ -1,10 +1,11 @@
 <script>
+	import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
 	import { Badge, Button, Input, Modal } from 'flowbite-svelte';
-	import { FolderPlusOutline } from 'flowbite-svelte-icons';
 
 	export let data;
 	let toDelete = '';
 	let openToDelete = false;
+	$: authStatus = getAuthStatus(data.session);
 </script>
 
 <Modal size="xs" title="Delete mystery" bind:open={openToDelete} autoclose={false} outsideclose>
@@ -49,14 +50,18 @@
 	</div>
 {:else}
 	<div class="flex h-dvh bg-tertiary-500 lg:justify-center">
-		<div class="mx-4 w-full pt-8 lg:w-1/2">
+		<div class="mx-4 w-full pt-8 lg:w-1/2 xl:w-[40rem]">
 			<h1 class="font-secondary text-4xl font-medium text-quaternary">Create a mystery</h1>
 			<h2 class="mb-8 font-secondary text-xl font-medium text-gray-500">
-				Make your own unique mystery in a few minutes, then play it and share it with your friends.
+				Make your own unique mystery in a few minutes, then play it and share it with your friends and the world.
 			</h2>
-			<form action="?/create" method="post" class="inline">
-				<Button class="bg-quaternary font-primary text-2xl font-medium text-gray-200" type="submit">CREATE NEW</Button>
-			</form>
+			{#if authStatus == AuthStatus.LoggedIn}
+				<form action="?/create" method="post" class="inline">
+					<Button class="bg-quaternary font-primary text-2xl font-medium text-gray-200" type="submit">CREATE NEW</Button>
+				</form>
+			{:else}
+				<Button class="bg-quaternary font-primary text-2xl font-medium text-gray-200" href="/login">SIGN UP</Button>
+			{/if}
 		</div>
 	</div>
 {/if}
