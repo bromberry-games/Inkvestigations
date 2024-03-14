@@ -19,9 +19,10 @@ const config = {
         		'primary': '#a05e2a',
         		'secondary': '#99785e',
         		'tertiary': {
-					500: '#efdfbb',
-					// 300: '#ffe5a8',
-					100: '#fff1d1'
+					400: '#efdfbb',
+					300: '#f7ebca',
+					200: '#fcefd4',
+					100: '#fff9eb'
 				},
 				'quaternary': '#3c3c3c',
 				'chief': '#dcb98c',

@@ -33,6 +33,6 @@
 		New messages in: {Math.floor(timeLeft / 3600)}h {Math.floor((timeLeft % 3600) / 60)}m {Math.floor(timeLeft % 60)}s
 	</p>
 	<div class="mt-2 text-center">
-		<Button class="bg-quaternary !p-2 font-secondary text-xl text-tertiary-500" href="/pricing">BUY MORE</Button>
+		<Button class="text-tertiary-400 bg-quaternary !p-2 font-secondary text-xl" href="/pricing">BUY MORE</Button>
 	</div>
 </div>

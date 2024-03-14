@@ -25,7 +25,7 @@
 	href={unlocked ? mystery.slug : undefined}
 >
 	<div class="m-4 flex justify-center">
-		<div class="flex flex-col justify-between font-primary text-2xl text-tertiary-500">
+		<div class="text-tertiary-400 flex flex-col justify-between font-primary text-2xl">
 			<h5 class="text-center text-xl md:text-2xl xl:text-3xl">
 				{mystery.name}
 				{#if !unlocked}
