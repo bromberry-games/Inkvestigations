@@ -37,7 +37,7 @@
 	<div class="mx-1 grid w-full grid-cols-2 md:mx-4 md:gap-6 lg:w-1/2">
 		<Radio name="custom" custom value="free" bind:group={subscription}>
 			<div
-				class="peer-checked:border-tertiary w-full cursor-pointer items-center justify-between rounded-lg border-4 border-quaternary bg-quaternary p-2 text-gray-500 hover:text-gray-600 peer-checked:text-gray-900"
+				class="peer-checked:border-tertiary-400 w-full cursor-pointer items-center justify-between rounded-lg border-4 border-quaternary bg-quaternary p-2 text-gray-500 hover:text-gray-600 peer-checked:text-gray-900"
 			>
 				<div class="text-md text-tertiary-400 w-full font-semibold md:text-lg">DEFAULT</div>
 			</div>
@@ -51,7 +51,7 @@
 		<!-- </Radio> -->
 		<Radio name="custom" custom value="user" bind:group={subscription}>
 			<div
-				class="peer-checked:border-tertiary w-full cursor-pointer items-center justify-between rounded-lg border-4 border-quaternary bg-quaternary p-2 text-gray-500 hover:text-gray-600 peer-checked:text-gray-900"
+				class="peer-checked:border-tertiary-400 w-full cursor-pointer items-center justify-between rounded-lg border-4 border-quaternary bg-quaternary p-2 text-gray-500 hover:text-gray-600 peer-checked:text-gray-900"
 			>
 				<div class="block">
 					<div class="text-md text-tertiary-400 w-full font-semibold md:text-lg">USER</div>

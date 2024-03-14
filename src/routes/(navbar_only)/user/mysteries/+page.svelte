@@ -1,4 +1,5 @@
 <script>
+	import { PUBLIC_SUPABASE_URL } from '$env/static/public';
 	import { AuthStatus, getAuthStatus } from '$lib/auth-helper';
 	import { Badge, Button, Input, Modal } from 'flowbite-svelte';
 
@@ -31,18 +32,25 @@
 			</div>
 			<div class="mt-4 flex flex-col gap-4">
 				{#each data.mysteries as mystery}
-					<div aria-label="mystery" class="bg-tertiary-200 w-full rounded px-4 py-2">
-						<Badge rounded color="dark">{mystery.mystery_id != undefined ? 'Published' : 'Draft'}</Badge>
-						{mystery.name || 'Untitled mystery'}
-						<Button
-							type="submit"
-							class="text-gray-700"
-							on:click={() => {
-								toDelete = mystery.id;
-								openToDelete = true;
-							}}>Delete</Button
-						>
-						<Button class="text-md bg-quaternary" href="/user/mysteries/{mystery.id}">Edit</Button>
+					<div aria-label="mystery" class="bg-tertiary-200 flex w-full rounded px-4 py-2">
+						<!-- <img -->
+						<!-- src={PUBLIC_SUPABASE_URL + '/storage/v1/object/public/user_mysteries/' + mystery.id + '/mystery.image' + '?' + Math.random()} -->
+						<!-- width="80" -->
+						<!-- alt="mystery image" -->
+						<!-- /> -->
+						<div>
+							<Badge rounded color="dark">{mystery.mystery_id != undefined ? 'Published' : 'Draft'}</Badge>
+							{mystery.name || 'Untitled mystery'}
+							<Button
+								type="submit"
+								class="text-gray-700"
+								on:click={() => {
+									toDelete = mystery.id;
+									openToDelete = true;
+								}}>Delete</Button
+							>
+							<Button class="text-md bg-quaternary" href="/user/mysteries/{mystery.id}">Edit</Button>
+						</div>
 					</div>
 				{/each}
 			</div>

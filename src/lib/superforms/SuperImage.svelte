@@ -33,7 +33,7 @@
 	{/if}
 </div>
 <input
-	class="col-span-1"
+	class="col-span-1 rounded-lg"
 	type="file"
 	name={field}
 	accept="image/png, image/jpeg, image/webp"

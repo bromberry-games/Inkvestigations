@@ -22,8 +22,7 @@
 	export let session: Session | null;
 	$: authStatus = getAuthStatus(session);
 	$: activeUrl = $page.url.pathname;
-	let activeClass =
-		'!text-white bg-green-700 md:bg-transparent md:text-green-700 md:dark:text-white dark:bg-green-600 md:dark:bg-transparent';
+	let activeClass = '!text-tertiary-300';
 
 	onMount(() => {
 		if (authStatus != AuthStatus.LoggedOut && session?.user.id != undefined) {
@@ -59,14 +58,19 @@
 			{/if}
 			<NavHamburger on:click={toggle} class="!focus:outline-none !bg-transparent" />
 		</div>
-		<NavUl {hidden} {activeClass} class="ml-0 justify-end border-none !bg-transparent text-end font-primary 2xl:ml-24" on:click={toggle}>
-			<NavLi href="/mysteries" class="ml-2 text-2xl !text-quaternary lg:text-4xl" active={activeUrl === '/mysteries'}>MYSTERIES</NavLi>
-			<NavLi href="/user/mysteries" class="ml-2 text-2xl !text-quaternary lg:text-4xl" active={activeUrl === '/user/mysteries'}
-				>CREATE</NavLi
+		<NavUl
+			{hidden}
+			{activeClass}
+			{activeUrl}
+			class="ml-0 justify-end border-none !bg-transparent text-end font-primary 2xl:ml-24"
+			on:click={toggle}
+		>
+			<NavLi href="/mysteries" class="ml-2 text-2xl text-quaternary lg:text-4xl" {activeClass}>MYSTERIES</NavLi>
+			<NavLi href="/user/mysteries" class="ml-2 text-2xl text-quaternary lg:text-4xl" active={activeUrl === '/user/mysteries'}>CREATE</NavLi
 			>
-			<NavLi href="/pricing" class="ml-2 text-2xl !text-quaternary lg:text-4xl" active={activeUrl === '/pricing'}>PRICING</NavLi>
+			<NavLi href="/pricing" class="ml-2 text-2xl text-quaternary lg:text-4xl" active={activeUrl === '/pricing'}>PRICING</NavLi>
 			{#if authStatus != AuthStatus.LoggedIn}
-				<NavLi href="/login" class="ml-2 text-2xl !text-quaternary lg:text-4xl" active={activeUrl === '/login'}>LOGIN</NavLi>
+				<NavLi href="/login" class="ml-2 text-2xl text-quaternary lg:text-4xl" active={activeUrl === '/login'}>LOGIN</NavLi>
 			{/if}
 		</NavUl>
 	</NavContainer>

@@ -29,7 +29,7 @@
 				href={mysterData.slug}
 			>
 				<div class="">
-					<h1 class="text-tertiary-400 text-2xl">{data.lastPlayed != undefined ? 'Continue playing' : 'Start playing'}</h1>
+					<h1 class="text-tertiary-300 text-2xl">{data.lastPlayed != undefined ? 'Continue playing' : 'Start playing'}</h1>
 					<p>{mysterData.name}</p>
 				</div>
 				<div class="">
