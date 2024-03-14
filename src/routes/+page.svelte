@@ -9,7 +9,7 @@
 </script>
 
 <div class="flex flex-1">
-	<div class="flex-auto bg-tertiary-500">
+	<div class="bg-tertiary-400 flex-auto">
 		<section class="relative justify-center bg-[url(/images/hero_page.webp)] bg-cover bg-bottom bg-no-repeat pb-80 md:h-screen">
 			<div id="nav">
 				<MyLayout {supabase} {session}></MyLayout>
@@ -18,15 +18,15 @@
 				<div class="container mt-44 px-4 text-center sm:px-6 lg:px-8 xl:mt-52 2xl:mt-24">
 					<div class="font-secondary">
 						<!-- Adjusting margin to push content to the left -->
-						<h1 class="mb-4 text-end text-7xl font-extrabold tracking-wide text-tertiary-500">INTERACTIVE MYSTERY GAMES</h1>
+						<h1 class="text-tertiary-400 mb-4 text-end text-7xl font-extrabold tracking-wide">INTERACTIVE MYSTERY GAMES</h1>
 						<div class="flex justify-end">
-							<h2 class="mb-8 mt-4 max-w-sm text-end text-tertiary-500 sm:text-xl md:max-w-2xl">
+							<h2 class="text-tertiary-400 mb-8 mt-4 max-w-sm text-end sm:text-xl md:max-w-2xl">
 								A new type of game's afoot in these AI powered mystery murder stories. Inkvestigation combines authored mysteries with
 								dynamic storytelling.
 							</h2>
 						</div>
 						<div class="mt-16 flex justify-end">
-							<Button class="w-1/2 rounded-none bg-tertiary-500 py-4 font-primary !text-4xl !text-quaternary lg:w-1/4" href="/try-for-free"
+							<Button class="bg-tertiary-400 w-1/2 rounded-none py-4 font-primary !text-4xl !text-quaternary lg:w-1/4" href="/try-for-free"
 								>TRY FOR FREE</Button
 							>
 						</div>

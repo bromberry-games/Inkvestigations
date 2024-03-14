@@ -3,7 +3,7 @@
 	import { FacebookSolid, GithubSolid, DiscordSolid, TwitterSolid } from 'flowbite-svelte-icons';
 </script>
 
-<Footer footerType="socialmedia" class="!bg-tertiary-500">
+<Footer footerType="socialmedia" class="!bg-tertiary-400">
 	<hr class="my-6 border-gray-700 dark:border-gray-700 sm:mx-auto lg:my-8" />
 	<div class="md:flex md:justify-between">
 		<div class="mb-6 md:mb-0">

@@ -21,7 +21,7 @@
 	</svelte:fragment>
 </Modal>
 {#if data.mysteries && data.mysteries.length > 0}
-	<div class="flex h-dvh justify-center bg-tertiary-500">
+	<div class="bg-tertiary-400 flex h-dvh justify-center">
 		<div class="w-11/12 lg:w-1/2 xl:w-[50rem]">
 			<div class="mt-4 flex">
 				<Input type="text" placeholder="search" class="mr-2"></Input>
@@ -31,12 +31,12 @@
 			</div>
 			<div class="mt-4 flex flex-col gap-4">
 				{#each data.mysteries as mystery}
-					<div aria-label="mystery" class="w-full rounded bg-tertiary-100 px-4 py-2">
+					<div aria-label="mystery" class="bg-tertiary-200 w-full rounded px-4 py-2">
 						<Badge rounded color="dark">{mystery.mystery_id != undefined ? 'Published' : 'Draft'}</Badge>
 						{mystery.name || 'Untitled mystery'}
 						<Button
 							type="submit"
-							class="bg-tertiary-300 text-gray-700"
+							class="text-gray-700"
 							on:click={() => {
 								toDelete = mystery.id;
 								openToDelete = true;
@@ -49,7 +49,7 @@
 		</div>
 	</div>
 {:else}
-	<div class="flex h-dvh bg-tertiary-500 lg:justify-center">
+	<div class="bg-tertiary-400 flex h-dvh lg:justify-center">
 		<div class="mx-4 w-full pt-8 lg:w-1/2 xl:w-[40rem]">
 			<h1 class="font-secondary text-4xl font-medium text-quaternary">Create a mystery</h1>
 			<h2 class="mb-8 font-secondary text-xl font-medium text-gray-500">

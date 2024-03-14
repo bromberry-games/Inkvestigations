@@ -29,7 +29,7 @@
 				href={mysterData.slug}
 			>
 				<div class="">
-					<h1 class="text-2xl text-tertiary-500">{data.lastPlayed != undefined ? 'Continue playing' : 'Start playing'}</h1>
+					<h1 class="text-tertiary-400 text-2xl">{data.lastPlayed != undefined ? 'Continue playing' : 'Start playing'}</h1>
 					<p>{mysterData.name}</p>
 				</div>
 				<div class="">
@@ -44,7 +44,7 @@
 				</div>
 				<!-- <Button -->
 				<!-- href={data.lastPlayed.user_mystery_conversations?.mystery_name.replace(/ /, '_')} -->
-				<!-- class="mt-4 w-full rounded bg-tertiary-500 font-primary text-2xl text-quaternary">CONTINUE</Button -->
+				<!-- class="mt-4 w-full rounded bg-tertiary-400 font-primary text-2xl text-quaternary">CONTINUE</Button -->
 				<!-- > -->
 			</Card>
 			<iframe

@@ -51,7 +51,7 @@
 					</ul>
 				</div>
 				<div class="w-full self-end">
-					<Button class="w-full bg-tertiary-500 font-primary font-primary text-xl text-quaternary" href="/login">SIGNUP</Button>
+					<Button class="bg-tertiary-400 w-full font-primary font-primary text-xl text-quaternary" href="/login">SIGNUP</Button>
 				</div>
 			</Card>
 		{/if}
@@ -80,11 +80,11 @@
 					<form action="?/subscribe" method="POST">
 						<input type="hidden" name="paymode" value={SubscriptionBundles.ZeroDollar} />
 						<input type="hidden" name="price-id" value={data.freeTier.id} />
-						<Button class="w-full bg-tertiary-500 font-primary font-primary text-xl text-quaternary" type="submit">Subscribe</Button>
+						<Button class="bg-tertiary-400 w-full font-primary font-primary text-xl text-quaternary" type="submit">Subscribe</Button>
 					</form>
 				{:else}
 					<form action="?/cancel" method="POST">
-						<Button class="w-full bg-tertiary-500 font-primary font-primary text-xl text-quaternary" type="submit">
+						<Button class="bg-tertiary-400 w-full font-primary font-primary text-xl text-quaternary" type="submit">
 							{#if data.subType == SubscriptionBundles.ZeroDollar}
 								CANCEL PLAN
 							{:else if data.subType == SubscriptionBundles.NineDollar}
@@ -105,7 +105,7 @@
 					</p>
 					<form action="?/buy" method="POST" class="mt-4">
 						<input type="hidden" name="price_id" value={price.id} />
-						<Button class="w-full bg-tertiary-500 font-primary text-xl text-quaternary" type="submit">Buy now</Button>
+						<Button class="bg-tertiary-400 w-full font-primary text-xl text-quaternary" type="submit">Buy now</Button>
 					</form>
 				</Card>
 			{/each}
@@ -142,7 +142,7 @@
 	<!-- <input type="hidden" name="paymode" value={SubscriptionBundles.NineDollar} /> -->
 	<!-- <input type="hidden" name="pay-to-go" value={data.subTier.payToGo.id} /> -->
 	<!-- <input type="hidden" name="mystery-sub" value={data.subTier.mysterySub.id} /> -->
-	<!-- <Button class="w-full bg-tertiary-500 font-primary font-primary text-xl text-quaternary" type="submit"> -->
+	<!-- <Button class="w-full bg-tertiary-400 font-primary font-primary text-xl text-quaternary" type="submit"> -->
 	<!-- {#if data.subType == SubscriptionBundles.Free} -->
 	<!-- CHOOSE PLAN -->
 	<!-- {:else} -->
@@ -152,7 +152,7 @@
 	<!-- </form> -->
 	<!-- {:else} -->
 	<!-- <form action="?/cancel" method="POST"> -->
-	<!-- <Button class="w-full bg-tertiary-500 font-primary font-primary text-xl text-quaternary" type="submit">CANCEL PLAN</Button> -->
+	<!-- <Button class="w-full bg-tertiary-400 font-primary font-primary text-xl text-quaternary" type="submit">CANCEL PLAN</Button> -->
 	<!-- </form> -->
 	<!-- {/if} -->
 	<!-- </Card> -->

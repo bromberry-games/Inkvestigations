@@ -37,7 +37,7 @@
 	<div class="bg-quaternary">
 		<slot name="additional-content-top" />
 		<div class="container mx-auto flex h-full flex-col px-4 md:px-8" style="justify-content: end">
-			<div class="flex max-w-4xl flex-col space-y-6 bg-tertiary-500 pt-6 md:mx-auto">
+			<div class="bg-tertiary-400 flex max-w-4xl flex-col space-y-6 pt-6 md:mx-auto">
 				<!-- Message history -->
 				<!-- Do not display the 1. message-->
 				{#each animMessages as message, i}

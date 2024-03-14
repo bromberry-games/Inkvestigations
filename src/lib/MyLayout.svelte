@@ -41,7 +41,7 @@
 			{#if authStatus == AuthStatus.LoggedIn}
 				<div class="flex items-center rounded-full bg-quaternary" id="message-counter">
 					<Avatar id="avatar-menu" src="/images/mysteries/police_captain.webp" class="cursor-pointer" />
-					<div data-testid="message-counter" class="mx-3 font-primary text-2xl text-tertiary-500">
+					<div data-testid="message-counter" class="text-tertiary-400 mx-3 font-primary text-2xl">
 						{$messageAmountStore}
 					</div>
 				</div>
