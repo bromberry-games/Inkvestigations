@@ -10,6 +10,7 @@
 	import SuperTextarea from '$lib/superforms/SuperTextarea.svelte';
 	import { Spinner, Tooltip } from 'flowbite-svelte';
 	import SuperImage from '$lib/superforms/SuperImage.svelte';
+	import H2AndTooltip from './H2AndTooltip.svelte';
 
 	export let data: PageData;
 
@@ -77,12 +78,12 @@
 </script>
 
 <!-- <SuperDebug data={$form} /> -->
-<div class="flex w-full justify-center bg-tertiary-500 pt-8">
+<div class="bg-tertiary-400 flex w-full justify-center pt-8">
 	<form
 		enctype="multipart/form-data"
 		method="POST"
 		action={save ? '?/save' : '?/submit'}
-		class="mx-4 grid grid-cols-[1fr_4fr] gap-2 rounded bg-blue-200 p-4 lg:w-1/2 lg:grid-cols-[1fr_10fr] lg:gap-2"
+		class="bg-tertiary-300 mx-4 grid grid-cols-[1fr_4fr] gap-2 rounded p-4 lg:w-1/2 lg:grid-cols-[1fr_10fr] lg:gap-2 xl:px-8"
 		use:formAll.enhance
 	>
 		<input type="hidden" name="id" bind:value={$form.id} />
@@ -119,7 +120,7 @@
 			labelName="Theme"
 			placeholder="escape and transformation"
 		/>
-		<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 px-4 pb-4 pt-2">
+		<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-tertiary-100 px-4 pb-4 pt-2">
 			<h2 class="col-span-2 text-lg font-bold">Victim</h2>
 			<SuperImage inputClass={inputClassFull} errorClass="col-span-2" field="mystery.victim_image" {formAll} labelName="Thumbnail"
 			></SuperImage>
@@ -131,7 +132,7 @@
 				errorClass="col-span-2"
 				placeholder="John Toilard"
 			/>
-			<SuperInput
+			<SuperTextarea
 				inputClass={inputClassHalf}
 				field="mystery.victim_description"
 				form={formAll}
@@ -157,9 +158,12 @@
 			labelName="Letter"
 			placeholder="Dear Mr. Sherlock Holmes, ..."
 		/>
-		<h2 class="col-span-2 text-lg font-bold">Suspects</h2>
+		<H2AndTooltip
+			title="Characters"
+			tooltip="All important characters in the mystery. Provide a short descirption that describes them. Do not add hidden information here. That will be input into action clues."
+		/>
 		{#each $form.suspects || [] as suspect, index (index)}
-			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 px-4 pb-4 pt-2">
+			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-tertiary-100 px-4 pb-4 pt-2">
 				<div class="col-span-2 flex justify-end">
 					<button type="button" class="" on:click={() => removeItem('suspects', index)}><CloseSolid class="h-4 w-4"></CloseSolid></button>
 				</div>
@@ -170,10 +174,10 @@
 					errorClass="col-span-2"
 					field="suspects[{index}].name"
 					form={formAll}
-					labelName="Suspect"
+					labelName="Name"
 					placeholder="Butler Jesob"
 				/>
-				<SuperInput
+				<SuperTextarea
 					inputClass="rounded border border-gray-300 px-2 py-1"
 					errorClass="col-span-2"
 					field="suspects[{index}].description"
@@ -191,8 +195,12 @@
 		>
 		<hr class="col-span-2 border-slate-900" />
 
-		<input type="checkbox" class="col-span-1" name="show-timeframe" bind:checked={showTimeframe} />
-		<h2 class="col-span-1 text-lg font-bold">Events</h2>
+		<input type="checkbox" class="col-span-1 mt-5" name="show-timeframe" bind:checked={showTimeframe} />
+		<H2AndTooltip
+			title="Events"
+			tooltip="All events in the mystery. Provide a short descirption that describes them. Do not add hidden information here. That will be input into action clues."
+			grid="col-span-1"
+		/>
 		{#if showTimeframe}
 			{#each $form?.timeframes || [] as timeframe, index (index)}
 				<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 px-4 pb-4 pt-2">
@@ -209,7 +217,7 @@
 						labelName="Time"
 						placeholder="09:00AM"
 					/>
-					<SuperInput
+					<SuperTextarea
 						inputClass="rounded border border-gray-300 px-2 py-1"
 						errorClass="col-span-2"
 						field="timeframes[{index}].event_happened"
@@ -223,9 +231,12 @@
 		{/if}
 
 		<hr class="col-span-2 border-slate-900" />
-		<h2 class="col-span-2 text-lg font-bold">Inspector Actions</h2>
+		<H2AndTooltip
+			title="Inspector actions"
+			tooltip="Important clues for solving the mystery. These are predifned clues which dictate the flow of the mystery."
+		/>
 		{#each $form.action_clues || [] as action, index (index)}
-			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 px-4 pb-4 pt-2">
+			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-tertiary-100 px-4 pb-4 pt-2">
 				<div class="col-span-2 flex justify-end">
 					<button type="button" class="" on:click={() => removeItem('action_clues', index)}
 						><CloseSolid class="h-4 w-4"></CloseSolid></button
@@ -239,7 +250,7 @@
 					labelName="Action"
 					placeholder="Who was in the house when the boy disappeared"
 				/>
-				<SuperInput
+				<SuperTextarea
 					inputClass="rounded border border-gray-300 px-2 py-1"
 					errorClass="col-span-2"
 					field="action_clues[{index}].clue"
@@ -253,17 +264,15 @@
 			>Add Action</button
 		>
 
-		<div class="col-span-2 mt-4 flex items-center justify-between">
-			<h2 class="text-lg font-bold">Examples with known information</h2>
-			<QuestionCircleSolid />
-			<Tooltip class="text-md w-96"
-				>To make answers in your mysteries more convincing you should provide some examples. In this case think of questions that a player
+		<H2AndTooltip
+			title="Examples with known information"
+			tooltip="
+				To make answers in your mysteries more convincing you should provide some examples. In this case think of questions that a player
 				of your mysteries might ask, that asks about information you input before. For example from your inspector actions. Your answer
-				should only output information and not in a conversational tone.</Tooltip
-			>
-		</div>
+				should only output information and not in a conversational tone."
+		/>
 		{#each $form.few_shots_known_answers || [] as fewShot, index (index)}
-			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 p-4">
+			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-tertiary-100 p-4">
 				<SuperInput
 					inputClass="rounded border border-gray-300 px-2 py-1"
 					errorClass="col-span-2"
@@ -272,7 +281,7 @@
 					labelName="Question"
 					placeholder="Search the crime scene"
 				/>
-				<SuperInput
+				<SuperTextarea
 					inputClass="rounded border border-gray-300 px-2 py-1"
 					errorClass="col-span-2"
 					field="few_shots_known_answers[{index}].answer"
@@ -282,17 +291,14 @@
 				/>
 			</div>
 		{/each}
-		<div class="col-span-2 mt-4 flex items-center justify-between">
-			<h2 class="text-lg font-bold">Examples with madeup information</h2>
-			<QuestionCircleSolid />
-			<Tooltip class="text-md w-96"
-				>To make answers in your mysteries more convincing you should provide some examples. In this case think of questions that a player
-				of your mysteries might ask, that asks about information you did not input before. It could ask something specific about a suspect.
-				Your answer should only output information and not in a conversational tone.</Tooltip
-			>
-		</div>
+		<H2AndTooltip
+			title="Examples with madeup informations"
+			tooltip="To make answers in your mysteries more convincing you should provide some examples. In this case think of questions that a player -->
+		of your mysteries might ask, that asks about information you did not input before. It could ask something specific about a suspect. -->
+		Your answer should only output information and not in a conversational tone."
+		/>
 		{#each $form.few_shots_unknown_answers || [] as fewShot, index (index)}
-			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-blue-100 p-4">
+			<div class="col-span-2 grid grid-cols-subgrid gap-2 rounded bg-tertiary-100 p-4">
 				<SuperInput
 					inputClass="rounded border border-gray-300 px-2 py-1"
 					errorClass="col-span-2"
@@ -301,7 +307,7 @@
 					labelName="Question"
 					placeholder="Interrogate the victims colleagues"
 				/>
-				<SuperInput
+				<SuperTextarea
 					inputClass="rounded border border-gray-300 px-2 py-1"
 					errorClass="col-span-2"
 					field="few_shots_unknown_answers[{index}].answer"
