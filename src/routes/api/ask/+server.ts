@@ -1,23 +1,16 @@
 import type { RequestHandler } from './$types';
-import { error, redirect } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 import { getErrorMessage, throwIfFalse, throwIfUnset } from '$misc/error';
 import type { Session } from '@supabase/supabase-js';
 import {
 	accuseLetterModelRequest,
 	accuseBrainRequest,
 	type AccuseModelRequestParams,
-	type Victim,
 	type SuspectAndVictim,
 	type LLMCallback
 } from './llangchain_ask';
 import { loadGameInfo } from '$lib/supabase/mystery_data.server';
-import {
-	addMessageForUser,
-	archiveLastConversation,
-	loadBrainMessages,
-	loadLetterMessages,
-	setRating
-} from '$lib/supabase/conversations.server';
+import { addMessageForUser, loadBrainMessages, loadLetterMessages, setRating } from '$lib/supabase/conversations.server';
 import { getMessageAmountForUser, decreaseMessageForUser, increaseMessageForUser } from '$lib/supabase/message_amounts.server';
 import { approximateTokenCount } from '$misc/openai';
 import { shuffleArray } from '$lib/generic-helpers';
@@ -28,7 +21,6 @@ import { loadActiveAndUncancelledSubscription } from '$lib/supabase/prcing.serve
 import { stripeClient } from '$lib/stripe';
 import { MAX_CONVERSATION_LENGTH, textIsTooLong } from '$lib/message-conversation-lengths';
 import type { Json } from '../../../schema';
-import { on } from 'events';
 
 interface AccuseModelAnswerParams extends LLMCallback {
 	slug: string;

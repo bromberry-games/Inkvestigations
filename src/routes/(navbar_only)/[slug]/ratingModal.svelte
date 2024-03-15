@@ -2,8 +2,7 @@
 	import { getMysteryImagePath } from '$lib/generic-helpers';
 	import { Button, Modal } from 'flowbite-svelte';
 	import { StarOutline, StarSolid } from 'flowbite-svelte-icons';
-	import { onMount } from 'svelte';
-	import { backOut, elasticOut, quintIn, quintOut, sineIn, sineOut } from 'svelte/easing';
+	import { elasticOut, sineIn } from 'svelte/easing';
 	import { scale } from 'svelte/transition';
 
 	export let openRatingModal = false;
@@ -46,19 +45,3 @@
 		>
 	</div>
 </Modal>
-
-<style>
-	.star {
-		animation:
-			popUp 0.5s ease-out forwards,
-			rotate 2s linear infinite;
-	}
-	@keyframes rotate {
-		from {
-			transform: rotate(0deg);
-		}
-		to {
-			transform: rotate(360deg);
-		}
-	}
-</style>

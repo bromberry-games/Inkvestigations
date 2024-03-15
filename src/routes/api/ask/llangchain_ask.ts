@@ -14,7 +14,6 @@ import { HttpResponseOutputParser } from 'langchain/output_parsers';
 import { StringOutputParser, BaseTransformOutputParser } from '@langchain/core/output_parsers';
 import type { Json } from '../../../schema';
 import { CHAIN_OF_THOUGHT_TEXT } from './consts';
-import { write } from 'fs';
 
 export interface Victim {
 	name: string;
