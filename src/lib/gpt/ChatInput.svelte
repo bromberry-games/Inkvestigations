@@ -36,7 +36,6 @@
 	let textarea: HTMLTextAreaElement;
 	let messageTokens = 0;
 	let lastUserMessage: string | null = null;
-	// let gameOver = false;
 
 	$: message = input.trim();
 	$: if (blockWrite) {
@@ -58,6 +57,10 @@
 		submitMessage(lastUserMessage ? lastUserMessage : '', true);
 	}
 
+	function handleRating(event: MessageEvent<number>) {
+		dispatch('rating', event.data);
+	}
+
 	function submitMessage(messageToSubmit: string, regenerate = false) {
 		if (accuseMode) {
 			gameOver = true;
@@ -77,7 +80,7 @@
 			regenerate
 		};
 
-		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort, handleEnd);
+		$eventSourceStore.start(payload, handleAnswer, handleError, handleAbort, handleEnd, handleRating);
 	}
 
 	function handleEnd(event: MessageEvent<any>) {
@@ -205,7 +208,9 @@
 						<textarea
 							id="chat-input"
 							data-testid="chat-input"
-							class="textarea min-h-[42px] bg-amber-50 flex-1 overflow-hidden font-secondary border-primary focus:ring-primary focus:border-primary  {accuseMode ? 'shadow-inner shadow-red-500' : ''}"
+							class="textarea min-h-[42px] flex-1 overflow-hidden border-primary bg-amber-50 font-secondary focus:border-primary focus:ring-primary {accuseMode
+								? 'shadow-inner shadow-red-500'
+								: ''}"
 							rows="1"
 							placeholder={placeholderText}
 							use:textareaAutosizeAction

@@ -12,11 +12,16 @@
 	import { MAX_CONVERSATION_LENGTH } from '$lib/message-conversation-lengths';
 	import { error } from '@sveltejs/kit';
 	import Tutorial from './tutorial.svelte';
+	import RatingModal from './ratingModal.svelte';
 
 	export let data: PageData;
 
 	let tokenModal = data.session?.user.user_metadata.useMyOwnToken && $tokenStore == '';
 	let suspectModal = false;
+	let gameOver = false;
+	let rating = 0;
+	let openRatingModal = false;
+	// new Promise((resolve) => setTimeout(() => (openRatingModal = true), 500));
 
 	$: supabase = data.supabase;
 	$: messages = buildMessagesList(data.messages);
@@ -65,6 +70,9 @@
 	async function updateUserMessageAmountAndAddMessage(event: CustomEvent<ChatMessage>) {
 		addMessage(event);
 		updateMessageCounter(supabase, session?.user.id);
+		if (gameOver) {
+			//TODO load rating info
+		}
 	}
 
 	onMount(async () => {
@@ -86,6 +94,11 @@
 		openAiToken = '';
 		tokenModal = false;
 	}
+
+	function handleRating(e: CustomEvent<string>): void {
+		openRatingModal = true;
+		rating = parseInt(e.detail[1]);
+	}
 </script>
 
 <SuspectModal
@@ -96,6 +109,7 @@
 	{slug}
 	accessCode={data.accessCode}
 ></SuspectModal>
+<RatingModal bind:openRatingModal {rating} mystery={{ access_code: data.accessCode, slug: data.slug, name: data.name }} />
 {#if data.session?.user.user_metadata.useMyOwnToken}
 	<Modal title="Use own openai token" bind:open={tokenModal} autoclose>
 		<p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
@@ -127,10 +141,12 @@
 	{slug}
 	on:chatInput={addMessage}
 	on:messageReceived={updateUserMessageAmountAndAddMessage}
+	on:rating={handleRating}
 	chatUnbalanced={messages.filter((m) => m.extra == undefined || m.extra == false).length % 2 !== 1}
 	authStatus={getAuthStatus(data.session)}
 	metered={data.metered}
 	blockWrite={messages.length / 2 >= MAX_CONVERSATION_LENGTH}
+	bind:gameOver
 >
 	<Button
 		id="notes-button"

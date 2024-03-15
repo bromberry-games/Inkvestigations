@@ -61,7 +61,8 @@ async function accuseModelAnswer({
 		suspects: accuseBrainRequestParams.suspects,
 		victim: accuseBrainRequestParams.victim,
 		onResponseGenerated,
-		openAiToken: accuseBrainRequestParams.openAiToken
+		openAiToken: accuseBrainRequestParams.openAiToken,
+		rating: response.rating
 	});
 }
 
