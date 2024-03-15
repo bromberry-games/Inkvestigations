@@ -11,7 +11,7 @@
 	export let mystery: { access_code: string; slug: string; name: string };
 	let animArr = Array(0);
 	async function startAnim() {
-		await new Promise((resolve) => setTimeout(resolve, 500));
+		await new Promise((resolve) => setTimeout(resolve, 400));
 		animArr = Array(3);
 	}
 </script>
@@ -30,7 +30,7 @@
 	<div class="flex h-12 justify-center">
 		{#each animArr as _, i}
 			{#if rating > i}
-				<div in:scale|global={{ duration: 1000, delay: 500 + 500 * i, opacity: 0.5, start: 0.1, easing: elasticOut }} class="mx-4">
+				<div in:scale|global={{ duration: 1000, delay: 100 + 500 * i, opacity: 0.5, start: 0.1, easing: elasticOut }} class="mx-4">
 					<StarSolid size="xl" class="star text-tertiary-300 h-12 w-12" />
 				</div>
 			{:else}
