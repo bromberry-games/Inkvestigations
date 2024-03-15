@@ -307,13 +307,15 @@ export async function accuseBrainRequest({
 	starRatings
 }: AccuseModelRequestParams): Promise<RatingWithEpilogue> {
 	const prompt = createAccusePrompt(parseFewShots(fewShots));
-	// const llm = new ChatOpenAI({
-	// temperature: 0.9,
-	// openAIApiKey: openAiToken,
-	// modelName: OpenAiModel.Gpt35Turbo0125,
-	// maxTokens: 500
-	// });
-	const llm = createFakeAccuseBrainLLM();
+	const llm =
+		USE_FAKE_LLM == 'true'
+			? createFakeAccuseBrainLLM()
+			: new ChatOpenAI({
+					temperature: 0.9,
+					openAIApiKey: openAiToken,
+					modelName: OpenAiModel.Gpt35Turbo0125,
+					maxTokens: 500
+				});
 
 	const parser = new RatingParser();
 	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
