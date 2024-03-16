@@ -4,13 +4,14 @@ import { ChatMessage, type BaseMessage, type LLMResult } from 'langchain/schema'
 import { BaseOutputParser } from '@langchain/core/output_parsers';
 import { error } from '@sveltejs/kit';
 import { OpenAiModel } from '$misc/openai';
-import { createFakeBrainLLM, createFakeLetterLLM } from './fakes/fake_llm';
+import { createFakeAccuseBrainLLM, createFakeBrainLLM, createFakeLetterLLM } from './fakes/fake_llm';
 import { createBrainPrompt } from './prompt_templates/brain';
 import { createLetterPrompt } from './prompt_templates/letter';
 import { createAccusePrompt } from './prompt_templates/accusation_brain';
 import { createAccuseLetterPrompt } from './prompt_templates/accusation_letter';
 import { USE_FAKE_LLM } from '$env/static/private';
 import { HttpResponseOutputParser } from 'langchain/output_parsers';
+import { StringOutputParser, BaseTransformOutputParser } from '@langchain/core/output_parsers';
 import type { Json } from '../../../schema';
 import { CHAIN_OF_THOUGHT_TEXT } from './consts';
 
@@ -69,6 +70,7 @@ interface AccuseLetterModelRequestParams extends LLMCallback, SuspectAndVictim, 
 	accusation: string;
 	epilogue: string;
 	accuseLetterInfo: string;
+	rating: number;
 }
 
 export async function letterModelRequest({
@@ -244,6 +246,54 @@ class RatingParser extends BaseOutputParser<RatingWithEpilogue> {
 	}
 }
 
+//This unironically seems to be the simplest way to add a new event to the stream that returns the rating
+//I want the rating to be added as a new event so I don't have to change anything in the frontend.
+//This could be generalized so that more data that is not displayed immeidately coul be displayed but does not seem to be needed at all.
+class AccuseLetterAppedRating extends BaseTransformOutputParser<Uint8Array> {
+	lc_namespace = ['langchain', 'output_parsers'];
+	protected appended = false;
+	protected encoder = new TextEncoder();
+	private rating;
+	outputParser: BaseTransformOutputParser = new StringOutputParser();
+	constructor(rating: number) {
+		super();
+		this.rating = rating;
+	}
+
+	async *_transform(inputGenerator: AsyncGenerator<string | BaseMessage>): AsyncGenerator<Uint8Array> {
+		for await (const chunk of this.outputParser._transform(inputGenerator)) {
+			if (typeof chunk === 'string') {
+				yield this.parse(chunk);
+			} else {
+				yield this.parse(JSON.stringify(chunk));
+			}
+		}
+		const encoder = new TextEncoder();
+		yield encoder.encode(`event: end\n\n`);
+	}
+
+	async parse(text: string) {
+		const chunk = await this.outputParser.parse(text);
+		const arr1 = this.encoder.encode(`event: data\ndata: ${JSON.stringify(chunk)}\n\n`);
+		if (!this.appended) {
+			this.appended = true;
+			const rating = await this.outputParser.parse(this.rating.toString());
+			const arr2 = this.encoder.encode(`event: rating\ndata: ${JSON.stringify(rating)}\n\n`);
+			const result = new Uint8Array(arr1.length + arr2.length);
+
+			result.set(arr2, 0);
+			result.set(arr1, arr2.length);
+
+			return result;
+		}
+		return arr1;
+	}
+
+	getFormatInstructions(): string {
+		return '';
+	}
+}
+
 export async function accuseBrainRequest({
 	suspects,
 	victim,
@@ -256,12 +306,15 @@ export async function accuseBrainRequest({
 	starRatings
 }: AccuseModelRequestParams): Promise<RatingWithEpilogue> {
 	const prompt = createAccusePrompt(parseFewShots(fewShots));
-	const llm = new ChatOpenAI({
-		temperature: 0.9,
-		openAIApiKey: openAiToken,
-		modelName: OpenAiModel.Gpt35Turbo0125,
-		maxTokens: 500
-	});
+	const llm =
+		USE_FAKE_LLM == 'true'
+			? createFakeAccuseBrainLLM()
+			: new ChatOpenAI({
+					temperature: 0.9,
+					openAIApiKey: openAiToken,
+					modelName: OpenAiModel.Gpt35Turbo0125,
+					maxTokens: 500
+				});
 
 	const parser = new RatingParser();
 	const chain = new LLMChain({ prompt, llm, outputParser: parser, verbose: true });
@@ -284,9 +337,11 @@ export async function accuseLetterModelRequest(accuseLetterParams: AccuseLetterM
 	const parser = new HttpResponseOutputParser({
 		contentType: 'text/event-stream'
 	});
+	const ratingParser = new AccuseLetterAppedRating(accuseLetterParams.rating);
 	const stream = await prompt
 		.pipe(llm)
-		.pipe(parser)
+		.pipe(ratingParser)
+		// .pipe(parser)
 		.stream({
 			information: accuseLetterParams.accuseLetterInfo,
 			suspects: accuseLetterParams.suspects,
