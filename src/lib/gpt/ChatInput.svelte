@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
 	import { textareaAutosizeAction } from 'svelte-legos';
 	import { PaperAirplane } from '@inqling/svelte-icons/heroicon-24-solid';
 	import type { ChatMessage } from '$misc/shared';
@@ -137,6 +137,9 @@
 		$eventSourceStore.reset();
 		resetLiveAnswer();
 		dispatch('messageReceived', messageToAdd);
+		setTimeout(() => {
+			document.getElementById('chat-input')?.focus();
+		}, 110);
 	}
 
 	function resetLiveAnswer() {
@@ -176,6 +179,10 @@
 			placeholderText = 'Input clues to solve the case';
 		}
 	}
+
+	onMount(() => {
+		document.getElementById('chat-input')?.focus();
+	});
 </script>
 
 <footer class="fixed bottom-0 z-10 w-full md:rounded-xl md:px-8 md:py-4">

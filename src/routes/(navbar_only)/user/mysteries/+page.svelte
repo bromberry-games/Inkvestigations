@@ -7,6 +7,7 @@
 	let toDelete = '';
 	let openToDelete = false;
 	$: authStatus = getAuthStatus(data.session);
+	$: console.log(data.session);
 </script>
 
 <Modal size="xs" title="Delete mystery" bind:open={openToDelete} autoclose={false} outsideclose>
