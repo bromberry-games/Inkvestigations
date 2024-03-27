@@ -1,7 +1,6 @@
 <script>
 	import MyLayout from '$lib/MyLayout.svelte';
 	import MyFooter from '$lib/MyFooter.svelte';
-	import Newsletter from '../lib/Newsletter.svelte';
 	import { Button } from 'flowbite-svelte';
 	import { FacebookSolid, GithubSolid, DiscordSolid, TwitterSolid } from 'flowbite-svelte-icons'
 	export let data;
