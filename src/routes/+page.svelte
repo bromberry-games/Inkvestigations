@@ -1,6 +1,7 @@
 <script>
 	import MyLayout from '$lib/MyLayout.svelte';
 	import MyFooter from '$lib/MyFooter.svelte';
+	import HomepageParagraph from '$lib/HomepageParagraph.svelte';
 	import { Button } from 'flowbite-svelte';
 	import { FacebookSolid, GithubSolid, DiscordSolid, TwitterSolid } from 'flowbite-svelte-icons'
 	export let data;
@@ -11,7 +12,7 @@
 
 <div class="flex flex-1 ">
 	<div class="flex-auto">
-		<section class="relative justify-center bg-[url(/images/hero_page.webp)] bg-cover bg-bottom bg-no-repeat pb-80 md:h-screen mb-24">
+		<section class="relative justify-center bg-[url(/images/hero_page.webp)] bg-cover bg-bottom bg-no-repeat  md:h-screen mb-24">
 			<div id="nav">
 				<MyLayout {supabase} {session}></MyLayout>
 			</div>
@@ -27,76 +28,45 @@
 							</h2>
 						</div>
 						<div class="mt-16 flex justify-end ">
-							<Button class="bg-tertiary-400 w-1/2 rounded py-4 font-primary !text-4xl !text-quaternary lg:w-1/4" href="/try-for-free"
+							<Button class="bg-tertiary-300 w-1/2 rounded py-4 font-primary !text-4xl !text-gray-900 lg:w-1/4" href="/try-for-free"
 								>PLAY NOW</Button
 							>
 						</div>			
 		</section>
 		<div class=" inset-0 flex flex-col items-center justify-start gap-12 p-9 ">
-			<div class="w-full max-w-4xl p-16 bg-tertiary-400 font-primary rounded shadow-lg">
-			  <h2 class="text-4xl font-extrabold text-tertiary uppercase">
-				Think Deductive, Be Detective
-			  </h2>
-			  <p class="mt-4 text-tertiary font-bold font-secondary">
-				In Inkvestigations game you slip into the shoes of the greatest detective: Sherlock Holmes.
-				A crime has occurred and police chief Wellington needs your help to solve it. By writing orders to the chief, he will perform those tasks to the best of his ability in order to give you more clues. When you have gathered enough clues, you will tell Wellington your solution. If you are right the criminal will be caught!
-			  </p>
-			</div>
-			<div class="w-full max-w-4xl p-16 bg-tertiary-400 font-primary rounded shadow-lg">
-				<h2 class="text-4xl font-extrabold text-tertiary uppercase">
-					Test your smarts
-				</h2>
-				<p class="mt-4 text-tertiary font-bold font-secondary">
-					This is a game of wits. Facing off against the worst of criminals is no easy task. They make it harder by obscuring their deeds with many misleads, and sometimes Wellington is not a great help. In times like these, you will have to persevere even if the next step is not so clear and rely on your smarts to figure out how to proceed. And who knows, sometimes you'll get lucky and a new event will reveal the missing piece.  
-				</p>
-			  </div>
+				<HomepageParagraph header={`Think Deductive, Be Detective`} paragraph={`In Inkvestigations you slip into the shoes of the greatest detective: Sherlock Holmes.
+				A crime has occurred and police chief Wellington needs your help to solve it. By writing orders to the chief, he will perform those tasks to the best of his ability in order to give you more clues. When you have gathered enough clues, you will tell Wellington your solution. If you are right the criminal will be caught!`}/>
+				<HomepageParagraph header={`Test your smarts`} paragraph={`This is a game of wits. Facing off against the worst of criminals is no easy task. They make it harder by obscuring their deeds with many misleads, and sometimes Wellington is not a great help. In times like these, you will have to persevere even if the next step is not so clear and rely on your smarts to figure out how to proceed. And who knows, sometimes you'll get lucky and a new event will reveal the missing piece. `}/>
+		
 			  <div class="">
-				<Button class="bg-black uppercase rounded py-4 font-primary !text-4xl !text-tertiary-400" href="/try-for-free"
-					>Click here to play</Button
-				>
+				<Button class="bg-gray-900 uppercase rounded py-4 font-primary !text-4xl !text-tertiary-400" href="/try-for-free"
+					>Click here to play</Button>
 			</div>		
-			  <div class="w-full max-w-4xl p-16 bg-tertiary-400 font-primary rounded shadow-lg">
-				<h2 class="text-4xl font-extrabold text-tertiary uppercase">
-					Countless possibilities
-				</h2>
-				<p class="mt-4 text-tertiary font-bold font-secondary">
-					No more invisible walls. Thanks to the power of AI, you can pursue any lead that strikes you as important. But beware: not every lead ends with something useful. You must see through the noise and separate the important clues from unimportant information.  
-				</p>
-			  </div>
-			  <div class="w-full max-w-4xl p-16 bg-tertiary-400 font-primary rounded shadow-lg">
-				<h2 class="text-4xl font-extrabold text-tertiary uppercase">
-					Challenge your friends
-				</h2>
-				<p class="mt-4 text-tertiary font-bold font-secondary">
-					You can create your own mysteries--fast! Want to challenge a friend to a battle of wits? Go to the mystery creator and set up your story. Easily write and publish your case and send a link to your friends.  
-				</p>
-			  </div>
+				<HomepageParagraph header={`Countless possibilities`} paragraph={`No more invisible walls. Thanks to the power of AI, you can pursue any lead that strikes you as important. But beware: not every lead ends with something useful. You must see through the noise and separate the important clues from unimportant information.`}/>  
+				<HomepageParagraph header={`Challenge your friends`} paragraph={`You can create your own mysteries--fast! Want to challenge a friend to a battle of wits? Go to the mystery creator and set up your story. Easily write and publish your case and send a link to your friends.  `}/>
 			  <div class="">
-				<Button class="bg-black uppercase rounded py-4 font-primary !text-4xl !text-tertiary-400" href="/user/mysteries/"
+				<Button class="bg-gray-900 uppercase rounded py-4 font-primary !text-4xl !text-tertiary-400" href="/user/mysteries/"
 					>Click here to CREATE A MYSTERY</Button
 				>
 			</div>	
-			  <div class="w-full max-w-4xl p-16 bg-tertiary-400 font-primary rounded shadow-lg flex-col">
-				<h2 class="text-4xl font-extrabold text-tertiary uppercase">
-					We're open source!
-				</h2>
-				<p class="mt-4 text-tertiary font-bold font-secondary">
-					Your opinion counts. Reach out to us on Discord and write us your thoughts. Or if you have suggestions what we could improve, you can open an issue on Github. We'd be thrilled to hear your ideas!  
-				</p>
-				<div class="text-center mt-8 flex-row ">
-					<h3 class="mt-4 font-primary text-4xl mb-4">
-						Check out the code or come say hi!
+			<div>
+			<HomepageParagraph header={`We're open source!`} paragraph={`Your opinion counts. Reach out to us on Discord and write us your thoughts. Or if you have suggestions what we could improve, you can open an issue on Github. We'd be thrilled to hear your ideas!`}/>
+			<div class="w-full max-w-4xl p-16 bg-tertiary-400 font-primary rounded shadow-lg flex-col">
+				<div class="-mt-20 text-center mt-8 flex-row ">
+					<h3 class="font-primary text-4xl mb-12 text-gray-900">
+						Check out the code and come say hi!
 					</h3>
 					<div class="flex justify-center">
-					<a class="btn btn-sm ml-2 text-tertiary " href="https://github.com/bromberry-games/Inkvestigations">
+					<a class="btn btn-sm ml-2 text-gray-900 " href="https://github.com/bromberry-games/Inkvestigations">
 						<GithubSolid class="h-24 w-24 " />
 					</a>
 				
-					<a class="btn btn-sm ml-2 text-tertiary" href="https://discord.gg/DhvuZDxrtz">
+					<a class="btn btn-sm ml-2 text-gray-900" href="https://discord.gg/DhvuZDxrtz">
 						<DiscordSolid class="h-24 w-24" />
 					</a>
 				</div>
 				</div>
+			</div>
 			</div>
 			
 				
