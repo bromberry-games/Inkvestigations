@@ -39,13 +39,13 @@
 				<HomepageParagraph header={`Test your smarts`} paragraph={`This is a game of wits. Facing off against the worst of criminals is no easy task. They make it harder by obscuring their deeds with many misleads, and sometimes Wellington is not a great help. In times like these, you will have to persevere even if the next step is not so clear and rely on your smarts to figure out how to proceed. And who knows, sometimes you'll get lucky and a new event will reveal the missing piece. `}/>
 		
 			  <div class="">
-				<Button class="bg-gray-900 uppercase rounded py-4 font-primary !text-4xl !text-tertiary-400" href="/try-for-free"
+				<Button class="bg-gray-900 uppercase rounded py-4 font-primary !text-4xl !text-white" href="/try-for-free"
 					>Click here to play</Button>
 			</div>		
 				<HomepageParagraph header={`Countless possibilities`} paragraph={`No more invisible walls. Thanks to the power of AI, you can pursue any lead that strikes you as important. But beware: not every lead ends with something useful. You must see through the noise and separate the important clues from unimportant information.`}/>  
 				<HomepageParagraph header={`Challenge your friends`} paragraph={`You can create your own mysteries--fast! Want to challenge a friend to a battle of wits? Go to the mystery creator and set up your story. Easily write and publish your case and send a link to your friends.  `}/>
 			  <div class="">
-				<Button class="bg-gray-900 uppercase rounded py-4 font-primary !text-4xl !text-tertiary-400" href="/user/mysteries/"
+				<Button class="bg-gray-900 uppercase rounded py-4 font-primary !text-4xl !text-white" href="/user/mysteries/"
 					>Click here to CREATE A MYSTERY</Button
 				>
 			</div>	
@@ -74,8 +74,9 @@
 		  
 	</div>
 </div>
-<MyFooter></MyFooter>
-
+<div class="block w-full m-0 p-0 max-w-none">
+<MyFooter ></MyFooter>
+</div>
 <style>
 	#nav {
 		background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
