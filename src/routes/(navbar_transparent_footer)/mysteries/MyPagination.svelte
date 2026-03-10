@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { Pagination } from 'flowbite-svelte';
 	import { ChevronLeftOutline, ChevronRightOutline } from 'flowbite-svelte-icons';
 

@@ -16,6 +16,7 @@ function response500AndLogError(message: string) {
 export async function POST({ request }) {
 	const body = await request.text();
 	const signature = request.headers.get('stripe-signature');
+	console.log('webhook activated');
 
 	let event;
 	try {

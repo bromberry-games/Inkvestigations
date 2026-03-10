@@ -6,6 +6,7 @@
     "dev": "concurrently \"npm:dev-vite\" \"npm:dev-stripe\"",
     "dev-vite": "vite dev",
     "dev-stripe": "stripe listen --forward-to http://localhost:5173/api/webhook",
+    "dev-stripe-wrangler": "stripe listen --forward-to http://localhost:8788/api/webhook",
     "dev-pages": "concurrently \"npm:build-watch\" \"npm:wrangler\"",
     "build-watch": "vite build --watch",
     "wrangler": "wrangler pages dev .svelte-kit/cloudflare --live-reload",
